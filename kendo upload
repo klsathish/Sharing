@@ -1,0 +1,126 @@
+✅ 1. Updated Kendo Upload UI (Clean Look)
+
+Replace your upload block with this:
+
+<div class="custom-upload-container">
+    @(Html.Kendo().Upload()
+        .Name(Model.PropertyName)
+        .Multiple(false)
+        .Async(a => a
+            .Save("UploadECMAttachment", "DecisionSupportPlatform")
+            .Remove("DeleteECMAttachment", "DecisionSupportPlatform")
+            .AutoUpload(true)
+        )
+        .ShowFileList(false)   // Hides ugly default file list
+        .HtmlAttributes(new { @class = "custom-kendo-upload" })
+        .Events(ev => ev.Select("checkSingleFileExtension"))
+    )
+    
+    <div id="SelectedFileDisplay" class="file-display">
+        @if (Model.AttachmentID > 0)
+        {
+            <span id="existingFile">@Model.FileName</span>
+            <a href="#" class="delete-file" onclick="deleteExistingFile('@Model.AttachmentID')">×</a>
+        }
+    </div>
+</div>
+
+⭐ 2. Add Modern CSS (looks neat and clean)
+
+Place this CSS at bottom of your page:
+
+<style>
+.custom-upload-container {
+    margin-top: 10px;
+}
+
+.custom-kendo-upload .k-upload-button {
+    background: #0078d7 !important;
+    color: white !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+    font-size: 14px !important;
+}
+
+.file-display {
+    margin-top: 8px;
+    font-size: 14px;
+    padding: 6px 10px;
+    background: #f5f5f5;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.delete-file {
+    color: red;
+    font-size: 18px;
+    margin-left: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+}
+</style>
+
+
+🔥 This hides the ugly default list
+🔥 Shows file name in a neat, clean bar
+🔥 Provides a modern delete icon (×)
+
+⭐ 3. JavaScript for Delete Existing File
+function deleteExistingFile(id) {
+    $.ajax({
+        url: '@Url.Action("DeleteECMAttachment", "DecisionSupportPlatform")',
+        type: 'POST',
+        data: { attachmentId: id },
+        success: function () {
+            $("#existingFile").remove();
+            $(".delete-file").remove();
+            alert("File removed");
+        }
+    });
+}
+
+⭐ 4. Controller Adjustments
+Upload
+[HttpPost]
+public ActionResult UploadECMAttachment(IEnumerable<HttpPostedFileBase> files, int RequestID)
+{
+    foreach (var file in files)
+    {
+        if (file != null)
+        {
+            byte[] bytes;
+            using (var br = new BinaryReader(file.InputStream))
+            {
+                bytes = br.ReadBytes(file.ContentLength);
+            }
+
+            db.Attachments.Add(new Attachment
+            {
+                RequestID = RequestID,
+                FileName = file.FileName,
+                FileContent = bytes,
+                FileSize = file.ContentLength,
+                FileExtension = Path.GetExtension(file.FileName)
+            });
+
+            db.SaveChanges();
+        }
+    }
+    return Json(new { success = true });
+}
+
+Delete
+[HttpPost]
+public ActionResult DeleteECMAttachment(int attachmentId)
+{
+    var file = db.Attachments.FirstOrDefault(x => x.AttachmentID == attachmentId);
+
+    if (file != null)
+    {
+        db.Attachments.Remove(file);
+        db.SaveChanges();
+    }
+
+    return Json(new { success = true });
+}
