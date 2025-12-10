@@ -1,32 +1,310 @@
-// Assuming 'rawDataList' is your list of FinishedGoodsInterCompanyTransferChart objects
-var rawDataList = model.FinishedGoodsInterCompanyTransferChartFormats; 
-
-// --- LINQ for Grouping and Formatting ---
-
-var groupedData = rawDataList
-    .GroupBy(item => item.DataValue)
-    .ToDictionary(
-        g => g.Key, 
-        g => g.Select(d => new ChartDataPoint // Use the explicit class here!
-        {
-            x = $"{d.DataMonth} {d.DataCalYear}", 
-            y = d.DataValue_1 
-        }).ToList() // Return a List<ChartDataPoint>
-    );
-
-// --- Construct the Final Response Object ---
-
-// Create the object that holds the two data arrays
-var chartFormat = new FinishedGoodsInterCompanyTransferChartFormat
-{
-    AllForecast = groupedData.ContainsKey("AllForecast") ? groupedData["AllForecast"] : new List<ChartDataPoint>(),
-    Actuals = groupedData.ContainsKey("Actuals") ? groupedData["Actuals"] : new List<ChartDataPoint>()
-};
-
-// If your method returns the top-level TransferChartResponseModel:
-var finalResponse = new TransferChartResponseModel
-{
-    FinishedGoodsInterCompanyTransferChartFormats = chartFormat
-};
-
-return finalResponse; 
+"finishedGoodsInterCompanyTransferCharts": [
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2023,
+      "calMonth": "JUN",
+      "dataValue": 65762.48,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2023,
+      "calMonth": "JUL",
+      "dataValue": 62486.43,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2023,
+      "calMonth": "AUG",
+      "dataValue": 64146.04,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2023,
+      "calMonth": "SEP",
+      "dataValue": 61862.98,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2023,
+      "calMonth": "OCT",
+      "dataValue": 52223.45,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2023,
+      "calMonth": "NOV",
+      "dataValue": 41905.85,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2023,
+      "calMonth": "DEC",
+      "dataValue": 63715.41,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "JAN",
+      "dataValue": 68019.89,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "FEB",
+      "dataValue": 71145.33,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "MAR",
+      "dataValue": 74032.2,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "APR",
+      "dataValue": 72832.72,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "MAY",
+      "dataValue": 70165.24,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "JUN",
+      "dataValue": 65152.19,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "JUL",
+      "dataValue": 74268.54,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "AUG",
+      "dataValue": 60928.68,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "SEP",
+      "dataValue": 62681.54,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "OCT",
+      "dataValue": 74404.76,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "NOV",
+      "dataValue": 68580.23,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "DEC",
+      "dataValue": 66568.98,
+      "dataType": "Actuals"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2023,
+      "calMonth": "JUN",
+      "dataValue": 65764.51,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2023,
+      "calMonth": "JUL",
+      "dataValue": 70199.23,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2023,
+      "calMonth": "AUG",
+      "dataValue": 74559.59,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2023,
+      "calMonth": "SEP",
+      "dataValue": 66366.17,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2023,
+      "calMonth": "OCT",
+      "dataValue": 65143.52,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2023,
+      "calMonth": "NOV",
+      "dataValue": 65915.04,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2023,
+      "calMonth": "DEC",
+      "dataValue": 73113.49,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "JAN",
+      "dataValue": 68446.27,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "FEB",
+      "dataValue": 68799.36,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "MAR",
+      "dataValue": 69998.26,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "APR",
+      "dataValue": 71374.74,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "MAY",
+      "dataValue": 69585.53,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "JUN",
+      "dataValue": 71515.93,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "JUL",
+      "dataValue": 71413.96,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "AUG",
+      "dataValue": 71465.92,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "SEP",
+      "dataValue": 70214.48,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "OCT",
+      "dataValue": 71482.69,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "NOV",
+      "dataValue": 70322.36,
+      "dataType": "AIForecast"
+    },
+    {
+      "currencyType": 1,
+      "metrics": 1,
+      "calYear": 2024,
+      "calMonth": "DEC",
+      "dataValue": 72137.02,
+      "dataType": "AIForecast"
+    }
+  ],
+  "statusCode": 200,
+  "statusMessage": "Success",
+  "errorMessage": null
+}
