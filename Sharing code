@@ -1,0 +1,32 @@
+// Assuming 'rawDataList' is your list of FinishedGoodsInterCompanyTransferChart objects
+var rawDataList = model.FinishedGoodsInterCompanyTransferChartFormats; 
+
+// --- LINQ for Grouping and Formatting ---
+
+var groupedData = rawDataList
+    .GroupBy(item => item.DataValue)
+    .ToDictionary(
+        g => g.Key, 
+        g => g.Select(d => new ChartDataPoint // Use the explicit class here!
+        {
+            x = $"{d.DataMonth} {d.DataCalYear}", 
+            y = d.DataValue_1 
+        }).ToList() // Return a List<ChartDataPoint>
+    );
+
+// --- Construct the Final Response Object ---
+
+// Create the object that holds the two data arrays
+var chartFormat = new FinishedGoodsInterCompanyTransferChartFormat
+{
+    AllForecast = groupedData.ContainsKey("AllForecast") ? groupedData["AllForecast"] : new List<ChartDataPoint>(),
+    Actuals = groupedData.ContainsKey("Actuals") ? groupedData["Actuals"] : new List<ChartDataPoint>()
+};
+
+// If your method returns the top-level TransferChartResponseModel:
+var finalResponse = new TransferChartResponseModel
+{
+    FinishedGoodsInterCompanyTransferChartFormats = chartFormat
+};
+
+return finalResponse; 
