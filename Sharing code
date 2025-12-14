@@ -1,6 +1,6 @@
 USE [SABIC_DT_Finance_WCI_WebUI]
 GO
-/****** Object:  Table [dbo].[ADM_ActivityTracker]    Script Date: 12/14/2025 4:50:44 PM ******/
+/****** Object:  Table [dbo].[ADM_ActivityTracker]    Script Date: 12/14/2025 4:55:18 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -35,7 +35,7 @@ CREATE TABLE [dbo].[ADM_ActivityTracker](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_API]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_API]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -55,7 +55,7 @@ CREATE TABLE [dbo].[ADM_API](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_APIRequestLog]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_APIRequestLog]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -83,7 +83,7 @@ CREATE TABLE [dbo].[ADM_APIRequestLog](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_Application]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_Application]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -102,7 +102,7 @@ CREATE TABLE [dbo].[ADM_Application](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_BU_Delete]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_BU_Delete]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -122,7 +122,7 @@ CREATE TABLE [dbo].[ADM_BU_Delete](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_DefaultDatesForFilter]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_DefaultDatesForFilter]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -138,7 +138,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_ErrorLogging]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_ErrorLogging]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -178,7 +178,7 @@ CREATE TABLE [dbo].[ADM_ErrorLogging](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_ErrorStatus]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_ErrorStatus]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -194,7 +194,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_Functionality]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_Functionality]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -215,7 +215,7 @@ CREATE TABLE [dbo].[ADM_Functionality](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_Layer]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_Layer]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -234,7 +234,7 @@ CREATE TABLE [dbo].[ADM_Layer](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_LoginActivity]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_LoginActivity]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -264,7 +264,7 @@ CREATE TABLE [dbo].[ADM_LoginActivity](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_Menu]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_Menu]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -290,7 +290,7 @@ CREATE TABLE [dbo].[ADM_Menu](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_Module]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_Module]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -311,7 +311,7 @@ CREATE TABLE [dbo].[ADM_Module](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_PerformanceLog]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_PerformanceLog]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -334,7 +334,7 @@ CREATE TABLE [dbo].[ADM_PerformanceLog](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_QueryTracker]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_QueryTracker]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -356,7 +356,7 @@ CREATE TABLE [dbo].[ADM_QueryTracker](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_Role]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_Role]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -375,7 +375,7 @@ CREATE TABLE [dbo].[ADM_Role](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_RoleMenuMapping]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_RoleMenuMapping]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -394,7 +394,7 @@ CREATE TABLE [dbo].[ADM_RoleMenuMapping](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_SBU_Delete]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_SBU_Delete]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -414,7 +414,7 @@ CREATE TABLE [dbo].[ADM_SBU_Delete](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_Screen]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_Screen]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -436,7 +436,7 @@ CREATE TABLE [dbo].[ADM_Screen](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_StoredProcedure]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_StoredProcedure]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -455,7 +455,7 @@ CREATE TABLE [dbo].[ADM_StoredProcedure](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_User]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_User]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -481,7 +481,7 @@ CREATE TABLE [dbo].[ADM_User](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_UserRoleMapping]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_UserRoleMapping]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -503,7 +503,7 @@ CREATE TABLE [dbo].[ADM_UserRoleMapping](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ADM_UserToken]    Script Date: 12/14/2025 4:50:45 PM ******/
+/****** Object:  Table [dbo].[ADM_UserToken]    Script Date: 12/14/2025 4:55:19 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -519,858 +519,6 @@ CREATE TABLE [dbo].[ADM_UserToken](
  CONSTRAINT [PK_ADM_UserToken] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Aggregate_Actuals_ClosingInventory_fg]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Aggregate_Actuals_ClosingInventory_fg](
-	[RecID] [int] IDENTITY(1,1) NOT NULL,
-	[calYearMonth] [int] NULL,
-	[calYear] [int] NOT NULL,
-	[calMonth] [int] NOT NULL,
-	[CompanyCode] [varchar](50) NULL,
-	[ProfitCenter] [varchar](50) NULL,
-	[Material_Type] [varchar](50) NOT NULL,
-	[Opening_Inventory_Volume_In_MT] [float] NULL,
-	[Opening_Inventory_Value_In_SAR] [float] NULL,
-	[Opening_Inventory_Value_In_USD] [float] NULL,
-	[CreatedBy] [nvarchar](50) NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
- CONSTRAINT [PK_Aggregate_Actuals_ClosingInventory_fg] PRIMARY KEY CLUSTERED 
-(
-	[RecID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Aggregate_Actuals_ClosingInventory_rm]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Aggregate_Actuals_ClosingInventory_rm](
-	[RecID] [int] IDENTITY(1,1) NOT NULL,
-	[calYearMonth] [int] NULL,
-	[calYear] [int] NOT NULL,
-	[calMonth] [int] NOT NULL,
-	[CompanyCode] [varchar](50) NULL,
-	[ProfitCenter] [varchar](50) NULL,
-	[Material_Type] [varchar](50) NOT NULL,
-	[Opening_Inventory_Volume_In_MT] [float] NULL,
-	[Opening_Inventory_Value_In_SAR] [float] NULL,
-	[Opening_Inventory_Value_In_USD] [float] NULL,
-	[CreatedBy] [nvarchar](50) NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
- CONSTRAINT [PK_Aggregate_Actuals_ClosingInventory_rm] PRIMARY KEY CLUSTERED 
-(
-	[RecID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Aggregate_Actuals_Inventory]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Aggregate_Actuals_Inventory](
-	[InventoryID] [int] IDENTITY(1,1) NOT NULL,
-	[CalYearMonth] [int] NULL,
-	[CalYear] [int] NULL,
-	[CalMonth] [int] NULL,
-	[InventoryType] [varchar](100) NULL,
-	[CompanyCode] [varchar](100) NULL,
-	[CompanyName] [varchar](100) NULL,
-	[OpeningInventory_Volume_In_MT] [float] NULL,
-	[ClosingInventory_Volume_In_MT] [float] NULL,
-	[OpeningInventory_Value_In_MillionSAR] [float] NULL,
-	[OpeningInventory_Value_In_MillionUSD] [float] NULL,
-	[ClosingInventory_Value_In_MillionSAR] [float] NULL,
-	[ClosingInventory_Value_In_MillionUSD] [float] NULL,
-	[volume_Production_Output_In_MT] [float] NULL,
-	[volume_STO_IN_In_MT] [float] NULL,
-	[volume_STO_OUT_In_MT] [float] NULL,
-	[volume_Transfers_IN_In_MT] [float] NULL,
-	[volume_Transfers_OUT_In_MT] [float] NULL,
-	[volume_Sale_In_MT] [float] NULL,
-	[volume_Consumed_in_production_In_MT] [float] NULL,
-	[volume_Adjustments_In_MT] [float] NULL,
-	[volume_Purchase_In_MT] [float] NULL,
-	[value_Production_Output_In_MillionSAR] [float] NULL,
-	[value_Production_Output_In_MillionUSD] [float] NULL,
-	[value_STO_IN_In_MillionSAR] [float] NULL,
-	[value_STO_IN_In_MillionUSD] [float] NULL,
-	[value_STO_OUT_In_MillionSAR] [float] NULL,
-	[value_STO_OUT_In_MillionUSD] [float] NULL,
-	[value_Transfers_IN_In_MillionSAR] [float] NULL,
-	[value_Transfers_IN_In_MillionUSD] [float] NULL,
-	[value_Transfers_OUT_In_MillionSAR] [float] NULL,
-	[value_Transfers_OUT_In_MillionUSD] [float] NULL,
-	[value_Sale_In_MillionSAR] [float] NULL,
-	[value_Sale_In_MillionUSD] [float] NULL,
-	[value_Consumed_in_production_In_MillionSAR] [float] NULL,
-	[value_Consumed_in_production_In_MillionUSD] [float] NULL,
-	[value_Adjustments_In_MillionSAR] [float] NULL,
-	[value_Adjustments_In_MillionUSD] [float] NULL,
-	[value_Purchase_In_MillionSAR] [float] NULL,
-	[value_Purchase_In_MillionUSD] [float] NULL,
-	[CreatedDate] [datetime] NULL,
-	[Profit_Center] [varchar](10) NULL,
-	[SBU] [varchar](10) NULL,
-	[BU] [varchar](10) NULL,
-	[Plant] [varchar](10) NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[InventoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Aggregate_Actuals_MaterialMovementDemand_FG]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovementDemand_FG](
-	[MaterialMovementDemandID] [int] IDENTITY(1,1) NOT NULL,
-	[CalYearMonth] [int] NULL,
-	[CalYear] [int] NULL,
-	[CalMonth] [int] NULL,
-	[SBU] [varchar](100) NULL,
-	[BU] [varchar](100) NULL,
-	[CompanyCode] [varchar](100) NULL,
-	[CompanyName] [varchar](100) NULL,
-	[Plant] [varchar](100) NULL,
-	[PlantName] [varchar](100) NULL,
-	[ProfitCenterID] [int] NULL,
-	[ProfitCenterName] [varchar](100) NULL,
-	[Volume_In_MT] [float] NULL,
-	[Value_In_SAR] [float] NULL,
-	[Value_In_USD] [float] NULL,
-	[Value_In_MillionSAR] [float] NULL,
-	[Value_In_MillionUSD] [float] NULL,
-	[CreatedDate] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[MaterialMovementDemandID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Aggregate_Actuals_MaterialMovementGIT_FG]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovementGIT_FG](
-	[MaterialMovementGITID] [int] IDENTITY(1,1) NOT NULL,
-	[CalYearMonth] [int] NULL,
-	[CalYear] [int] NULL,
-	[CalMonth] [int] NULL,
-	[SBU] [varchar](100) NULL,
-	[BU] [varchar](100) NULL,
-	[CompanyCode] [varchar](100) NULL,
-	[CompanyName] [varchar](100) NULL,
-	[Plant] [varchar](100) NULL,
-	[PlantName] [varchar](100) NULL,
-	[ProfitCenterID] [int] NULL,
-	[ProfitCenterName] [varchar](100) NULL,
-	[Volume_In_MT] [float] NULL,
-	[Value_In_SAR] [float] NULL,
-	[Value_In_USD] [float] NULL,
-	[Value_In_MillionSAR] [float] NULL,
-	[Value_In_MillionUSD] [float] NULL,
-	[CreatedDate] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[MaterialMovementGITID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Aggregate_Actuals_MaterialMovementGR_RM]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovementGR_RM](
-	[MaterialMovementGRID] [int] IDENTITY(1,1) NOT NULL,
-	[CalYearMonth] [int] NULL,
-	[CalYear] [int] NULL,
-	[CalMonth] [int] NULL,
-	[SBU] [varchar](100) NULL,
-	[BU] [varchar](100) NULL,
-	[CompanyCode] [varchar](100) NULL,
-	[CompanyName] [varchar](100) NULL,
-	[Plant] [varchar](100) NULL,
-	[PlantName] [varchar](100) NULL,
-	[ProfitCenterID] [int] NULL,
-	[ProfitCenterName] [varchar](100) NULL,
-	[Volume_In_MT] [float] NULL,
-	[Value_In_SAR] [float] NULL,
-	[Value_In_USD] [float] NULL,
-	[Value_In_MillionSAR] [float] NULL,
-	[Value_In_MillionUSD] [float] NULL,
-	[CreatedDate] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[MaterialMovementGRID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Aggregate_Actuals_MaterialMovementOwnConsumption_RM]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovementOwnConsumption_RM](
-	[MaterialMovementOwnConsumptionID] [int] IDENTITY(1,1) NOT NULL,
-	[CalYearMonth] [int] NULL,
-	[CalYear] [int] NULL,
-	[CalMonth] [int] NULL,
-	[SBU] [varchar](100) NULL,
-	[BU] [varchar](100) NULL,
-	[CompanyCode] [varchar](100) NULL,
-	[CompanyName] [varchar](100) NULL,
-	[Plant] [varchar](100) NULL,
-	[PlantName] [varchar](100) NULL,
-	[ProfitCenterID] [int] NULL,
-	[ProfitCenterName] [varchar](100) NULL,
-	[Volume_In_MT] [float] NULL,
-	[Value_In_SAR] [float] NULL,
-	[Value_In_USD] [float] NULL,
-	[Value_In_MillionSAR] [float] NULL,
-	[Value_In_MillionUSD] [float] NULL,
-	[CreatedDate] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[MaterialMovementOwnConsumptionID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Aggregate_Actuals_MaterialMovementPrdConsumption_RM]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovementPrdConsumption_RM](
-	[MaterialMovementPrdConsumptionID] [int] IDENTITY(1,1) NOT NULL,
-	[CalYearMonth] [int] NULL,
-	[CalYear] [int] NULL,
-	[CalMonth] [int] NULL,
-	[SBU] [varchar](100) NULL,
-	[BU] [varchar](100) NULL,
-	[CompanyCode] [varchar](100) NULL,
-	[CompanyName] [varchar](100) NULL,
-	[Plant] [varchar](100) NULL,
-	[PlantName] [varchar](100) NULL,
-	[ProfitCenterID] [int] NULL,
-	[ProfitCenterName] [varchar](100) NULL,
-	[Volume_In_MT] [float] NULL,
-	[Value_In_SAR] [float] NULL,
-	[Value_In_USD] [float] NULL,
-	[Value_In_MillionSAR] [float] NULL,
-	[Value_In_MillionUSD] [float] NULL,
-	[CreatedDate] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[MaterialMovementPrdConsumptionID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Aggregate_Actuals_MaterialMovementProduction_FG]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovementProduction_FG](
-	[MaterialMovementProductionID] [int] IDENTITY(1,1) NOT NULL,
-	[CalYearMonth] [int] NULL,
-	[CalYear] [int] NULL,
-	[CalMonth] [int] NULL,
-	[SBU] [varchar](100) NULL,
-	[BU] [varchar](100) NULL,
-	[CompanyCode] [varchar](100) NULL,
-	[CompanyName] [varchar](100) NULL,
-	[Plant] [varchar](100) NULL,
-	[PlantName] [varchar](100) NULL,
-	[ProfitCenterID] [int] NULL,
-	[ProfitCenterName] [varchar](100) NULL,
-	[Volume_In_MT] [float] NULL,
-	[Value_In_SAR] [float] NULL,
-	[Value_In_USD] [float] NULL,
-	[Value_In_MillionSAR] [float] NULL,
-	[Value_In_MillionUSD] [float] NULL,
-	[CreatedDate] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[MaterialMovementProductionID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Aggregate_Actuals_MaterialMovementPurchase_FG]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovementPurchase_FG](
-	[MaterialMovementPurchaseID] [int] IDENTITY(1,1) NOT NULL,
-	[CalYearMonth] [int] NULL,
-	[CalYear] [int] NULL,
-	[CalMonth] [int] NULL,
-	[SBU] [varchar](100) NULL,
-	[BU] [varchar](100) NULL,
-	[CompanyCode] [varchar](100) NULL,
-	[CompanyName] [varchar](100) NULL,
-	[Plant] [varchar](100) NULL,
-	[PlantName] [varchar](100) NULL,
-	[ProfitCenterID] [int] NULL,
-	[ProfitCenterName] [varchar](100) NULL,
-	[Volume_In_MT] [float] NULL,
-	[Value_In_SAR] [float] NULL,
-	[Value_In_USD] [float] NULL,
-	[Value_In_MillionSAR] [float] NULL,
-	[Value_In_MillionUSD] [float] NULL,
-	[CreatedDate] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[MaterialMovementPurchaseID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Aggregate_Actuals_MaterialMovementSTO_FG]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovementSTO_FG](
-	[MaterialMovementSTOID] [int] IDENTITY(1,1) NOT NULL,
-	[CalYearMonth] [int] NULL,
-	[CalYear] [int] NULL,
-	[CalMonth] [int] NULL,
-	[SBU] [varchar](100) NULL,
-	[BU] [varchar](100) NULL,
-	[CompanyCode] [varchar](100) NULL,
-	[CompanyName] [varchar](100) NULL,
-	[Plant] [varchar](100) NULL,
-	[PlantName] [varchar](100) NULL,
-	[ProfitCenterID] [int] NULL,
-	[ProfitCenterName] [varchar](100) NULL,
-	[Volume_In_MT] [float] NULL,
-	[Value_In_SAR] [float] NULL,
-	[Value_In_USD] [float] NULL,
-	[Value_In_MillionSAR] [float] NULL,
-	[Value_In_MillionUSD] [float] NULL,
-	[CreatedDate] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[MaterialMovementSTOID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Aggregate_Actuals_MaterialMovementSTO_RM]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovementSTO_RM](
-	[MaterialMovementSTOID] [int] IDENTITY(1,1) NOT NULL,
-	[CalYearMonth] [int] NULL,
-	[CalYear] [int] NULL,
-	[CalMonth] [int] NULL,
-	[SBU] [varchar](100) NULL,
-	[BU] [varchar](100) NULL,
-	[CompanyCode] [varchar](100) NULL,
-	[CompanyName] [varchar](100) NULL,
-	[Plant] [varchar](100) NULL,
-	[PlantName] [varchar](100) NULL,
-	[ProfitCenterID] [int] NULL,
-	[ProfitCenterName] [varchar](100) NULL,
-	[Volume_In_MT] [float] NULL,
-	[Value_In_SAR] [float] NULL,
-	[Value_In_USD] [float] NULL,
-	[Value_In_MillionSAR] [float] NULL,
-	[Value_In_MillionUSD] [float] NULL,
-	[CreatedDate] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[MaterialMovementSTOID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Aggregate_Actuals_MaterialMovementWIP_FG]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovementWIP_FG](
-	[MaterialMovementWIPID] [int] IDENTITY(1,1) NOT NULL,
-	[CalYearMonth] [int] NULL,
-	[CalYear] [int] NULL,
-	[CalMonth] [int] NULL,
-	[SBU] [varchar](100) NULL,
-	[BU] [varchar](100) NULL,
-	[CompanyCode] [varchar](100) NULL,
-	[CompanyName] [varchar](100) NULL,
-	[Plant] [varchar](100) NULL,
-	[PlantName] [varchar](100) NULL,
-	[ProfitCenterID] [int] NULL,
-	[ProfitCenterName] [varchar](100) NULL,
-	[Volume_In_MT] [float] NULL,
-	[Value_In_SAR] [float] NULL,
-	[Value_In_USD] [float] NULL,
-	[Value_In_MillionSAR] [float] NULL,
-	[Value_In_MillionUSD] [float] NULL,
-	[CreatedDate] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[MaterialMovementWIPID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[Aggregate_Forecast_Inventory]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Aggregate_Forecast_Inventory](
-	[InventoryID] [int] IDENTITY(1,1) NOT NULL,
-	[CalYearMonth] [int] NULL,
-	[CalYear] [int] NULL,
-	[CalMonth] [int] NULL,
-	[InventoryType] [varchar](100) NULL,
-	[CompanyCode] [varchar](100) NULL,
-	[CompanyName] [varchar](100) NULL,
-	[OpeningInventory_Volume_In_MT] [float] NULL,
-	[ClosingInventory_Volume_In_MT] [float] NULL,
-	[OpeningInventory_Value_In_MillionSAR] [float] NULL,
-	[OpeningInventory_Value_In_MillionUSD] [float] NULL,
-	[ClosingInventory_Value_In_MillionSAR] [float] NULL,
-	[ClosingInventory_Value_In_MillionUSD] [float] NULL,
-	[ForecastedInventoryMovement_Volume_In_MT] [float] NULL,
-	[ForecastedInventoryMovement_Value_In_MillionSAR] [float] NULL,
-	[ForecastedInventoryMovement_Value_In_MillionUSD] [float] NULL,
-	[forecast_volume_Production_Output_In_MT] [float] NULL,
-	[forecast_volume_STO_IN_In_MT] [float] NULL,
-	[forecast_volume_STO_OUT_In_MT] [float] NULL,
-	[forecast_volume_Transfers_IN_In_MT] [float] NULL,
-	[forecast_volume_Transfers_OUT_In_MT] [float] NULL,
-	[forecast_volume_Sale_In_MT] [float] NULL,
-	[forecast_volume_Consumed_in_production_In_MT] [float] NULL,
-	[forecast_volume_Adjustments_In_MT] [float] NULL,
-	[forecast_volume_Purchase_In_MT] [float] NULL,
-	[forecast_value_Production_Output_In_MillionSAR] [float] NULL,
-	[forecast_value_Production_Output_In_MillionUSD] [float] NULL,
-	[forecast_value_STO_IN_In_MillionSAR] [float] NULL,
-	[forecast_value_STO_IN_In_MillionUSD] [float] NULL,
-	[forecast_value_STO_OUT_In_MillionSAR] [float] NULL,
-	[forecast_value_STO_OUT_In_MillionUSD] [float] NULL,
-	[forecast_value_Transfers_IN_In_MillionSAR] [float] NULL,
-	[forecast_value_Transfers_IN_In_MillionUSD] [float] NULL,
-	[forecast_value_Transfers_OUT_In_MillionSAR] [float] NULL,
-	[forecast_value_Transfers_OUT_In_MillionUSD] [float] NULL,
-	[forecast_value_Sale_In_MillionSAR] [float] NULL,
-	[forecast_value_Sale_In_MillionUSD] [float] NULL,
-	[forecast_value_Consumed_in_production_In_MillionSAR] [float] NULL,
-	[forecast_value_Consumed_in_production_In_MillionUSD] [float] NULL,
-	[forecast_value_Adjustments_In_MillionSAR] [float] NULL,
-	[forecast_value_Adjustments_In_MillionUSD] [float] NULL,
-	[forecast_value_Purchase_In_MillionSAR] [float] NULL,
-	[forecast_value_Purchase_In_MillionUSD] [float] NULL,
-	[CreatedDate] [datetime] NULL,
-	[Profit_Center] [varchar](10) NULL,
-	[SBU] [varchar](10) NULL,
-	[BU] [varchar](10) NULL,
-	[Plant] [varchar](10) NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[InventoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[FG_Inventory_Forecast]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[FG_Inventory_Forecast](
-	[RecID] [int] IDENTITY(1,1) NOT NULL,
-	[bu] [varchar](10) NULL,
-	[sbu] [varchar](10) NULL,
-	[sub_bu] [varchar](10) NULL,
-	[Month] [varchar](7) NULL,
-	[posting_month] [date] NULL,
-	[forecast_volume_Production_Output] [float] NULL,
-	[forecast_volume_Transfers_IN] [float] NULL,
-	[forecast_volume_Transfers_OUT] [float] NULL,
-	[forecast_volume_STO_IN] [float] NULL,
-	[forecast_volume_STO_OUT] [float] NULL,
-	[forecast_volume_STO] [float] NULL,
-	[forecast_volume_Sale] [float] NULL,
-	[forecast_volume_Consumed_in_production] [float] NULL,
-	[forecast_volume_Adjustments] [float] NULL,
-	[forecast_volume_Purchase] [float] NULL,
-	[forecast_volume_Samples] [float] NULL,
-	[forecast_volume_Losses] [float] NULL,
-	[forecast_volume_Own_Consumption] [float] NULL,
-	[forecast_volume_Other] [float] NULL,
-	[volume_Production_output] [float] NULL,
-	[volume_Transfers_IN] [float] NULL,
-	[volume_Transfers_OUT] [float] NULL,
-	[volume_STO_IN] [float] NULL,
-	[volume_STO_OUT] [float] NULL,
-	[volume_STO] [float] NULL,
-	[volume_Sale] [float] NULL,
-	[volume_Consumed_in_production] [float] NULL,
-	[volume_Adjustments] [float] NULL,
-	[volume_Purchase] [float] NULL,
-	[volume_Samples] [float] NULL,
-	[volume_Losses] [float] NULL,
-	[volume_Own_Consumption] [float] NULL,
-	[volume_Other] [float] NULL,
-	[forecast_value_Production_Output] [float] NULL,
-	[forecast_value_Transfers_IN] [float] NULL,
-	[forecast_value_Transfers_OUT] [float] NULL,
-	[forecast_value_STO_IN] [float] NULL,
-	[forecast_value_STO_OUT] [float] NULL,
-	[forecast_value_STO] [float] NULL,
-	[forecast_value_Sale] [float] NULL,
-	[forecast_value_Consumed_in_production] [float] NULL,
-	[forecast_value_Adjustments] [float] NULL,
-	[forecast_value_Purchase] [float] NULL,
-	[forecast_value_Samples] [float] NULL,
-	[forecast_value_Losses] [float] NULL,
-	[forecast_value_Own_Consumption] [float] NULL,
-	[forecast_value_Other] [float] NULL,
-	[value_Production_output] [float] NULL,
-	[value_Transfers_IN] [float] NULL,
-	[value_Transfers_OUT] [float] NULL,
-	[value_STO_IN] [float] NULL,
-	[value_STO_OUT] [float] NULL,
-	[value_STO] [float] NULL,
-	[value_Sale] [float] NULL,
-	[value_Consumed_in_production] [float] NULL,
-	[value_Adjustments] [float] NULL,
-	[value_Purchase] [float] NULL,
-	[value_Samples] [float] NULL,
-	[value_Losses] [float] NULL,
-	[value_Own_Consumption] [float] NULL,
-	[value_Other] [float] NULL,
-	[material_number] [varchar](18) NULL,
-	[materialtype] [varchar](4) NULL,
-	[plant] [varchar](4) NULL,
-	[Unit_of_measure] [varchar](2) NOT NULL,
-	[currency] [varchar](3) NOT NULL,
-	[CreatedOn] [datetime] NULL,
- CONSTRAINT [PK_FG_Inventory_Forecast] PRIMARY KEY CLUSTERED 
-(
-	[RecID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[LOG_AdminActivities]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[LOG_AdminActivities](
-	[LogID] [int] IDENTITY(1,1) NOT NULL,
-	[TableName] [nvarchar](100) NOT NULL,
-	[OldValue] [xml] NULL,
-	[NewValue] [xml] NOT NULL,
-	[IdentityColumnID] [int] NOT NULL,
-	[ActivityType] [nvarchar](50) NOT NULL,
-	[CreatedBy] [nvarchar](50) NOT NULL,
-	[CreatedDateTime] [datetime] NOT NULL,
- CONSTRAINT [PK_LOG_AdminActivities] PRIMARY KEY CLUSTERED 
-(
-	[LogID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[MST_AccessType]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[MST_AccessType](
-	[AccessTypeID] [int] IDENTITY(1,1) NOT NULL,
-	[AccessTypeName] [varchar](50) NOT NULL,
-	[Description] [nvarchar](500) NOT NULL,
-	[RoleID] [int] NOT NULL,
-	[IsActive] [bit] NOT NULL,
-	[CreatedBy] [nvarchar](400) NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[UpdatedBy] [nvarchar](400) NULL,
-	[UpdatedDate] [datetime] NULL,
- CONSTRAINT [PK_MST_AccessType] PRIMARY KEY CLUSTERED 
-(
-	[AccessTypeID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[MST_Affiliate]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[MST_Affiliate](
-	[AffiliateID] [int] IDENTITY(1,1) NOT NULL,
-	[AffiliateName] [varchar](200) NOT NULL,
-	[IsActive] [bit] NOT NULL,
-	[CreatedBy] [nvarchar](400) NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[UpdatedBy] [nvarchar](400) NULL,
-	[UpdatedDate] [datetime] NULL,
- CONSTRAINT [PK_MST_Affiliate] PRIMARY KEY CLUSTERED 
-(
-	[AffiliateID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[MST_API]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[MST_API](
-	[APIID] [int] IDENTITY(1,1) NOT NULL,
-	[APIName] [varchar](2000) NOT NULL,
-	[LayerName] [varchar](2000) NULL,
-	[IsActive] [bit] NOT NULL,
-	[CreatedBy] [varchar](50) NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[UpdatedBy] [varchar](50) NULL,
-	[UpdatedDate] [datetime] NULL,
- CONSTRAINT [PK_MST_API] PRIMARY KEY CLUSTERED 
-(
-	[APIID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[MST_ConfigurationMaster]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[MST_ConfigurationMaster](
-	[ConfigurationID] [int] IDENTITY(1,1) NOT NULL,
-	[ConfiguationName] [varchar](500) NOT NULL,
-	[ConfiguationValue] [varchar](500) NULL,
-	[ConfigurationType] [varchar](500) NULL,
-	[IsActive] [bit] NOT NULL,
-	[CreatedBy] [varchar](50) NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[UpdatedBy] [varchar](50) NULL,
-	[UpdatedDate] [datetime] NULL,
- CONSTRAINT [PK_MST_ConfigurationMaster] PRIMARY KEY CLUSTERED 
-(
-	[ConfigurationID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[MST_CurrencyExchangeRate]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[MST_CurrencyExchangeRate](
-	[CurrencyExchangeRateID] [int] IDENTITY(1,1) NOT NULL,
-	[FromCurrencyCode] [varchar](3) NULL,
-	[ToCurrencyCode] [varchar](3) NULL,
-	[ExhangeRate] [decimal](18, 6) NOT NULL,
-	[IsActive] [bit] NOT NULL,
-	[CreatedBy] [varchar](50) NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[UpdatedBy] [varchar](50) NULL,
-	[UpdatedDate] [datetime] NULL,
- CONSTRAINT [PK_MST_CurrencyExchangeRate] PRIMARY KEY CLUSTERED 
-(
-	[CurrencyExchangeRateID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[TRN_OpeningAndClosingInventory]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[TRN_OpeningAndClosingInventory](
-	[OpeningAndClosingInventoryID] [int] IDENTITY(1,1) NOT NULL,
-	[CalYear] [int] NULL,
-	[CalMonth] [int] NULL,
-	[InventoryType] [varchar](100) NULL,
-	[CompanyCode] [varchar](100) NULL,
-	[CompanyName] [varchar](100) NULL,
-	[OpeningInventory_Volume_In_MT] [float] NULL,
-	[ClosingInventory_Volume_In_MT] [float] NULL,
-	[OpeningInventory_Value_In_MillionSAR] [float] NULL,
-	[OpeningInventory_Value_In_MillionUSD] [float] NULL,
-	[ClosingInventory_Value_In_MillionSAR] [float] NULL,
-	[ClosingInventory_Value_In_MillionUSD] [float] NULL,
-	[CreatedDate] [datetime] NULL,
-	[CalYearMonth] [int] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[OpeningAndClosingInventoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[TRN_OpeningAndClosingInventory_Actuals_Testing]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[TRN_OpeningAndClosingInventory_Actuals_Testing](
-	[OpeningAndClosingInventoryID] [int] IDENTITY(1,1) NOT NULL,
-	[CalYear] [int] NULL,
-	[CalMonth] [int] NULL,
-	[InventoryType] [varchar](100) NULL,
-	[CompanyCode] [varchar](100) NULL,
-	[CompanyName] [varchar](100) NULL,
-	[OpeningInventory_Volume_In_MT] [float] NULL,
-	[ClosingInventory_Volume_In_MT] [float] NULL,
-	[OpeningInventory_Value_In_MillionSAR] [float] NULL,
-	[OpeningInventory_Value_In_MillionUSD] [float] NULL,
-	[ClosingInventory_Value_In_MillionSAR] [float] NULL,
-	[ClosingInventory_Value_In_MillionUSD] [float] NULL,
-	[CreatedDate] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[OpeningAndClosingInventoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[TRN_OpeningAndClosingInventory_Bkp]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[TRN_OpeningAndClosingInventory_Bkp](
-	[OpeningAndClosingInventoryID] [int] IDENTITY(1,1) NOT NULL,
-	[CalYear] [int] NULL,
-	[CalMonth] [int] NULL,
-	[InventoryType] [varchar](100) NULL,
-	[CompanyCode] [varchar](100) NULL,
-	[CompanyName] [varchar](100) NULL,
-	[OpeningInventory_Volume_In_MT] [float] NULL,
-	[ClosingInventory_Volume_In_MT] [float] NULL,
-	[OpeningInventory_Value_In_MillionSAR] [float] NULL,
-	[OpeningInventory_Value_In_MillionUSD] [float] NULL,
-	[ClosingInventory_Value_In_MillionSAR] [float] NULL,
-	[ClosingInventory_Value_In_MillionUSD] [float] NULL,
-	[CreatedDate] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[OpeningAndClosingInventoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[TRN_OpeningAndClosingInventory_NewBkp]    Script Date: 12/14/2025 4:50:45 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[TRN_OpeningAndClosingInventory_NewBkp](
-	[OpeningAndClosingInventoryID] [int] IDENTITY(1,1) NOT NULL,
-	[CalYear] [int] NULL,
-	[CalMonth] [int] NULL,
-	[InventoryType] [varchar](100) NULL,
-	[CompanyCode] [varchar](100) NULL,
-	[CompanyName] [varchar](100) NULL,
-	[OpeningInventory_Volume_In_MT] [float] NULL,
-	[ClosingInventory_Volume_In_MT] [float] NULL,
-	[OpeningInventory_Value_In_MillionSAR] [float] NULL,
-	[OpeningInventory_Value_In_MillionUSD] [float] NULL,
-	[ClosingInventory_Value_In_MillionSAR] [float] NULL,
-	[ClosingInventory_Value_In_MillionUSD] [float] NULL,
-	[CreatedDate] [datetime] NULL
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[TRN_OpeningInventory_fg]    Script Date: 12/14/2025 4:50:46 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[TRN_OpeningInventory_fg](
-	[RecID] [int] IDENTITY(1,1) NOT NULL,
-	[calYear] [int] NOT NULL,
-	[calMonth] [int] NOT NULL,
-	[CompanyCode] [varchar](50) NULL,
-	[ProfitCenter] [varchar](50) NULL,
-	[Material_Type] [varchar](50) NOT NULL,
-	[Opening_Inventory_Volume_In_MT] [float] NULL,
-	[Opening_Inventory_Value_In_SAR] [float] NULL,
-	[Opening_Inventory_Value_In_USD] [float] NULL,
-	[CreatedBy] [nvarchar](50) NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
- CONSTRAINT [PK_TRN_OpeningInventory_fg] PRIMARY KEY CLUSTERED 
-(
-	[RecID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[TRN_OpeningInventory_rm]    Script Date: 12/14/2025 4:50:46 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[TRN_OpeningInventory_rm](
-	[RecID] [int] IDENTITY(1,1) NOT NULL,
-	[calYear] [int] NOT NULL,
-	[calMonth] [int] NOT NULL,
-	[CompanyCode] [varchar](50) NULL,
-	[ProfitCenter] [varchar](50) NULL,
-	[Material_Type] [varchar](50) NOT NULL,
-	[Opening_Inventory_Volume_In_MT] [float] NULL,
-	[Opening_Inventory_Value_In_SAR] [float] NULL,
-	[Opening_Inventory_Value_In_USD] [float] NULL,
-	[CreatedBy] [nvarchar](50) NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
- CONSTRAINT [PK_TRN_OpeningInventory_rm] PRIMARY KEY CLUSTERED 
-(
-	[RecID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[TRN_UserLoginSession]    Script Date: 12/14/2025 4:50:46 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[TRN_UserLoginSession](
-	[UserLoginSessionID] [int] IDENTITY(1,1) NOT NULL,
-	[UserID] [int] NOT NULL,
-	[SessionID] [varchar](5000) NOT NULL,
-	[IsActive] [bit] NOT NULL,
-	[CreatedBy] [nvarchar](200) NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[UpdatedBy] [nvarchar](200) NULL,
-	[UpdatedOn] [datetime] NULL,
- CONSTRAINT [PK_TRN_UserLoginSession] PRIMARY KEY CLUSTERED 
-(
-	[UserLoginSessionID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[v_materials_movement]    Script Date: 12/14/2025 4:50:46 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[v_materials_movement](
-	[RecID] [int] IDENTITY(1,1) NOT NULL,
-	[postingdate_year] [int] NULL,
-	[postingdate_month] [int] NULL,
-	[currency] [varchar](5) NULL,
-	[Amount_in_Local_Currency] [decimal](13, 2) NULL,
-	[flow] [varchar](10) NULL,
-	[master_data] [varchar](20) NULL,
-	[materialtype] [varchar](5) NULL,
-	[posting_date] [varchar](10) NULL,
-	[plant] [varchar](5) NULL,
- CONSTRAINT [PK_v_materials_movement] PRIMARY KEY CLUSTERED 
-(
-	[RecID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
@@ -1439,64 +587,6 @@ GO
 ALTER TABLE [dbo].[ADM_UserToken] ADD  CONSTRAINT [DF_ADM_UserToken_IsActive]  DEFAULT ((1)) FOR [IsActive]
 GO
 ALTER TABLE [dbo].[ADM_UserToken] ADD  CONSTRAINT [DF_ADM_UserToken_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
-GO
-ALTER TABLE [dbo].[Aggregate_Actuals_ClosingInventory_fg] ADD  CONSTRAINT [DF_Aggregate_Actuals_ClosingInventory_fg_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[Aggregate_Actuals_ClosingInventory_rm] ADD  CONSTRAINT [DF_Aggregate_Actuals_ClosingInventory_rm_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[Aggregate_Actuals_Inventory] ADD  CONSTRAINT [DF_Aggregate_Actuals_Inventory_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[Aggregate_Actuals_MaterialMovementDemand_FG] ADD  CONSTRAINT [DF_Aggregate_Actuals_MaterialMovementDemand_FG_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[Aggregate_Actuals_MaterialMovementGIT_FG] ADD  CONSTRAINT [DF_Aggregate_Actuals_MaterialMovementGIT_FG_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[Aggregate_Actuals_MaterialMovementGR_RM] ADD  CONSTRAINT [DF_Aggregate_Actuals_MaterialMovementGR_RM_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[Aggregate_Actuals_MaterialMovementOwnConsumption_RM] ADD  CONSTRAINT [DF_Aggregate_Actuals_MaterialMovementOwnConsumption_RM_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[Aggregate_Actuals_MaterialMovementPrdConsumption_RM] ADD  CONSTRAINT [DF_Aggregate_Actuals_MaterialMovementPrdConsumption_RM_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[Aggregate_Actuals_MaterialMovementProduction_FG] ADD  CONSTRAINT [DF_Aggregate_Actuals_MaterialMovementProduction_FG_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[Aggregate_Actuals_MaterialMovementPurchase_FG] ADD  CONSTRAINT [DF_Aggregate_Actuals_MaterialMovementPurchase_FG_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[Aggregate_Actuals_MaterialMovementSTO_FG] ADD  CONSTRAINT [DF_Aggregate_Actuals_MaterialMovementSTO_FG_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[Aggregate_Actuals_MaterialMovementSTO_RM] ADD  CONSTRAINT [DF_Aggregate_Actuals_MaterialMovementSTO_RM_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[Aggregate_Actuals_MaterialMovementWIP_FG] ADD  CONSTRAINT [DF_Aggregate_Actuals_MaterialMovementWIP_FG_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[Aggregate_Forecast_Inventory] ADD  CONSTRAINT [DF_Aggregate_Forecast_Inventory_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[LOG_AdminActivities] ADD  CONSTRAINT [DF_LOG_AdminActivities_CreatedDateTime]  DEFAULT (getdate()) FOR [CreatedDateTime]
-GO
-ALTER TABLE [dbo].[MST_AccessType] ADD  CONSTRAINT [DF_MST_AccessType_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[MST_AccessType] ADD  CONSTRAINT [DF_MST_AccessType_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[MST_Affiliate] ADD  CONSTRAINT [DF_MST_Affiliate_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[MST_Affiliate] ADD  CONSTRAINT [DF_MST_Affiliate_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[MST_API] ADD  CONSTRAINT [DF_MST_API_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[MST_API] ADD  CONSTRAINT [DF_MST_API_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[MST_ConfigurationMaster] ADD  CONSTRAINT [DF_MST_ConfigurationMaster_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[MST_ConfigurationMaster] ADD  CONSTRAINT [DF_MST_ConfigurationMaster_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[MST_CurrencyExchangeRate] ADD  CONSTRAINT [DF_MST_CurrencyExchangeRate_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[MST_CurrencyExchangeRate] ADD  CONSTRAINT [DF_MST_CurrencyExchangeRate_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[TRN_OpeningInventory_fg] ADD  CONSTRAINT [DF_TRN_OpeningInventory_fg_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[TRN_OpeningInventory_rm] ADD  CONSTRAINT [DF_TRN_OpeningInventory_rm_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[TRN_UserLoginSession] ADD  CONSTRAINT [DF_TRN_UserLoginSession_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[TRN_UserLoginSession] ADD  CONSTRAINT [DF_TRN_UserLoginSession_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
 GO
 ALTER TABLE [dbo].[ADM_ActivityTracker]  WITH CHECK ADD  CONSTRAINT [FK_ADM_ActivityTracker_ADM_Application] FOREIGN KEY([ApplicationID])
 REFERENCES [dbo].[ADM_Application] ([ApplicationID])
@@ -1607,14 +697,4 @@ ALTER TABLE [dbo].[ADM_UserToken]  WITH CHECK ADD  CONSTRAINT [FK_ADM_UserToken_
 REFERENCES [dbo].[ADM_User] ([UserID])
 GO
 ALTER TABLE [dbo].[ADM_UserToken] CHECK CONSTRAINT [FK_ADM_UserToken_ADM_User]
-GO
-ALTER TABLE [dbo].[MST_AccessType]  WITH CHECK ADD  CONSTRAINT [FK_MST_AccessType_ADM_Role] FOREIGN KEY([RoleID])
-REFERENCES [dbo].[ADM_Role] ([RoleID])
-GO
-ALTER TABLE [dbo].[MST_AccessType] CHECK CONSTRAINT [FK_MST_AccessType_ADM_Role]
-GO
-ALTER TABLE [dbo].[TRN_UserLoginSession]  WITH CHECK ADD  CONSTRAINT [FK_TRN_UserLoginSession_ADM_User] FOREIGN KEY([UserID])
-REFERENCES [dbo].[ADM_User] ([UserID])
-GO
-ALTER TABLE [dbo].[TRN_UserLoginSession] CHECK CONSTRAINT [FK_TRN_UserLoginSession_ADM_User]
 GO
