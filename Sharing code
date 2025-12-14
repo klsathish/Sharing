@@ -1,700 +1,151 @@
-USE [SABIC_DT_Finance_WCI_WebUI]
-GO
-/****** Object:  Table [dbo].[ADM_ActivityTracker]    Script Date: 12/14/2025 4:55:18 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_ActivityTracker](
-	[ActivityTrackerID] [int] IDENTITY(1,1) NOT NULL,
-	[UserID] [int] NULL,
-	[RoleID] [int] NULL,
-	[RoleName] [varchar](200) NULL,
-	[IpAddress] [varchar](200) NULL,
-	[BrowserName] [varchar](200) NULL,
-	[ApplicationID] [int] NULL,
-	[ScreenID] [int] NULL,
-	[FunctionID] [int] NULL,
-	[UserActionID] [int] NULL,
-	[LoginTime] [datetime] NULL,
-	[LogoutTime] [datetime] NULL,
-	[SessionDuration] [float] NULL,
-	[SessionID] [varchar](200) NULL,
-	[IsOnline] [bit] NULL,
-	[CreatedBy] [varchar](200) NULL,
-	[CreatedOn] [datetime] NULL,
-	[UpdatedBy] [varchar](200) NULL,
-	[UpdatedOn] [datetime] NULL,
-	[UserAgent] [nvarchar](1000) NULL,
-	[Browser] [nvarchar](100) NULL,
-	[BrowserVersion] [nvarchar](100) NULL,
-	[SessionStartTimeStamp] [datetime] NULL,
- CONSTRAINT [PK_ADM_ActivityTracker] PRIMARY KEY CLUSTERED 
-(
-	[ActivityTrackerID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_API]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_API](
-	[APIID] [int] IDENTITY(1,1) NOT NULL,
-	[APIName] [nvarchar](50) NULL,
-	[IsActive] [bit] NOT NULL,
-	[CreatedBy] [nvarchar](200) NOT NULL,
-	[CreatedOn] [datetime] NOT NULL,
-	[UpdatedBy] [nvarchar](200) NULL,
-	[UpdatedOn] [datetime] NULL,
-	[FunctionalityID] [int] NULL,
- CONSTRAINT [PK_ADM_API] PRIMARY KEY CLUSTERED 
-(
-	[APIID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_APIRequestLog]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_APIRequestLog](
-	[RequestLogID] [int] IDENTITY(1,1) NOT NULL,
-	[UserID] [int] NULL,
-	[RoleID] [int] NULL,
-	[AppModuleMappingID] [int] NULL,
-	[SessionID] [varchar](200) NULL,
-	[ApiEndPoint] [varchar](300) NULL,
-	[HttpMethod] [varchar](50) NULL,
-	[StatusCode] [int] NULL,
-	[RequestBody] [nvarchar](max) NULL,
-	[RequestTimeStamp] [datetime] NULL,
-	[ResponseBody] [nvarchar](max) NULL,
-	[ResponseTimeStamp] [datetime] NULL,
-	[Duration] [varchar](50) NULL,
-	[CreatedBy] [varchar](200) NULL,
-	[CreatedOn] [datetime] NULL,
-	[LayerID] [int] NULL,
- CONSTRAINT [PK_ADM_APIRequestLog] PRIMARY KEY CLUSTERED 
-(
-	[RequestLogID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_Application]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_Application](
-	[ApplicationID] [int] IDENTITY(1,1) NOT NULL,
-	[ApplicationName] [nvarchar](50) NOT NULL,
-	[IsActive] [bit] NOT NULL,
-	[CreatedBy] [nvarchar](200) NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[UpdatedBy] [nvarchar](200) NULL,
-	[UpdatedDate] [datetime] NULL,
- CONSTRAINT [PK_ADM_Application] PRIMARY KEY CLUSTERED 
-(
-	[ApplicationID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_BU_Delete]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_BU_Delete](
-	[BuID] [int] IDENTITY(1,1) NOT NULL,
-	[BuName] [nvarchar](100) NULL,
-	[SbuID] [int] NULL,
-	[IsActive] [bit] NULL,
-	[CreatedBy] [nvarchar](100) NULL,
-	[CreatedDate] [datetime] NULL,
-	[UpdatedBy] [nvarchar](100) NULL,
-	[UpdatedDate] [datetime] NULL,
- CONSTRAINT [PK__ADM_BU__56C7F157E0A8353E] PRIMARY KEY CLUSTERED 
-(
-	[BuID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_DefaultDatesForFilter]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_DefaultDatesForFilter](
-	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[FromDate] [datetime] NULL,
-	[ToDate] [datetime] NULL,
-	[IsActive] [bit] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_ErrorLogging]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_ErrorLogging](
-	[ErrorLogID] [int] IDENTITY(1,1) NOT NULL,
-	[UserID] [int] NOT NULL,
-	[RoleID] [int] NOT NULL,
-	[SessionID] [varchar](5000) NULL,
-	[ApplicationID] [int] NULL,
-	[ScreenID] [int] NULL,
-	[ModuleID] [int] NULL,
-	[FunctionID] [int] NULL,
-	[LayerID] [int] NULL,
-	[APIID] [int] NULL,
-	[StoredProcedureID] [int] NULL,
-	[ErrorNumber] [int] NULL,
-	[ErrorState] [int] NULL,
-	[ErrorSeverity] [varchar](100) NULL,
-	[StackTrace] [nvarchar](max) NULL,
-	[ErrorMessage] [nvarchar](max) NULL,
-	[RequestBody] [nvarchar](max) NULL,
-	[ResponseBody] [nvarchar](max) NULL,
-	[ErrorStatusID] [int] NULL,
-	[Status] [nvarchar](50) NULL,
-	[AssignTo] [nvarchar](50) NULL,
-	[HostName] [varchar](100) NULL,
-	[Environment] [varchar](50) NULL,
-	[CreatedBy] [varchar](50) NOT NULL,
-	[CreatedOn] [datetime] NOT NULL,
-	[UpdatedBy] [varchar](50) NULL,
-	[UpdatedDate] [datetime] NULL,
-	[IpAddress] [nvarchar](50) NULL,
- CONSTRAINT [PK__ADM_Erro__D65247E2308AC53F] PRIMARY KEY CLUSTERED 
-(
-	[ErrorLogID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_ErrorStatus]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_ErrorStatus](
-	[ErrorStatusID] [int] IDENTITY(1,1) NOT NULL,
-	[StatusName] [nvarchar](50) NOT NULL,
-	[Description] [nvarchar](255) NULL,
-	[IsActive] [bit] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[ErrorStatusID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_Functionality]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_Functionality](
-	[FunctionalityID] [int] IDENTITY(1,1) NOT NULL,
-	[FunctionalityName] [nvarchar](200) NULL,
-	[IsActive] [bit] NOT NULL,
-	[CreatedBy] [nvarchar](200) NOT NULL,
-	[CreatedOn] [datetime] NOT NULL,
-	[UpdatedBy] [nvarchar](50) NULL,
-	[UpdatedOn] [datetime] NULL,
-	[ScreenID] [int] NULL,
-	[IsDisplay] [bit] NULL,
- CONSTRAINT [PK_ADM_Functionality] PRIMARY KEY CLUSTERED 
-(
-	[FunctionalityID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_Layer]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_Layer](
-	[LayerID] [int] IDENTITY(1,1) NOT NULL,
-	[LayerName] [nvarchar](50) NULL,
-	[IsActive] [bit] NOT NULL,
-	[CreatedBy] [nvarchar](200) NOT NULL,
-	[CreatedOn] [datetime] NOT NULL,
-	[UpdatedBy] [nvarchar](200) NULL,
-	[UpdatedOn] [datetime] NULL,
- CONSTRAINT [PK_ADM_Layer] PRIMARY KEY CLUSTERED 
-(
-	[LayerID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_LoginActivity]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_LoginActivity](
-	[LoginID] [int] IDENTITY(1,1) NOT NULL,
-	[RoleID] [int] NULL,
-	[IpAddress] [varchar](200) NULL,
-	[BrowserName] [varchar](500) NULL,
-	[ApplicationID] [int] NULL,
-	[LoginTime] [datetime] NULL,
-	[LogoutTime] [datetime] NULL,
-	[SessionID] [varchar](200) NULL,
-	[IsOnline] [bit] NULL,
-	[CreatedBy] [varchar](200) NOT NULL,
-	[CreatedOn] [datetime] NOT NULL,
-	[UpdatedBy] [varchar](200) NULL,
-	[UpdatedOn] [datetime] NULL,
-	[UserID] [int] NULL,
-	[UserAgent] [nvarchar](500) NULL,
-	[Browser] [nvarchar](100) NULL,
-	[BrowserVersion] [nvarchar](100) NULL,
-	[SessionStartTimeStamp] [datetime] NULL,
- CONSTRAINT [PK_ADM_LoginActivity] PRIMARY KEY CLUSTERED 
-(
-	[LoginID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_Menu]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_Menu](
-	[MenuID] [int] IDENTITY(1,1) NOT NULL,
-	[MenuName] [varchar](500) NOT NULL,
-	[ActionLink] [varchar](500) NULL,
-	[ActionName] [varchar](500) NULL,
-	[ControllerName] [varchar](500) NULL,
-	[Title] [varchar](500) NOT NULL,
-	[Svg] [nvarchar](max) NOT NULL,
-	[NavPosition] [int] NOT NULL,
-	[IsActive] [bit] NOT NULL,
-	[CreatedBy] [nvarchar](400) NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[UpdatedBy] [nvarchar](400) NULL,
-	[UpdatedDate] [datetime] NULL,
-	[ModuleID] [int] NULL,
- CONSTRAINT [PK_ADM_Menu] PRIMARY KEY CLUSTERED 
-(
-	[MenuID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_Module]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_Module](
-	[ModuleID] [int] IDENTITY(1,1) NOT NULL,
-	[ModuleName] [varchar](200) NULL,
-	[Description] [varchar](200) NULL,
-	[IsActive] [bit] NOT NULL,
-	[CreatedBy] [varchar](50) NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[UpdatedBy] [varchar](50) NULL,
-	[UpdatedDate] [datetime] NULL,
-	[ApplicationID] [int] NULL,
- CONSTRAINT [PK_ADM_Module] PRIMARY KEY CLUSTERED 
-(
-	[ModuleID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_PerformanceLog]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_PerformanceLog](
-	[PerformanceLogID] [int] IDENTITY(1,1) NOT NULL,
-	[UserID] [int] NULL,
-	[RoleID] [int] NULL,
-	[SessionID] [varchar](100) NULL,
-	[ComponentName] [varchar](200) NULL,
-	[ActionName] [varchar](200) NULL,
-	[StartTime] [datetime] NULL,
-	[EndTime] [datetime] NULL,
-	[Duration] [varchar](100) NULL,
-	[CreatedBy] [varchar](200) NOT NULL,
-	[CreatedOn] [datetime] NOT NULL,
- CONSTRAINT [PK_ADM_PerformanceLog] PRIMARY KEY CLUSTERED 
-(
-	[PerformanceLogID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_QueryTracker]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_QueryTracker](
-	[TrackID] [int] IDENTITY(1,1) NOT NULL,
-	[StoredProcedureID] [int] NULL,
-	[TotalRecords] [nvarchar](50) NULL,
-	[Totaltime] [int] NULL,
-	[Size] [nvarchar](50) NULL,
-	[CreatedDate] [datetime] NULL,
-	[WebServer] [varchar](max) NULL,
-	[ActionUrl] [varchar](max) NULL,
-	[ErrorMessage] [varchar](max) NULL,
-	[ParallelSql] [varchar](max) NULL,
- CONSTRAINT [PK_ADM_QueryTracker] PRIMARY KEY CLUSTERED 
-(
-	[TrackID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_Role]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_Role](
-	[RoleID] [int] IDENTITY(1,1) NOT NULL,
-	[RoleName] [varchar](100) NULL,
-	[IsActive] [bit] NOT NULL,
-	[CreatedBy] [nvarchar](400) NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[UpdatedBy] [nvarchar](400) NULL,
-	[UpdatedDate] [datetime] NULL,
- CONSTRAINT [PK_ADM_Role] PRIMARY KEY CLUSTERED 
-(
-	[RoleID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_RoleMenuMapping]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_RoleMenuMapping](
-	[RoleMenuMappingID] [int] IDENTITY(1,1) NOT NULL,
-	[RoleID] [int] NOT NULL,
-	[MenuID] [int] NOT NULL,
-	[CreatedBy] [nvarchar](400) NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[UpdatedBy] [nvarchar](400) NULL,
-	[UpdatedDate] [datetime] NULL,
- CONSTRAINT [PK_ADM_RoleMenuMapping] PRIMARY KEY CLUSTERED 
-(
-	[RoleMenuMappingID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_SBU_Delete]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_SBU_Delete](
-	[SbuID] [int] IDENTITY(1,1) NOT NULL,
-	[SbuName] [nvarchar](100) NULL,
-	[AffiliateID] [int] NULL,
-	[IsActive] [bit] NULL,
-	[CreatedBy] [nvarchar](100) NULL,
-	[CreatedDate] [datetime] NULL,
-	[UpdatedBy] [nvarchar](100) NULL,
-	[UpdatedDate] [datetime] NULL,
- CONSTRAINT [PK__ADM_SBU__E9DAA3C5CB858A3E] PRIMARY KEY CLUSTERED 
-(
-	[SbuID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_Screen]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_Screen](
-	[ScreenID] [int] IDENTITY(1,1) NOT NULL,
-	[ScreenName] [varchar](200) NULL,
-	[Description] [varchar](200) NULL,
-	[IsActive] [bit] NOT NULL,
-	[CreatedBy] [varchar](50) NOT NULL,
-	[CreatedOn] [datetime] NOT NULL,
-	[UpdatedBy] [varchar](50) NULL,
-	[UpdatedOn] [datetime] NULL,
-	[MenuID] [int] NULL,
-	[IsDisplay] [bit] NULL,
- CONSTRAINT [PK_ADM_Screen] PRIMARY KEY CLUSTERED 
-(
-	[ScreenID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_StoredProcedure]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_StoredProcedure](
-	[StoredProcedureID] [int] IDENTITY(1,1) NOT NULL,
-	[StoredProcedureName] [nvarchar](100) NULL,
-	[IsActive] [bit] NOT NULL,
-	[CreatedBy] [nvarchar](200) NOT NULL,
-	[CreatedOn] [datetime] NOT NULL,
-	[UpdatedBy] [nvarchar](200) NULL,
-	[UpdatedOn] [datetime] NULL,
- CONSTRAINT [PK_ADM_StoredProcedure] PRIMARY KEY CLUSTERED 
-(
-	[StoredProcedureID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_User]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_User](
-	[UserID] [int] IDENTITY(1,1) NOT NULL,
-	[Username] [nvarchar](400) NULL,
-	[Email] [nvarchar](400) NULL,
-	[FirstName] [nvarchar](200) NULL,
-	[LastName] [nvarchar](200) NULL,
-	[EmployeeID] [nvarchar](50) NULL,
-	[AffiliateID] [int] NOT NULL,
-	[IsDeleted] [bit] NOT NULL,
-	[IsActive] [bit] NOT NULL,
-	[LastLoginDate] [datetime] NULL,
-	[CreatedBy] [nvarchar](400) NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[UpdatedBy] [nvarchar](400) NULL,
-	[UpdatedDate] [datetime] NULL,
- CONSTRAINT [PK_ADM_User] PRIMARY KEY CLUSTERED 
-(
-	[UserID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_UserRoleMapping]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_UserRoleMapping](
-	[UserRoleMappingID] [int] IDENTITY(1,1) NOT NULL,
-	[UserID] [int] NOT NULL,
-	[RoleID] [int] NOT NULL,
-	[IsActive] [bit] NOT NULL,
-	[IsDeleted] [bit] NOT NULL,
-	[IsSelectedRole] [bit] NOT NULL,
-	[CreatedBy] [varchar](50) NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[UpdatedBy] [varchar](50) NULL,
-	[UpdatedDate] [datetime] NULL,
- CONSTRAINT [PK_ADM_UserRoleMapping] PRIMARY KEY CLUSTERED 
-(
-	[UserRoleMappingID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[ADM_UserToken]    Script Date: 12/14/2025 4:55:19 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ADM_UserToken](
-	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[SessionID] [nvarchar](500) NULL,
-	[Token] [varchar](500) NULL,
-	[IsActive] [bit] NOT NULL,
-	[UserID] [int] NOT NULL,
-	[CreatedBy] [varchar](500) NOT NULL,
-	[CreatedOn] [datetime] NOT NULL,
- CONSTRAINT [PK_ADM_UserToken] PRIMARY KEY CLUSTERED 
-(
-	[ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-ALTER TABLE [dbo].[ADM_API] ADD  CONSTRAINT [DF_ADM_API_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[ADM_API] ADD  CONSTRAINT [DF_ADM_API_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
-GO
-ALTER TABLE [dbo].[ADM_API] ADD  CONSTRAINT [DF_ADM_API_UpdatedOn]  DEFAULT (getdate()) FOR [UpdatedOn]
-GO
-ALTER TABLE [dbo].[ADM_Application] ADD  CONSTRAINT [DF_ADM_Application_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[ADM_Application] ADD  CONSTRAINT [DF_ADM_Application_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[ADM_ErrorLogging] ADD  CONSTRAINT [DF_ADM_ErrorLogging_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
-GO
-ALTER TABLE [dbo].[ADM_Functionality] ADD  CONSTRAINT [DF_ADM_Functionality_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[ADM_Functionality] ADD  CONSTRAINT [DF_ADM_Functionality_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
-GO
-ALTER TABLE [dbo].[ADM_Functionality] ADD  CONSTRAINT [DF__ADM_Funct__IsDis__035179CE]  DEFAULT ((1)) FOR [IsDisplay]
-GO
-ALTER TABLE [dbo].[ADM_Layer] ADD  CONSTRAINT [DF_ADM_Layer_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[ADM_Layer] ADD  CONSTRAINT [DF_ADM_Layer_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
-GO
-ALTER TABLE [dbo].[ADM_Menu] ADD  CONSTRAINT [DF_ADM_Menu_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[ADM_Menu] ADD  CONSTRAINT [DF_Menu_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[ADM_Module] ADD  CONSTRAINT [DF_ADM_Module_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[ADM_Module] ADD  CONSTRAINT [DF_ADM_Module_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[ADM_Module] ADD  CONSTRAINT [DF_ADM_Module_UpdatedDate]  DEFAULT (getdate()) FOR [UpdatedDate]
-GO
-ALTER TABLE [dbo].[ADM_PerformanceLog] ADD  CONSTRAINT [DF_ADM_PerformanceLog_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
-GO
-ALTER TABLE [dbo].[ADM_Role] ADD  CONSTRAINT [DF_ADM_Role_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[ADM_Role] ADD  CONSTRAINT [DF_ADM_Role_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[ADM_RoleMenuMapping] ADD  CONSTRAINT [DF_ADM_RoleMenuMapping_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[ADM_Screen] ADD  CONSTRAINT [DF_ADM_Screen_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[ADM_Screen] ADD  CONSTRAINT [DF_ADM_Screen_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
-GO
-ALTER TABLE [dbo].[ADM_Screen] ADD  CONSTRAINT [DF_ADM_Screen_Updatedon]  DEFAULT (getdate()) FOR [UpdatedOn]
-GO
-ALTER TABLE [dbo].[ADM_Screen] ADD  CONSTRAINT [DF__ADM_Scree__IsDis__56B3DD81]  DEFAULT ((0)) FOR [IsDisplay]
-GO
-ALTER TABLE [dbo].[ADM_StoredProcedure] ADD  CONSTRAINT [DF_ADM_StoredProcedure_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[ADM_StoredProcedure] ADD  CONSTRAINT [DF_ADM_StoredProcedure_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
-GO
-ALTER TABLE [dbo].[ADM_User] ADD  CONSTRAINT [DF_ADM_User_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[ADM_User] ADD  CONSTRAINT [DF_ADM_User_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[ADM_UserRoleMapping] ADD  CONSTRAINT [DF_ADM_UserRoleMapping_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[ADM_UserRoleMapping] ADD  CONSTRAINT [DF_ADM_UserRoleMapping_IsDeleted]  DEFAULT ((0)) FOR [IsDeleted]
-GO
-ALTER TABLE [dbo].[ADM_UserRoleMapping] ADD  CONSTRAINT [DF_ADM_UserRoleMapping_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[ADM_UserToken] ADD  CONSTRAINT [DF_ADM_UserToken_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-ALTER TABLE [dbo].[ADM_UserToken] ADD  CONSTRAINT [DF_ADM_UserToken_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
-GO
-ALTER TABLE [dbo].[ADM_ActivityTracker]  WITH CHECK ADD  CONSTRAINT [FK_ADM_ActivityTracker_ADM_Application] FOREIGN KEY([ApplicationID])
-REFERENCES [dbo].[ADM_Application] ([ApplicationID])
-GO
-ALTER TABLE [dbo].[ADM_ActivityTracker] CHECK CONSTRAINT [FK_ADM_ActivityTracker_ADM_Application]
-GO
-ALTER TABLE [dbo].[ADM_ActivityTracker]  WITH CHECK ADD  CONSTRAINT [FK_ADM_ActivityTracker_ADM_Role] FOREIGN KEY([RoleID])
-REFERENCES [dbo].[ADM_Role] ([RoleID])
-GO
-ALTER TABLE [dbo].[ADM_ActivityTracker] CHECK CONSTRAINT [FK_ADM_ActivityTracker_ADM_Role]
-GO
-ALTER TABLE [dbo].[ADM_ActivityTracker]  WITH CHECK ADD  CONSTRAINT [FK_ADM_ActivityTracker_ADM_User] FOREIGN KEY([UserID])
-REFERENCES [dbo].[ADM_User] ([UserID])
-GO
-ALTER TABLE [dbo].[ADM_ActivityTracker] CHECK CONSTRAINT [FK_ADM_ActivityTracker_ADM_User]
-GO
-ALTER TABLE [dbo].[ADM_API]  WITH CHECK ADD  CONSTRAINT [FK_ADM_API_ADM_Functionality] FOREIGN KEY([FunctionalityID])
-REFERENCES [dbo].[ADM_Functionality] ([FunctionalityID])
-GO
-ALTER TABLE [dbo].[ADM_API] CHECK CONSTRAINT [FK_ADM_API_ADM_Functionality]
-GO
-ALTER TABLE [dbo].[ADM_APIRequestLog]  WITH CHECK ADD  CONSTRAINT [FK_ADM_APIRequestLog_ADM_Role] FOREIGN KEY([RoleID])
-REFERENCES [dbo].[ADM_Role] ([RoleID])
-GO
-ALTER TABLE [dbo].[ADM_APIRequestLog] CHECK CONSTRAINT [FK_ADM_APIRequestLog_ADM_Role]
-GO
-ALTER TABLE [dbo].[ADM_APIRequestLog]  WITH CHECK ADD  CONSTRAINT [FK_ADM_APIRequestLog_ADM_User] FOREIGN KEY([UserID])
-REFERENCES [dbo].[ADM_User] ([UserID])
-GO
-ALTER TABLE [dbo].[ADM_APIRequestLog] CHECK CONSTRAINT [FK_ADM_APIRequestLog_ADM_User]
-GO
-ALTER TABLE [dbo].[ADM_APIRequestLog]  WITH CHECK ADD  CONSTRAINT [foreignKeyName] FOREIGN KEY([LayerID])
-REFERENCES [dbo].[ADM_Layer] ([LayerID])
-GO
-ALTER TABLE [dbo].[ADM_APIRequestLog] CHECK CONSTRAINT [foreignKeyName]
-GO
-ALTER TABLE [dbo].[ADM_BU_Delete]  WITH CHECK ADD  CONSTRAINT [FK__ADM_BU__SbuID__625A9A57] FOREIGN KEY([SbuID])
-REFERENCES [dbo].[ADM_SBU_Delete] ([SbuID])
-GO
-ALTER TABLE [dbo].[ADM_BU_Delete] CHECK CONSTRAINT [FK__ADM_BU__SbuID__625A9A57]
-GO
-ALTER TABLE [dbo].[ADM_ErrorLogging]  WITH CHECK ADD  CONSTRAINT [FK_ADM_ErrorLogging_ADM_Application] FOREIGN KEY([ApplicationID])
-REFERENCES [dbo].[ADM_Application] ([ApplicationID])
-GO
-ALTER TABLE [dbo].[ADM_ErrorLogging] CHECK CONSTRAINT [FK_ADM_ErrorLogging_ADM_Application]
-GO
-ALTER TABLE [dbo].[ADM_ErrorLogging]  WITH CHECK ADD  CONSTRAINT [FK_ADM_ErrorLogging_ADM_Role] FOREIGN KEY([RoleID])
-REFERENCES [dbo].[ADM_Role] ([RoleID])
-GO
-ALTER TABLE [dbo].[ADM_ErrorLogging] CHECK CONSTRAINT [FK_ADM_ErrorLogging_ADM_Role]
-GO
-ALTER TABLE [dbo].[ADM_ErrorLogging]  WITH CHECK ADD  CONSTRAINT [FK_ADM_ErrorLogging_ADM_User] FOREIGN KEY([UserID])
-REFERENCES [dbo].[ADM_User] ([UserID])
-GO
-ALTER TABLE [dbo].[ADM_ErrorLogging] CHECK CONSTRAINT [FK_ADM_ErrorLogging_ADM_User]
-GO
-ALTER TABLE [dbo].[ADM_ErrorLogging]  WITH CHECK ADD  CONSTRAINT [FK_ErrorLogging_Status] FOREIGN KEY([ErrorStatusID])
-REFERENCES [dbo].[ADM_ErrorStatus] ([ErrorStatusID])
-GO
-ALTER TABLE [dbo].[ADM_ErrorLogging] CHECK CONSTRAINT [FK_ErrorLogging_Status]
-GO
-ALTER TABLE [dbo].[ADM_LoginActivity]  WITH CHECK ADD  CONSTRAINT [FK_ADM_LoginActivity_ADM_Application] FOREIGN KEY([ApplicationID])
-REFERENCES [dbo].[ADM_Application] ([ApplicationID])
-GO
-ALTER TABLE [dbo].[ADM_LoginActivity] CHECK CONSTRAINT [FK_ADM_LoginActivity_ADM_Application]
-GO
-ALTER TABLE [dbo].[ADM_LoginActivity]  WITH CHECK ADD  CONSTRAINT [FK_ADM_LoginActivity_ADM_Role] FOREIGN KEY([RoleID])
-REFERENCES [dbo].[ADM_Role] ([RoleID])
-GO
-ALTER TABLE [dbo].[ADM_LoginActivity] CHECK CONSTRAINT [FK_ADM_LoginActivity_ADM_Role]
-GO
-ALTER TABLE [dbo].[ADM_LoginActivity]  WITH CHECK ADD  CONSTRAINT [FK_ADM_LoginActivity_ADM_User] FOREIGN KEY([UserID])
-REFERENCES [dbo].[ADM_User] ([UserID])
-GO
-ALTER TABLE [dbo].[ADM_LoginActivity] CHECK CONSTRAINT [FK_ADM_LoginActivity_ADM_User]
-GO
-ALTER TABLE [dbo].[ADM_Module]  WITH CHECK ADD  CONSTRAINT [FK_ADM_Module_ADM_Application] FOREIGN KEY([ApplicationID])
-REFERENCES [dbo].[ADM_Application] ([ApplicationID])
-GO
-ALTER TABLE [dbo].[ADM_Module] CHECK CONSTRAINT [FK_ADM_Module_ADM_Application]
-GO
-ALTER TABLE [dbo].[ADM_RoleMenuMapping]  WITH CHECK ADD  CONSTRAINT [FK_ADM_RoleMenuMapping_ADM_Menu] FOREIGN KEY([MenuID])
-REFERENCES [dbo].[ADM_Menu] ([MenuID])
-GO
-ALTER TABLE [dbo].[ADM_RoleMenuMapping] CHECK CONSTRAINT [FK_ADM_RoleMenuMapping_ADM_Menu]
-GO
-ALTER TABLE [dbo].[ADM_RoleMenuMapping]  WITH CHECK ADD  CONSTRAINT [FK_ADM_RoleMenuMapping_ADM_Role] FOREIGN KEY([RoleID])
-REFERENCES [dbo].[ADM_Role] ([RoleID])
-GO
-ALTER TABLE [dbo].[ADM_RoleMenuMapping] CHECK CONSTRAINT [FK_ADM_RoleMenuMapping_ADM_Role]
-GO
-ALTER TABLE [dbo].[ADM_Screen]  WITH CHECK ADD  CONSTRAINT [FK_ADM_Screen_ADM_Menu] FOREIGN KEY([MenuID])
-REFERENCES [dbo].[ADM_Menu] ([MenuID])
-GO
-ALTER TABLE [dbo].[ADM_Screen] CHECK CONSTRAINT [FK_ADM_Screen_ADM_Menu]
-GO
-ALTER TABLE [dbo].[ADM_UserRoleMapping]  WITH CHECK ADD  CONSTRAINT [FK_ADM_UserRoleMapping_ADM_Role] FOREIGN KEY([RoleID])
-REFERENCES [dbo].[ADM_Role] ([RoleID])
-GO
-ALTER TABLE [dbo].[ADM_UserRoleMapping] CHECK CONSTRAINT [FK_ADM_UserRoleMapping_ADM_Role]
-GO
-ALTER TABLE [dbo].[ADM_UserRoleMapping]  WITH CHECK ADD  CONSTRAINT [FK_ADM_UserRoleMapping_ADM_User] FOREIGN KEY([UserID])
-REFERENCES [dbo].[ADM_User] ([UserID])
-GO
-ALTER TABLE [dbo].[ADM_UserRoleMapping] CHECK CONSTRAINT [FK_ADM_UserRoleMapping_ADM_User]
-GO
-ALTER TABLE [dbo].[ADM_UserToken]  WITH CHECK ADD  CONSTRAINT [FK_ADM_UserToken_ADM_User] FOREIGN KEY([UserID])
-REFERENCES [dbo].[ADM_User] ([UserID])
-GO
-ALTER TABLE [dbo].[ADM_UserToken] CHECK CONSTRAINT [FK_ADM_UserToken_ADM_User]
-GO
+3. ADM_Application
+This table refers to application master details.
+Column	Description	Example
+ApplicationID (PK)	Auto-increment primary key	1
+ApplicationName	Name of the application	Finance WCI
+IsActive	Application active status	1
+CreatedBy	Record created by	Admin
+CreatedDate	Record created date	2023-08-20
+UpdatedBy	Record updated by	Admin
+UpdatedDate	Record updated date	2023-08-21
+________________________________________
+4. ADM_Module
+This table refers to module details of the application.
+Column	Description	Example
+ModuleID (PK)	Auto-increment primary key	1
+ModuleName	Name of the module	Demand Planning
+Description	Module description	Planning module
+IsActive	Active status	1
+ApplicationID (FK)	Linked application ID	1
+CreatedBy	Created by user	Admin
+CreatedDate	Created date	2023-08-20
+UpdatedBy	Updated by user	Admin
+UpdatedDate	Updated date	2023-08-21
+________________________________________
+5. ADM_Menu
+This table refers to menu and navigation details.
+Column	Description	Example
+MenuID (PK)	Auto-increment primary key	10
+MenuName	Menu display name	Dashboard
+ActionLink	URL link	/home/index
+ControllerName	MVC controller name	Home
+ActionName	MVC action name	Index
+Title	Menu title	Dashboard
+NavPosition	Navigation order	1
+IsActive	Active status	1
+ModuleID (FK)	Related module	1
+CreatedBy	Created by	Admin
+CreatedDate	Created date	2023-08-20
+________________________________________
+6. ADM_Screen
+This table refers to screen details.
+Column	Description	Example
+ScreenID (PK)	Auto-increment primary key	5
+ScreenName	Name of the screen	Demand Forecast
+Description	Screen description	Forecast screen
+IsActive	Active status	1
+MenuID (FK)	Linked menu	10
+IsDisplay	Display flag	1
+CreatedBy	Created by	Admin
+CreatedOn	Created date	2023-08-20
+________________________________________
+7. ADM_Role
+This table refers to role master details.
+Column	Description	Example
+RoleID (PK)	Auto-increment primary key	1
+RoleName	Name of the role	Admin
+IsActive	Active status	1
+CreatedBy	Created by	System
+CreatedDate	Created date	2023-08-20
+________________________________________
+8. ADM_User
+This table refers to user master details.
+Column	Description	Example
+UserID (PK)	Auto-increment primary key	100
+Username	User login name	sathish
+Email	User email	sathish@mail.com
+FirstName	First name	Sathish
+LastName	Last name	K
+EmployeeID	Employee ID	EMP123
+IsActive	Active status	1
+CreatedBy	Created by	Admin
+CreatedDate	Created date	2023-08-20
+________________________________________
+9. ADM_UserRoleMapping
+Maps users to roles.
+Column	Description	Example
+UserRoleMappingID (PK)	Auto-increment primary key	1
+UserID (FK)	User reference	100
+RoleID (FK)	Role reference	1
+IsActive	Active mapping	1
+IsSelectedRole	Default role	1
+________________________________________
+10. ADM_RoleMenuMapping
+Maps roles to menus.
+Column	Description	Example
+RoleMenuMappingID (PK)	Auto-increment primary key	1
+RoleID (FK)	Role reference	1
+MenuID (FK)	Menu reference	10
+________________________________________
+11. ADM_ActivityTracker
+Tracks user activity and session details.
+Column	Description	Example
+ActivityTrackerID (PK)	Auto-increment primary key	1
+UserID (FK)	Logged-in user	100
+RoleID (FK)	User role	1
+IpAddress	User IP address	10.10.10.1
+LoginTime	Login time	2023-08-20 10:00
+LogoutTime	Logout time	2023-08-20 18:00
+SessionDuration	Duration in minutes	480
+________________________________________
+12. ADM_LoginActivity
+Tracks login and logout activities.
+Column	Description	Example
+LoginID (PK)	Auto-increment primary key	1
+UserID (FK)	User reference	100
+LoginTime	Login timestamp	2023-08-20 10:00
+LogoutTime	Logout timestamp	2023-08-20 18:00
+SessionID	Session identifier	ABC123
+________________________________________
+13. ADM_API
+Stores API master details.
+Column	Description	Example
+APIID (PK)	Auto-increment primary key	1
+APIName	API name	GetForecast
+IsActive	API status	1
+FunctionalityID (FK)	Linked functionality	5
+________________________________________
+14. ADM_APIRequestLog
+Logs API request and response details.
+Column	Description	Example
+RequestLogID (PK)	Auto-increment primary key	1
+ApiEndPoint	API URL	/api/forecast
+HttpMethod	HTTP method	POST
+StatusCode	Response status	200
+RequestTimeStamp	Request time	2023-08-20
+ResponseTimeStamp	Response time	2023-08-20
+________________________________________
+15. ADM_ErrorLogging
+Stores application error details.
+Column	Description	Example
+ErrorLogID (PK)	Auto-increment primary key	1
+ErrorMessage	Error message	Null reference
+ErrorSeverity	Error severity	High
+CreatedOn	Error logged date	2023-08-20
+________________________________________
+16. ADM_PerformanceLog
+Tracks performance metrics.
+Column	Description	Example
+PerformanceLogID (PK)	Auto-increment primary key	1
+ComponentName	Component name	Forecast
+Duration	Execution time	200ms
+CreatedOn	Logged date	2023-08-20
+________________________________________
+17. ADM_UserToken
+Stores user authentication tokens.
+Column	Description	Example
+ID (PK)	Auto-increment primary key	1
+Token	JWT token	eyJhbGci
+IsActive	Token status	1
+CreatedOn	Token created date	2023-08-20
+
