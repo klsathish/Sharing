@@ -1,458 +1,109 @@
-ASP.NET Core Web API (.NET 8 / .NET 6 / .NET Core 3.1 – as applicable)
-Used to build RESTful backend services with high performance and scalability.
+--Revenue Trend
 
-C# (Latest Version)
-Primary programming language for business logic and API implementation.
+Exec [dbo].[SP_GetRevenueTrend] 0,'1200','','2020-01-01','2025-03-31', 0, 0  
+_dbContext.RevenueTrend.FromSqlRaw("EXEC [dbo].[SP_GetRevenueTrend] {0},{1},{2},{3},{4},{5},{6}",
+                revenueFilterReq.TypeID,
+                revenueFilterReq.CompanyCode,
+                revenueFilterReq.ProfitCenterID,
+                revenueFilterReq.FromDate,
+                revenueFilterReq.ToDate,
+                  revenueFilterReq.SBU,
+                revenueFilterReq.BU).ToListAsync();
 
-Entity Framework Core
-Used for database access, ORM mapping, and data persistence with MS SQL Server.
-
-JWT (JSON Web Token) Authentication
-Implemented for secure token-based authentication and authorization.
-
-Windows Authentication (if applicable)
-Used for internal user authentication within enterprise environments.
-
-Role-Based Authorization
-Ensures controlled access to APIs based on user roles and permissions.
-
-ASP.NET Core Middleware Pipeline
-Used for request handling, authentication, logging, and exception management.
-
-Swagger / OpenAPI
-Used for API documentation, testing, and contract validation.
-
-Dependency Injection (Built-in DI Container)
-Enables loose coupling, improved testability, and maintainable code.
-
-LINQ
-Used for querying and manipulating data efficiently.
-
-Configuration Management (appsettings.json)
-Environment-specific configuration handling.
--------
-
-Database Technology Stack – Microsoft SQL Server
-
-Microsoft SQL Server (2019 / 2022 – as applicable)
-Used as the primary relational database for storing application data securely and reliably.
-
-Stored Procedures
-Implemented for complex business logic, improved performance, and enhanced security.
-
-Indexes and Constraints
-Used to ensure data integrity, enforce relationships, and optimize query performance.
-
-Joins, Views, and Functions
-Used for efficient data retrieval and reporting requirements.
-
-Transaction Management
-Ensures data consistency and reliability during insert, update, and delete operations.
-
-Data Security
-Role-based access, schema-level permissions, and secure connections are enforced.
-
-Backup and Recovery
-Supports regular database backups and disaster recovery mechanisms.
-
-Integration with Entity Framework Core / ADO.NET
-Used for seamless interaction between the application and the database layer.
+TypeID	SalesYear	Month	Actual	Forecast	SmartForecast	Revenue
+0	2020	1	936	NULL	NULL	NULL
 
 
+-----------
 
-ID": {
-            "type": "string",
-            "nullable": true
-          },
-          "sbuName": {
-            "type": "string",
-            "nullable": true
-          },
-          "buName": {
-            "type": "string",
-            "nullable": true
-          },
-          "profitCenterID": {
-            "type": "string",
-            "nullable": true
-          },
-          "plantID": {
-            "type": "string",
-            "nullable": true
-          },
-          "roleID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "baseFilterResult": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/BaseFilterResult"
-            },
-            "nullable": true
-          },
-          "moreFiltersSBUandBUResult": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/MoreFiltersSBUandBUResult"
-            },
-            "nullable": true
-          },
-          "moreFiltersProfitCenterResult": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/MoreFiltersProfitCenterResult"
-            },
-            "nullable": true
-          },
-          "moreFiltersPlantResult": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/MoreFiltersPlantResult"
-            },
-            "nullable": true
-          },
-          "statusCode": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "statusMessage": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "InsertUpdateUserReq": {
-        "type": "object",
-        "properties": {
-          "userID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "userRoleIDs": {
-            "type": "string",
-            "nullable": true
-          },
-          "userName": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "firstName": {
-            "type": "string",
-            "nullable": true
-          },
-          "lastName": {
-            "type": "string",
-            "nullable": true
-          },
-          "employeeID": {
-            "type": "string",
-            "nullable": true
-          },
-          "affiliateID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "statusID": {
-            "type": "boolean"
-          },
-          "createdBy": {
-            "type": "string",
-            "nullable": true
-          },
-          "isInsert": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
-      "InsertUserActivity": {
-        "type": "object",
-        "properties": {
-          "activityTrackerID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "userActionID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "screenID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "functionID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "createdBy": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "InvChartDataFilterReq": {
-        "type": "object",
-        "properties": {
-          "regionCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "countryCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "companyCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "currencyType": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "metrics": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "profitCenterID": {
-            "type": "string",
-            "nullable": true
-          },
-          "plantID": {
-            "type": "string",
-            "nullable": true
-          },
-          "fromDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "toDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "sbuName": {
-            "type": "string",
-            "nullable": true
-          },
-          "buName": {
-            "type": "string",
-            "nullable": true
-          },
-          "unitOfMeasure": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "InvInterCompanyTransferComparisonChartData": {
-        "type": "object",
-        "properties": {
-          "regionCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "countryCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "companyCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "profitCenterID": {
-            "type": "string",
-            "nullable": true
-          },
-          "plantID": {
-            "type": "string",
-            "nullable": true
-          },
-          "fromDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "toDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "sbuName": {
-            "type": "string",
-            "nullable": true
-          },
-          "buName": {
-            "type": "string",
-            "nullable": true
-          },
-          "unitOfMeasure": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "InventoryFilterReq": {
-        "type": "object",
-        "properties": {
-          "regionCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "countryCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "companyCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "profitCenterID": {
-            "type": "string",
-            "nullable": true
-          },
-          "plantID": {
-            "type": "string",
-            "nullable": true
-          },
-          "sbuName": {
-            "type": "string",
-            "nullable": true
-          },
-          "buName": {
-            "type": "string",
-            "nullable": true
-          },
-          "fromDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "toDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "typeID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "LogExceptionModel": {
-        "type": "object",
-        "properties": {
-          "employeeID": {
-            "type": "string",
-            "nullable": true
-          },
-          "roleID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "applicationName": {
-            "type": "string",
-            "nullable": true
-          },
-          "screen": {
-            "type": "string",
-            "nullable": true
-          },
-          "functionality": {
-            "type": "string",
-            "nullable": true
-          },
-          "userAction": {
-            "type": "string",
-            "nullable": true
-          },
-          "stackTrace": {
-            "type": "string",
-            "nullable": true
-          },
-          "requestUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "errorMessage": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "MoreFiltersPlantResult": {
-        "type": "object",
-        "properties": {
-          "plantID": {
-            "type": "string",
-            "nullable": true
-          },
-          "plantName": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "MoreFiltersProfitCenterResult": {
-        "type": "object",
-        "properties": {
-          "profitCenterID": {
-            "type": "string",
-            "nullable": true
-          },
-          "profitCenterName": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "MoreFiltersSBUandBUResult": {
-        "type": "object",
-        "properties": {
-          "sbuName": {
-            "type": "string",
-            "nullable": true
-          },
-          "buName": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      }
-    },
-    "securitySchemes": {
-      "Bearer": {
-        "type": "http",
-        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-        "scheme": "bearer"
-      }
-    }
-  },
-  "security": [
-    {
-      "Bearer": 
+--Contribution Margin Trend (M $)
+
+Exec [dbo].[SP_GetContributionMarginTrend] 0,'',0,'2025-01-01','2025-03-31'    
+
+
+_dbContext.ContributionMarginTrend.FromSqlRaw("EXEC [dbo].[SP_GetContributionMarginTrend] {0},{1},{2},{3},{4},{5},{6}",
+                revenueFilterReq.TypeID,
+                revenueFilterReq.CompanyCode,
+                revenueFilterReq.ProfitCenterID,
+                revenueFilterReq.FromDate,
+                revenueFilterReq.ToDate,
+                revenueFilterReq.SBU,
+                revenueFilterReq.BU).ToListAsync();
+
+response
+TypeID	SalesYear	Month	Actual	Forecast	SmartForecast	Revenue
+0	2025	1	1091	79	178	NULL
+
+
+--------------
+
+--Sales Volume Trend
+Exec [dbo].[SP_GetSalesVolumeTrend] 0,'1','0','2020-01-01','2025-03-31', 0, 0    
+
+
+_dbContext.SalesVolumeTrend.FromSqlRaw("EXEC [dbo].[SP_GetSalesVolumeTrend] {0},{1},{2},{3},{4},{5},{6}",
+                revenueFilterReq.TypeID,
+                revenueFilterReq.CompanyCode,
+                revenueFilterReq.ProfitCenterID,
+                revenueFilterReq.FromDate,
+                revenueFilterReq.ToDate,
+                revenueFilterReq.SBU,
+                revenueFilterReq.BU).ToListAsync();
+
+
+response
+
+TypeID	SalesYear	Month	Actual	Forecast	SmartForecast	Revenue
+0	2020	1	2715805	NULL	NULL	NULL
+
+
+----------------------------------------------------------
+--ASP(Average Selling Price)Forecast Trend
+
+Exec [dbo].[SP_GetAverageSellingPrice] 1,'','','2020-01-01','2025-03-31'      
+
+ _dbContext.AverageSellingPriceForcastTrend.FromSqlRaw("EXEC [dbo].[SP_GetAverageSellingPrice] {0},{1},{2},{3},{4},{5},{6}",
+                revenueFilterReq.TypeID,
+                revenueFilterReq.CompanyCode,
+                revenueFilterReq.ProfitCenterID,
+                revenueFilterReq.FromDate,
+                revenueFilterReq.ToDate,
+                revenueFilterReq.SBU,
+                revenueFilterReq.BU).ToListAsync();
+
+
+
+response
+
+TypeID	SalesYear	Month	Actual	Forecast	SmartForecast	Revenue
+0	2020	1	1026	NULL	NULL	NULL
+
+
+---------------
+
+want to output
+
+PROC:
+ [SP_GetContributionMarginTrend]
+
+Params:
+var parameters = new Dictionary<string, object>
+{
+    { "@TypeID", 1 },//0 revenue, 1 Production 
+    { "@CompanyCode", 1},
+     { "@ProfitCenterID", 0},
+        { "@FromDate","2020-01-01"},//
+        { "@ToDate","2025-03-31"},
+         { "@SBU",null},
+         { "@BU",null}
+};
+
+Response
+table
+
+
+
+
+
+
+
