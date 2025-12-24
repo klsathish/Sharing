@@ -1,3 +1,119 @@
+SELECT 
+    OBJECT_NAME(object_id) AS ProcedureName,
+    column_ordinal AS ColumnOrder,
+    name AS ColumnName,
+    system_type_name AS DataType
+FROM sys.dm_exec_describe_first_result_set_for_object(NULL, 0) -- This is a placeholder
+WHERE object_id IN (
+    SELECT object_id 
+    FROM sys.objects 
+    WHERE type = 'P' 
+    AND name IN (
+        'SP_GetAIForecastValue', 
+        'SP_GetInventoryDIO', 
+        'SP_GetFGClosingInventoryBalanceChartData',
+        -- Add your other procedure names here or remove the IN clause to get ALL
+        'SP_GetAuthenticatedUserDetails'
+    )
+)
+ORDER BY ProcedureName, ColumnOrder;
+
+SELECT 
+    p.name AS ProcedureName,
+    r.name AS ColumnName,
+    r.system_type_name AS DataType
+FROM sys.procedures AS p
+CROSS APPLY sys.dm_exec_describe_first_result_set_for_object(p.object_id, 0) AS r
+ORDER BY p.name, r.column_ordinal;
+
+
+
+# Procedure Name Parameter Name(s) Output Response / Result Set
+1 SP_AddActivityLogForAdmin @ActivityType, @CreatedBy, @IdentityColID, @NewValue, @OldValue, @TableName  
+2 SP_CheckUserMenuAccess @MenuID, @UserName  
+3 SP_GetAffiliate @CountryID  
+4 SP_GetAffiliateForUserManagement NULL  
+5 SP_GetAIForecastValue @BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID  
+6 SP_GetAllErrorLogging @FromDate, @ToDate  
+7 SP_GetAPIRequestLog @FromDate, @ToDate  
+8 SP_GetAuthenticatedUserDetails @Username  
+9 SP_GetBaseFilters @CountryID, @RegionID, @RoleID  
+10 SP_GetClosingInventoryBalanceChartDetailData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
+11 SP_GetCountry @RegionID  
+12 SP_GetDataForAuthenticationByUserId @UserID  
+13 SP_GetDiffrencesValues @BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID  
+14 SP_GetDiffrencesVolumes @BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID  
+15 SP_GetErrorLog_AssignToUser NULL  
+16 SP_GetErrorLogging @ErrorMessage  
+17 SP_GetErrorLogStatus NULL  
+18 SP_GetExceptionUserActivityDetailsBySessionID @SessionID  
+19 SP_GetFGClosingInventoryBalanceChartData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
+20 SP_GetFGClosingInventoryBalanceChartData_New @BU, @CompanyCode, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @SBU, @ToDate  
+21 SP_GetFGInterCompanyTransferAIFCChartData @BU, @CompanyCode, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @SBU, @ToDate  
+22 SP_GetFGInterCompanyTransferAIFCChartDataForGIT @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
+23 SP_GetFGInterCompanyTransferAIFCChartDataForSTO @BU, @CompanyCode, @CountryID, @CurrencyType, @ToDate, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU  
+24 SP_GetFGInterCompanyTransferAIFCChartDataForWIP @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
+25 SP_GetFGInterCompanyTransferComparisonChartData @BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate  
+26 SP_GetFGInterCompanyTransferComparisonChartDataForGIT @BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate  
+27 SP_GetFGPurchasesAIFCChartData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
+28 SP_GetFGPurchasesComparisonChartData @BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate  
+29 SP_GetFinishedGoodsDemandChartAIEnhancedForecastData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
+30 SP_GetFinishedGoodsDemandGraphComparisonData @BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate  
+31 SP_GetFinishedGoodsProductionChartAIEnhancedForecastData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
+32 SP_GetFinishedGoodsProductionGraphComparisonData @BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate  
+33 SP_GetGoodsReceiptGraphComparisonData @BU, @ClassificationLevel1, @CompanyCode, @FromDate, @MaterialType, @PlantID, @ProfitCenterID, @SBU, @ToDate  
+34 SP_GetInventoryDIO @BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
+35 SP_GetInventoryGlobalMap @BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID  
+36 SP_GetInventoryInsightsGridData @BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
+37 SP_GetLoginActivity @FromDate, @ToDate  
+38 SP_GetLoginUserActivity @FromDate, @ToDate  
+39 SP_GetMoreFiltersPlant @affiliateCode, @profitCenterID  
+40 SP_GetMoreFiltersProfitCenter @affiliateCode, @buName, @sbuName  
+41 SP_GetMoreFiltersSBUandBU @affiliateCode, @buName, @sbuName  
+42 SP_GetPerformanceLog @FromDate, @ToDate  
+43 SP_GetRawMaterialsConsumedGraphComparisonData @BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate  
+44 SP_GetRawMaterialsCPChartData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @UnitofMeasure  
+45 SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @UnitofMeasure  
+46 SP_GetRegion NULL  
+47 SP_GetRMConsumptionTrendComparisonData @BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate  
+48 SP_GetRMConsumptionTrendData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
+49 SP_GetRMInterCompanyTransferChartData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @UnitofMeasure  
+50 SP_GetRMInterCompanyTransferComparisonChartData @BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate  
+51 SP_GetRole NULL  
+52 SP_GetSessionDetails @SessionID  
+53 SP_GetTotalInventoryValueDifference @BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
+54 SP_GetTotalInventoryVolumeDifference @BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
+55 SP_GetUnitofMeasure NULL  
+56 SP_GetUserDetails @Username  
+57 SP_GetUserMenus @RoleID, @UserID  
+58 SP_GetUsers NULL  
+59 SP_GetXMLValueForLog @ID, @IdentityColumn, @Tablename, @XMLValue  
+60 SP_Insert_Update_ActivityTracker @ActivityTrackerID, @CreatedBy, @FunctionID, @ScreenID, @UserActionID  
+61 SP_Insert_Update_APIRequestLog @ApiEndPoint... @ResponseTimeStamp, @RoleID  
+62 SP_Insert_Update_AssignedUser @AffiliateID, @CreatedBy... @UserName, @UserRoleIDs  
+63 SP_Insert_Update_ErrorLogging @APIID... @HostName, @IpAddress  
+64 SP_Insert_Update_LoginActivity @Browser... @SessionStartTimeStamp, @UserAgent  
+65 SP_Insert_Update_PerformanceLog @ActionName, @ComponentName... @StartTime, @UserID  
+66 SP_Insert_Update_UserLoginSession @IsActive, @SessionID, @UserID, @UserLoginSessionID  
+67 SP_Insert_Update_UserRoleMapping @CreatedBy, @DomainUserID, @IsActive, @IsSelectedRole, @RoleIDs, @UserRoleMappingID  
+68 SP_Insert_Update_UserToken @ID, @IsActive, @SessionID, @Token, @UserID  
+69 SP_InsertMaterialMovements_Actuals_FG NULL  
+70 SP_InsertMaterialMovements_Actuals_RM NULL  
+71 SP_InsertOpeningAndClosingInventoryDetails_FG NULL  
+72 SP_InsertOpeningAndClosingInventoryDetails_RM NULL  
+73 SP_InsertOpeningInventory_Actuals_FG NULL  
+74 SP_InsertOpeningInventory_Actuals_RM NULL  
+75 SP_IsInternal_AuthenticatedUser @Username  
+76 SP_LogoutAndEndSessionByUserId @UserID  
+77 SP_Update_ErrorLogging_AssigneeWith_Status @AssigneeUserID, @ErrorLogID, @ErrorStatusID, @UpdatedBy  
+78 SP_Update_User_IsActivated @IsActivated, @UpdatedBy, @UserID  
+79 usp_AddandUpdateUserAndRoleMapping @Email, @EmployeeId, @FirstName, @LastName, @RoleID, @Username  
+
+
+
+
+
+
 ProcedureName	ParameterName
 SP_AddActivityLogForAdmin	@ActivityType, @CreatedBy, @IdentityColID, @NewValue, @OldValue, @TableName
 SP_CheckUserMenuAccess	@MenuID, @UserName
