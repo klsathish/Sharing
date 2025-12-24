@@ -1,196 +1,80 @@
-SELECT 
-    OBJECT_NAME(object_id) AS ProcedureName,
-    column_ordinal AS ColumnOrder,
-    name AS ColumnName,
-    system_type_name AS DataType
-FROM sys.dm_exec_describe_first_result_set_for_object(NULL, 0) -- This is a placeholder
-WHERE object_id IN (
-    SELECT object_id 
-    FROM sys.objects 
-    WHERE type = 'P' 
-    AND name IN (
-        'SP_GetAIForecastValue', 
-        'SP_GetInventoryDIO', 
-        'SP_GetFGClosingInventoryBalanceChartData',
-        -- Add your other procedure names here or remove the IN clause to get ALL
-        'SP_GetAuthenticatedUserDetails'
-    )
-)
-ORDER BY ProcedureName, ColumnOrder;
-
-SELECT 
-    p.name AS ProcedureName,
-    r.name AS ColumnName,
-    r.system_type_name AS DataType
-FROM sys.procedures AS p
-CROSS APPLY sys.dm_exec_describe_first_result_set_for_object(p.object_id, 0) AS r
-ORDER BY p.name, r.column_ordinal;
-
-
-
-# Procedure Name Parameter Name(s) Output Response / Result Set
-1 SP_AddActivityLogForAdmin @ActivityType, @CreatedBy, @IdentityColID, @NewValue, @OldValue, @TableName  
-2 SP_CheckUserMenuAccess @MenuID, @UserName  
-3 SP_GetAffiliate @CountryID  
-4 SP_GetAffiliateForUserManagement NULL  
-5 SP_GetAIForecastValue @BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID  
-6 SP_GetAllErrorLogging @FromDate, @ToDate  
-7 SP_GetAPIRequestLog @FromDate, @ToDate  
-8 SP_GetAuthenticatedUserDetails @Username  
-9 SP_GetBaseFilters @CountryID, @RegionID, @RoleID  
-10 SP_GetClosingInventoryBalanceChartDetailData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
-11 SP_GetCountry @RegionID  
-12 SP_GetDataForAuthenticationByUserId @UserID  
-13 SP_GetDiffrencesValues @BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID  
-14 SP_GetDiffrencesVolumes @BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID  
-15 SP_GetErrorLog_AssignToUser NULL  
-16 SP_GetErrorLogging @ErrorMessage  
-17 SP_GetErrorLogStatus NULL  
-18 SP_GetExceptionUserActivityDetailsBySessionID @SessionID  
-19 SP_GetFGClosingInventoryBalanceChartData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
-20 SP_GetFGClosingInventoryBalanceChartData_New @BU, @CompanyCode, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @SBU, @ToDate  
-21 SP_GetFGInterCompanyTransferAIFCChartData @BU, @CompanyCode, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @SBU, @ToDate  
-22 SP_GetFGInterCompanyTransferAIFCChartDataForGIT @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
-23 SP_GetFGInterCompanyTransferAIFCChartDataForSTO @BU, @CompanyCode, @CountryID, @CurrencyType, @ToDate, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU  
-24 SP_GetFGInterCompanyTransferAIFCChartDataForWIP @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
-25 SP_GetFGInterCompanyTransferComparisonChartData @BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate  
-26 SP_GetFGInterCompanyTransferComparisonChartDataForGIT @BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate  
-27 SP_GetFGPurchasesAIFCChartData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
-28 SP_GetFGPurchasesComparisonChartData @BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate  
-29 SP_GetFinishedGoodsDemandChartAIEnhancedForecastData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
-30 SP_GetFinishedGoodsDemandGraphComparisonData @BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate  
-31 SP_GetFinishedGoodsProductionChartAIEnhancedForecastData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
-32 SP_GetFinishedGoodsProductionGraphComparisonData @BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate  
-33 SP_GetGoodsReceiptGraphComparisonData @BU, @ClassificationLevel1, @CompanyCode, @FromDate, @MaterialType, @PlantID, @ProfitCenterID, @SBU, @ToDate  
-34 SP_GetInventoryDIO @BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
-35 SP_GetInventoryGlobalMap @BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID  
-36 SP_GetInventoryInsightsGridData @BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
-37 SP_GetLoginActivity @FromDate, @ToDate  
-38 SP_GetLoginUserActivity @FromDate, @ToDate  
-39 SP_GetMoreFiltersPlant @affiliateCode, @profitCenterID  
-40 SP_GetMoreFiltersProfitCenter @affiliateCode, @buName, @sbuName  
-41 SP_GetMoreFiltersSBUandBU @affiliateCode, @buName, @sbuName  
-42 SP_GetPerformanceLog @FromDate, @ToDate  
-43 SP_GetRawMaterialsConsumedGraphComparisonData @BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate  
-44 SP_GetRawMaterialsCPChartData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @UnitofMeasure  
-45 SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @UnitofMeasure  
-46 SP_GetRegion NULL  
-47 SP_GetRMConsumptionTrendComparisonData @BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate  
-48 SP_GetRMConsumptionTrendData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
-49 SP_GetRMInterCompanyTransferChartData @BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @UnitofMeasure  
-50 SP_GetRMInterCompanyTransferComparisonChartData @BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate  
-51 SP_GetRole NULL  
-52 SP_GetSessionDetails @SessionID  
-53 SP_GetTotalInventoryValueDifference @BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
-54 SP_GetTotalInventoryVolumeDifference @BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate  
-55 SP_GetUnitofMeasure NULL  
-56 SP_GetUserDetails @Username  
-57 SP_GetUserMenus @RoleID, @UserID  
-58 SP_GetUsers NULL  
-59 SP_GetXMLValueForLog @ID, @IdentityColumn, @Tablename, @XMLValue  
-60 SP_Insert_Update_ActivityTracker @ActivityTrackerID, @CreatedBy, @FunctionID, @ScreenID, @UserActionID  
-61 SP_Insert_Update_APIRequestLog @ApiEndPoint... @ResponseTimeStamp, @RoleID  
-62 SP_Insert_Update_AssignedUser @AffiliateID, @CreatedBy... @UserName, @UserRoleIDs  
-63 SP_Insert_Update_ErrorLogging @APIID... @HostName, @IpAddress  
-64 SP_Insert_Update_LoginActivity @Browser... @SessionStartTimeStamp, @UserAgent  
-65 SP_Insert_Update_PerformanceLog @ActionName, @ComponentName... @StartTime, @UserID  
-66 SP_Insert_Update_UserLoginSession @IsActive, @SessionID, @UserID, @UserLoginSessionID  
-67 SP_Insert_Update_UserRoleMapping @CreatedBy, @DomainUserID, @IsActive, @IsSelectedRole, @RoleIDs, @UserRoleMappingID  
-68 SP_Insert_Update_UserToken @ID, @IsActive, @SessionID, @Token, @UserID  
-69 SP_InsertMaterialMovements_Actuals_FG NULL  
-70 SP_InsertMaterialMovements_Actuals_RM NULL  
-71 SP_InsertOpeningAndClosingInventoryDetails_FG NULL  
-72 SP_InsertOpeningAndClosingInventoryDetails_RM NULL  
-73 SP_InsertOpeningInventory_Actuals_FG NULL  
-74 SP_InsertOpeningInventory_Actuals_RM NULL  
-75 SP_IsInternal_AuthenticatedUser @Username  
-76 SP_LogoutAndEndSessionByUserId @UserID  
-77 SP_Update_ErrorLogging_AssigneeWith_Status @AssigneeUserID, @ErrorLogID, @ErrorStatusID, @UpdatedBy  
-78 SP_Update_User_IsActivated @IsActivated, @UpdatedBy, @UserID  
-79 usp_AddandUpdateUserAndRoleMapping @Email, @EmployeeId, @FirstName, @LastName, @RoleID, @Username  
-
-
-
-
-
-
-ProcedureName	ParameterName
-SP_AddActivityLogForAdmin	@ActivityType, @CreatedBy, @IdentityColID, @NewValue, @OldValue, @TableName
-SP_CheckUserMenuAccess	@MenuID, @UserName
-SP_GetAffiliate	@CountryID
-SP_GetAffiliateForUserManagement	NULL
-SP_GetAIForecastValue	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID
-SP_GetAllErrorLogging	@FromDate, @ToDate
-SP_GetAPIRequestLog	@FromDate, @ToDate
-SP_GetAuthenticatedUserDetails	@Username
-SP_GetBaseFilters	@CountryID, @RegionID, @RoleID
-SP_GetClosingInventoryBalanceChartDetailData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate
-SP_GetCountry	@RegionID
-SP_GetDataForAuthenticationByUserId	@UserID
-SP_GetDiffrencesValues	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID
-SP_GetDiffrencesVolumes	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID
-SP_GetErrorLog_AssignToUser	NULL
-SP_GetErrorLogging	@ErrorMessage
-SP_GetErrorLogStatus	NULL
-SP_GetExceptionUserActivityDetailsBySessionID	@SessionID
-SP_GetFGClosingInventoryBalanceChartData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate
-SP_GetFGClosingInventoryBalanceChartData_New	@BU, @CompanyCode, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @SBU, @ToDate
-SP_GetFGInterCompanyTransferAIFCChartData	@BU, @CompanyCode, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @SBU, @ToDate
-SP_GetFGInterCompanyTransferAIFCChartDataForGIT	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate
-SP_GetFGInterCompanyTransferAIFCChartDataForSTO	@BU, @CompanyCode, @CountryID, @CurrencyType, @ToDate, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU
-SP_GetFGInterCompanyTransferAIFCChartDataForWIP	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate
-SP_GetFGInterCompanyTransferComparisonChartData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate
-SP_GetFGInterCompanyTransferComparisonChartDataForGIT	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate
-SP_GetFGPurchasesAIFCChartData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate
-SP_GetFGPurchasesComparisonChartData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate
-SP_GetFinishedGoodsDemandChartAIEnhancedForecastData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate
-SP_GetFinishedGoodsDemandGraphComparisonData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate
-SP_GetFinishedGoodsProductionChartAIEnhancedForecastData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate
-SP_GetFinishedGoodsProductionGraphComparisonData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate
-SP_GetGoodsReceiptGraphComparisonData	@BU, @ClassificationLevel1, @CompanyCode, @FromDate, @MaterialType, @PlantID, @ProfitCenterID, @SBU, @ToDate
-SP_GetInventoryDIO	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate
-SP_GetInventoryGlobalMap	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID
-SP_GetInventoryInsightsGridData	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate
-SP_GetLoginActivity	@FromDate, @ToDate
-SP_GetLoginUserActivity	@FromDate, @ToDate
-SP_GetMoreFiltersPlant	@affiliateCode, @profitCenterID
-SP_GetMoreFiltersProfitCenter	@affiliateCode, @buName, @sbuName
-SP_GetMoreFiltersSBUandBU	@affiliateCode, @buName, @sbuName
-SP_GetPerformanceLog	@FromDate, @ToDate
-SP_GetRawMaterialsConsumedGraphComparisonData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate
-SP_GetRawMaterialsCPChartData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @UnitofMeasure
-SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @UnitofMeasure
-SP_GetRegion	NULL
-SP_GetRMConsumptionTrendComparisonData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate
-SP_GetRMConsumptionTrendData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate
-SP_GetRMInterCompanyTransferChartData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @UnitofMeasure
-SP_GetRMInterCompanyTransferComparisonChartData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate
-SP_GetRole	NULL
-SP_GetSessionDetails	@SessionID
-SP_GetTotalInventoryValueDifference	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate
-SP_GetTotalInventoryVolumeDifference	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate
-SP_GetUnitofMeasure	NULL
-SP_GetUserDetails	@Username
-SP_GetUserMenus	@RoleID, @UserID
-SP_GetUsers	NULL
-SP_GetXMLValueForLog	@ID, @IdentityColumn, @Tablename, @XMLValue
-SP_Insert_Update_ActivityTracker	@ActivityTrackerID, @CreatedBy, @FunctionID, @ScreenID, @UserActionID
-SP_Insert_Update_APIRequestLog	@ApiEndPoint, @AppModuleMappingID, @CreatedBy, @Duration, @HttpMethod, @LayerID, @SessionID, @StatusCode, @UserID, @RequestBody, @RequestLogID, @RequestTimeStamp, @ResponseBody, @ResponseTimeStamp, @RoleID
-SP_Insert_Update_AssignedUser	@AffiliateID, @CreatedBy, @Email, @EmployeeID, @FirstName, @IsInsert, @LastName, @StatusID, @UserID, @UserName, @UserRoleIDs
-SP_Insert_Update_ErrorLogging	@APIID, @ApplicationID, @CreatedBy, @Environment, @ErrorLogID, @ErrorMessage, @SessionID, @StackTrace, @Status, @StoredProcedureID, @UpdatedBy, @UserID, @LayerID, @ModuleID, @RequestBody, @ResponseBody, @RoleID, @ScreenID, @ErrorNumber, @ErrorSeverity, @ErrorState, @FunctionID, @HostName, @IpAddress
-SP_Insert_Update_LoginActivity	@Browser, @BrowserName, @BrowserVersion, @IpAddress, @IsOnline, @LoginID, @UserID, @LoginTime, @LogoutTime, @RoleID, @SessionID, @SessionStartTimeStamp, @UserAgent
-SP_Insert_Update_PerformanceLog	@ActionName, @ComponentName, @CreatedBy, @CreatedOn, @Duration, @EndTime, @PerformanceLogID, @RoleID, @SessionID, @StartTime, @UserID
-SP_Insert_Update_UserLoginSession	@IsActive, @SessionID, @UserID, @UserLoginSessionID
-SP_Insert_Update_UserRoleMapping	@CreatedBy, @DomainUserID, @IsActive, @IsSelectedRole, @RoleIDs, @UserRoleMappingID
-SP_Insert_Update_UserToken	@ID, @IsActive, @SessionID, @Token, @UserID
-SP_InsertMaterialMovements_Actuals_FG	NULL
-SP_InsertMaterialMovements_Actuals_RM	NULL
-SP_InsertOpeningAndClosingInventoryDetails_FG	NULL
-SP_InsertOpeningAndClosingInventoryDetails_RM	NULL
-SP_InsertOpeningInventory_Actuals_FG	NULL
-SP_InsertOpeningInventory_Actuals_RM	NULL
-SP_IsInternal_AuthenticatedUser	@Username
-SP_LogoutAndEndSessionByUserId	@UserID
-SP_Update_ErrorLogging_AssigneeWith_Status	@AssigneeUserID, @ErrorLogID, @ErrorStatusID, @UpdatedBy
-SP_Update_User_IsActivated	@IsActivated, @UpdatedBy, @UserID
-usp_AddandUpdateUserAndRoleMapping	@Email, @EmployeeId, @FirstName, @LastName, @RoleID, @Username
+ProcedureName	ParameterName	|	ResponseColumns
+SP_AddActivityLogForAdmin	@ActivityType, @CreatedBy, @IdentityColID, @NewValue, @OldValue, @TableName	|	
+SP_CheckUserMenuAccess	@MenuID, @UserName	|	HasAccess
+SP_GetAffiliate	@CountryID	|	AffiliateCode, AffiliateName
+SP_GetAffiliateForUserManagement	NULL	|	AffiliateID, AffiliateName
+SP_GetAIForecastValue	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID	|	ID, InventoryValue, PlantValue, AIForecastValue
+SP_GetAllErrorLogging	@FromDate, @ToDate	|	ErrorLogID, ErrorMessage, ErrorNumber, Environment, ErrorSeverity, ErrorState, Status, StackTrace, HostName, CreatedBy, CreatedOn, SessionID, RequestBody, ResponseBody, ScreenName, ApplicationName, ModuleName, FunctionalityName, LayerName, APIName, StoredProcedureName, ErrorStatusID, AssignTo
+SP_GetAPIRequestLog	@FromDate, @ToDate	|	RequestLogID, EmployeeName, RoleName, SessionID, ApiEndPoint, HttpMethod, StatusCode, Duration, LayerName, CreatedOn
+SP_GetAuthenticatedUserDetails	@Username	|	UserID, EmployeeID, UserName, FirstName, LastName, Email, RoleID, LoginTime, RoleName
+SP_GetBaseFilters	@CountryID, @RegionID, @RoleID	|	RegionID, RegionName, CountryID, CountryName, AffiliateCode, AffiliateName
+SP_GetClosingInventoryBalanceChartDetailData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	|	CalYear, CalMonth, InventoryType, CompanyCode, OpeningInventory_Value_In_Million, OpeningInventory_Volume_In_MT, forecast_value_Production_Output_In_Million, forecast_volume_Production_Output_In_MT, forecast_value_STO_IN_In_Million, forecast_volume_STO_IN_In_MT, forecast_value_STO_OUT_In_Million, forecast_volume_STO_OUT_In_MT, forecast_value_Transfers_IN_In_Million, forecast_volume_Transfers_IN_In_MT, forecast_value_Transfers_OUT_In_Million, forecast_volume_Transfers_OUT_In_MT, forecast_value_Sale_In_Million, forecast_volume_Sale_In_MT, forecast_value_Consumed_in_production_In_Million, forecast_volume_Consumed_in_production_In_MT, forecast_value_Adjustments_In_Million, forecast_volume_Adjustments_In_MT, forecast_value_Purchase_In_Million, forecast_volume_Purchase_In_MT, ClosingInventory_Value_In_Million, ClosingInventory_Volume_In_MT
+SP_GetCountry	@RegionID	|	CountryID, CountryName
+SP_GetDataForAuthenticationByUserId	@UserID	|	UserID, EmployeeID, UserName, RoleID, RoleName, SessionID, IsOnline, LogoutTime, IpAddress, BrowserName, BrowserVersion
+SP_GetDiffrencesValues	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID	|	RecID, OpeningInventoryValueInMillionSAR, OpeningInventoryValueInMillionUSD, AIForecastVolumeInMillionSAR, AIForecastVolumeInMillionUSD
+SP_GetDiffrencesVolumes	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID	|	RecID, OpeningInventoryVolumeInMT, AIForecastVolumeInMT
+SP_GetErrorLog_AssignToUser	NULL	|	UserID, Username, Email
+SP_GetErrorLogging	@ErrorMessage	|	NULL
+SP_GetErrorLogStatus	NULL	|	ErrorStatusID, StatusName
+SP_GetExceptionUserActivityDetailsBySessionID	@SessionID	|	SessionID, EmployeeName, RoleName, UserAgent, Browser, BrowserVersion, SessionStartTimeStamp, IpAddress, ApplicationName
+SP_GetFGClosingInventoryBalanceChartData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	|	RecID, CurrencyType, Metrics, DataType, FG_DataValue, RM_DataValue, CalMonth, CalYear
+SP_GetFGClosingInventoryBalanceChartData_New	@BU, @CompanyCode, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @SBU, @ToDate	|	RecID, FG_ForecastedValue, RawMaterials_ForecastedValue, MeasureMonth, MeasureYear
+SP_GetFGInterCompanyTransferAIFCChartData	@BU, @CompanyCode, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @SBU, @ToDate	|	CurrencyType, Metrics, Category, ForecastValue
+SP_GetFGInterCompanyTransferAIFCChartDataForGIT	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	|	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetFGInterCompanyTransferAIFCChartDataForSTO	@BU, @CompanyCode, @CountryID, @CurrencyType, @ToDate, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU	|	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetFGInterCompanyTransferAIFCChartDataForWIP	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	|	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetFGInterCompanyTransferComparisonChartData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate	|	NULL
+SP_GetFGInterCompanyTransferComparisonChartDataForGIT	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate	|	NULL
+SP_GetFGPurchasesAIFCChartData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	|	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetFGPurchasesComparisonChartData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate	|	NULL
+SP_GetFinishedGoodsDemandChartAIEnhancedForecastData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	|	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetFinishedGoodsDemandGraphComparisonData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate	|	NULL
+SP_GetFinishedGoodsProductionChartAIEnhancedForecastData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	|	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetFinishedGoodsProductionGraphComparisonData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate	|	NULL
+SP_GetGoodsReceiptGraphComparisonData	@BU, @ClassificationLevel1, @CompanyCode, @FromDate, @MaterialType, @PlantID, @ProfitCenterID, @SBU, @ToDate	|	NULL
+SP_GetInventoryDIO	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	|	RecID, DIO_Days
+SP_GetInventoryGlobalMap	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID	|	RegionID, RegionName, CountryID, CountryName, LatGPSValue, LonGPSValue, RecommendationMessage
+SP_GetInventoryInsightsGridData	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	|	RecID, InventoryType, CompanyCode, CompanyName, OpeningInventory_Volume_In_MT, ClosingInventory_Volume_In_MT, OpeningInventory_Value_In_MillionSAR, ClosingInventory_Value_In_MillionSAR, DIO_OpeningInventory, DIO_ClosingInventory, CostOfWC_OpeningInventory, CostOfWC_ClosingInventory
+SP_GetLoginActivity	@FromDate, @ToDate	|	EmployeeName, RoleName, IpAddress, ApplicationName, LoginTime, BrowserName, IsOnline, SessionID, CreatedOn, UserAgent, Browser, BrowserVersion, SessionStartTimeStamp
+SP_GetLoginUserActivity	@FromDate, @ToDate	|	EmployeeName, RoleName, IpAddress, ApplicationName, ScreenName, FunctionalityName, UserAction, SessionID, CreatedOn, UserAgent, Browser, BrowserVersion, SessionStartTimeStamp
+SP_GetMoreFiltersPlant	@affiliateCode, @profitCenterID	|	PlantID, PlantName
+SP_GetMoreFiltersProfitCenter	@affiliateCode, @buName, @sbuName	|	ProfitCenterID, ProfitCenterName
+SP_GetMoreFiltersSBUandBU	@affiliateCode, @buName, @sbuName	|	SbuName, BuName
+SP_GetPerformanceLog	@FromDate, @ToDate	|	PerformanceLogID, EmployeeName, RoleName, ActionName, ComponentName, SessionID, Duration, CreatedOn, StartTime, EndTime
+SP_GetRawMaterialsConsumedGraphComparisonData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate	|	NULL
+SP_GetRawMaterialsCPChartData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @UnitofMeasure	|	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @UnitofMeasure	|	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetRegion	NULL	|	RegionID, RegionName
+SP_GetRMConsumptionTrendComparisonData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate	|	NULL
+SP_GetRMConsumptionTrendData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	|	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetRMInterCompanyTransferChartData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @UnitofMeasure	|	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetRMInterCompanyTransferComparisonChartData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate	|	NULL
+SP_GetRole	NULL	|	RoleID, RoleName
+SP_GetSessionDetails	@SessionID	|	EmployeeName, RoleName, IpAddress, ApplicationName, LoginTime, BrowserName, IsOnline, SessionID, CreatedOn, UserAgent, Browser, BrowserVersion, SessionStartTimeStamp
+SP_GetTotalInventoryValueDifference	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	|	RecID, ValueDifference_MillionDollar
+SP_GetTotalInventoryVolumeDifference	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	|	RecID, VolumeDifference_MillionTonnes
+SP_GetUnitofMeasure	NULL	|	Id, Name
+SP_GetUserDetails	@Username	|	UserID, EmployeeID, UserName, FirstName, LastName, Email, RoleID, RoleName, LoginTime
+SP_GetUserMenus	@RoleID, @UserID	|	MenuID, MenuName, ActionLink, ActionName, ControllerName, Title, Svg, NavPosition, IsActive, ScreenID, FunctionalityID
+SP_GetUsers	NULL	|	UserID, EmployeeID, UserName, Email, RoleIDs, Roles, AffiliateID, AffiliateName, Status
+SP_GetXMLValueForLog	@ID, @IdentityColumn, @Tablename, @XMLValue	|	NULL
+SP_Insert_Update_ActivityTracker	@ActivityTrackerID, @CreatedBy, @FunctionID, @ScreenID, @UserActionID	|	
+SP_Insert_Update_APIRequestLog	@ApiEndPoint, @AppModuleMappingID, @CreatedBy, @Duration, @HttpMethod, @LayerID, @SessionID, @StatusCode, @UserID, @RequestBody, @RequestLogID, @RequestTimeStamp, @ResponseBody, @ResponseTimeStamp, @RoleID	|	NULL
+SP_Insert_Update_AssignedUser	@AffiliateID, @CreatedBy, @Email, @EmployeeID, @FirstName, @IsInsert, @LastName, @StatusID, @UserID, @UserName, @UserRoleIDs	|	NULL
+SP_Insert_Update_ErrorLogging	@APIID, @ApplicationID, @CreatedBy, @Environment, @ErrorLogID, @ErrorMessage, @SessionID, @StackTrace, @Status, @StoredProcedureID, @UpdatedBy, @UserID, @LayerID, @ModuleID, @RequestBody, @ResponseBody, @RoleID, @ScreenID, @ErrorNumber, @ErrorSeverity, @ErrorState, @FunctionID, @HostName, @IpAddress	|	NULL
+SP_Insert_Update_LoginActivity	@Browser, @BrowserName, @BrowserVersion, @IpAddress, @IsOnline, @LoginID, @UserID, @LoginTime, @LogoutTime, @RoleID, @SessionID, @SessionStartTimeStamp, @UserAgent	|	NULL
+SP_Insert_Update_PerformanceLog	@ActionName, @ComponentName, @CreatedBy, @CreatedOn, @Duration, @EndTime, @PerformanceLogID, @RoleID, @SessionID, @StartTime, @UserID	|	NULL
+SP_Insert_Update_UserLoginSession	@IsActive, @SessionID, @UserID, @UserLoginSessionID	|	NULL
+SP_Insert_Update_UserRoleMapping	@CreatedBy, @DomainUserID, @IsActive, @IsSelectedRole, @RoleIDs, @UserRoleMappingID	|	NULL
+SP_Insert_Update_UserToken	@ID, @IsActive, @SessionID, @Token, @UserID	|	
+SP_InsertMaterialMovements_Actuals_FG	NULL	|	
+SP_InsertMaterialMovements_Actuals_RM	NULL	|	
+SP_InsertOpeningAndClosingInventoryDetails_FG	NULL	|	
+SP_InsertOpeningAndClosingInventoryDetails_RM	NULL	|	
+SP_InsertOpeningInventory_Actuals_FG	NULL	|	
+SP_InsertOpeningInventory_Actuals_RM	NULL	|	
+SP_IsInternal_AuthenticatedUser	@Username	|	UserID, EmployeeID, UserName, FirstName, LastName, Email, RoleID, RoleName
+SP_LogoutAndEndSessionByUserId	@UserID	|	
+SP_Update_ErrorLogging_AssigneeWith_Status	@AssigneeUserID, @ErrorLogID, @ErrorStatusID, @UpdatedBy	|	NULL
+SP_Update_User_IsActivated	@IsActivated, @UpdatedBy, @UserID	|	
+usp_AddandUpdateUserAndRoleMapping	@Email, @EmployeeId, @FirstName, @LastName, @RoleID, @Username	|	
