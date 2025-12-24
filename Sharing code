@@ -1,177 +1,480 @@
-
-SELECT  
-    s.name AS SchemaName,
-    p.name AS ProcedureName,
-    prm.name AS ParameterName,
-    CASE 
-        WHEN prm.is_output = 1 THEN 'OUTPUT'
-        ELSE 'INPUT'
-    END AS ParameterType,
-    TYPE_NAME(prm.user_type_id) AS DataType,
-    prm.max_length AS MaxLength
-FROM sys.procedures p
-JOIN sys.schemas s ON p.schema_id = s.schema_id
-LEFT JOIN sys.parameters prm ON p.object_id = prm.object_id
-ORDER BY p.name, prm.parameter_id;
-
-
-
-
-
---                revenueFilterReq.TypeID,
-                revenueFilterReq.CompanyCode,
-                revenueFilterReq.ProfitCenterID,
-                revenueFilterReq.FromDate,
-                revenueFilterReq.ToDate,
-                revenueFilterReq.SBU,
-                revenueFilterReq.BU).ToListAsync();
-
-
-
-response
-
-TypeID	SalesYear	Month	Actual	Forecast	SmartForecast	Revenue
-0	2020	1	1026	NULL	NULL	NULL
-
-
----------------
-
-want to output
-
-PROC:
- [SP_GetContributionMarginTrend]
-
-Params:
-var parameters = new Dictionary<string, object>
-{
-    { "@TypeID", 1 },//0 revenue, 1 Production 
-    { "@CompanyCode", 1},
-     { "@ProfitCenterID", 0},
-        { "@FromDate","2020-01-01"},//
-        { "@ToDate","2025-03-31"},
-         { "@SBU",null},
-         { "@BU",null}
-};
-
-Response
-table
-
-
-
-
-1. SP_GetRevenueTrend
-
-Parameters (C#)
-
-var parameters = new Dictionary<string, object>
-{
-    { "@TypeID", 0 },                // Revenue
-    { "@CompanyCode", "1200" },
-    { "@ProfitCenterID", "" },
-    { "@FromDate", "2020-01-01" },
-    { "@ToDate", "2025-03-31" },
-    { "@SBU", 0 },
-    { "@BU", 0 }
-};
-
-Execution
-
-EXEC [dbo].[SP_GetRevenueTrend]
-     0,'1200','','2020-01-01','2025-03-31',0,0
-
-Response
-
-TypeID | SalesYear | Month | Actual | Forecast | SmartForecast | Revenue
-0      | 2020      | 1     | 936    | NULL     | NULL          | NULL
-
-
----
-
-2. SP_GetContributionMarginTrend
-
-Parameters (C#)
-
-var parameters = new Dictionary<string, object>
-{
-    { "@TypeID", 1 },               // Production
-    { "@CompanyCode", "" },
-    { "@ProfitCenterID", 0 },
-    { "@FromDate", "2025-01-01" },
-    { "@ToDate", "2025-03-31" },
-    { "@SBU", null },
-    { "@BU", null }
-};
-
-Execution
-
-EXEC [dbo].[SP_GetContributionMarginTrend]
-     0,'',0,'2025-01-01','2025-03-31',NULL,NULL
-
-Response
-
-TypeID | SalesYear | Month | Actual | Forecast | SmartForecast | Revenue
-0      | 2025      | 1     | 1091   | 79       | 178           | NULL
-
-
----
-
-3. SP_GetSalesVolumeTrend
-
-Parameters (C#)
-
-var parameters = new Dictionary<string, object>
-{
-    { "@TypeID", 0 },
-    { "@CompanyCode", "1" },
-    { "@ProfitCenterID", "0" },
-    { "@FromDate", "2020-01-01" },
-    { "@ToDate", "2025-03-31" },
-    { "@SBU", 0 },
-    { "@BU", 0 }
-};
-
-Execution
-
-EXEC [dbo].[SP_GetSalesVolumeTrend]
-     0,'1','0','2020-01-01','2025-03-31',0,0
-
-Response
-
-TypeID | SalesYear | Month | Actual  | Forecast | SmartForecast | Revenue
-0      | 2020      | 1     | 2715805 | NULL     | NULL          | NULL
-
-
----
-
-4. SP_GetAverageSellingPrice
-
-Parameters (C#)
-
-var parameters = new Dictionary<string, object>
-{
-    { "@TypeID", 1 },
-    { "@CompanyCode", "" },
-    { "@ProfitCenterID", "" },
-    { "@FromDate", "2020-01-01" },
-    { "@ToDate", "2025-03-31" },
-    { "@SBU", null },
-    { "@BU", null }
-};
-
-Execution
-
-EXEC [dbo].[SP_GetAverageSellingPrice]
-     1,'','','2020-01-01','2025-03-31',NULL,NULL
-
-Response
-
-TypeID | SalesYear | Month | Actual | Forecast | SmartForecast | Revenue
-0      | 2020      | 1     | 1026   | NULL     | NULL          | NULL
-
-
-
-
-
-
-
-
+ProcedureName	ParameterName
+SP_AddActivityLogForAdmin	@TableName
+SP_AddActivityLogForAdmin	@OldValue
+SP_AddActivityLogForAdmin	@NewValue
+SP_AddActivityLogForAdmin	@IdentityColID
+SP_AddActivityLogForAdmin	@ActivityType
+SP_AddActivityLogForAdmin	@CreatedBy
+SP_CheckUserMenuAccess	@UserName
+SP_CheckUserMenuAccess	@MenuID
+SP_GetAffiliate	@CountryID
+SP_GetAffiliateForUserManagement	NULL
+SP_GetAIForecastValue	@TypeID
+SP_GetAIForecastValue	@RegionID
+SP_GetAIForecastValue	@CountryID
+SP_GetAIForecastValue	@CompanyCode
+SP_GetAIForecastValue	@ProfitCenterID
+SP_GetAIForecastValue	@PlantID
+SP_GetAIForecastValue	@SBU
+SP_GetAIForecastValue	@BU
+SP_GetAIForecastValue	@FromDate
+SP_GetAIForecastValue	@ToDate
+SP_GetAllErrorLogging	@FromDate
+SP_GetAllErrorLogging	@ToDate
+SP_GetAPIRequestLog	@FromDate
+SP_GetAPIRequestLog	@ToDate
+SP_GetAuthenticatedUserDetails	@Username
+SP_GetBaseFilters	@RoleID
+SP_GetBaseFilters	@RegionID
+SP_GetBaseFilters	@CountryID
+SP_GetClosingInventoryBalanceChartDetailData	@CurrencyType
+SP_GetClosingInventoryBalanceChartDetailData	@RegionID
+SP_GetClosingInventoryBalanceChartDetailData	@CountryID
+SP_GetClosingInventoryBalanceChartDetailData	@CompanyCode
+SP_GetClosingInventoryBalanceChartDetailData	@ProfitCenterID
+SP_GetClosingInventoryBalanceChartDetailData	@PlantID
+SP_GetClosingInventoryBalanceChartDetailData	@SBU
+SP_GetClosingInventoryBalanceChartDetailData	@BU
+SP_GetClosingInventoryBalanceChartDetailData	@FromDate
+SP_GetClosingInventoryBalanceChartDetailData	@ToDate
+SP_GetCountry	@RegionID
+SP_GetDataForAuthenticationByUserId	@UserID
+SP_GetDiffrencesValues	@TypeID
+SP_GetDiffrencesValues	@RegionID
+SP_GetDiffrencesValues	@CountryID
+SP_GetDiffrencesValues	@CompanyCode
+SP_GetDiffrencesValues	@ProfitCenterID
+SP_GetDiffrencesValues	@PlantID
+SP_GetDiffrencesValues	@SBU
+SP_GetDiffrencesValues	@BU
+SP_GetDiffrencesValues	@FromDate
+SP_GetDiffrencesValues	@ToDate
+SP_GetDiffrencesVolumes	@TypeID
+SP_GetDiffrencesVolumes	@RegionID
+SP_GetDiffrencesVolumes	@CountryID
+SP_GetDiffrencesVolumes	@CompanyCode
+SP_GetDiffrencesVolumes	@ProfitCenterID
+SP_GetDiffrencesVolumes	@PlantID
+SP_GetDiffrencesVolumes	@SBU
+SP_GetDiffrencesVolumes	@BU
+SP_GetDiffrencesVolumes	@FromDate
+SP_GetDiffrencesVolumes	@ToDate
+SP_GetErrorLog_AssignToUser	NULL
+SP_GetErrorLogging	@ErrorMessage
+SP_GetErrorLogStatus	NULL
+SP_GetExceptionUserActivityDetailsBySessionID	@SessionID
+SP_GetFGClosingInventoryBalanceChartData	@CurrencyType
+SP_GetFGClosingInventoryBalanceChartData	@Metrics
+SP_GetFGClosingInventoryBalanceChartData	@RegionID
+SP_GetFGClosingInventoryBalanceChartData	@CountryID
+SP_GetFGClosingInventoryBalanceChartData	@CompanyCode
+SP_GetFGClosingInventoryBalanceChartData	@ProfitCenterID
+SP_GetFGClosingInventoryBalanceChartData	@PlantID
+SP_GetFGClosingInventoryBalanceChartData	@SBU
+SP_GetFGClosingInventoryBalanceChartData	@BU
+SP_GetFGClosingInventoryBalanceChartData	@FromDate
+SP_GetFGClosingInventoryBalanceChartData	@ToDate
+SP_GetFGClosingInventoryBalanceChartData_New	@CurrencyType
+SP_GetFGClosingInventoryBalanceChartData_New	@Metrics
+SP_GetFGClosingInventoryBalanceChartData_New	@CompanyCode
+SP_GetFGClosingInventoryBalanceChartData_New	@ProfitCenterID
+SP_GetFGClosingInventoryBalanceChartData_New	@PlantID
+SP_GetFGClosingInventoryBalanceChartData_New	@SBU
+SP_GetFGClosingInventoryBalanceChartData_New	@BU
+SP_GetFGClosingInventoryBalanceChartData_New	@FromDate
+SP_GetFGClosingInventoryBalanceChartData_New	@ToDate
+SP_GetFGClosingInventoryBalanceChartData_Old	@CurrencyType
+SP_GetFGClosingInventoryBalanceChartData_Old	@Metrics
+SP_GetFGClosingInventoryBalanceChartData_Old	@CompanyCode
+SP_GetFGClosingInventoryBalanceChartData_Old	@ProfitCenterID
+SP_GetFGClosingInventoryBalanceChartData_Old	@PlantID
+SP_GetFGClosingInventoryBalanceChartData_Old	@SBU
+SP_GetFGClosingInventoryBalanceChartData_Old	@BU
+SP_GetFGClosingInventoryBalanceChartData_Old	@FromDate
+SP_GetFGClosingInventoryBalanceChartData_Old	@ToDate
+SP_GetFGInterCompanyTransferAIFCChartData	@CurrencyType
+SP_GetFGInterCompanyTransferAIFCChartData	@Metrics
+SP_GetFGInterCompanyTransferAIFCChartData	@CompanyCode
+SP_GetFGInterCompanyTransferAIFCChartData	@ProfitCenterID
+SP_GetFGInterCompanyTransferAIFCChartData	@PlantID
+SP_GetFGInterCompanyTransferAIFCChartData	@FromDate
+SP_GetFGInterCompanyTransferAIFCChartData	@ToDate
+SP_GetFGInterCompanyTransferAIFCChartData	@SBU
+SP_GetFGInterCompanyTransferAIFCChartData	@BU
+SP_GetFGInterCompanyTransferAIFCChartDataForGIT	@CurrencyType
+SP_GetFGInterCompanyTransferAIFCChartDataForGIT	@Metrics
+SP_GetFGInterCompanyTransferAIFCChartDataForGIT	@RegionID
+SP_GetFGInterCompanyTransferAIFCChartDataForGIT	@CountryID
+SP_GetFGInterCompanyTransferAIFCChartDataForGIT	@CompanyCode
+SP_GetFGInterCompanyTransferAIFCChartDataForGIT	@ProfitCenterID
+SP_GetFGInterCompanyTransferAIFCChartDataForGIT	@PlantID
+SP_GetFGInterCompanyTransferAIFCChartDataForGIT	@SBU
+SP_GetFGInterCompanyTransferAIFCChartDataForGIT	@BU
+SP_GetFGInterCompanyTransferAIFCChartDataForGIT	@FromDate
+SP_GetFGInterCompanyTransferAIFCChartDataForGIT	@ToDate
+SP_GetFGInterCompanyTransferAIFCChartDataForSTO	@CurrencyType
+SP_GetFGInterCompanyTransferAIFCChartDataForSTO	@Metrics
+SP_GetFGInterCompanyTransferAIFCChartDataForSTO	@RegionID
+SP_GetFGInterCompanyTransferAIFCChartDataForSTO	@CountryID
+SP_GetFGInterCompanyTransferAIFCChartDataForSTO	@CompanyCode
+SP_GetFGInterCompanyTransferAIFCChartDataForSTO	@ProfitCenterID
+SP_GetFGInterCompanyTransferAIFCChartDataForSTO	@PlantID
+SP_GetFGInterCompanyTransferAIFCChartDataForSTO	@SBU
+SP_GetFGInterCompanyTransferAIFCChartDataForSTO	@BU
+SP_GetFGInterCompanyTransferAIFCChartDataForSTO	@FromDate
+SP_GetFGInterCompanyTransferAIFCChartDataForSTO	@ToDate
+SP_GetFGInterCompanyTransferAIFCChartDataForWIP	@CurrencyType
+SP_GetFGInterCompanyTransferAIFCChartDataForWIP	@Metrics
+SP_GetFGInterCompanyTransferAIFCChartDataForWIP	@RegionID
+SP_GetFGInterCompanyTransferAIFCChartDataForWIP	@CountryID
+SP_GetFGInterCompanyTransferAIFCChartDataForWIP	@CompanyCode
+SP_GetFGInterCompanyTransferAIFCChartDataForWIP	@ProfitCenterID
+SP_GetFGInterCompanyTransferAIFCChartDataForWIP	@PlantID
+SP_GetFGInterCompanyTransferAIFCChartDataForWIP	@SBU
+SP_GetFGInterCompanyTransferAIFCChartDataForWIP	@BU
+SP_GetFGInterCompanyTransferAIFCChartDataForWIP	@FromDate
+SP_GetFGInterCompanyTransferAIFCChartDataForWIP	@ToDate
+SP_GetFGInterCompanyTransferComparisonChartData	@CompanyCode
+SP_GetFGInterCompanyTransferComparisonChartData	@ProfitCenterID
+SP_GetFGInterCompanyTransferComparisonChartData	@PlantID
+SP_GetFGInterCompanyTransferComparisonChartData	@SBU
+SP_GetFGInterCompanyTransferComparisonChartData	@BU
+SP_GetFGInterCompanyTransferComparisonChartData	@FromDate
+SP_GetFGInterCompanyTransferComparisonChartData	@ToDate
+SP_GetFGInterCompanyTransferComparisonChartData_Old	@CompanyCode
+SP_GetFGInterCompanyTransferComparisonChartData_Old	@ProfitCenterID
+SP_GetFGInterCompanyTransferComparisonChartData_Old	@SBU
+SP_GetFGInterCompanyTransferComparisonChartData_Old	@BU
+SP_GetFGInterCompanyTransferComparisonChartData_Old	@FromDate
+SP_GetFGInterCompanyTransferComparisonChartData_Old	@ToDate
+SP_GetFGInterCompanyTransferComparisonChartDataForGIT	@CompanyCode
+SP_GetFGInterCompanyTransferComparisonChartDataForGIT	@ProfitCenterID
+SP_GetFGInterCompanyTransferComparisonChartDataForGIT	@PlantID
+SP_GetFGInterCompanyTransferComparisonChartDataForGIT	@SBU
+SP_GetFGInterCompanyTransferComparisonChartDataForGIT	@BU
+SP_GetFGInterCompanyTransferComparisonChartDataForGIT	@FromDate
+SP_GetFGInterCompanyTransferComparisonChartDataForGIT	@ToDate
+SP_GetFGInterCompanyTransferComparisonChartDataForGIT_Old	@CompanyCode
+SP_GetFGInterCompanyTransferComparisonChartDataForGIT_Old	@ProfitCenterID
+SP_GetFGInterCompanyTransferComparisonChartDataForGIT_Old	@SBU
+SP_GetFGInterCompanyTransferComparisonChartDataForGIT_Old	@BU
+SP_GetFGInterCompanyTransferComparisonChartDataForGIT_Old	@FromDate
+SP_GetFGInterCompanyTransferComparisonChartDataForGIT_Old	@ToDate
+SP_GetFGPurchasesAIFCChartData	@CurrencyType
+SP_GetFGPurchasesAIFCChartData	@Metrics
+SP_GetFGPurchasesAIFCChartData	@RegionID
+SP_GetFGPurchasesAIFCChartData	@CountryID
+SP_GetFGPurchasesAIFCChartData	@CompanyCode
+SP_GetFGPurchasesAIFCChartData	@ProfitCenterID
+SP_GetFGPurchasesAIFCChartData	@PlantID
+SP_GetFGPurchasesAIFCChartData	@SBU
+SP_GetFGPurchasesAIFCChartData	@BU
+SP_GetFGPurchasesAIFCChartData	@FromDate
+SP_GetFGPurchasesAIFCChartData	@ToDate
+SP_GetFGPurchasesComparisonChartData	@CompanyCode
+SP_GetFGPurchasesComparisonChartData	@ProfitCenterID
+SP_GetFGPurchasesComparisonChartData	@PlantID
+SP_GetFGPurchasesComparisonChartData	@SBU
+SP_GetFGPurchasesComparisonChartData	@BU
+SP_GetFGPurchasesComparisonChartData	@FromDate
+SP_GetFGPurchasesComparisonChartData	@ToDate
+SP_GetFinishedGoodsDemandChartAIEnhancedForecastData	@CurrencyType
+SP_GetFinishedGoodsDemandChartAIEnhancedForecastData	@Metrics
+SP_GetFinishedGoodsDemandChartAIEnhancedForecastData	@RegionID
+SP_GetFinishedGoodsDemandChartAIEnhancedForecastData	@CountryID
+SP_GetFinishedGoodsDemandChartAIEnhancedForecastData	@CompanyCode
+SP_GetFinishedGoodsDemandChartAIEnhancedForecastData	@ProfitCenterID
+SP_GetFinishedGoodsDemandChartAIEnhancedForecastData	@PlantID
+SP_GetFinishedGoodsDemandChartAIEnhancedForecastData	@SBU
+SP_GetFinishedGoodsDemandChartAIEnhancedForecastData	@BU
+SP_GetFinishedGoodsDemandChartAIEnhancedForecastData	@FromDate
+SP_GetFinishedGoodsDemandChartAIEnhancedForecastData	@ToDate
+SP_GetFinishedGoodsDemandGraphComparisonData	@CompanyCode
+SP_GetFinishedGoodsDemandGraphComparisonData	@ProfitCenterID
+SP_GetFinishedGoodsDemandGraphComparisonData	@PlantID
+SP_GetFinishedGoodsDemandGraphComparisonData	@SBU
+SP_GetFinishedGoodsDemandGraphComparisonData	@BU
+SP_GetFinishedGoodsDemandGraphComparisonData	@FromDate
+SP_GetFinishedGoodsDemandGraphComparisonData	@ToDate
+SP_GetFinishedGoodsProductionChartAIEnhancedForecastData	@CurrencyType
+SP_GetFinishedGoodsProductionChartAIEnhancedForecastData	@Metrics
+SP_GetFinishedGoodsProductionChartAIEnhancedForecastData	@RegionID
+SP_GetFinishedGoodsProductionChartAIEnhancedForecastData	@CountryID
+SP_GetFinishedGoodsProductionChartAIEnhancedForecastData	@CompanyCode
+SP_GetFinishedGoodsProductionChartAIEnhancedForecastData	@ProfitCenterID
+SP_GetFinishedGoodsProductionChartAIEnhancedForecastData	@PlantID
+SP_GetFinishedGoodsProductionChartAIEnhancedForecastData	@SBU
+SP_GetFinishedGoodsProductionChartAIEnhancedForecastData	@BU
+SP_GetFinishedGoodsProductionChartAIEnhancedForecastData	@FromDate
+SP_GetFinishedGoodsProductionChartAIEnhancedForecastData	@ToDate
+SP_GetFinishedGoodsProductionGraphComparisonData	@CompanyCode
+SP_GetFinishedGoodsProductionGraphComparisonData	@ProfitCenterID
+SP_GetFinishedGoodsProductionGraphComparisonData	@PlantID
+SP_GetFinishedGoodsProductionGraphComparisonData	@SBU
+SP_GetFinishedGoodsProductionGraphComparisonData	@BU
+SP_GetFinishedGoodsProductionGraphComparisonData	@FromDate
+SP_GetFinishedGoodsProductionGraphComparisonData	@ToDate
+SP_GetGoodsReceiptGraphComparisonData	@CompanyCode
+SP_GetGoodsReceiptGraphComparisonData	@ProfitCenterID
+SP_GetGoodsReceiptGraphComparisonData	@PlantID
+SP_GetGoodsReceiptGraphComparisonData	@SBU
+SP_GetGoodsReceiptGraphComparisonData	@BU
+SP_GetGoodsReceiptGraphComparisonData	@FromDate
+SP_GetGoodsReceiptGraphComparisonData	@ToDate
+SP_GetGoodsReceiptGraphComparisonData	@MaterialType
+SP_GetGoodsReceiptGraphComparisonData	@ClassificationLevel1
+SP_GetInventoryDIO	@RegionID
+SP_GetInventoryDIO	@CountryID
+SP_GetInventoryDIO	@CompanyCode
+SP_GetInventoryDIO	@ProfitCenterID
+SP_GetInventoryDIO	@PlantID
+SP_GetInventoryDIO	@SBU
+SP_GetInventoryDIO	@BU
+SP_GetInventoryDIO	@FromDate
+SP_GetInventoryDIO	@ToDate
+SP_GetInventoryGlobalMap	@TypeID
+SP_GetInventoryGlobalMap	@RegionID
+SP_GetInventoryGlobalMap	@CountryID
+SP_GetInventoryGlobalMap	@CompanyCode
+SP_GetInventoryGlobalMap	@ProfitCenterID
+SP_GetInventoryGlobalMap	@PlantID
+SP_GetInventoryGlobalMap	@SBU
+SP_GetInventoryGlobalMap	@BU
+SP_GetInventoryGlobalMap	@FromDate
+SP_GetInventoryGlobalMap	@ToDate
+SP_GetInventoryInsightsGridData	@RegionID
+SP_GetInventoryInsightsGridData	@CountryID
+SP_GetInventoryInsightsGridData	@CompanyCode
+SP_GetInventoryInsightsGridData	@ProfitCenterID
+SP_GetInventoryInsightsGridData	@PlantID
+SP_GetInventoryInsightsGridData	@SBU
+SP_GetInventoryInsightsGridData	@BU
+SP_GetInventoryInsightsGridData	@FromDate
+SP_GetInventoryInsightsGridData	@ToDate
+SP_GetLoginActivity	@FromDate
+SP_GetLoginActivity	@ToDate
+SP_GetLoginUserActivity	@FromDate
+SP_GetLoginUserActivity	@ToDate
+SP_GetMoreFiltersPlant	@affiliateCode
+SP_GetMoreFiltersPlant	@profitCenterID
+SP_GetMoreFiltersProfitCenter	@affiliateCode
+SP_GetMoreFiltersProfitCenter	@sbuName
+SP_GetMoreFiltersProfitCenter	@buName
+SP_GetMoreFiltersSBUandBU	@sbuName
+SP_GetMoreFiltersSBUandBU	@buName
+SP_GetMoreFiltersSBUandBU	@affiliateCode
+SP_GetPerformanceLog	@FromDate
+SP_GetPerformanceLog	@ToDate
+SP_GetRawMaterialsConsumedGraphComparisonData	@CompanyCode
+SP_GetRawMaterialsConsumedGraphComparisonData	@ProfitCenterID
+SP_GetRawMaterialsConsumedGraphComparisonData	@PlantID
+SP_GetRawMaterialsConsumedGraphComparisonData	@SBU
+SP_GetRawMaterialsConsumedGraphComparisonData	@BU
+SP_GetRawMaterialsConsumedGraphComparisonData	@FromDate
+SP_GetRawMaterialsConsumedGraphComparisonData	@ToDate
+SP_GetRawMaterialsCPChartData	@CurrencyType
+SP_GetRawMaterialsCPChartData	@Metrics
+SP_GetRawMaterialsCPChartData	@RegionID
+SP_GetRawMaterialsCPChartData	@CountryID
+SP_GetRawMaterialsCPChartData	@CompanyCode
+SP_GetRawMaterialsCPChartData	@ProfitCenterID
+SP_GetRawMaterialsCPChartData	@PlantID
+SP_GetRawMaterialsCPChartData	@SBU
+SP_GetRawMaterialsCPChartData	@BU
+SP_GetRawMaterialsCPChartData	@FromDate
+SP_GetRawMaterialsCPChartData	@ToDate
+SP_GetRawMaterialsCPChartData	@UnitofMeasure
+SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData	@CurrencyType
+SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData	@Metrics
+SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData	@RegionID
+SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData	@CountryID
+SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData	@CompanyCode
+SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData	@ProfitCenterID
+SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData	@PlantID
+SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData	@SBU
+SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData	@BU
+SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData	@FromDate
+SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData	@ToDate
+SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData	@UnitofMeasure
+SP_GetRegion	NULL
+SP_GetRMConsumptionTrendComparisonData	@CompanyCode
+SP_GetRMConsumptionTrendComparisonData	@ProfitCenterID
+SP_GetRMConsumptionTrendComparisonData	@PlantID
+SP_GetRMConsumptionTrendComparisonData	@SBU
+SP_GetRMConsumptionTrendComparisonData	@BU
+SP_GetRMConsumptionTrendComparisonData	@FromDate
+SP_GetRMConsumptionTrendComparisonData	@ToDate
+SP_GetRMConsumptionTrendData	@CurrencyType
+SP_GetRMConsumptionTrendData	@Metrics
+SP_GetRMConsumptionTrendData	@RegionID
+SP_GetRMConsumptionTrendData	@CountryID
+SP_GetRMConsumptionTrendData	@CompanyCode
+SP_GetRMConsumptionTrendData	@ProfitCenterID
+SP_GetRMConsumptionTrendData	@PlantID
+SP_GetRMConsumptionTrendData	@SBU
+SP_GetRMConsumptionTrendData	@BU
+SP_GetRMConsumptionTrendData	@FromDate
+SP_GetRMConsumptionTrendData	@ToDate
+SP_GetRMInterCompanyTransferChartData	@CurrencyType
+SP_GetRMInterCompanyTransferChartData	@Metrics
+SP_GetRMInterCompanyTransferChartData	@RegionID
+SP_GetRMInterCompanyTransferChartData	@CountryID
+SP_GetRMInterCompanyTransferChartData	@CompanyCode
+SP_GetRMInterCompanyTransferChartData	@ProfitCenterID
+SP_GetRMInterCompanyTransferChartData	@PlantID
+SP_GetRMInterCompanyTransferChartData	@SBU
+SP_GetRMInterCompanyTransferChartData	@BU
+SP_GetRMInterCompanyTransferChartData	@FromDate
+SP_GetRMInterCompanyTransferChartData	@ToDate
+SP_GetRMInterCompanyTransferChartData	@UnitofMeasure
+SP_GetRMInterCompanyTransferComparisonChartData	@CompanyCode
+SP_GetRMInterCompanyTransferComparisonChartData	@ProfitCenterID
+SP_GetRMInterCompanyTransferComparisonChartData	@PlantID
+SP_GetRMInterCompanyTransferComparisonChartData	@SBU
+SP_GetRMInterCompanyTransferComparisonChartData	@BU
+SP_GetRMInterCompanyTransferComparisonChartData	@FromDate
+SP_GetRMInterCompanyTransferComparisonChartData	@ToDate
+SP_GetRole	NULL
+SP_GetSessionDetails	@SessionID
+SP_GetTotalInventoryValueDifference	@RegionID
+SP_GetTotalInventoryValueDifference	@CountryID
+SP_GetTotalInventoryValueDifference	@CompanyCode
+SP_GetTotalInventoryValueDifference	@ProfitCenterID
+SP_GetTotalInventoryValueDifference	@PlantID
+SP_GetTotalInventoryValueDifference	@SBU
+SP_GetTotalInventoryValueDifference	@BU
+SP_GetTotalInventoryValueDifference	@FromDate
+SP_GetTotalInventoryValueDifference	@ToDate
+SP_GetTotalInventoryVolumeDifference	@RegionID
+SP_GetTotalInventoryVolumeDifference	@CountryID
+SP_GetTotalInventoryVolumeDifference	@CompanyCode
+SP_GetTotalInventoryVolumeDifference	@ProfitCenterID
+SP_GetTotalInventoryVolumeDifference	@PlantID
+SP_GetTotalInventoryVolumeDifference	@SBU
+SP_GetTotalInventoryVolumeDifference	@BU
+SP_GetTotalInventoryVolumeDifference	@FromDate
+SP_GetTotalInventoryVolumeDifference	@ToDate
+SP_GetUnitofMeasure	NULL
+SP_GetUserDetails	@Username
+SP_GetUserMenus	@UserID
+SP_GetUserMenus	@RoleID
+SP_GetUsers	NULL
+SP_GetXMLValueForLog	@Tablename
+SP_GetXMLValueForLog	@IdentityColumn
+SP_GetXMLValueForLog	@ID
+SP_GetXMLValueForLog	@XMLValue
+SP_Insert_Update_ActivityTracker	@ActivityTrackerID
+SP_Insert_Update_ActivityTracker	@ScreenID
+SP_Insert_Update_ActivityTracker	@FunctionID
+SP_Insert_Update_ActivityTracker	@UserActionID
+SP_Insert_Update_ActivityTracker	@CreatedBy
+SP_Insert_Update_APIRequestLog	@RequestLogID
+SP_Insert_Update_APIRequestLog	@UserID
+SP_Insert_Update_APIRequestLog	@RoleID
+SP_Insert_Update_APIRequestLog	@SessionID
+SP_Insert_Update_APIRequestLog	@AppModuleMappingID
+SP_Insert_Update_APIRequestLog	@ApiEndPoint
+SP_Insert_Update_APIRequestLog	@HttpMethod
+SP_Insert_Update_APIRequestLog	@StatusCode
+SP_Insert_Update_APIRequestLog	@RequestBody
+SP_Insert_Update_APIRequestLog	@RequestTimeStamp
+SP_Insert_Update_APIRequestLog	@ResponseBody
+SP_Insert_Update_APIRequestLog	@ResponseTimeStamp
+SP_Insert_Update_APIRequestLog	@Duration
+SP_Insert_Update_APIRequestLog	@CreatedBy
+SP_Insert_Update_APIRequestLog	@LayerID
+SP_Insert_Update_AssignedUser	@UserID
+SP_Insert_Update_AssignedUser	@UserRoleIDs
+SP_Insert_Update_AssignedUser	@UserName
+SP_Insert_Update_AssignedUser	@Email
+SP_Insert_Update_AssignedUser	@FirstName
+SP_Insert_Update_AssignedUser	@LastName
+SP_Insert_Update_AssignedUser	@EmployeeID
+SP_Insert_Update_AssignedUser	@AffiliateID
+SP_Insert_Update_AssignedUser	@StatusID
+SP_Insert_Update_AssignedUser	@CreatedBy
+SP_Insert_Update_AssignedUser	@IsInsert
+SP_Insert_Update_ErrorLogging	@ErrorLogID
+SP_Insert_Update_ErrorLogging	@UserID
+SP_Insert_Update_ErrorLogging	@RoleID
+SP_Insert_Update_ErrorLogging	@SessionID
+SP_Insert_Update_ErrorLogging	@ApplicationID
+SP_Insert_Update_ErrorLogging	@ScreenID
+SP_Insert_Update_ErrorLogging	@ModuleID
+SP_Insert_Update_ErrorLogging	@FunctionID
+SP_Insert_Update_ErrorLogging	@LayerID
+SP_Insert_Update_ErrorLogging	@APIID
+SP_Insert_Update_ErrorLogging	@StoredProcedureID
+SP_Insert_Update_ErrorLogging	@ErrorNumber
+SP_Insert_Update_ErrorLogging	@ErrorState
+SP_Insert_Update_ErrorLogging	@ErrorSeverity
+SP_Insert_Update_ErrorLogging	@StackTrace
+SP_Insert_Update_ErrorLogging	@ErrorMessage
+SP_Insert_Update_ErrorLogging	@RequestBody
+SP_Insert_Update_ErrorLogging	@ResponseBody
+SP_Insert_Update_ErrorLogging	@Status
+SP_Insert_Update_ErrorLogging	@HostName
+SP_Insert_Update_ErrorLogging	@Environment
+SP_Insert_Update_ErrorLogging	@CreatedBy
+SP_Insert_Update_ErrorLogging	@UpdatedBy
+SP_Insert_Update_ErrorLogging	@IpAddress
+SP_Insert_Update_LoginActivity	@LoginID
+SP_Insert_Update_LoginActivity	@RoleID
+SP_Insert_Update_LoginActivity	@IpAddress
+SP_Insert_Update_LoginActivity	@BrowserName
+SP_Insert_Update_LoginActivity	@LoginTime
+SP_Insert_Update_LoginActivity	@LogoutTime
+SP_Insert_Update_LoginActivity	@SessionID
+SP_Insert_Update_LoginActivity	@IsOnline
+SP_Insert_Update_LoginActivity	@UserID
+SP_Insert_Update_LoginActivity	@UserAgent
+SP_Insert_Update_LoginActivity	@Browser
+SP_Insert_Update_LoginActivity	@BrowserVersion
+SP_Insert_Update_LoginActivity	@SessionStartTimeStamp
+SP_Insert_Update_PerformanceLog	@PerformanceLogID
+SP_Insert_Update_PerformanceLog	@UserID
+SP_Insert_Update_PerformanceLog	@RoleID
+SP_Insert_Update_PerformanceLog	@SessionID
+SP_Insert_Update_PerformanceLog	@ComponentName
+SP_Insert_Update_PerformanceLog	@ActionName
+SP_Insert_Update_PerformanceLog	@StartTime
+SP_Insert_Update_PerformanceLog	@EndTime
+SP_Insert_Update_PerformanceLog	@Duration
+SP_Insert_Update_PerformanceLog	@CreatedBy
+SP_Insert_Update_PerformanceLog	@CreatedOn
+SP_Insert_Update_UserLoginSession	@UserLoginSessionID
+SP_Insert_Update_UserLoginSession	@UserID
+SP_Insert_Update_UserLoginSession	@SessionID
+SP_Insert_Update_UserLoginSession	@IsActive
+SP_Insert_Update_UserRoleMapping	@UserRoleMappingID
+SP_Insert_Update_UserRoleMapping	@DomainUserID
+SP_Insert_Update_UserRoleMapping	@RoleIDs
+SP_Insert_Update_UserRoleMapping	@IsActive
+SP_Insert_Update_UserRoleMapping	@IsSelectedRole
+SP_Insert_Update_UserRoleMapping	@CreatedBy
+SP_Insert_Update_UserToken	@ID
+SP_Insert_Update_UserToken	@SessionID
+SP_Insert_Update_UserToken	@Token
+SP_Insert_Update_UserToken	@IsActive
+SP_Insert_Update_UserToken	@UserID
+SP_InsertMaterialMovements_Actuals_FG	NULL
+SP_InsertMaterialMovements_Actuals_RM	NULL
+SP_InsertOpeningAndClosingInventoryDetails_FG	NULL
+SP_InsertOpeningAndClosingInventoryDetails_RM	NULL
+SP_InsertOpeningInventory_Actuals_FG	NULL
+SP_InsertOpeningInventory_Actuals_RM	NULL
+SP_IsInternal_AuthenticatedUser	@Username
+SP_LogoutAndEndSessionByUserId	@UserID
+SP_Update_ErrorLogging_AssigneeWith_Status	@ErrorLogID
+SP_Update_ErrorLogging_AssigneeWith_Status	@AssigneeUserID
+SP_Update_ErrorLogging_AssigneeWith_Status	@ErrorStatusID
+SP_Update_ErrorLogging_AssigneeWith_Status	@UpdatedBy
+SP_Update_User_IsActivated	@UserID
+SP_Update_User_IsActivated	@IsActivated
+SP_Update_User_IsActivated	@UpdatedBy
+usp_AddandUpdateUserAndRoleMapping	@Username
+usp_AddandUpdateUserAndRoleMapping	@EmployeeId
+usp_AddandUpdateUserAndRoleMapping	@Email
+usp_AddandUpdateUserAndRoleMapping	@FirstName
+usp_AddandUpdateUserAndRoleMapping	@LastName
+usp_AddandUpdateUserAndRoleMapping	@RoleID
