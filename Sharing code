@@ -1,3 +1,242 @@
+public class ClosingInventoryBalanceDetailChartTests
+{
+    private Mock<IDashboardRepository> _mockRepository;
+    private Mock<IMoq> _mockOtherDependencies; // Add other dependencies as needed
+    private ClosingInventoryService _service; // Replace with your actual service class name
+
+    public ClosingInventoryBalanceDetailChartTests()
+    {
+        _mockRepository = new Mock<IDashboardRepository>();
+        _mockOtherDependencies = new Mock<IMoq>();
+        _service = new ClosingInventoryService(_mockRepository.Object, _mockOtherDependencies.Object);
+    }
+
+    [Fact]
+    public async Task GetClosingInventoryBalanceDetailChart_SelectedMonthEmpty_UsesFromDate()
+    {
+        // Arrange
+        var request = new ChartDataFilterReq 
+        { 
+            FromDate = new DateTime(2023, 12, 1),
+            ToDate = new DateTime(2023, 12, 31),
+            SelectedMonth = "",
+            Metrics = 1
+        };
+        var expectedResult = new List<InventoryItem>
+        {
+            new InventoryItem { InventoryType = "Finished Goods", Value = 100, Volume = 10 },
+            new InventoryItem { InventoryType = "Raw Materials", Value = 200, Volume = 20 }
+        };
+
+        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.IsAny<ChartDataFilterReq>()))
+                      .ReturnsAsync(expectedResult);
+
+        // Act
+        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
+
+        // Assert
+        result.StatusCode.Should().Be(SabicConstants.SuccessStatusCode);
+        result.FGChartData.Should().NotBeNull();
+        result.RMChartData.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task GetClosingInventoryBalanceDetailChart_WithSelectedMonth_UsesSelectedMonth()
+    {
+        // Arrange
+        var request = new ChartDataFilterReq 
+        { 
+            SelectedMonth = "DEC 2023",
+            Metrics = 0
+        };
+        var expectedResult = new List<InventoryItem>
+        {
+            new InventoryItem { InventoryType = "Finished Goods", Value = 100, Volume = 10 }
+        };
+
+        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.Is<ChartDataFilterReq>(r => 
+            r.SelectedMonth == "DEC 2023")))
+                      .ReturnsAsync(expectedResult);
+
+        // Act
+        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
+
+        // Assert
+        result.StatusCode.Should().Be(SabicConstants.SuccessStatusCode);
+        result.FGClosingInventoryBalanceDetailsChart.Should().NotBeNull();
+    }
+
+    [Theory]
+    [InlineData(1, "Value")]
+    [InlineData(0, "Volume")]
+    public async Task GetClosingInventoryBalanceDetailChart_DifferentMetrics_CallsGetFilteredWithCorrectMetric(int metrics, string expectedMetric)
+    {
+        // Arrange
+        var request = new ChartDataFilterReq { Metrics = metrics, FromDate = DateTime.Now, ToDate = DateTime.Now };
+        var resultData = new List<InventoryItem> { new InventoryItem { InventoryType = "Finished Goods" } };
+
+        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.IsAny<ChartDataFilterReq>()))
+                      .ReturnsAsync(resultData);
+
+        // Act
+        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
+
+        // Assert
+        result.StatusCode.Should().Be(SabicConstants.SuccessStatusCode);
+    }
+
+    [Fact]
+    public async Task GetClosingInventoryBalanceDetailChart_FGResultOnly_SetsFGPropertiesOnly()
+    {
+        // Arrange
+        var request = new ChartDataFilterReq { FromDate = DateTime.Now, ToDate = DateTime.Now, Metrics = 1 };
+        var fgData = new List<InventoryItem> { new InventoryItem { InventoryType = "Finished Goods", Value = 100 } };
+        var allData = new List<InventoryItem>(fgData); // No RM data
+
+        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.IsAny<ChartDataFilterReq>()))
+                      .ReturnsAsync(allData);
+
+        // Act
+        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
+
+        // Assert
+        result.FGChartData.Should().NotBeNull();
+        result.FGClosingInventoryBalanceDetailsChart.Should().NotBeNull();
+        result.RMChartData.Should().BeNull();
+        result.RMClosingInventoryBalanceDetailsChart.Should().BeNull();
+        result.StatusCode.Should().Be(SabicConstants.SuccessStatusCode);
+    }
+
+    [Fact]
+    public async Task GetClosingInventoryBalanceDetailChart_RMResultOnly_SetsRMPropertiesOnly()
+    {
+        // Arrange
+        var request = new ChartDataFilterReq { FromDate = DateTime.Now, ToDate = DateTime.Now, Metrics = 1 };
+        var rmData = new List<InventoryItem> { new InventoryItem { InventoryType = "Raw Materials", Value = 200 } };
+
+        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.IsAny<ChartDataFilterReq>()))
+                      .ReturnsAsync(rmData);
+
+        // Act
+        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
+
+        // Assert
+        result.RMChartData.Should().NotBeNull();
+        result.RMClosingInventoryBalanceDetailsChart.Should().NotBeNull();
+        result.FGChartData.Should().BeNull();
+        result.StatusCode.Should().Be(SabicConstants.SuccessStatusCode);
+    }
+
+    [Fact]
+    public async Task GetClosingInventoryBalanceDetailChart_EmptyResult_SetsRecordNotFound()
+    {
+        // Arrange
+        var request = new ChartDataFilterReq { FromDate = DateTime.Now, ToDate = DateTime.Now };
+        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.IsAny<ChartDataFilterReq>()))
+                      .ReturnsAsync(new List<InventoryItem>());
+
+        // Act
+        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
+
+        // Assert
+        result.StatusCode.Should().Be(SabicConstants.RecordNotFoundStatusCode);
+        result.StatusMessage.Should().Be(SabicConstants.RecordNotFoundMessage);
+    }
+
+    [Fact]
+    public async Task GetClosingInventoryBalanceDetailChart_NullResult_SetsRecordNotFound()
+    {
+        // Arrange
+        var request = new ChartDataFilterReq { FromDate = DateTime.Now, ToDate = DateTime.Now };
+        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.IsAny<ChartDataFilterReq>()))
+                      .ReturnsAsync((List<InventoryItem>)null);
+
+        // Act
+        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
+
+        // Assert
+        result.StatusCode.Should().Be(SabicConstants.RecordNotFoundStatusCode);
+    }
+
+    [Fact]
+    public async Task GetClosingInventoryBalanceDetailChart_BothFGandRMData_SetsAllProperties()
+    {
+        // Arrange
+        var request = new ChartDataFilterReq { FromDate = DateTime.Now, ToDate = DateTime.Now, Metrics = 1 };
+        var resultData = new List<InventoryItem>
+        {
+            new InventoryItem { InventoryType = "Finished Goods", Value = 100, Volume = 10 },
+            new InventoryItem { InventoryType = "Raw Materials", Value = 200, Volume = 20 }
+        };
+
+        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.IsAny<ChartDataFilterReq>()))
+                      .ReturnsAsync(resultData);
+
+        // Act
+        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
+
+        // Assert
+        result.FGChartData.Should().NotBeNull();
+        result.RMChartData.Should().NotBeNull();
+        result.FGClosingInventoryBalanceDetailsChart.Should().NotBeNull();
+        result.RMClosingInventoryBalanceDetailsChart.Should().NotBeNull();
+        result.StatusCode.Should().Be(SabicConstants.SuccessStatusCode);
+    }
+
+    [Fact]
+    public async Task GetClosingInventoryBalanceDetailChart_FromDateNull_HandlesGracefully()
+    {
+        // Arrange
+        var request = new ChartDataFilterReq 
+        { 
+            FromDate = null,
+            ToDate = DateTime.Now,
+            SelectedMonth = "DEC 2023",
+            Metrics = 1
+        };
+        var mockData = new List<InventoryItem>();
+
+        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.IsAny<ChartDataFilterReq>()))
+                      .ReturnsAsync(mockData);
+
+        // Act
+        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
+
+        // Assert
+        result.StatusCode.Should().Be(SabicConstants.RecordNotFoundStatusCode);
+    }
+}
+
+// Supporting classes (add these to your test project)
+public class ChartDataFilterReq
+{
+    public DateTime? FromDate { get; set; }
+    public DateTime? ToDate { get; set; }
+    public string? SelectedMonth { get; set; }
+    public int Metrics { get; set; }
+}
+
+public class InventoryItem
+{
+    public string InventoryType { get; set; } = "";
+    public decimal Value { get; set; }
+    public decimal Volume { get; set; }
+}
+
+public class ClosingInventoryBalanceDetailChartModel
+{
+    public object? FGChartData { get; set; }
+    public object? RMChartData { get; set; }
+    public object? FGClosingInventoryBalanceDetailsChart { get; set; }
+    public object? RMClosingInventoryBalanceDetailsChart { get; set; }
+    public string StatusMessage { get; set; } = "";
+    public int StatusCode { get; set; }
+}
+
+
+dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+
+
 
         public async Task<ClosingInventoryBalanceDetailChartModel> GetClosingInventoryBalanceDetailChart(ChartDataFilterReq chartDataFilterReq)
         {
