@@ -1,113 +1,812 @@
-SELECT 
-    s.name              AS SchemaName,
-    t.name              AS TableName,
-    c.column_id         AS ColumnOrder,
-    c.name              AS ColumnName,
-    TYPE_NAME(c.user_type_id) AS DataType,
-    c.max_length        AS MaxLength,
-    c.is_nullable       AS IsNullable,
-    CASE 
-        WHEN pk.column_id IS NOT NULL THEN 'PK'
-        WHEN fk.parent_column_id IS NOT NULL THEN 'FK'
-        ELSE ''
-    END                 AS KeyType,
-    fk_details.ReferencedTable,
-    fk_details.ReferencedColumn
-FROM sys.tables t
-JOIN sys.schemas s
-    ON t.schema_id = s.schema_id
-JOIN sys.columns c
-    ON t.object_id = c.object_id
-LEFT JOIN (
-    -- primary key columns
-    SELECT 
-        ic.object_id,
-        ic.column_id
-    FROM sys.indexes i
-    JOIN sys.index_columns ic
-        ON i.object_id = ic.object_id
-       AND i.index_id = ic.index_id
-    WHERE i.is_primary_key = 1
-) pk
-    ON c.object_id = pk.object_id
-   AND c.column_id = pk.column_id
-LEFT JOIN (
-    -- foreign key columns (parent side)
-    SELECT 
-        fkc.parent_object_id,
-        fkc.parent_column_id,
-        OBJECT_NAME(fkc.referenced_object_id) AS ReferencedTable,
-        c2.name                              AS ReferencedColumn
-    FROM sys.foreign_key_columns fkc
-    JOIN sys.columns c2
-      ON fkc.referenced_object_id = c2.object_id
-     AND fkc.referenced_column_id = c2.column_id
-) fk_details
-    ON c.object_id = fk_details.parent_object_id
-LEFT JOIN sys.foreign_key_columns fk
-    ON c.object_id = fk.parent_object_id
-   AND c.column_id = fk.parent_column_id
-ORDER BY s.name, t.name, c.column_id;
-
-
-
-
-
-List of Documents	|	Contents
-Project Scope to Feature Mapping	|	Mapping between scope and features
-Web API Document	|	Overview and Introduction: Explain the  API's purpose & main features.
-	|	Getting Started: Instructions for initial setup and basic configuration steps.
-	|	Authentication and Authorization: Detailed explanation on how to authenticate requests.
-	|	API Reference Endpoints: A list of all available API endpoints in Open API Specification(OAS) with
-	|	Parameters, Request and Response: must have at least one example schemas for request and response payloads, including data models and their attributes.
-	|	Status Codes: Explanation of expected HTTP status codes for various operations (e.g., 200 OK, 400 Bad Request, 500 Internal Server Error).
-Technical Design Document	|	Overview and Introduction
-	|	System Architecture: A high-level diagram showing the major components and how they interact.
-	|	Component Design: Detailed descriptions of individual components, the technologies they use, and their specific functionalities (Frontend, Backend etc.).
-	|	Data Design: Details on data structures, database schemas, and how data will be stored and managed.
-	|	Interface Design: Descriptions of external interfaces, including user interfaces and APIs.
-	|	Implementation and Deployment Plans:
-	|	- Implementation Plan
-	|	- Deployment & Release Strategy
-	|	- Caching & Performance Strategy
-	|	- Error Handling & Disaster Management
-	|	- Testing strategy
-	|	Maintenance Plan: Guidelines for post-deployment activities like bug fixes and updates.
-	|	Assumptions and Dependencies: List any assumptions made and other systems or services the project depends on. 
-Source Code Document	|	Source code details - repo
-	|	Technical Architecture high level diagram
-	|	Environment/project setup - should also include IDE/editor configurations.
-	|	Project Structure
-	|	High level description for the code
-	|	Code/Data flow diagram
-	|	Database/Other Data source
-	|	Application Modules/Features
-	|	User access flow diagram
-	|	- User Login Flow
-	|	- User Access Provisioning
-	|	- User Access Mapping with Application Features
-SQL- DB Schema & Implementation Document	|	Overview
-	|	ERD diagram of DB
-	|	DB Details:  Should include all DBO's(Table, Views) details as per the SQL Standard Template
-	|	Implementation Details: Details of SP's, View & Functions etc.
-Release Document	|	Release identification: Version number, release date, and the document's name.
-	|	Overview: A brief summary of the release's purpose and major changes.
-	|	New features: A detailed list of new features and functionality.
-	|	Fixed issues: A list of bugs and problems that have been resolved.
-	|	Known issues: Any remaining bugs or limitations in the release.
-	|	Links to related documents like user guides or help manuals.
-	|	Other information:
-	|	Any disclaimers or important notes.  
-Risk Demand Approval	|	
-EA Approved Document	|	
-Vulnerability Scan approval mail	|	
-ISRT Completion Report	|	
-SonarQube Scan Report  	|	Auto generated
-UAT Approval	|	
-Support Cook Book	|	Must include for all components of  Application
-	|	1. Common Errors or Bugs Noticed
-	|	2. Frequent Queries from End Users
-	|	3. Log all production bugs and categorize
-App & Error Monitoring	|	
-RCA's	|	
-Post Go Live - Project Handover Session & Approval	|	
+SchemaName	TableName	ColumnOrder	ColumnName	DataType	MaxLength	IsNullable	KeyType	ReferencedTable	ReferencedColumn
+dbo	ADM_ActivityTracker	1	ActivityTrackerID	int	4	0	PK	ADM_User	UserID
+dbo	ADM_ActivityTracker	1	ActivityTrackerID	int	4	0	PK	ADM_Role	RoleID
+dbo	ADM_ActivityTracker	1	ActivityTrackerID	int	4	0	PK	ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	2	UserID	int	4	0	FK	ADM_User	UserID
+dbo	ADM_ActivityTracker	2	UserID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_ActivityTracker	2	UserID	int	4	0	FK	ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	3	RoleID	int	4	0	FK	ADM_User	UserID
+dbo	ADM_ActivityTracker	3	RoleID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_ActivityTracker	3	RoleID	int	4	0	FK	ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	4	RoleName	varchar	200	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	4	RoleName	varchar	200	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	4	RoleName	varchar	200	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	5	IpAddress	varchar	200	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	5	IpAddress	varchar	200	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	5	IpAddress	varchar	200	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	6	BrowserName	varchar	200	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	6	BrowserName	varchar	200	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	6	BrowserName	varchar	200	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	7	ApplicationID	int	4	0	FK	ADM_User	UserID
+dbo	ADM_ActivityTracker	7	ApplicationID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_ActivityTracker	7	ApplicationID	int	4	0	FK	ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	8	ScreenID	int	4	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	8	ScreenID	int	4	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	8	ScreenID	int	4	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	9	FunctionID	int	4	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	9	FunctionID	int	4	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	9	FunctionID	int	4	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	10	UserActionID	int	4	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	10	UserActionID	int	4	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	10	UserActionID	int	4	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	11	LoginTime	datetime	8	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	11	LoginTime	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	11	LoginTime	datetime	8	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	12	LogoutTime	datetime	8	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	12	LogoutTime	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	12	LogoutTime	datetime	8	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	13	SessionDuration	float	8	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	13	SessionDuration	float	8	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	13	SessionDuration	float	8	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	14	SessionID	varchar	200	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	14	SessionID	varchar	200	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	14	SessionID	varchar	200	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	15	IsOnline	bit	1	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	15	IsOnline	bit	1	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	15	IsOnline	bit	1	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	16	CreatedBy	varchar	200	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	16	CreatedBy	varchar	200	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	16	CreatedBy	varchar	200	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	17	CreatedOn	datetime	8	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	17	CreatedOn	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	17	CreatedOn	datetime	8	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	18	UpdatedBy	varchar	200	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	18	UpdatedBy	varchar	200	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	18	UpdatedBy	varchar	200	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	19	UpdatedOn	datetime	8	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	19	UpdatedOn	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	19	UpdatedOn	datetime	8	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	20	UserAgent	nvarchar	1000	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	20	UserAgent	nvarchar	1000	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	20	UserAgent	nvarchar	1000	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	21	Browser	nvarchar	200	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	21	Browser	nvarchar	200	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	21	Browser	nvarchar	200	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	22	BrowserVersion	nvarchar	200	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	22	BrowserVersion	nvarchar	200	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	22	BrowserVersion	nvarchar	200	1		ADM_Application	ApplicationID
+dbo	ADM_ActivityTracker	23	SessionStartTimeStamp	datetime	8	1		ADM_User	UserID
+dbo	ADM_ActivityTracker	23	SessionStartTimeStamp	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_ActivityTracker	23	SessionStartTimeStamp	datetime	8	1		ADM_Application	ApplicationID
+dbo	ADM_API	1	APIID	int	4	0	PK	ADM_Functionality	FunctionalityID
+dbo	ADM_API	2	APIName	nvarchar	100	1		ADM_Functionality	FunctionalityID
+dbo	ADM_API	3	IsActive	bit	1	1		ADM_Functionality	FunctionalityID
+dbo	ADM_API	4	CreatedBy	nvarchar	400	1		ADM_Functionality	FunctionalityID
+dbo	ADM_API	5	CreatedOn	datetime	8	1		ADM_Functionality	FunctionalityID
+dbo	ADM_API	6	UpdatedBy	nvarchar	400	1		ADM_Functionality	FunctionalityID
+dbo	ADM_API	7	UpdatedOn	datetime	8	1		ADM_Functionality	FunctionalityID
+dbo	ADM_API	8	FunctionalityID	int	4	0	FK	ADM_Functionality	FunctionalityID
+dbo	ADM_APIRequestLog	1	RequestLogID	int	4	0	PK	ADM_User	UserID
+dbo	ADM_APIRequestLog	1	RequestLogID	int	4	0	PK	ADM_Role	RoleID
+dbo	ADM_APIRequestLog	1	RequestLogID	int	4	0	PK	ADM_Module	ModuleID
+dbo	ADM_APIRequestLog	2	UserID	int	4	0	FK	ADM_User	UserID
+dbo	ADM_APIRequestLog	2	UserID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_APIRequestLog	2	UserID	int	4	0	FK	ADM_Module	ModuleID
+dbo	ADM_APIRequestLog	3	RoleID	int	4	0	FK	ADM_User	UserID
+dbo	ADM_APIRequestLog	3	RoleID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_APIRequestLog	3	RoleID	int	4	0	FK	ADM_Module	ModuleID
+dbo	ADM_APIRequestLog	4	AppModuleMappingID	int	4	0	FK	ADM_User	UserID
+dbo	ADM_APIRequestLog	4	AppModuleMappingID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_APIRequestLog	4	AppModuleMappingID	int	4	0	FK	ADM_Module	ModuleID
+dbo	ADM_APIRequestLog	5	SessionID	varchar	200	1		ADM_User	UserID
+dbo	ADM_APIRequestLog	5	SessionID	varchar	200	1		ADM_Role	RoleID
+dbo	ADM_APIRequestLog	5	SessionID	varchar	200	1		ADM_Module	ModuleID
+dbo	ADM_APIRequestLog	6	ApiEndPoint	varchar	300	1		ADM_User	UserID
+dbo	ADM_APIRequestLog	6	ApiEndPoint	varchar	300	1		ADM_Role	RoleID
+dbo	ADM_APIRequestLog	6	ApiEndPoint	varchar	300	1		ADM_Module	ModuleID
+dbo	ADM_APIRequestLog	7	HttpMethod	varchar	50	1		ADM_User	UserID
+dbo	ADM_APIRequestLog	7	HttpMethod	varchar	50	1		ADM_Role	RoleID
+dbo	ADM_APIRequestLog	7	HttpMethod	varchar	50	1		ADM_Module	ModuleID
+dbo	ADM_APIRequestLog	8	StatusCode	int	4	1		ADM_User	UserID
+dbo	ADM_APIRequestLog	8	StatusCode	int	4	1		ADM_Role	RoleID
+dbo	ADM_APIRequestLog	8	StatusCode	int	4	1		ADM_Module	ModuleID
+dbo	ADM_APIRequestLog	9	RequestBody	varchar	-1	1		ADM_User	UserID
+dbo	ADM_APIRequestLog	9	RequestBody	varchar	-1	1		ADM_Role	RoleID
+dbo	ADM_APIRequestLog	9	RequestBody	varchar	-1	1		ADM_Module	ModuleID
+dbo	ADM_APIRequestLog	10	RequestTimeStamp	datetime	8	1		ADM_User	UserID
+dbo	ADM_APIRequestLog	10	RequestTimeStamp	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_APIRequestLog	10	RequestTimeStamp	datetime	8	1		ADM_Module	ModuleID
+dbo	ADM_APIRequestLog	11	ResponseBody	varchar	-1	1		ADM_User	UserID
+dbo	ADM_APIRequestLog	11	ResponseBody	varchar	-1	1		ADM_Role	RoleID
+dbo	ADM_APIRequestLog	11	ResponseBody	varchar	-1	1		ADM_Module	ModuleID
+dbo	ADM_APIRequestLog	12	ResponseTimeStamp	datetime	8	1		ADM_User	UserID
+dbo	ADM_APIRequestLog	12	ResponseTimeStamp	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_APIRequestLog	12	ResponseTimeStamp	datetime	8	1		ADM_Module	ModuleID
+dbo	ADM_APIRequestLog	13	Duration	varchar	50	1		ADM_User	UserID
+dbo	ADM_APIRequestLog	13	Duration	varchar	50	1		ADM_Role	RoleID
+dbo	ADM_APIRequestLog	13	Duration	varchar	50	1		ADM_Module	ModuleID
+dbo	ADM_APIRequestLog	14	CreatedBy	varchar	200	1		ADM_User	UserID
+dbo	ADM_APIRequestLog	14	CreatedBy	varchar	200	1		ADM_Role	RoleID
+dbo	ADM_APIRequestLog	14	CreatedBy	varchar	200	1		ADM_Module	ModuleID
+dbo	ADM_APIRequestLog	15	CreatedOn	datetime	8	1		ADM_User	UserID
+dbo	ADM_APIRequestLog	15	CreatedOn	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_APIRequestLog	15	CreatedOn	datetime	8	1		ADM_Module	ModuleID
+dbo	ADM_APIRequestLog	16	LayerID	int	4	0		ADM_User	UserID
+dbo	ADM_APIRequestLog	16	LayerID	int	4	0		ADM_Role	RoleID
+dbo	ADM_APIRequestLog	16	LayerID	int	4	0		ADM_Module	ModuleID
+dbo	ADM_Application	1	ApplicationID	int	4	0	PK	NULL	NULL
+dbo	ADM_Application	2	ApplicationName	nvarchar	100	0		NULL	NULL
+dbo	ADM_Application	3	IsActive	bit	1	1		NULL	NULL
+dbo	ADM_Application	4	CreatedBy	nvarchar	400	1		NULL	NULL
+dbo	ADM_Application	5	CreatedDate	datetime	8	1		NULL	NULL
+dbo	ADM_Application	6	UpdatedBy	nvarchar	400	1		NULL	NULL
+dbo	ADM_Application	7	UpdatedDate	datetime	8	1		NULL	NULL
+dbo	ADM_BU_Delete	1	BuID	int	4	0	PK	ADM_SBU_Delete	SbuID
+dbo	ADM_BU_Delete	2	BuName	nvarchar	200	1		ADM_SBU_Delete	SbuID
+dbo	ADM_BU_Delete	3	SbuID	int	4	1	FK	ADM_SBU_Delete	SbuID
+dbo	ADM_BU_Delete	4	IsActive	bit	1	1		ADM_SBU_Delete	SbuID
+dbo	ADM_BU_Delete	5	CreatedBy	nvarchar	200	1		ADM_SBU_Delete	SbuID
+dbo	ADM_BU_Delete	6	CreatedDate	datetime	8	1		ADM_SBU_Delete	SbuID
+dbo	ADM_BU_Delete	7	UpdatedBy	nvarchar	200	1		ADM_SBU_Delete	SbuID
+dbo	ADM_BU_Delete	8	UpdatedDate	datetime	8	1		ADM_SBU_Delete	SbuID
+dbo	ADM_ErrorLogging	1	ErrorLogID	int	4	0	PK	ADM_User	UserID
+dbo	ADM_ErrorLogging	1	ErrorLogID	int	4	0	PK	ADM_Role	RoleID
+dbo	ADM_ErrorLogging	1	ErrorLogID	int	4	0	PK	ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	1	ErrorLogID	int	4	0	PK	ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	1	ErrorLogID	int	4	0	PK	ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	2	UserID	int	4	0	FK	ADM_User	UserID
+dbo	ADM_ErrorLogging	2	UserID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_ErrorLogging	2	UserID	int	4	0	FK	ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	2	UserID	int	4	0	FK	ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	2	UserID	int	4	0	FK	ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	3	RoleID	int	4	0	FK	ADM_User	UserID
+dbo	ADM_ErrorLogging	3	RoleID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_ErrorLogging	3	RoleID	int	4	0	FK	ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	3	RoleID	int	4	0	FK	ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	3	RoleID	int	4	0	FK	ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	4	SessionID	varchar	5000	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	4	SessionID	varchar	5000	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	4	SessionID	varchar	5000	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	4	SessionID	varchar	5000	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	4	SessionID	varchar	5000	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	5	ApplicationID	int	4	0	FK	ADM_User	UserID
+dbo	ADM_ErrorLogging	5	ApplicationID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_ErrorLogging	5	ApplicationID	int	4	0	FK	ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	5	ApplicationID	int	4	0	FK	ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	5	ApplicationID	int	4	0	FK	ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	6	ScreenID	int	4	0		ADM_User	UserID
+dbo	ADM_ErrorLogging	6	ScreenID	int	4	0		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	6	ScreenID	int	4	0		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	6	ScreenID	int	4	0		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	6	ScreenID	int	4	0		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	7	ModuleID	int	4	0	FK	ADM_User	UserID
+dbo	ADM_ErrorLogging	7	ModuleID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_ErrorLogging	7	ModuleID	int	4	0	FK	ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	7	ModuleID	int	4	0	FK	ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	7	ModuleID	int	4	0	FK	ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	8	FunctionID	int	4	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	8	FunctionID	int	4	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	8	FunctionID	int	4	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	8	FunctionID	int	4	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	8	FunctionID	int	4	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	9	LayerID	int	4	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	9	LayerID	int	4	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	9	LayerID	int	4	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	9	LayerID	int	4	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	9	LayerID	int	4	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	10	APIID	int	4	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	10	APIID	int	4	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	10	APIID	int	4	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	10	APIID	int	4	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	10	APIID	int	4	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	11	StoredProcedureID	int	4	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	11	StoredProcedureID	int	4	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	11	StoredProcedureID	int	4	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	11	StoredProcedureID	int	4	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	11	StoredProcedureID	int	4	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	12	ErrorNumber	int	4	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	12	ErrorNumber	int	4	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	12	ErrorNumber	int	4	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	12	ErrorNumber	int	4	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	12	ErrorNumber	int	4	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	13	ErrorState	int	4	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	13	ErrorState	int	4	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	13	ErrorState	int	4	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	13	ErrorState	int	4	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	13	ErrorState	int	4	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	14	ErrorSeverity	varchar	100	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	14	ErrorSeverity	varchar	100	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	14	ErrorSeverity	varchar	100	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	14	ErrorSeverity	varchar	100	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	14	ErrorSeverity	varchar	100	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	15	StackTrace	nvarchar	-1	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	15	StackTrace	nvarchar	-1	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	15	StackTrace	nvarchar	-1	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	15	StackTrace	nvarchar	-1	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	15	StackTrace	nvarchar	-1	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	16	ErrorMessage	nvarchar	-1	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	16	ErrorMessage	nvarchar	-1	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	16	ErrorMessage	nvarchar	-1	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	16	ErrorMessage	nvarchar	-1	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	16	ErrorMessage	nvarchar	-1	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	17	RequestBody	nvarchar	-1	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	17	RequestBody	nvarchar	-1	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	17	RequestBody	nvarchar	-1	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	17	RequestBody	nvarchar	-1	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	17	RequestBody	nvarchar	-1	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	18	ResponseBody	nvarchar	-1	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	18	ResponseBody	nvarchar	-1	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	18	ResponseBody	nvarchar	-1	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	18	ResponseBody	nvarchar	-1	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	18	ResponseBody	nvarchar	-1	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	19	ErrorStatusID	int	4	1	FK	ADM_User	UserID
+dbo	ADM_ErrorLogging	19	ErrorStatusID	int	4	1	FK	ADM_Role	RoleID
+dbo	ADM_ErrorLogging	19	ErrorStatusID	int	4	1	FK	ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	19	ErrorStatusID	int	4	1	FK	ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	19	ErrorStatusID	int	4	1	FK	ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	20	Status	varchar	30	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	20	Status	varchar	30	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	20	Status	varchar	30	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	20	Status	varchar	30	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	20	Status	varchar	30	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	21	AssignTo	varchar	100	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	21	AssignTo	varchar	100	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	21	AssignTo	varchar	100	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	21	AssignTo	varchar	100	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	21	AssignTo	varchar	100	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	22	HostName	varchar	100	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	22	HostName	varchar	100	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	22	HostName	varchar	100	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	22	HostName	varchar	100	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	22	HostName	varchar	100	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	23	Environment	varchar	50	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	23	Environment	varchar	50	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	23	Environment	varchar	50	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	23	Environment	varchar	50	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	23	Environment	varchar	50	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	25	CreatedBy	varchar	50	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	25	CreatedBy	varchar	50	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	25	CreatedBy	varchar	50	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	25	CreatedBy	varchar	50	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	25	CreatedBy	varchar	50	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	26	CreatedOn	datetime	8	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	26	CreatedOn	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	26	CreatedOn	datetime	8	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	26	CreatedOn	datetime	8	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	26	CreatedOn	datetime	8	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	27	UpdatedBy	varchar	50	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	27	UpdatedBy	varchar	50	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	27	UpdatedBy	varchar	50	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	27	UpdatedBy	varchar	50	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	27	UpdatedBy	varchar	50	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	28	UpdatedDate	datetime	8	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	28	UpdatedDate	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	28	UpdatedDate	datetime	8	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	28	UpdatedDate	datetime	8	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	28	UpdatedDate	datetime	8	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorLogging	29	IpAddress	nvarchar	100	1		ADM_User	UserID
+dbo	ADM_ErrorLogging	29	IpAddress	nvarchar	100	1		ADM_Role	RoleID
+dbo	ADM_ErrorLogging	29	IpAddress	nvarchar	100	1		ADM_Application	ApplicationID
+dbo	ADM_ErrorLogging	29	IpAddress	nvarchar	100	1		ADM_Module	ModuleID
+dbo	ADM_ErrorLogging	29	IpAddress	nvarchar	100	1		ADM_ErrorStatus	ErrorStatusID
+dbo	ADM_ErrorStatus	1	ErrorStatusID	int	4	0	PK	NULL	NULL
+dbo	ADM_ErrorStatus	2	StatusName	nvarchar	100	0		NULL	NULL
+dbo	ADM_ErrorStatus	3	Description	nvarchar	510	1		NULL	NULL
+dbo	ADM_ErrorStatus	4	IsActive	bit	1	1		NULL	NULL
+dbo	ADM_Functionality	1	FunctionalityID	int	4	0	PK	NULL	NULL
+dbo	ADM_Functionality	2	FunctionalityName	nvarchar	400	1		NULL	NULL
+dbo	ADM_Functionality	3	IsActive	bit	1	1		NULL	NULL
+dbo	ADM_Functionality	4	CreatedBy	nvarchar	400	1		NULL	NULL
+dbo	ADM_Functionality	5	CreatedOn	datetime	8	1		NULL	NULL
+dbo	ADM_Functionality	6	UpdatedBy	nvarchar	100	1		NULL	NULL
+dbo	ADM_Functionality	7	UpdatedOn	datetime	8	1		NULL	NULL
+dbo	ADM_Functionality	8	ScreenID	int	4	1		NULL	NULL
+dbo	ADM_Functionality	9	IsDisplay	bit	1	1		NULL	NULL
+dbo	ADM_Layer	1	LayerID	int	4	0	PK	NULL	NULL
+dbo	ADM_Layer	2	LayerName	nvarchar	100	1		NULL	NULL
+dbo	ADM_Layer	3	IsActive	bit	1	0		NULL	NULL
+dbo	ADM_Layer	4	CreatedBy	nvarchar	400	0		NULL	NULL
+dbo	ADM_Layer	5	CreatedOn	datetime	8	0		NULL	NULL
+dbo	ADM_Layer	6	UpdatedBy	nvarchar	400	1		NULL	NULL
+dbo	ADM_Layer	7	UpdatedOn	datetime	8	1		NULL	NULL
+dbo	ADM_LoginActivity	1	LoginID	int	4	0	PK	ADM_Role	RoleID
+dbo	ADM_LoginActivity	1	LoginID	int	4	0	PK	ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	1	LoginID	int	4	0	PK	ADM_User	UserID
+dbo	ADM_LoginActivity	2	RoleID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_LoginActivity	2	RoleID	int	4	0	FK	ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	2	RoleID	int	4	0	FK	ADM_User	UserID
+dbo	ADM_LoginActivity	3	IpAddress	varchar	200	1		ADM_Role	RoleID
+dbo	ADM_LoginActivity	3	IpAddress	varchar	200	1		ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	3	IpAddress	varchar	200	1		ADM_User	UserID
+dbo	ADM_LoginActivity	4	BrowserName	varchar	500	1		ADM_Role	RoleID
+dbo	ADM_LoginActivity	4	BrowserName	varchar	500	1		ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	4	BrowserName	varchar	500	1		ADM_User	UserID
+dbo	ADM_LoginActivity	5	ApplicationID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_LoginActivity	5	ApplicationID	int	4	0	FK	ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	5	ApplicationID	int	4	0	FK	ADM_User	UserID
+dbo	ADM_LoginActivity	6	LoginTime	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_LoginActivity	6	LoginTime	datetime	8	1		ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	6	LoginTime	datetime	8	1		ADM_User	UserID
+dbo	ADM_LoginActivity	7	LogoutTime	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_LoginActivity	7	LogoutTime	datetime	8	1		ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	7	LogoutTime	datetime	8	1		ADM_User	UserID
+dbo	ADM_LoginActivity	8	SessionID	varchar	200	1		ADM_Role	RoleID
+dbo	ADM_LoginActivity	8	SessionID	varchar	200	1		ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	8	SessionID	varchar	200	1		ADM_User	UserID
+dbo	ADM_LoginActivity	9	IsOnline	bit	1	1		ADM_Role	RoleID
+dbo	ADM_LoginActivity	9	IsOnline	bit	1	1		ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	9	IsOnline	bit	1	1		ADM_User	UserID
+dbo	ADM_LoginActivity	10	CreatedBy	varchar	200	1		ADM_Role	RoleID
+dbo	ADM_LoginActivity	10	CreatedBy	varchar	200	1		ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	10	CreatedBy	varchar	200	1		ADM_User	UserID
+dbo	ADM_LoginActivity	11	CreatedOn	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_LoginActivity	11	CreatedOn	datetime	8	1		ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	11	CreatedOn	datetime	8	1		ADM_User	UserID
+dbo	ADM_LoginActivity	12	UpdatedBy	varchar	200	1		ADM_Role	RoleID
+dbo	ADM_LoginActivity	12	UpdatedBy	varchar	200	1		ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	12	UpdatedBy	varchar	200	1		ADM_User	UserID
+dbo	ADM_LoginActivity	13	UpdatedOn	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_LoginActivity	13	UpdatedOn	datetime	8	1		ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	13	UpdatedOn	datetime	8	1		ADM_User	UserID
+dbo	ADM_LoginActivity	14	UserID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_LoginActivity	14	UserID	int	4	0	FK	ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	14	UserID	int	4	0	FK	ADM_User	UserID
+dbo	ADM_LoginActivity	15	UserAgent	nvarchar	1000	1		ADM_Role	RoleID
+dbo	ADM_LoginActivity	15	UserAgent	nvarchar	1000	1		ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	15	UserAgent	nvarchar	1000	1		ADM_User	UserID
+dbo	ADM_LoginActivity	16	Browser	nvarchar	200	1		ADM_Role	RoleID
+dbo	ADM_LoginActivity	16	Browser	nvarchar	200	1		ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	16	Browser	nvarchar	200	1		ADM_User	UserID
+dbo	ADM_LoginActivity	17	BrowserVersion	nvarchar	200	1		ADM_Role	RoleID
+dbo	ADM_LoginActivity	17	BrowserVersion	nvarchar	200	1		ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	17	BrowserVersion	nvarchar	200	1		ADM_User	UserID
+dbo	ADM_LoginActivity	18	SessionStartTimeStamp	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_LoginActivity	18	SessionStartTimeStamp	datetime	8	1		ADM_Application	ApplicationID
+dbo	ADM_LoginActivity	18	SessionStartTimeStamp	datetime	8	1		ADM_User	UserID
+dbo	ADM_Menu	1	MenuID	int	4	0	PK	NULL	NULL
+dbo	ADM_Menu	2	MenuName	varchar	500	0		NULL	NULL
+dbo	ADM_Menu	3	ActionLink	varchar	500	1		NULL	NULL
+dbo	ADM_Menu	4	ActionName	varchar	500	1		NULL	NULL
+dbo	ADM_Menu	5	ControllerName	varchar	500	1		NULL	NULL
+dbo	ADM_Menu	6	Title	varchar	500	0		NULL	NULL
+dbo	ADM_Menu	7	Svg	nvarchar	-1	0		NULL	NULL
+dbo	ADM_Menu	8	NavPosition	int	4	0		NULL	NULL
+dbo	ADM_Menu	9	IsActive	bit	1	0		NULL	NULL
+dbo	ADM_Menu	10	CreatedBy	varchar	50	0		NULL	NULL
+dbo	ADM_Menu	11	CreatedDate	datetime	8	0		NULL	NULL
+dbo	ADM_Menu	12	UpdatedBy	varchar	50	1		NULL	NULL
+dbo	ADM_Menu	13	UpdatedDate	datetime	8	1		NULL	NULL
+dbo	ADM_Menu	14	ModuleID	int	4	1		NULL	NULL
+dbo	ADM_Module	1	ModuleID	int	4	0	PK	ADM_Application	ApplicationID
+dbo	ADM_Module	2	ModuleName	varchar	200	1		ADM_Application	ApplicationID
+dbo	ADM_Module	3	Description	varchar	200	1		ADM_Application	ApplicationID
+dbo	ADM_Module	4	IsActive	bit	1	0		ADM_Application	ApplicationID
+dbo	ADM_Module	5	CreatedBy	varchar	50	0		ADM_Application	ApplicationID
+dbo	ADM_Module	6	CreatedDate	datetime	8	0		ADM_Application	ApplicationID
+dbo	ADM_Module	7	UpdatedBy	varchar	50	1		ADM_Application	ApplicationID
+dbo	ADM_Module	8	UpdatedDate	datetime	8	1		ADM_Application	ApplicationID
+dbo	ADM_Module	9	ApplicationID	int	4	0	FK	ADM_Application	ApplicationID
+dbo	ADM_PerformanceLog	1	PerformanceLogID	int	4	0	PK	NULL	NULL
+dbo	ADM_PerformanceLog	2	UserID	int	4	0		NULL	NULL
+dbo	ADM_PerformanceLog	3	RoleID	int	4	0		NULL	NULL
+dbo	ADM_PerformanceLog	4	SessionID	varchar	100	1		NULL	NULL
+dbo	ADM_PerformanceLog	5	ComponentName	varchar	200	1		NULL	NULL
+dbo	ADM_PerformanceLog	6	ActionName	varchar	200	1		NULL	NULL
+dbo	ADM_PerformanceLog	7	StartTime	datetime	8	1		NULL	NULL
+dbo	ADM_PerformanceLog	8	EndTime	datetime	8	1		NULL	NULL
+dbo	ADM_PerformanceLog	9	Duration	varchar	100	1		NULL	NULL
+dbo	ADM_PerformanceLog	10	CreatedBy	varchar	200	0		NULL	NULL
+dbo	ADM_PerformanceLog	11	CreatedOn	datetime	8	0		NULL	NULL
+dbo	ADM_QueryTracker	1	TrackID	int	4	0	PK	NULL	NULL
+dbo	ADM_QueryTracker	2	StoredProcedureID	int	4	1		NULL	NULL
+dbo	ADM_QueryTracker	3	TotalRecords	nvarchar	100	1		NULL	NULL
+dbo	ADM_QueryTracker	4	Totaltime	int	4	1		NULL	NULL
+dbo	ADM_QueryTracker	5	Size	nvarchar	100	1		NULL	NULL
+dbo	ADM_QueryTracker	6	CreatedDate	datetime	8	1		NULL	NULL
+dbo	ADM_QueryTracker	7	WebServer	varchar	-1	1		NULL	NULL
+dbo	ADM_QueryTracker	8	ActionUrl	varchar	-1	1		NULL	NULL
+dbo	ADM_QueryTracker	9	ErrorMessage	varchar	-1	1		NULL	NULL
+dbo	ADM_QueryTracker	10	ParallelSql	varchar	-1	1		NULL	NULL
+dbo	ADM_Role	1	RoleID	int	4	0	PK	NULL	NULL
+dbo	ADM_Role	2	RoleName	varchar	100	1		NULL	NULL
+dbo	ADM_Role	3	IsActive	bit	1	0		NULL	NULL
+dbo	ADM_Role	4	CreatedBy	nvarchar	800	0		NULL	NULL
+dbo	ADM_Role	5	CreatedDate	datetime	8	0		NULL	NULL
+dbo	ADM_Role	6	UpdatedBy	nvarchar	800	1		NULL	NULL
+dbo	ADM_Role	7	UpdatedDate	datetime	8	1		NULL	NULL
+dbo	ADM_RoleMenuMapping	1	RoleMenuMappingID	int	4	0	PK	ADM_Role	RoleID
+dbo	ADM_RoleMenuMapping	1	RoleMenuMappingID	int	4	0	PK	ADM_Menu	MenuID
+dbo	ADM_RoleMenuMapping	2	RoleID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_RoleMenuMapping	2	RoleID	int	4	0	FK	ADM_Menu	MenuID
+dbo	ADM_RoleMenuMapping	3	MenuID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_RoleMenuMapping	3	MenuID	int	4	0	FK	ADM_Menu	MenuID
+dbo	ADM_RoleMenuMapping	4	CreatedBy	nvarchar	800	0		ADM_Role	RoleID
+dbo	ADM_RoleMenuMapping	4	CreatedBy	nvarchar	800	0		ADM_Menu	MenuID
+dbo	ADM_RoleMenuMapping	5	CreatedDate	datetime	8	0		ADM_Role	RoleID
+dbo	ADM_RoleMenuMapping	5	CreatedDate	datetime	8	0		ADM_Menu	MenuID
+dbo	ADM_RoleMenuMapping	6	UpdatedBy	nvarchar	800	1		ADM_Role	RoleID
+dbo	ADM_RoleMenuMapping	6	UpdatedBy	nvarchar	800	1		ADM_Menu	MenuID
+dbo	ADM_RoleMenuMapping	7	UpdatedDate	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_RoleMenuMapping	7	UpdatedDate	datetime	8	1		ADM_Menu	MenuID
+dbo	ADM_RoleProfitCenterMapping	1	RoleProfitCenterMappingID	int	4	0	PK	ADM_Role	RoleID
+dbo	ADM_RoleProfitCenterMapping	2	RoleID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_RoleProfitCenterMapping	3	ProfitCenterID	int	4	0		ADM_Role	RoleID
+dbo	ADM_RoleProfitCenterMapping	4	IsActive	bit	1	0		ADM_Role	RoleID
+dbo	ADM_RoleProfitCenterMapping	5	CreatedBy	nvarchar	800	0		ADM_Role	RoleID
+dbo	ADM_RoleProfitCenterMapping	6	CreatedDate	datetime	8	0		ADM_Role	RoleID
+dbo	ADM_RoleProfitCenterMapping	7	UpdatedBy	nvarchar	800	1		ADM_Role	RoleID
+dbo	ADM_RoleProfitCenterMapping	8	UpdatedDate	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_SBU_Delete	1	SbuID	int	4	0	PK	NULL	NULL
+dbo	ADM_SBU_Delete	2	SbuName	nvarchar	200	1		NULL	NULL
+dbo	ADM_SBU_Delete	3	AffiliateID	int	4	1		NULL	NULL
+dbo	ADM_SBU_Delete	4	IsActive	bit	1	1		NULL	NULL
+dbo	ADM_SBU_Delete	5	CreatedBy	nvarchar	200	1		NULL	NULL
+dbo	ADM_SBU_Delete	6	CreatedDate	datetime	8	1		NULL	NULL
+dbo	ADM_SBU_Delete	7	UpdatedBy	nvarchar	200	1		NULL	NULL
+dbo	ADM_SBU_Delete	8	UpdatedDate	datetime	8	1		NULL	NULL
+dbo	ADM_Screen	1	ScreenID	int	4	0	PK	ADM_Menu	MenuID
+dbo	ADM_Screen	2	ScreenName	varchar	200	1		ADM_Menu	MenuID
+dbo	ADM_Screen	3	Description	varchar	200	1		ADM_Menu	MenuID
+dbo	ADM_Screen	4	IsActive	bit	1	0		ADM_Menu	MenuID
+dbo	ADM_Screen	5	CreatedBy	varchar	50	0		ADM_Menu	MenuID
+dbo	ADM_Screen	6	CreatedDate	datetime	8	0		ADM_Menu	MenuID
+dbo	ADM_Screen	7	UpdatedBy	varchar	50	1		ADM_Menu	MenuID
+dbo	ADM_Screen	8	UpdatedDate	datetime	8	1		ADM_Menu	MenuID
+dbo	ADM_Screen	9	MenuID	int	4	0	FK	ADM_Menu	MenuID
+dbo	ADM_Screen	10	IsDisplay	bit	1	1		ADM_Menu	MenuID
+dbo	ADM_StoredProcedure	1	StoredProcedureID	int	4	0	PK	NULL	NULL
+dbo	ADM_StoredProcedure	2	StoredProcedureName	nvarchar	200	1		NULL	NULL
+dbo	ADM_StoredProcedure	3	IsActive	bit	1	0		NULL	NULL
+dbo	ADM_StoredProcedure	4	CreatedBy	nvarchar	400	0		NULL	NULL
+dbo	ADM_StoredProcedure	5	CreatedOn	datetime	8	0		NULL	NULL
+dbo	ADM_StoredProcedure	6	UpdatedBy	nvarchar	400	1		NULL	NULL
+dbo	ADM_StoredProcedure	7	UpdatedOn	datetime	8	1		NULL	NULL
+dbo	ADM_User	1	UserID	int	4	0	PK	NULL	NULL
+dbo	ADM_User	2	Username	nvarchar	800	1		NULL	NULL
+dbo	ADM_User	3	Email	nvarchar	800	1		NULL	NULL
+dbo	ADM_User	4	FirstName	nvarchar	400	1		NULL	NULL
+dbo	ADM_User	5	LastName	nvarchar	400	1		NULL	NULL
+dbo	ADM_User	6	EmployeeID	nvarchar	100	1		NULL	NULL
+dbo	ADM_User	7	IsDeleted	bit	1	0		NULL	NULL
+dbo	ADM_User	8	IsActive	bit	1	0		NULL	NULL
+dbo	ADM_User	9	LastLoginDate	datetime	8	1		NULL	NULL
+dbo	ADM_User	10	CreatedBy	nvarchar	800	0		NULL	NULL
+dbo	ADM_User	11	CreatedDate	datetime	8	0		NULL	NULL
+dbo	ADM_User	12	UpdatedBy	nvarchar	800	1		NULL	NULL
+dbo	ADM_User	13	UpdatedDate	datetime	8	1		NULL	NULL
+dbo	ADM_User	14	AffiliateID	int	4	1		NULL	NULL
+dbo	ADM_UserRoleMapping	1	UserRoleMappingID	int	4	0	PK	ADM_User	UserID
+dbo	ADM_UserRoleMapping	1	UserRoleMappingID	int	4	0	PK	ADM_Role	RoleID
+dbo	ADM_UserRoleMapping	2	UserID	int	4	0	FK	ADM_User	UserID
+dbo	ADM_UserRoleMapping	2	UserID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_UserRoleMapping	3	RoleID	int	4	0	FK	ADM_User	UserID
+dbo	ADM_UserRoleMapping	3	RoleID	int	4	0	FK	ADM_Role	RoleID
+dbo	ADM_UserRoleMapping	4	IsActive	bit	1	0		ADM_User	UserID
+dbo	ADM_UserRoleMapping	4	IsActive	bit	1	0		ADM_Role	RoleID
+dbo	ADM_UserRoleMapping	5	IsDeleted	bit	1	0		ADM_User	UserID
+dbo	ADM_UserRoleMapping	5	IsDeleted	bit	1	0		ADM_Role	RoleID
+dbo	ADM_UserRoleMapping	6	IsSelectedRole	bit	1	0		ADM_User	UserID
+dbo	ADM_UserRoleMapping	6	IsSelectedRole	bit	1	0		ADM_Role	RoleID
+dbo	ADM_UserRoleMapping	7	CreatedBy	varchar	50	0		ADM_User	UserID
+dbo	ADM_UserRoleMapping	7	CreatedBy	varchar	50	0		ADM_Role	RoleID
+dbo	ADM_UserRoleMapping	8	CreatedDate	datetime	8	0		ADM_User	UserID
+dbo	ADM_UserRoleMapping	8	CreatedDate	datetime	8	0		ADM_Role	RoleID
+dbo	ADM_UserRoleMapping	9	UpdatedBy	varchar	50	1		ADM_User	UserID
+dbo	ADM_UserRoleMapping	9	UpdatedBy	varchar	50	1		ADM_Role	RoleID
+dbo	ADM_UserRoleMapping	10	UpdatedDate	datetime	8	1		ADM_User	UserID
+dbo	ADM_UserRoleMapping	10	UpdatedDate	datetime	8	1		ADM_Role	RoleID
+dbo	ADM_UserToken	1	ID	int	4	0	PK	ADM_User	UserID
+dbo	ADM_UserToken	2	SessionID	nvarchar	1000	1		ADM_User	UserID
+dbo	ADM_UserToken	3	Token	varchar	500	1		ADM_User	UserID
+dbo	ADM_UserToken	4	IsActive	bit	1	1		ADM_User	UserID
+dbo	ADM_UserToken	5	UserID	int	4	0	FK	ADM_User	UserID
+dbo	ADM_UserToken	6	CreatedBy	varchar	500	1		ADM_User	UserID
+dbo	ADM_UserToken	7	CreatedOn	datetime	8	1		ADM_User	UserID
+dbo	LOG_AdminActivities	1	LogID	int	4	0	PK	NULL	NULL
+dbo	LOG_AdminActivities	2	TableName	nvarchar	200	0		NULL	NULL
+dbo	LOG_AdminActivities	3	OldValue	xml	-1	1		NULL	NULL
+dbo	LOG_AdminActivities	4	NewValue	xml	-1	0		NULL	NULL
+dbo	LOG_AdminActivities	5	IdentityColumnID	int	4	0		NULL	NULL
+dbo	LOG_AdminActivities	6	ActivityType	nvarchar	100	0		NULL	NULL
+dbo	LOG_AdminActivities	7	CreatedBy	nvarchar	100	0		NULL	NULL
+dbo	LOG_AdminActivities	8	CreatedDateTime	datetime	8	0		NULL	NULL
+dbo	MST_AccessType	1	AccessTypeID	int	4	0	PK	ADM_Role	RoleID
+dbo	MST_AccessType	2	AccessTypeName	varchar	50	0		ADM_Role	RoleID
+dbo	MST_AccessType	3	Description	nvarchar	1000	0		ADM_Role	RoleID
+dbo	MST_AccessType	4	RoleID	int	4	0	FK	ADM_Role	RoleID
+dbo	MST_AccessType	5	IsActive	bit	1	0		ADM_Role	RoleID
+dbo	MST_AccessType	6	CreatedBy	nvarchar	800	0		ADM_Role	RoleID
+dbo	MST_AccessType	7	CreatedDate	datetime	8	0		ADM_Role	RoleID
+dbo	MST_AccessType	8	UpdatedBy	nvarchar	800	1		ADM_Role	RoleID
+dbo	MST_AccessType	9	UpdatedDate	datetime	8	1		ADM_Role	RoleID
+dbo	MST_Affiliate	1	AffiliateID	int	4	0	PK	NULL	NULL
+dbo	MST_Affiliate	2	AffiliateName	varchar	200	0		NULL	NULL
+dbo	MST_Affiliate	3	IsActive	bit	1	0		NULL	NULL
+dbo	MST_Affiliate	4	CreatedBy	nvarchar	800	0		NULL	NULL
+dbo	MST_Affiliate	5	CreatedDate	datetime	8	0		NULL	NULL
+dbo	MST_Affiliate	6	UpdatedBy	nvarchar	800	1		NULL	NULL
+dbo	MST_Affiliate	7	UpdatedDate	datetime	8	1		NULL	NULL
+dbo	MST_API	1	APIID	int	4	0	PK	NULL	NULL
+dbo	MST_API	2	APIName	varchar	2000	0		NULL	NULL
+dbo	MST_API	3	LayerName	varchar	2000	1		NULL	NULL
+dbo	MST_API	4	IsActive	bit	1	0		NULL	NULL
+dbo	MST_API	5	CreatedBy	varchar	50	0		NULL	NULL
+dbo	MST_API	6	CreatedDate	datetime	8	0		NULL	NULL
+dbo	MST_API	7	UpdatedBy	varchar	50	1		NULL	NULL
+dbo	MST_API	8	UpdatedDate	datetime	8	1		NULL	NULL
+dbo	MST_ConfigurationMaster	1	ConfigurationID	int	4	0	PK	NULL	NULL
+dbo	MST_ConfigurationMaster	2	ConfiguationName	varchar	500	0		NULL	NULL
+dbo	MST_ConfigurationMaster	3	ConfiguationValue	varchar	500	1		NULL	NULL
+dbo	MST_ConfigurationMaster	4	ConfigurationType	varchar	500	1		NULL	NULL
+dbo	MST_ConfigurationMaster	5	IsActive	bit	1	0		NULL	NULL
+dbo	MST_ConfigurationMaster	6	CreatedBy	varchar	50	0		NULL	NULL
+dbo	MST_ConfigurationMaster	7	CreatedDate	datetime	8	0		NULL	NULL
+dbo	MST_ConfigurationMaster	8	UpdatedBy	varchar	50	1		NULL	NULL
+dbo	MST_ConfigurationMaster	9	UpdatedDate	datetime	8	1		NULL	NULL
+dbo	MST_Status	1	StatusID	int	4	0	PK	NULL	NULL
+dbo	MST_Status	2	StatusName	varchar	500	0		NULL	NULL
+dbo	MST_Status	3	StatusDisplayName	varchar	500	1		NULL	NULL
+dbo	MST_Status	4	StatusDisplayNameAr	nvarchar	1000	1		NULL	NULL
+dbo	MST_Status	5	StatusType	varchar	50	0		NULL	NULL
+dbo	MST_Status	6	IsActive	bit	1	0		NULL	NULL
+dbo	MST_Status	7	CreatedBy	varchar	50	0		NULL	NULL
+dbo	MST_Status	8	CreatedDate	datetime	8	0		NULL	NULL
+dbo	MST_Status	9	UpdateDate	datetime	8	1		NULL	NULL
+dbo	MST_Status	10	UpdatedBy	varchar	50	1		NULL	NULL
+dbo	SF_Contribution_Margin	1	RecID	int	4	0	PK	NULL	NULL
+dbo	SF_Contribution_Margin	2	YEAR	varchar	4	1		NULL	NULL
+dbo	SF_Contribution_Margin	3	Month	varchar	2	1		NULL	NULL
+dbo	SF_Contribution_Margin	4	CompanyCode	varchar	100	1		NULL	NULL
+dbo	SF_Contribution_Margin	5	CompanyCountryCode	varchar	100	1		NULL	NULL
+dbo	SF_Contribution_Margin	6	ProfitCenter	varchar	100	1		NULL	NULL
+dbo	SF_Contribution_Margin	7	SaleQuantityTo	decimal	17	1		NULL	NULL
+dbo	SF_Contribution_Margin	8	TotalRevenueInUSD	decimal	17	1		NULL	NULL
+dbo	SF_Contribution_Margin	9	TotalRevenueInSAR	decimal	17	1		NULL	NULL
+dbo	SF_Contribution_Margin	10	TotalCOGSInSAR	decimal	17	1		NULL	NULL
+dbo	SF_Contribution_Margin	11	TotalCOGSInUSD	decimal	17	1		NULL	NULL
+dbo	SF_Contribution_Margin	12	LogisticsCostInSAR	decimal	17	1		NULL	NULL
+dbo	SF_Contribution_Margin	13	LogisticsCostInUSD	decimal	17	1		NULL	NULL
+dbo	SF_Contribution_Margin	14	ContributionMarginInSAR	decimal	17	1		NULL	NULL
+dbo	SF_Contribution_Margin	15	ContributionMarginInUSD	decimal	17	1		NULL	NULL
+dbo	SF_Contribution_Margin	16	CreatedOn	datetime	8	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	1	RecID	int	4	0	PK	NULL	NULL
+dbo	SF_Historic_COGS_CM	2	FiscalYear	int	4	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	3	FiscalMonth	int	4	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	4	CompanyCode	varchar	200	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	5	Plant	nvarchar	400	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	6	ProductionLine	varchar	200	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	7	HeaderMaterialNumber	varchar	200	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	8	ProfitCenter	varchar	50	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	9	TransactionCurrency	varchar	50	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	10	PostedUOM	varchar	50	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	11	ProductionQuantityInTons	decimal	17	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	12	TotalCOGSInLocalCurrency	decimal	17	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	13	TotalCOGSInSAR	decimal	17	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	14	TotalCOGSInMillionSAR	decimal	17	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	15	TotalCOGSInUSD	decimal	17	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	16	TotalCOGSInMillionUSD	decimal	17	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	17	COGSPerTonInLocalCurrency	decimal	17	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	18	COGSPerTonInSAR	decimal	17	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	19	COGSPerTonInMillionSAR	decimal	17	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	20	COGSPerTonInUSD	decimal	17	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	21	COGSPerTonInMillionUSD	decimal	17	1		NULL	NULL
+dbo	SF_Historic_COGS_CM	22	CreatedOn	datetime	8	1		NULL	NULL
+dbo	SF_Historic_SalesRevenue	1	RecID	int	4	0	PK	NULL	NULL
+dbo	SF_Historic_SalesRevenue	2	Year	int	4	0		NULL	NULL
+dbo	SF_Historic_SalesRevenue	3	Month	int	4	0		NULL	NULL
+dbo	SF_Historic_SalesRevenue	4	CompanyCode	varchar	100	1		NULL	NULL
+dbo	SF_Historic_SalesRevenue	5	CompanyCountryCode	varchar	100	1		NULL	NULL
+dbo	SF_Historic_SalesRevenue	6	ProfitCenter	varchar	100	1		NULL	NULL
+dbo	SF_Historic_SalesRevenue	7	Plant	varchar	100	1		NULL	NULL
+dbo	SF_Historic_SalesRevenue	8	SalesOrg	varchar	100	1		NULL	NULL
+dbo	SF_Historic_SalesRevenue	9	SalesDistrict	varchar	100	1		NULL	NULL
+dbo	SF_Historic_SalesRevenue	10	ShipToCountry	varchar	100	1		NULL	NULL
+dbo	SF_Historic_SalesRevenue	11	CurrencyCode	varchar	100	1		NULL	NULL
+dbo	SF_Historic_SalesRevenue	12	TotalRevenueInUSD	decimal	17	1		NULL	NULL
+dbo	SF_Historic_SalesRevenue	13	TotalRevenueInMillionUSD	decimal	17	1		NULL	NULL
+dbo	SF_Historic_SalesRevenue	14	TotalRevenueInSAR	decimal	17	1		NULL	NULL
+dbo	SF_Historic_SalesRevenue	15	TotalRevenueInMillionSAR	decimal	17	1		NULL	NULL
+dbo	SF_Historic_SalesRevenue	16	SaleQuantityToInMetricTon	decimal	17	1		NULL	NULL
+dbo	SF_Historic_SalesRevenue	17	AverageSellingPriceInUSD	decimal	17	1		NULL	NULL
+dbo	SF_Historic_SalesRevenue	18	AverageSellingPriceInSAR	decimal	17	1		NULL	NULL
+dbo	SF_Historic_SalesRevenue	19	CreatedOn	datetime	8	1		NULL	NULL
+dbo	sysdiagrams	1	name	sysname	256	0		NULL	NULL
+dbo	sysdiagrams	2	principal_id	int	4	0		NULL	NULL
+dbo	sysdiagrams	3	diagram_id	int	4	0	PK	NULL	NULL
+dbo	sysdiagrams	4	version	int	4	1		NULL	NULL
+dbo	sysdiagrams	5	definition	varbinary	-1	1		NULL	NULL
+dbo	TRN_Recommendation	1	RecommendationID	int	4	0	PK	NULL	NULL
+dbo	TRN_Recommendation	2	ProfitCenterID	int	4	1		NULL	NULL
+dbo	TRN_Recommendation	3	ProfitCenter	varchar	50	1		NULL	NULL
+dbo	TRN_Recommendation	4	calMonth	int	4	1		NULL	NULL
+dbo	TRN_Recommendation	5	calYear	int	4	1		NULL	NULL
+dbo	TRN_Recommendation	6	Production_Message	varchar	5000	1		NULL	NULL
+dbo	TRN_Recommendation	7	Production_Plant	varchar	50	1		NULL	NULL
+dbo	TRN_Recommendation	8	Production_VolumeinMT	float	8	1		NULL	NULL
+dbo	TRN_Recommendation	9	Production_ForCountry	varchar	50	1		NULL	NULL
+dbo	TRN_Recommendation	10	Production_Capacity	float	8	1		NULL	NULL
+dbo	TRN_Recommendation	11	Production_CostPerTon	float	8	1		NULL	NULL
+dbo	TRN_Recommendation	12	Sales_Message	varchar	5000	1		NULL	NULL
+dbo	TRN_Recommendation	13	Sales_ForCountry	varchar	50	1		NULL	NULL
+dbo	TRN_Recommendation	14	Sales_FromVolumeinMT	float	8	1		NULL	NULL
+dbo	TRN_Recommendation	15	Sales_ToVolumeinMT	float	8	1		NULL	NULL
+dbo	TRN_Recommendation	16	Sales_Demand	float	8	1		NULL	NULL
+dbo	TRN_Recommendation	17	Sales_SalesPriceinUSD	float	8	1		NULL	NULL
+dbo	TRN_Recommendation	18	CM_ABP	float	8	1		NULL	NULL
+dbo	TRN_Recommendation	19	CM_SF	float	8	1		NULL	NULL
+dbo	TRN_Recommendation	20	IsActive	bit	1	0		NULL	NULL
+dbo	TRN_Recommendation	21	StatusID	int	4	0		NULL	NULL
+dbo	TRN_Recommendation	22	CreatedBy	nvarchar	800	0		NULL	NULL
+dbo	TRN_Recommendation	23	CreatedDate	datetime	8	0		NULL	NULL
+dbo	TRN_Recommendation	24	UpdatedBy	nvarchar	800	1		NULL	NULL
+dbo	TRN_Recommendation	25	UpdatedDate	datetime	8	1		NULL	NULL
+dbo	TRN_Recommendation	26	Comments	nvarchar	-1	1		NULL	NULL
+dbo	TRN_Recommendation	27	ActionTakenBy	varchar	50	1		NULL	NULL
+dbo	TRN_Recommendation	28	WorkFlowStageName	varchar	500	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	1	RecommendationID	int	4	0		NULL	NULL
+dbo	TRN_Recommendation_Bkp	2	ProfitCenterID	int	4	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	3	ProfitCenter	varchar	50	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	4	calMonth	int	4	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	5	calYear	int	4	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	6	Production_Message	varchar	5000	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	7	Production_Plant	varchar	50	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	8	Production_VolumeinMT	float	8	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	9	Production_ForCountry	varchar	50	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	10	Production_Capacity	float	8	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	11	Production_CostPerTon	float	8	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	12	Sales_Message	varchar	5000	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	13	Sales_ForCountry	varchar	50	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	14	Sales_FromVolumeinMT	float	8	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	15	Sales_ToVolumeinMT	float	8	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	16	Sales_Demand	float	8	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	17	Sales_SalesPriceinUSD	float	8	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	18	CM_ABP	float	8	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	19	CM_SF	float	8	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	20	IsActive	bit	1	0		NULL	NULL
+dbo	TRN_Recommendation_Bkp	21	CreatedBy	nvarchar	800	0		NULL	NULL
+dbo	TRN_Recommendation_Bkp	22	CreatedDate	datetime	8	0		NULL	NULL
+dbo	TRN_Recommendation_Bkp	23	UpdatedBy	nvarchar	800	1		NULL	NULL
+dbo	TRN_Recommendation_Bkp	24	UpdatedDate	datetime	8	1		NULL	NULL
+dbo	TRN_RecommendationDetails	1	RecommendationDetailsID	int	4	0	PK	TRN_Recommendation	RecommendationID
+dbo	TRN_RecommendationDetails	2	RecommendationID	int	4	0	FK	TRN_Recommendation	RecommendationID
+dbo	TRN_RecommendationDetails	3	RecommendationTypeID	int	4	0		TRN_Recommendation	RecommendationID
+dbo	TRN_RecommendationDetails	4	RecommendationTypeName	varchar	50	1		TRN_Recommendation	RecommendationID
+dbo	TRN_RecommendationDetails	5	Contributors	varchar	5000	1		TRN_Recommendation	RecommendationID
+dbo	TRN_RecommendationDetails	6	UnderlyingFacts	varchar	5000	1		TRN_Recommendation	RecommendationID
+dbo	TRN_UserLoginSession	1	UserLoginSessionID	int	4	0	PK	ADM_User	UserID
+dbo	TRN_UserLoginSession	2	UserID	int	4	0	FK	ADM_User	UserID
+dbo	TRN_UserLoginSession	3	SessionID	varchar	5000	0		ADM_User	UserID
+dbo	TRN_UserLoginSession	4	IsActive	bit	1	0		ADM_User	UserID
+dbo	TRN_UserLoginSession	5	CreatedBy	nvarchar	400	1		ADM_User	UserID
+dbo	TRN_UserLoginSession	6	CreatedDate	datetime	8	0		ADM_User	UserID
+dbo	TRN_UserLoginSession	7	UpdatedBy	nvarchar	400	1		ADM_User	UserID
+dbo	TRN_UserLoginSession	8	UpdatedOn	datetime	8	1		ADM_User	UserID
+dbo	vw_sf_contribution_margin_Delete	1	RecID	int	4	0	PK	NULL	NULL
+dbo	vw_sf_contribution_margin_Delete	2	YEAR	varchar	4	1		NULL	NULL
+dbo	vw_sf_contribution_margin_Delete	3	Month	varchar	2	1		NULL	NULL
+dbo	vw_sf_contribution_margin_Delete	4	Company_Country_code	varchar	50	1		NULL	NULL
+dbo	vw_sf_contribution_margin_Delete	5	Company_Code	varchar	50	1		NULL	NULL
+dbo	vw_sf_contribution_margin_Delete	6	Profit_Center	varchar	30	1		NULL	NULL
+dbo	vw_sf_contribution_margin_Delete	7	Plant	varchar	20	1		NULL	NULL
+dbo	vw_sf_contribution_margin_Delete	8	posted_unit_of_measure	varchar	20	1		NULL	NULL
+dbo	vw_sf_contribution_margin_Delete	9	Sale_Quantity_TO	decimal	17	1		NULL	NULL
+dbo	vw_sf_contribution_margin_Delete	10	transaction_currency	varchar	20	1		NULL	NULL
+dbo	vw_sf_contribution_margin_Delete	11	Total_Revenue_SAR	decimal	17	1		NULL	NULL
+dbo	vw_sf_contribution_margin_Delete	12	COGS_SAR	decimal	17	1		NULL	NULL
+dbo	vw_sf_contribution_margin_Delete	13	contribution_margin_SAR	decimal	17	1		NULL	NULL
+dbo	vw_sf_contribution_margin_Delete	14	contribution_margin_USD	decimal	17	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm	1	RecID	int	4	0	PK	NULL	NULL
+dbo	vw_sf_historic_cogs_cm	2	fiscal_year	int	4	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm	3	fiscal_Month	int	4	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm	4	company_code	nvarchar	400	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm	5	plant	nvarchar	400	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm	6	production_line	nvarchar	400	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm	7	header_material_number	nvarchar	400	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm	8	Total_cogs_MillionSAR	decimal	17	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm	9	Total_cogs_MillionUSD	decimal	17	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm	10	Contribution_Margin	decimal	17	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm_source_view	1	RecID	int	4	0	PK	NULL	NULL
+dbo	vw_sf_historic_cogs_cm_source_view	2	fiscal_year	int	4	0		NULL	NULL
+dbo	vw_sf_historic_cogs_cm_source_view	3	fiscal_Month	int	4	0		NULL	NULL
+dbo	vw_sf_historic_cogs_cm_source_view	4	company_code	nvarchar	100	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm_source_view	5	plant	nvarchar	100	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm_source_view	6	production_line	nvarchar	100	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm_source_view	7	header_material_number	nvarchar	100	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm_source_view	8	production_quantity_tons	decimal	17	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm_source_view	9	Total_cogs	decimal	17	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm_source_view	10	cogs_per_ton	decimal	17	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm_source_view	11	transaction_currency	varchar	50	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm_source_view	12	posted_unit_of_measure	varchar	50	1		NULL	NULL
+dbo	vw_sf_historic_cogs_cm_source_view	13	CreatedOn	datetime	8	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue	1	RecID	int	4	0	PK	NULL	NULL
+dbo	vw_sf_historic_salesrevenue	2	Year	int	4	0		NULL	NULL
+dbo	vw_sf_historic_salesrevenue	3	Month	int	4	0		NULL	NULL
+dbo	vw_sf_historic_salesrevenue	4	Company_Code	varchar	100	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue	5	Profit_Center	varchar	100	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue	6	Plant	varchar	100	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue	7	Sales_Org	varchar	100	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue	8	total_revenue_in_usd	decimal	17	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue	9	total_revenue_in_MillionUSD	decimal	17	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue	10	total_revenue_in_MillionSAR	decimal	17	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue	11	sale_quantity_in_MetricTon	decimal	17	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue	12	average_selling_price_in_USD	decimal	17	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue	13	average_selling_price_in_SAR	decimal	17	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue_source_view	1	RecID	int	4	0	PK	NULL	NULL
+dbo	vw_sf_historic_salesrevenue_source_view	2	Year	int	4	0		NULL	NULL
+dbo	vw_sf_historic_salesrevenue_source_view	3	Month	int	4	0		NULL	NULL
+dbo	vw_sf_historic_salesrevenue_source_view	5	Company_Country_code	varchar	50	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue_source_view	6	Company_Code	varchar	50	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue_source_view	7	Profit_Center	varchar	50	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue_source_view	8	Plant	varchar	50	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue_source_view	9	Sales_Org	varchar	100	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue_source_view	10	Sales_district	varchar	100	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue_source_view	13	Ship_to_Country	varchar	100	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue_source_view	15	total_revenue_in_usd	decimal	17	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue_source_view	16	sale_quantity_in_ton	decimal	17	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue_source_view	17	average_selling_price_in_usd	decimal	17	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue_source_view	18	currency_code	varchar	50	1		NULL	NULL
+dbo	vw_sf_historic_salesrevenue_source_view	19	CreatedOn	datetime	8	1		NULL	NULL
+dbo	VW_Web_SAC_COGS_CM	1	RecID	int	4	0	PK	NULL	NULL
+dbo	VW_Web_SAC_COGS_CM	2	sal_year	int	4	1		NULL	NULL
+dbo	VW_Web_SAC_COGS_CM	3	sal_month	int	4	1		NULL	NULL
+dbo	VW_Web_SAC_COGS_CM	4	date_sales_revmonth	varchar	50	1		NULL	NULL
+dbo	VW_Web_SAC_COGS_CM	5	company_code	varchar	50	1		NULL	NULL
+dbo	VW_Web_SAC_COGS_CM	6	product_id	varchar	50	1		NULL	NULL
+dbo	VW_Web_SAC_COGS_CM	7	profit_centerid	varchar	50	1		NULL	NULL
+dbo	VW_Web_SAC_COGS_CM	8	sales_volumes	decimal	17	1		NULL	NULL
+dbo	VW_Web_SAC_COGS_CM	9	sales_revs	decimal	17	1		NULL	NULL
+dbo	VW_Web_SAC_COGS_CM	10	MI_Price	decimal	17	1		NULL	NULL
+dbo	VW_Web_SAC_COGS_CM	11	logistic_cost	decimal	17	1		NULL	NULL
+dbo	VW_Web_SAC_COGS_CM	12	mfg_variable_cost_MillionSAR	decimal	17	1		NULL	NULL
+dbo	VW_Web_SAC_COGS_CM	13	Contri_Margin_MillionSAR	decimal	17	1		NULL	NULL
+dbo	VW_Web_SalesandRev_Salesrev_ASP	1	RecID	int	4	0	PK	NULL	NULL
+dbo	VW_Web_SalesandRev_Salesrev_ASP	2	sal_year	int	4	0		NULL	NULL
+dbo	VW_Web_SalesandRev_Salesrev_ASP	3	sal_month	int	4	0		NULL	NULL
+dbo	VW_Web_SalesandRev_Salesrev_ASP	4	Date_Sales_RevMonth	varchar	50	1		NULL	NULL
+dbo	VW_Web_SalesandRev_Salesrev_ASP	5	company_codeid	varchar	50	1		NULL	NULL
+dbo	VW_Web_SalesandRev_Salesrev_ASP	6	company_codeidoriginal	varchar	10	1		NULL	NULL
+dbo	VW_Web_SalesandRev_Salesrev_ASP	7	productid	varchar	50	1		NULL	NULL
+dbo	VW_Web_SalesandRev_Salesrev_ASP	8	profit_centerid	varchar	4	1		NULL	NULL
+dbo	VW_Web_SalesandRev_Salesrev_ASP	9	sales_regionid	varchar	50	1		NULL	NULL
+dbo	VW_Web_SalesandRev_Salesrev_ASP	10	sales_volume_in_MetricTon	decimal	17	0		NULL	NULL
+dbo	VW_Web_SalesandRev_Salesrev_ASP	11	sales_revenue_in_MillionSAR	decimal	17	0		NULL	NULL
+dbo	VW_Web_SalesandRev_Salesrev_ASP	12	sales_revenue_uom	varchar	50	1		NULL	NULL
+dbo	VW_Web_SalesandRev_Salesrev_ASP	13	asp_in_SAR	decimal	17	0		NULL	NULL
+dbo	WareHouse	1	WareHouseID	int	4	0	PK	NULL	NULL
+dbo	WareHouse	2	WareHouseName	nvarchar	200	1		NULL	NULL
+dbo	WareHouse	3	ProfitCenterID	int	4	1		NULL	NULL
+dbo	WareHouse	4	IsActive	bit	1	1		NULL	NULL
+dbo	WareHouse	5	CreatedBy	nvarchar	200	1		NULL	NULL
+dbo	WareHouse	6	CreatedDate	datetime	8	1		NULL	NULL
+dbo	WareHouse	7	UpdatedBy	nvarchar	200	1		NULL	NULL
+dbo	WareHouse	8	UpdatedDate	datetime	8	1		NULL	NULL
+dbo	WorkflowDelegation	1	DelegationId	int	4	0	PK	NULL	NULL
+dbo	WorkflowDelegation	2	ProcessId	int	4	0		NULL	NULL
+dbo	WorkflowDelegation	3	FromUserId	nvarchar	200	0		NULL	NULL
+dbo	WorkflowDelegation	4	ToUserId	nvarchar	200	0		NULL	NULL
+dbo	WorkflowDelegation	5	FromDate	date	3	0		NULL	NULL
+dbo	WorkflowDelegation	6	ToDate	date	3	0		NULL	NULL
+dbo	WorkflowDelegation	7	IsEffective	bit	1	0		NULL	NULL
+dbo	WorkflowDelegation	8	CreatedBy	nvarchar	200	1		NULL	NULL
+dbo	WorkflowDelegation	9	CreatedDate	datetime	8	1		NULL	NULL
+dbo	WorkflowDelegation	10	UpdatedBy	nvarchar	200	1		NULL	NULL
+dbo	WorkflowDelegation	11	UpdatedDate	datetime	8	1		NULL	NULL
+dbo	WorkflowRedirects	1	Id	int	4	0	PK	NULL	NULL
+dbo	WorkflowRedirects	2	WorkflowNumber	nvarchar	100	1		NULL	NULL
+dbo	WorkflowRedirects	3	RedirectedFrom	nvarchar	200	1		NULL	NULL
+dbo	WorkflowRedirects	4	RedirectedFromEmail	nvarchar	200	1		NULL	NULL
+dbo	WorkflowRedirects	5	RedirectedTo	nvarchar	200	1		NULL	NULL
+dbo	WorkflowRedirects	6	RedirectedToEmail	nvarchar	200	1		NULL	NULL
+dbo	WorkflowRedirects	7	RedirectedOn	datetime	8	1		NULL	NULL
+dbo	WorkflowRedirects	8	Reason	nvarchar	1000	1		NULL	NULL
+dbo	WorkflowRedirects	9	PendingWithId	nvarchar	200	1		NULL	NULL
+dbo	WorkflowRedirects	10	PendingWithName	nvarchar	200	1		NULL	NULL
+dbo	WorkflowRedirects	11	PendingWithDesignate	nvarchar	200	1		NULL	NULL
+dbo	WorkflowRedirects	12	AssignedDate	date	3	1		NULL	NULL
+dbo	WorkflowRedirects	13	Department	nvarchar	200	1		NULL	NULL
+dbo	WorkRecommendationActions	1	Id	int	4	0	PK	WorkRecommendations	Id
+dbo	WorkRecommendationActions	2	WorkRecommendationId	int	4	1	FK	WorkRecommendations	Id
+dbo	WorkRecommendationActions	3	StageName	varchar	100	1		WorkRecommendations	Id
+dbo	WorkRecommendationActions	4	ActionTaken	varchar	50	1		WorkRecommendations	Id
+dbo	WorkRecommendationActions	5	ActionBy	varchar	100	1		WorkRecommendations	Id
+dbo	WorkRecommendationActions	6	Comments	nvarchar	1000	1		WorkRecommendations	Id
+dbo	WorkRecommendationActions	7	ActionTime	datetime	8	1		WorkRecommendations	Id
+dbo	WorkRecommendations	1	Id	int	4	0	PK	NULL	NULL
+dbo	WorkRecommendations	2	RequestNumber	varchar	20	1		NULL	NULL
+dbo	WorkRecommendations	3	RecommendationDescription	nvarchar	1000	1		NULL	NULL
+dbo	WorkRecommendations	4	RevenueForecast	decimal	9	1		NULL	NULL
+dbo	WorkRecommendations	5	AIForecast	decimal	9	1		NULL	NULL
+dbo	WorkRecommendations	6	AIChangePercent	decimal	5	1		NULL	NULL
+dbo	WorkRecommendations	7	Status	varchar	50	1		NULL	NULL
+dbo	WorkRecommendations	8	CurrentAction	varchar	50	1		NULL	NULL
+dbo	WorkRecommendations	9	CreatedOn	datetime	8	1		NULL	NULL
