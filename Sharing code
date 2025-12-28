@@ -1,275 +1,58 @@
-public class ClosingInventoryBalanceDetailChartTests
-{
-    private Mock<IDashboardRepository> _mockRepository;
-    private Mock<IMoq> _mockOtherDependencies; // Add other dependencies as needed
-    private ClosingInventoryService _service; // Replace with your actual service class name
-
-    public ClosingInventoryBalanceDetailChartTests()
-    {
-        _mockRepository = new Mock<IDashboardRepository>();
-        _mockOtherDependencies = new Mock<IMoq>();
-        _service = new ClosingInventoryService(_mockRepository.Object, _mockOtherDependencies.Object);
-    }
-
-    [Fact]
-    public async Task GetClosingInventoryBalanceDetailChart_SelectedMonthEmpty_UsesFromDate()
-    {
-        // Arrange
-        var request = new ChartDataFilterReq 
-        { 
-            FromDate = new DateTime(2023, 12, 1),
-            ToDate = new DateTime(2023, 12, 31),
-            SelectedMonth = "",
-            Metrics = 1
-        };
-        var expectedResult = new List<InventoryItem>
-        {
-            new InventoryItem { InventoryType = "Finished Goods", Value = 100, Volume = 10 },
-            new InventoryItem { InventoryType = "Raw Materials", Value = 200, Volume = 20 }
-        };
-
-        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.IsAny<ChartDataFilterReq>()))
-                      .ReturnsAsync(expectedResult);
-
-        // Act
-        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
-
-        // Assert
-        result.StatusCode.Should().Be(SabicConstants.SuccessStatusCode);
-        result.FGChartData.Should().NotBeNull();
-        result.RMChartData.Should().NotBeNull();
-    }
-
-    [Fact]
-    public async Task GetClosingInventoryBalanceDetailChart_WithSelectedMonth_UsesSelectedMonth()
-    {
-        // Arrange
-        var request = new ChartDataFilterReq 
-        { 
-            SelectedMonth = "DEC 2023",
-            Metrics = 0
-        };
-        var expectedResult = new List<InventoryItem>
-        {
-            new InventoryItem { InventoryType = "Finished Goods", Value = 100, Volume = 10 }
-        };
-
-        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.Is<ChartDataFilterReq>(r => 
-            r.SelectedMonth == "DEC 2023")))
-                      .ReturnsAsync(expectedResult);
-
-        // Act
-        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
-
-        // Assert
-        result.StatusCode.Should().Be(SabicConstants.SuccessStatusCode);
-        result.FGClosingInventoryBalanceDetailsChart.Should().NotBeNull();
-    }
-
-    [Theory]
-    [InlineData(1, "Value")]
-    [InlineData(0, "Volume")]
-    public async Task GetClosingInventoryBalanceDetailChart_DifferentMetrics_CallsGetFilteredWithCorrectMetric(int metrics, string expectedMetric)
-    {
-        // Arrange
-        var request = new ChartDataFilterReq { Metrics = metrics, FromDate = DateTime.Now, ToDate = DateTime.Now };
-        var resultData = new List<InventoryItem> { new InventoryItem { InventoryType = "Finished Goods" } };
-
-        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.IsAny<ChartDataFilterReq>()))
-                      .ReturnsAsync(resultData);
-
-        // Act
-        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
-
-        // Assert
-        result.StatusCode.Should().Be(SabicConstants.SuccessStatusCode);
-    }
-
-    [Fact]
-    public async Task GetClosingInventoryBalanceDetailChart_FGResultOnly_SetsFGPropertiesOnly()
-    {
-        // Arrange
-        var request = new ChartDataFilterReq { FromDate = DateTime.Now, ToDate = DateTime.Now, Metrics = 1 };
-        var fgData = new List<InventoryItem> { new InventoryItem { InventoryType = "Finished Goods", Value = 100 } };
-        var allData = new List<InventoryItem>(fgData); // No RM data
-
-        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.IsAny<ChartDataFilterReq>()))
-                      .ReturnsAsync(allData);
-
-        // Act
-        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
-
-        // Assert
-        result.FGChartData.Should().NotBeNull();
-        result.FGClosingInventoryBalanceDetailsChart.Should().NotBeNull();
-        result.RMChartData.Should().BeNull();
-        result.RMClosingInventoryBalanceDetailsChart.Should().BeNull();
-        result.StatusCode.Should().Be(SabicConstants.SuccessStatusCode);
-    }
-
-    [Fact]
-    public async Task GetClosingInventoryBalanceDetailChart_RMResultOnly_SetsRMPropertiesOnly()
-    {
-        // Arrange
-        var request = new ChartDataFilterReq { FromDate = DateTime.Now, ToDate = DateTime.Now, Metrics = 1 };
-        var rmData = new List<InventoryItem> { new InventoryItem { InventoryType = "Raw Materials", Value = 200 } };
-
-        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.IsAny<ChartDataFilterReq>()))
-                      .ReturnsAsync(rmData);
-
-        // Act
-        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
-
-        // Assert
-        result.RMChartData.Should().NotBeNull();
-        result.RMClosingInventoryBalanceDetailsChart.Should().NotBeNull();
-        result.FGChartData.Should().BeNull();
-        result.StatusCode.Should().Be(SabicConstants.SuccessStatusCode);
-    }
-
-    [Fact]
-    public async Task GetClosingInventoryBalanceDetailChart_EmptyResult_SetsRecordNotFound()
-    {
-        // Arrange
-        var request = new ChartDataFilterReq { FromDate = DateTime.Now, ToDate = DateTime.Now };
-        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.IsAny<ChartDataFilterReq>()))
-                      .ReturnsAsync(new List<InventoryItem>());
-
-        // Act
-        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
-
-        // Assert
-        result.StatusCode.Should().Be(SabicConstants.RecordNotFoundStatusCode);
-        result.StatusMessage.Should().Be(SabicConstants.RecordNotFoundMessage);
-    }
-
-    [Fact]
-    public async Task GetClosingInventoryBalanceDetailChart_NullResult_SetsRecordNotFound()
-    {
-        // Arrange
-        var request = new ChartDataFilterReq { FromDate = DateTime.Now, ToDate = DateTime.Now };
-        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.IsAny<ChartDataFilterReq>()))
-                      .ReturnsAsync((List<InventoryItem>)null);
-
-        // Act
-        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
-
-        // Assert
-        result.StatusCode.Should().Be(SabicConstants.RecordNotFoundStatusCode);
-    }
-
-    [Fact]
-    public async Task GetClosingInventoryBalanceDetailChart_BothFGandRMData_SetsAllProperties()
-    {
-        // Arrange
-        var request = new ChartDataFilterReq { FromDate = DateTime.Now, ToDate = DateTime.Now, Metrics = 1 };
-        var resultData = new List<InventoryItem>
-        {
-            new InventoryItem { InventoryType = "Finished Goods", Value = 100, Volume = 10 },
-            new InventoryItem { InventoryType = "Raw Materials", Value = 200, Volume = 20 }
-        };
-
-        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.IsAny<ChartDataFilterReq>()))
-                      .ReturnsAsync(resultData);
-
-        // Act
-        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
-
-        // Assert
-        result.FGChartData.Should().NotBeNull();
-        result.RMChartData.Should().NotBeNull();
-        result.FGClosingInventoryBalanceDetailsChart.Should().NotBeNull();
-        result.RMClosingInventoryBalanceDetailsChart.Should().NotBeNull();
-        result.StatusCode.Should().Be(SabicConstants.SuccessStatusCode);
-    }
-
-    [Fact]
-    public async Task GetClosingInventoryBalanceDetailChart_FromDateNull_HandlesGracefully()
-    {
-        // Arrange
-        var request = new ChartDataFilterReq 
-        { 
-            FromDate = null,
-            ToDate = DateTime.Now,
-            SelectedMonth = "DEC 2023",
-            Metrics = 1
-        };
-        var mockData = new List<InventoryItem>();
-
-        _mockRepository.Setup(x => x.GetClosingInventoryBalanceDetailChart(It.IsAny<ChartDataFilterReq>()))
-                      .ReturnsAsync(mockData);
-
-        // Act
-        var result = await _service.GetClosingInventoryBalanceDetailChart(request);
-
-        // Assert
-        result.StatusCode.Should().Be(SabicConstants.RecordNotFoundStatusCode);
-    }
-}
-
-// Supporting classes (add these to your test project)
-public class ChartDataFilterReq
-{
-    public DateTime? FromDate { get; set; }
-    public DateTime? ToDate { get; set; }
-    public string? SelectedMonth { get; set; }
-    public int Metrics { get; set; }
-}
-
-public class InventoryItem
-{
-    public string InventoryType { get; set; } = "";
-    public decimal Value { get; set; }
-    public decimal Volume { get; set; }
-}
-
-public class ClosingInventoryBalanceDetailChartModel
-{
-    public object? FGChartData { get; set; }
-    public object? RMChartData { get; set; }
-    public object? FGClosingInventoryBalanceDetailsChart { get; set; }
-    public object? RMClosingInventoryBalanceDetailsChart { get; set; }
-    public string StatusMessage { get; set; } = "";
-    public int StatusCode { get; set; }
-}
-
-
-dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-
-
-
-        public async Task<ClosingInventoryBalanceDetailChartModel> GetClosingInventoryBalanceDetailChart(ChartDataFilterReq chartDataFilterReq)
-        {
-            var filterRes = new ClosingInventoryBalanceDetailChartModel();
-            var tempDate = string.IsNullOrEmpty(chartDataFilterReq.SelectedMonth) ? chartDataFilterReq.FromDate!.Value.ToString("MMM yyyy").ToUpper() : chartDataFilterReq.SelectedMonth;
-            var (fromDate, toDate) = GetStartandEndDate(tempDate); // DEC 2023
-            chartDataFilterReq.FromDate = fromDate;
-            chartDataFilterReq.ToDate = toDate;
-            var result = await _dashboardRepository.GetClosingInventoryBalanceDetailChart(chartDataFilterReq);
-
-            var FGResult = result.Where(x => x.InventoryType == "Finished Goods").ToList();
-            var RMResult = result.Where(x => x.InventoryType == "Raw Materials").ToList();
-
-
-            if (FGResult != null || RMResult != null)
-            {
-                // Finished Goods
-                var (FGchartData, FGgridList) = getFilteredClosingInventoryDetailList(chartDataFilterReq, FGResult, chartDataFilterReq.Metrics == 1 ? "Value" : "Volume");
-                filterRes.FGClosingInventoryBalanceDetailsChart = FGgridList; // (FGgridList, chartDataFilterReq.Metrics == 1 ? "Value" : "Volume");
-                filterRes.FGChartData = FGchartData;
-
-                //Raw Materials
-                var (RMchartData, RMgridList) = getFilteredClosingInventoryDetailList(chartDataFilterReq, RMResult, chartDataFilterReq.Metrics == 1 ? "Value" : "Volume");
-                filterRes.RMClosingInventoryBalanceDetailsChart = RMgridList; // GetFilteredList(RMgridList, chartDataFilterReq.Metrics == 1 ? "value" : "volume");
-                filterRes.RMChartData = RMchartData;
-
-                filterRes.StatusMessage = SabicConstants.SuccessMessage;
-                filterRes.StatusCode = SabicConstants.SuccessStatusCode;
-            }
-            else
-            {
-                filterRes.StatusMessage = SabicConstants.RecordNotFoundMessage;
-                filterRes.StatusCode = SabicConstants.RecordNotFoundStatusCode;
-            }
-            return filterRes;
-        }
+List of Documents	|	Contents
+Project Scope to Feature Mapping	|	Mapping between scope and features
+Web API Document	|	Overview and Introduction: Explain the  API's purpose & main features.
+	|	Getting Started: Instructions for initial setup and basic configuration steps.
+	|	Authentication and Authorization: Detailed explanation on how to authenticate requests.
+	|	API Reference Endpoints: A list of all available API endpoints in Open API Specification(OAS) with
+	|	Parameters, Request and Response: must have at least one example schemas for request and response payloads, including data models and their attributes.
+	|	Status Codes: Explanation of expected HTTP status codes for various operations (e.g., 200 OK, 400 Bad Request, 500 Internal Server Error).
+Technical Design Document	|	Overview and Introduction
+	|	System Architecture: A high-level diagram showing the major components and how they interact.
+	|	Component Design: Detailed descriptions of individual components, the technologies they use, and their specific functionalities (Frontend, Backend etc.).
+	|	Data Design: Details on data structures, database schemas, and how data will be stored and managed.
+	|	Interface Design: Descriptions of external interfaces, including user interfaces and APIs.
+	|	Implementation and Deployment Plans:
+	|	- Implementation Plan
+	|	- Deployment & Release Strategy
+	|	- Caching & Performance Strategy
+	|	- Error Handling & Disaster Management
+	|	- Testing strategy
+	|	Maintenance Plan: Guidelines for post-deployment activities like bug fixes and updates.
+	|	Assumptions and Dependencies: List any assumptions made and other systems or services the project depends on. 
+Source Code Document	|	Source code details - repo
+	|	Technical Architecture high level diagram
+	|	Environment/project setup - should also include IDE/editor configurations.
+	|	Project Structure
+	|	High level description for the code
+	|	Code/Data flow diagram
+	|	Database/Other Data source
+	|	Application Modules/Features
+	|	User access flow diagram
+	|	- User Login Flow
+	|	- User Access Provisioning
+	|	- User Access Mapping with Application Features
+SQL- DB Schema & Implementation Document	|	Overview
+	|	ERD diagram of DB
+	|	DB Details:  Should include all DBO's(Table, Views) details as per the SQL Standard Template
+	|	Implementation Details: Details of SP's, View & Functions etc.
+Release Document	|	Release identification: Version number, release date, and the document's name.
+	|	Overview: A brief summary of the release's purpose and major changes.
+	|	New features: A detailed list of new features and functionality.
+	|	Fixed issues: A list of bugs and problems that have been resolved.
+	|	Known issues: Any remaining bugs or limitations in the release.
+	|	Links to related documents like user guides or help manuals.
+	|	Other information:
+	|	Any disclaimers or important notes.  
+Risk Demand Approval	|	
+EA Approved Document	|	
+Vulnerability Scan approval mail	|	
+ISRT Completion Report	|	
+SonarQube Scan Report  	|	Auto generated
+UAT Approval	|	
+Support Cook Book	|	Must include for all components of  Application
+	|	1. Common Errors or Bugs Noticed
+	|	2. Frequent Queries from End Users
+	|	3. Log all production bugs and categorize
+App & Error Monitoring	|	
+RCA's	|	
+Post Go Live - Project Handover Session & Approval	|	
