@@ -24,3 +24,14 @@
 /api/Workflow/getDelegates
 /api/Workflow/addorUpdateDelegationAsync
 /api/APIRequestLog/insertAPIRequestLogs
+
+
+below i shared table formate. i want like that format
+HTTP Method	GET
+API Route	/api/exceptionHandler/getErrorLogAssignDetailsAsync 85
+Sample URL	https://<YOUR_DOMAIN_HERE>/WCI_api/api/exceptionHandler/getErrorLogAssignDetailsAsync
+Request Body	N/A
+Response Body (200)	{"isSuccess": true, "data": [{"assignee": "Developer.A", "count": 10}, {"assignee": "Developer.B", "count": 5}], "statusCode": 200, "message": "Assignee details retrieved."}
+Response Body (400)	{"isSuccess": false, "data": null, "statusCode": 400, "message": "Bad Request: Invalid request format."}
+Response Body (500)	{"isSuccess": false, "data": null, "statusCode": 500, "message": "Internal Server Error. Failed to asynchronously fetch assignment data."}
+
