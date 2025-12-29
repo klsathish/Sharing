@@ -1,454 +1,2104 @@
-👍 I’ll continue in the SAME 3-column format exactly like before:
-Columns:
-Column | Description | Example
-(no extra headings, no re-formatting)
-📄 Table: vw_sf_historic_salesrevenue
-Column
-Description
-Example
-RecID
-Unique record identity
-101
-Year
-Financial year
-2024
-Month
-Financial month
-7
-Company_Code
-Company code
-SA01
-Profit_Center
-Profit center identifier
-PC1001
-Plant
-Plant location code
-JED1
-Sales_Org
-Sales organization code
-SO01
-total_revenue_in_usd
-Total revenue in USD
-1500000.50
-total_revenue_in_MillionUSD
-Total revenue in Million USD
-1.50
-total_revenue_in_MillionSAR
-Total revenue in Million SAR
-5.60
-sale_quantity_in_MetricTon
-Sales quantity in metric tons
-1200.25
-average_selling_price_in_USD
-Average price per ton USD
-1250.75
-average_selling_price_in_SAR
-Average price per ton SAR
-4689.30
-📄 Table: vw_sf_historic_salesrevenue_source_view
-Column
-Description
-Example
-RecID
-Unique record identity
-501
-Year
-Financial year
-2024
-Month
-Financial month
-6
-Company_Country_code
-Company country code
-SA
-Company_Code
-Company identifier
-SA01
-Profit_Center
-Profit center code
-PC2001
-Plant
-Plant code
-RUH1
-Sales_Org
-Sales organization
-SO02
-Sales_district
-Sales district code
-D100
-Ship_to_Country
-Destination country
-UAE
-total_revenue_in_usd
-Revenue in USD
-2500000.00
-sale_quantity_in_ton
-Quantity sold (tons)
-1800.40
-average_selling_price_in_usd
-Avg selling price USD
-1388.80
-currency_code
-Transaction currency
-USD
-CreatedOn
-Record created date
-2024-08-15
-📄 Table: VW_Web_SAC_COGS_CM
-Column
-Description
-Example
-RecID
-Unique identifier
-10
-sal_year
-Sales year
-2024
-sal_month
-Sales month
-9
-date_sales_revmonth
-Sales revenue month text
-2024-09
-company_code
-Company code
-SA01
-product_id
-Product ID
-PR1001
-profit_centerid
-Profit center code
-PC100
-sales_volumes
-Sales volume in tons
-950.75
-sales_revs
-Total sales revenue
-3500000.00
-MI_Price
-Market index price
-1250.40
-logistic_cost
-Total logistics cost
-150000.00
-mfg_variable_cost_MillionSAR
-Manufacturing variable cost (Million SAR)
-2.75
-Contri_Margin_MillionSAR
-Contribution Margin (Million SAR)
-1.20
-📄 Table: VW_Web_SalesandRev_Salesrev_ASP
-Column
-Description
-Example
-RecID
-Unique record id
-77
-sal_year
-Sales year
-2024
-sal_month
-Sales month
-10
-Date_Sales_RevMonth
-Month description
-2024-10
-company_codeid
-Company code
-SA03
-company_codeidoriginal
-Original company code
-SA03
-productid
-Product code
-PR5002
-profit_centerid
-Profit center
-PC400
-sales_regionid
-Sales region
-R01
-sales_volume_in_MetricTon
-Sales quantity in tons
-2100.90
-sales_revenue_in_MillionSAR
-Sales revenue in Million SAR
-7.20
-sales_revenue_uom
-Revenue unit
-SAR
-asp_in_SAR
-Average selling price
-3428.00
-📄 Table: WareHouse
-Column
-Description
-Example
-WareHouseID
-Unique warehouse ID
-5
-WareHouseName
-Warehouse name
-Riyadh Central
-ProfitCenterID
-Linked profit center
-101
-IsActive
-Status flag
-1
-CreatedBy
-Created user
-admin
-CreatedDate
-Created timestamp
-2024-04-02
-UpdatedBy
-Last modified user
-system
-UpdatedDate
-Updated timestamp
-2024-05-01
-📄 Table: WorkflowDelegation
-Column
-Description
-Example
-DelegationId
-Delegation record ID
-12
-ProcessId
-Workflow process ID
-501
-FromUserId
-Original assignee
-U100
-ToUserId
-Delegated user
-U250
-FromDate
-Delegation start date
-2024-06-01
-ToDate
-Delegation end date
-2024-06-15
-IsEffective
-Delegation active flag
-1
-CreatedBy
-Created user
-admin
-CreatedDate
-Created timestamp
-2024-05-28
-UpdatedBy
-Updated user
-admin
-UpdatedDate
-Updated timestamp
-2024-06-02
-📄 Table: WorkflowRedirects
-Column
-Description
-Example
-Id
-Unique redirect ID
-30
-WorkflowNumber
-Workflow reference number
-WF-2024-1201
-RedirectedFrom
-Original user
-John
-RedirectedFromEmail
-Original email
-john@abc.com
-RedirectedTo
-New assignee
-Sara
-RedirectedToEmail
-New email
-sara@abc.com
-RedirectedOn
-Redirect date
-2024-07-01
-Reason
-Reason for redirect
-Out of office
-PendingWithId
-Current user ID
-U204
-PendingWithName
-Current user name
-Sara
-PendingWithDesignate
-Designation
-Manager
-AssignedDate
-Assignment date
-2024-07-02
-Department
-Department name
-Finance
-📄 Table: WorkRecommendationActions
-Column
-Description
-Example
-Id
-Action record ID
-9
-WorkRecommendationId
-Parent recommendation ID
-501
-StageName
-Stage of workflow
-Review
-ActionTaken
-Action description
-Approved
-ActionBy
-User who acted
-Manager1
-Comments
-Remarks
-Looks good
-ActionTime
-Timestamp
-2024-09-10
-📄 Table: WorkRecommendations
-Column
-Description
-Example
-Id
-Recommendation ID
-2001
-RequestNumber
-Request reference
-WR-00045
-RecommendationDescription
-Recommendation summary
-Increase production
-RevenueForecast
-Expected revenue impact
-5,000,000.00
-AIForecast
-AI forecasted value
-4,800,000.00
-AIChangePercent
-Change percentage
-4.2
-Status
-Current status
-Approved
-CurrentAction
-Action in progress
-Implementation
-CreatedOn
-Created timestamp
-2024-08-22
-If more remain, just paste —
-I’ll keep the same style exactly 👍
-
-
-
-TableName	ColumnOrder	ColumnName	DataType	KeyType
-vw_sf_historic_salesrevenue	1	RecID	int	PK
-vw_sf_historic_salesrevenue	2	Year	int	
-vw_sf_historic_salesrevenue	3	Month	int	
-vw_sf_historic_salesrevenue	4	Company_Code	varchar	
-vw_sf_historic_salesrevenue	5	Profit_Center	varchar	
-vw_sf_historic_salesrevenue	6	Plant	varchar	
-vw_sf_historic_salesrevenue	7	Sales_Org	varchar	
-vw_sf_historic_salesrevenue	8	total_revenue_in_usd	decimal	
-vw_sf_historic_salesrevenue	9	total_revenue_in_MillionUSD	decimal	
-vw_sf_historic_salesrevenue	10	total_revenue_in_MillionSAR	decimal	
-vw_sf_historic_salesrevenue	11	sale_quantity_in_MetricTon	decimal	
-vw_sf_historic_salesrevenue	12	average_selling_price_in_USD	decimal	
-vw_sf_historic_salesrevenue	13	average_selling_price_in_SAR	decimal	
-vw_sf_historic_salesrevenue_source_view	1	RecID	int	PK
-vw_sf_historic_salesrevenue_source_view	2	Year	int	
-vw_sf_historic_salesrevenue_source_view	3	Month	int	
-vw_sf_historic_salesrevenue_source_view	5	Company_Country_code	varchar	
-vw_sf_historic_salesrevenue_source_view	6	Company_Code	varchar	
-vw_sf_historic_salesrevenue_source_view	7	Profit_Center	varchar	
-vw_sf_historic_salesrevenue_source_view	8	Plant	varchar	
-vw_sf_historic_salesrevenue_source_view	9	Sales_Org	varchar	
-vw_sf_historic_salesrevenue_source_view	10	Sales_district	varchar	
-vw_sf_historic_salesrevenue_source_view	13	Ship_to_Country	varchar	
-vw_sf_historic_salesrevenue_source_view	15	total_revenue_in_usd	decimal	
-vw_sf_historic_salesrevenue_source_view	16	sale_quantity_in_ton	decimal	
-vw_sf_historic_salesrevenue_source_view	17	average_selling_price_in_usd	decimal	
-vw_sf_historic_salesrevenue_source_view	18	currency_code	varchar	
-vw_sf_historic_salesrevenue_source_view	19	CreatedOn	datetime	
-VW_Web_SAC_COGS_CM	1	RecID	int	PK
-VW_Web_SAC_COGS_CM	2	sal_year	int	
-VW_Web_SAC_COGS_CM	3	sal_month	int	
-VW_Web_SAC_COGS_CM	4	date_sales_revmonth	varchar	
-VW_Web_SAC_COGS_CM	5	company_code	varchar	
-VW_Web_SAC_COGS_CM	6	product_id	varchar	
-VW_Web_SAC_COGS_CM	7	profit_centerid	varchar	
-VW_Web_SAC_COGS_CM	8	sales_volumes	decimal	
-VW_Web_SAC_COGS_CM	9	sales_revs	decimal	
-VW_Web_SAC_COGS_CM	10	MI_Price	decimal	
-VW_Web_SAC_COGS_CM	11	logistic_cost	decimal	
-VW_Web_SAC_COGS_CM	12	mfg_variable_cost_MillionSAR	decimal	
-VW_Web_SAC_COGS_CM	13	Contri_Margin_MillionSAR	decimal	
-VW_Web_SalesandRev_Salesrev_ASP	1	RecID	int	PK
-VW_Web_SalesandRev_Salesrev_ASP	2	sal_year	int	
-VW_Web_SalesandRev_Salesrev_ASP	3	sal_month	int	
-VW_Web_SalesandRev_Salesrev_ASP	4	Date_Sales_RevMonth	varchar	
-VW_Web_SalesandRev_Salesrev_ASP	5	company_codeid	varchar	
-VW_Web_SalesandRev_Salesrev_ASP	6	company_codeidoriginal	varchar	
-VW_Web_SalesandRev_Salesrev_ASP	7	productid	varchar	
-VW_Web_SalesandRev_Salesrev_ASP	8	profit_centerid	varchar	
-VW_Web_SalesandRev_Salesrev_ASP	9	sales_regionid	varchar	
-VW_Web_SalesandRev_Salesrev_ASP	10	sales_volume_in_MetricTon	decimal	
-VW_Web_SalesandRev_Salesrev_ASP	11	sales_revenue_in_MillionSAR	decimal	
-VW_Web_SalesandRev_Salesrev_ASP	12	sales_revenue_uom	varchar	
-VW_Web_SalesandRev_Salesrev_ASP	13	asp_in_SAR	decimal	
-WareHouse	1	WareHouseID	int	PK
-WareHouse	2	WareHouseName	nvarchar	
-WareHouse	3	ProfitCenterID	int	
-WareHouse	4	IsActive	bit	
-WareHouse	5	CreatedBy	nvarchar	
-WareHouse	6	CreatedDate	datetime	
-WareHouse	7	UpdatedBy	nvarchar	
-WareHouse	8	UpdatedDate	datetime	
-WorkflowDelegation	1	DelegationId	int	PK
-WorkflowDelegation	2	ProcessId	int	
-WorkflowDelegation	3	FromUserId	nvarchar	
-WorkflowDelegation	4	ToUserId	nvarchar	
-WorkflowDelegation	5	FromDate	date	
-WorkflowDelegation	6	ToDate	date	
-WorkflowDelegation	7	IsEffective	bit	
-WorkflowDelegation	8	CreatedBy	nvarchar	
-WorkflowDelegation	9	CreatedDate	datetime	
-WorkflowDelegation	10	UpdatedBy	nvarchar	
-WorkflowDelegation	11	UpdatedDate	datetime	
-WorkflowRedirects	1	Id	int	PK
-WorkflowRedirects	2	WorkflowNumber	nvarchar	
-WorkflowRedirects	3	RedirectedFrom	nvarchar	
-WorkflowRedirects	4	RedirectedFromEmail	nvarchar	
-WorkflowRedirects	5	RedirectedTo	nvarchar	
-WorkflowRedirects	6	RedirectedToEmail	nvarchar	
-WorkflowRedirects	7	RedirectedOn	datetime	
-WorkflowRedirects	8	Reason	nvarchar	
-WorkflowRedirects	9	PendingWithId	nvarchar	
-WorkflowRedirects	10	PendingWithName	nvarchar	
-WorkflowRedirects	11	PendingWithDesignate	nvarchar	
-WorkflowRedirects	12	AssignedDate	date	
-WorkflowRedirects	13	Department	nvarchar	
-WorkRecommendationActions	1	Id	int	PK
-WorkRecommendationActions	2	WorkRecommendationId	int	FK
-WorkRecommendationActions	3	StageName	varchar	
-WorkRecommendationActions	4	ActionTaken	varchar	
-WorkRecommendationActions	5	ActionBy	varchar	
-WorkRecommendationActions	6	Comments	nvarchar	
-WorkRecommendationActions	7	ActionTime	datetime	
-WorkRecommendations	1	Id	int	PK
-WorkRecommendations	2	RequestNumber	varchar	
-WorkRecommendations	3	RecommendationDescription	nvarchar	
-WorkRecommendations	4	RevenueForecast	decimal	
-WorkRecommendations	5	AIForecast	decimal	
-WorkRecommendations	6	AIChangePercent	decimal	
-WorkRecommendations	7	Status	varchar	
-WorkRecommendations	8	CurrentAction	varchar	
-WorkRecommendations	9	CreatedOn	datetime	
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "SF_APIs",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "/sf_api"
+    }
+  ],
+  "paths": {
+    "/api/Account/GetUserDetails": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Account/logout": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ActivityMonitoring/getLoginUserActivity": {
+      "post": {
+        "tags": [
+          "ActivityMonitoring"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ActivityMonitoring/getLoginActivity": {
+      "post": {
+        "tags": [
+          "ActivityMonitoring"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ActivityMonitoring/InsertUserActivity": {
+      "post": {
+        "tags": [
+          "ActivityMonitoring"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InsertUserActivity"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InsertUserActivity"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InsertUserActivity"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/APIRequestLog/getAPIRequestLog": {
+      "post": {
+        "tags": [
+          "APIRequestLog"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/APIRequestLog/insertAPIRequestLogs": {
+      "post": {
+        "tags": [
+          "APIRequestLog"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/APIRequestModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/APIRequestModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/APIRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/APIRequestLog/insertAPIRequestLogsAndPerformanceLogs": {
+      "post": {
+        "tags": [
+          "APIRequestLog"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestAndPerformanceLogRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestAndPerformanceLogRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestAndPerformanceLogRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Authentication/login": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Authentication/refreshToken": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticationResponse"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticationResponse"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticationResponse"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Dashboard/getBaseFilterList": {
+      "post": {
+        "tags": [
+          "Dashboard"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilterModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilterModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilterModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Dashboard/getMoreFiltersSBUandBUList": {
+      "post": {
+        "tags": [
+          "Dashboard"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilterModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilterModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilterModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Dashboard/getMoreFiltersProfitCenterList": {
+      "post": {
+        "tags": [
+          "Dashboard"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilterModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilterModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilterModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Dashboard/getDateRangeList": {
+      "post": {
+        "tags": [
+          "Dashboard"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ExceptionHandler/LogException": {
+      "post": {
+        "tags": [
+          "ExceptionHandler"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogExceptionModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogExceptionModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogExceptionModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ExceptionHandler/getErrorLogs": {
+      "post": {
+        "tags": [
+          "ExceptionHandler"
+        ],
+        "parameters": [
+          {
+            "name": "errorMessage",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ExceptionHandler/getAllErrorLogs": {
+      "post": {
+        "tags": [
+          "ExceptionHandler"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ExceptionHandler/getExceptionUserActivityDetailsBySessionID": {
+      "get": {
+        "tags": [
+          "ExceptionHandler"
+        ],
+        "parameters": [
+          {
+            "name": "sessionID",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ExceptionHandler/updateErrorLoggingAssigneeWithStatus": {
+      "post": {
+        "tags": [
+          "ExceptionHandler"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExceptionDetails"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExceptionDetails"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExceptionDetails"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ExceptionHandler/getErrorLogAssignDetailsAsync": {
+      "get": {
+        "tags": [
+          "ExceptionHandler"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Performance/getPerformanceLogs": {
+      "post": {
+        "tags": [
+          "Performance"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Production/getProductionMapDetails": {
+      "post": {
+        "tags": [
+          "Production"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Production/getHistoricalSavings": {
+      "post": {
+        "tags": [
+          "Production"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/getRevenueMapDetails": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/getContributionMariginTrend": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/getRevenueTrend": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/getSalesVolumeTrend": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/GetAverageSellingPrice": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/GetRecommendationDetails": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/getCostofGoodsSoldGraphComparisonData": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/GetRecommendationsCardDetails": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/GetContributionMarginCardDetails": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/getContributionMarginRecommendations": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/getContributionMarginRecommendationRegionData/{recommendationID}": {
+      "get": {
+        "tags": [
+          "Revenue"
+        ],
+        "parameters": [
+          {
+            "name": "recommendationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/UserManagement/getUserList": {
+      "get": {
+        "tags": [
+          "UserManagement"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/UserManagement/getUserMenuList": {
+      "get": {
+        "tags": [
+          "UserManagement"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "roleId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/UserManagement/insertupdateUserDetails": {
+      "post": {
+        "tags": [
+          "UserManagement"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InsertUpdateUserReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InsertUpdateUserReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InsertUpdateUserReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/UserManagement/deactivateUser": {
+      "post": {
+        "tags": [
+          "UserManagement"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeactivateUserReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeactivateUserReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeactivateUserReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/UserManagement/getSearchUserListFromAD/{searchText}": {
+      "get": {
+        "tags": [
+          "UserManagement"
+        ],
+        "parameters": [
+          {
+            "name": "searchText",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/UserManagement/getRoleList": {
+      "get": {
+        "tags": [
+          "UserManagement"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/UserManagement/getAffiliateList": {
+      "get": {
+        "tags": [
+          "UserManagement"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Workflow/getAllWorkList": {
+      "post": {
+        "tags": [
+          "Workflow"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkFlowAction"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkFlowAction"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkFlowAction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Workflow/getWorkListDetails": {
+      "get": {
+        "tags": [
+          "Workflow"
+        ],
+        "parameters": [
+          {
+            "name": "requestNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "taskName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Workflow/getRegionContributor": {
+      "get": {
+        "tags": [
+          "Workflow"
+        ],
+        "parameters": [
+          {
+            "name": "requestNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Workflow/submitWorkflowAction": {
+      "post": {
+        "tags": [
+          "Workflow"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkFlowAction"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkFlowAction"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkFlowAction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Workflow/getRedirects": {
+      "post": {
+        "tags": [
+          "Workflow"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Workflow/addorUpdateRedirectAsync": {
+      "post": {
+        "tags": [
+          "Workflow"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowRedirect"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowRedirect"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowRedirect"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Workflow/getDelegates": {
+      "post": {
+        "tags": [
+          "Workflow"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDelegation"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDelegation"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDelegation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Workflow/addorUpdateDelegationAsync": {
+      "post": {
+        "tags": [
+          "Workflow"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDelegation"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDelegation"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDelegation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "APIRequestModel": {
+        "type": "object",
+        "properties": {
+          "requestLogID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "roleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "appModuleMappingID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "employeeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "apiEndPoint": {
+            "type": "string",
+            "nullable": true
+          },
+          "roleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "sessionID": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestBody": {
+            "type": "string",
+            "nullable": true
+          },
+          "httpMethod": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestTimeStamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "responseBody": {
+            "type": "string",
+            "nullable": true
+          },
+          "esponseTimeStamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "layerID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApiRequestAndPerformanceLogRequest": {
+        "type": "object",
+        "properties": {
+          "appModuleMappingID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "apiEndPoint": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestBody": {
+            "type": "string",
+            "nullable": true
+          },
+          "httpMethod": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "requestTimeStamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "responseBody": {
+            "type": "string",
+            "nullable": true
+          },
+          "responseTimeStamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "layerID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "componentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "actionName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AuthenticationResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "nullable": true
+          },
+          "refreshToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BaseFilterResult": {
+        "type": "object",
+        "properties": {
+          "regionID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "regionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "countryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "affiliateCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "affiliateName": {
+            "type": "string",
+            "nullable": true
+          },
+          "profitCenterID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "profitCenterName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DateFilter": {
+        "type": "object",
+        "properties": {
+          "fromDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "toDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeactivateUserReq": {
+        "type": "object",
+        "properties": {
+          "userID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isActivated": {
+            "type": "boolean"
+          },
+          "updatedBy": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExceptionDetails": {
+        "type": "object",
+        "properties": {
+          "errorLogID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "roleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sessionID": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "screenID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "moduleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "appModuleMappingID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "functionID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "layerID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "apiid": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "storedProcedureID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "errorNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "errorState": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorSeverity": {
+            "type": "string",
+            "nullable": true
+          },
+          "stackTrace": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestBody": {
+            "type": "string",
+            "nullable": true
+          },
+          "responseBody": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "hostName": {
+            "type": "string",
+            "nullable": true
+          },
+          "environment": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "updatedOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ipAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorStatusID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "assignTo": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FilterModel": {
+        "type": "object",
+        "properties": {
+          "typeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "regionID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "countryID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "companyID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sbuID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "buID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "profitCenterID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "wareHouseID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "roleID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseFilterResult": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BaseFilterResult"
+            },
+            "nullable": true
+          },
+          "moreFiltersSBUandBUResult": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MoreFiltersSBUandBUResult"
+            },
+            "nullable": true
+          },
+          "moreFiltersProfitCenterWarehouseResult": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MoreFiltersProfitCenterResult"
+            },
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "statusMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InsertUpdateUserReq": {
+        "type": "object",
+        "properties": {
+          "userID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userRoleIDs": {
+            "type": "string",
+            "nullable": true
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "employeeID": {
+            "type": "string",
+            "nullable": true
+          },
+          "affiliateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "statusID": {
+            "type": "boolean"
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "isInsert": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InsertUserActivity": {
+        "type": "object",
+        "properties": {
+          "activityTrackerID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "userActionID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "screenID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "functionID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LogExceptionModel": {
+        "type": "object",
+        "properties": {
+          "employeeID": {
+            "type": "string",
+            "nullable": true
+          },
+          "roleID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "applicationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "screen": {
+            "type": "string",
+            "nullable": true
+          },
+          "functionality": {
+            "type": "string",
+            "nullable": true
+          },
+          "userAction": {
+            "type": "string",
+            "nullable": true
+          },
+          "stackTrace": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MoreFiltersProfitCenterResult": {
+        "type": "object",
+        "properties": {
+          "profitCenterID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "profitCenterName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MoreFiltersSBUandBUResult": {
+        "type": "object",
+        "properties": {
+          "sbuID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sbuName": {
+            "type": "string",
+            "nullable": true
+          },
+          "buID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "buName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RevenueFilterReq": {
+        "type": "object",
+        "properties": {
+          "typeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "companyCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "profitCenterID": {
+            "type": "string",
+            "nullable": true
+          },
+          "fromDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "toDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sbu": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bu": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkFlowAction": {
+        "type": "object",
+        "properties": {
+          "typeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "companyCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "profitCenterID": {
+            "type": "string",
+            "nullable": true
+          },
+          "fromDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "toDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sbu": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bu": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recommendationId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "action": {
+            "type": "string",
+            "nullable": true
+          },
+          "loginId": {
+            "type": "string",
+            "nullable": true
+          },
+          "comments": {
+            "type": "string",
+            "nullable": true
+          },
+          "newRequest": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkflowDelegation": {
+        "type": "object",
+        "properties": {
+          "delegationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "fromUserDomainLoginID": {
+            "type": "string",
+            "nullable": true
+          },
+          "toUserDomainLoginID": {
+            "type": "string",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updatedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "updatedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkflowRedirect": {
+        "type": "object",
+        "properties": {
+          "worklistRedirectionID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "processInstanceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recommendationRequestID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "fromUserDomainLoginID": {
+            "type": "string",
+            "nullable": true
+          },
+          "toUserDomainLoginID": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [
+        "Bearer"
+      ]
+    }
+  ]
+}
