@@ -1,3 +1,354 @@
+👍 I’ll continue in the SAME 3-column format exactly like before:
+Columns:
+Column | Description | Example
+(no extra headings, no re-formatting)
+📄 Table: vw_sf_historic_salesrevenue
+Column
+Description
+Example
+RecID
+Unique record identity
+101
+Year
+Financial year
+2024
+Month
+Financial month
+7
+Company_Code
+Company code
+SA01
+Profit_Center
+Profit center identifier
+PC1001
+Plant
+Plant location code
+JED1
+Sales_Org
+Sales organization code
+SO01
+total_revenue_in_usd
+Total revenue in USD
+1500000.50
+total_revenue_in_MillionUSD
+Total revenue in Million USD
+1.50
+total_revenue_in_MillionSAR
+Total revenue in Million SAR
+5.60
+sale_quantity_in_MetricTon
+Sales quantity in metric tons
+1200.25
+average_selling_price_in_USD
+Average price per ton USD
+1250.75
+average_selling_price_in_SAR
+Average price per ton SAR
+4689.30
+📄 Table: vw_sf_historic_salesrevenue_source_view
+Column
+Description
+Example
+RecID
+Unique record identity
+501
+Year
+Financial year
+2024
+Month
+Financial month
+6
+Company_Country_code
+Company country code
+SA
+Company_Code
+Company identifier
+SA01
+Profit_Center
+Profit center code
+PC2001
+Plant
+Plant code
+RUH1
+Sales_Org
+Sales organization
+SO02
+Sales_district
+Sales district code
+D100
+Ship_to_Country
+Destination country
+UAE
+total_revenue_in_usd
+Revenue in USD
+2500000.00
+sale_quantity_in_ton
+Quantity sold (tons)
+1800.40
+average_selling_price_in_usd
+Avg selling price USD
+1388.80
+currency_code
+Transaction currency
+USD
+CreatedOn
+Record created date
+2024-08-15
+📄 Table: VW_Web_SAC_COGS_CM
+Column
+Description
+Example
+RecID
+Unique identifier
+10
+sal_year
+Sales year
+2024
+sal_month
+Sales month
+9
+date_sales_revmonth
+Sales revenue month text
+2024-09
+company_code
+Company code
+SA01
+product_id
+Product ID
+PR1001
+profit_centerid
+Profit center code
+PC100
+sales_volumes
+Sales volume in tons
+950.75
+sales_revs
+Total sales revenue
+3500000.00
+MI_Price
+Market index price
+1250.40
+logistic_cost
+Total logistics cost
+150000.00
+mfg_variable_cost_MillionSAR
+Manufacturing variable cost (Million SAR)
+2.75
+Contri_Margin_MillionSAR
+Contribution Margin (Million SAR)
+1.20
+📄 Table: VW_Web_SalesandRev_Salesrev_ASP
+Column
+Description
+Example
+RecID
+Unique record id
+77
+sal_year
+Sales year
+2024
+sal_month
+Sales month
+10
+Date_Sales_RevMonth
+Month description
+2024-10
+company_codeid
+Company code
+SA03
+company_codeidoriginal
+Original company code
+SA03
+productid
+Product code
+PR5002
+profit_centerid
+Profit center
+PC400
+sales_regionid
+Sales region
+R01
+sales_volume_in_MetricTon
+Sales quantity in tons
+2100.90
+sales_revenue_in_MillionSAR
+Sales revenue in Million SAR
+7.20
+sales_revenue_uom
+Revenue unit
+SAR
+asp_in_SAR
+Average selling price
+3428.00
+📄 Table: WareHouse
+Column
+Description
+Example
+WareHouseID
+Unique warehouse ID
+5
+WareHouseName
+Warehouse name
+Riyadh Central
+ProfitCenterID
+Linked profit center
+101
+IsActive
+Status flag
+1
+CreatedBy
+Created user
+admin
+CreatedDate
+Created timestamp
+2024-04-02
+UpdatedBy
+Last modified user
+system
+UpdatedDate
+Updated timestamp
+2024-05-01
+📄 Table: WorkflowDelegation
+Column
+Description
+Example
+DelegationId
+Delegation record ID
+12
+ProcessId
+Workflow process ID
+501
+FromUserId
+Original assignee
+U100
+ToUserId
+Delegated user
+U250
+FromDate
+Delegation start date
+2024-06-01
+ToDate
+Delegation end date
+2024-06-15
+IsEffective
+Delegation active flag
+1
+CreatedBy
+Created user
+admin
+CreatedDate
+Created timestamp
+2024-05-28
+UpdatedBy
+Updated user
+admin
+UpdatedDate
+Updated timestamp
+2024-06-02
+📄 Table: WorkflowRedirects
+Column
+Description
+Example
+Id
+Unique redirect ID
+30
+WorkflowNumber
+Workflow reference number
+WF-2024-1201
+RedirectedFrom
+Original user
+John
+RedirectedFromEmail
+Original email
+john@abc.com
+RedirectedTo
+New assignee
+Sara
+RedirectedToEmail
+New email
+sara@abc.com
+RedirectedOn
+Redirect date
+2024-07-01
+Reason
+Reason for redirect
+Out of office
+PendingWithId
+Current user ID
+U204
+PendingWithName
+Current user name
+Sara
+PendingWithDesignate
+Designation
+Manager
+AssignedDate
+Assignment date
+2024-07-02
+Department
+Department name
+Finance
+📄 Table: WorkRecommendationActions
+Column
+Description
+Example
+Id
+Action record ID
+9
+WorkRecommendationId
+Parent recommendation ID
+501
+StageName
+Stage of workflow
+Review
+ActionTaken
+Action description
+Approved
+ActionBy
+User who acted
+Manager1
+Comments
+Remarks
+Looks good
+ActionTime
+Timestamp
+2024-09-10
+📄 Table: WorkRecommendations
+Column
+Description
+Example
+Id
+Recommendation ID
+2001
+RequestNumber
+Request reference
+WR-00045
+RecommendationDescription
+Recommendation summary
+Increase production
+RevenueForecast
+Expected revenue impact
+5,000,000.00
+AIForecast
+AI forecasted value
+4,800,000.00
+AIChangePercent
+Change percentage
+4.2
+Status
+Current status
+Approved
+CurrentAction
+Action in progress
+Implementation
+CreatedOn
+Created timestamp
+2024-08-22
+If more remain, just paste —
+I’ll keep the same style exactly 👍
+
+
+
 TableName	ColumnOrder	ColumnName	DataType	KeyType
 vw_sf_historic_salesrevenue	1	RecID	int	PK
 vw_sf_historic_salesrevenue	2	Year	int	
