@@ -1,4 +1,16 @@
- "/api/Account/GetUserDetails": {
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "SF_APIs",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "/sf_api"
+    }
+  ],
+  "paths": {
+    "/api/Account/GetUserDetails": {
       "get": {
         "tags": [
           "Account"
@@ -282,3 +294,1811 @@
         }
       }
     },
+    "/api/Dashboard/getMoreFiltersSBUandBUList": {
+      "post": {
+        "tags": [
+          "Dashboard"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilterModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilterModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilterModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Dashboard/getMoreFiltersProfitCenterList": {
+      "post": {
+        "tags": [
+          "Dashboard"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilterModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilterModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilterModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Dashboard/getDateRangeList": {
+      "post": {
+        "tags": [
+          "Dashboard"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ExceptionHandler/LogException": {
+      "post": {
+        "tags": [
+          "ExceptionHandler"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogExceptionModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogExceptionModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogExceptionModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ExceptionHandler/getErrorLogs": {
+      "post": {
+        "tags": [
+          "ExceptionHandler"
+        ],
+        "parameters": [
+          {
+            "name": "errorMessage",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ExceptionHandler/getAllErrorLogs": {
+      "post": {
+        "tags": [
+          "ExceptionHandler"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ExceptionHandler/getExceptionUserActivityDetailsBySessionID": {
+      "get": {
+        "tags": [
+          "ExceptionHandler"
+        ],
+        "parameters": [
+          {
+            "name": "sessionID",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ExceptionHandler/updateErrorLoggingAssigneeWithStatus": {
+      "post": {
+        "tags": [
+          "ExceptionHandler"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExceptionDetails"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExceptionDetails"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExceptionDetails"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ExceptionHandler/getErrorLogAssignDetailsAsync": {
+      "get": {
+        "tags": [
+          "ExceptionHandler"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Performance/getPerformanceLogs": {
+      "post": {
+        "tags": [
+          "Performance"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DateFilter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Production/getProductionMapDetails": {
+      "post": {
+        "tags": [
+          "Production"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Production/getHistoricalSavings": {
+      "post": {
+        "tags": [
+          "Production"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/getRevenueMapDetails": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/getContributionMariginTrend": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/getRevenueTrend": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/getSalesVolumeTrend": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/GetAverageSellingPrice": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/GetRecommendationDetails": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/getCostofGoodsSoldGraphComparisonData": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/GetRecommendationsCardDetails": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/GetContributionMarginCardDetails": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/getContributionMarginRecommendations": {
+      "post": {
+        "tags": [
+          "Revenue"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevenueFilterReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Revenue/getContributionMarginRecommendationRegionData/{recommendationID}": {
+      "get": {
+        "tags": [
+          "Revenue"
+        ],
+        "parameters": [
+          {
+            "name": "recommendationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/UserManagement/getUserList": {
+      "get": {
+        "tags": [
+          "UserManagement"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/UserManagement/getUserMenuList": {
+      "get": {
+        "tags": [
+          "UserManagement"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "roleId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/UserManagement/insertupdateUserDetails": {
+      "post": {
+        "tags": [
+          "UserManagement"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InsertUpdateUserReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InsertUpdateUserReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InsertUpdateUserReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/UserManagement/deactivateUser": {
+      "post": {
+        "tags": [
+          "UserManagement"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeactivateUserReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeactivateUserReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeactivateUserReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/UserManagement/getSearchUserListFromAD/{searchText}": {
+      "get": {
+        "tags": [
+          "UserManagement"
+        ],
+        "parameters": [
+          {
+            "name": "searchText",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/UserManagement/getRoleList": {
+      "get": {
+        "tags": [
+          "UserManagement"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/UserManagement/getAffiliateList": {
+      "get": {
+        "tags": [
+          "UserManagement"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Workflow/getAllWorkList": {
+      "post": {
+        "tags": [
+          "Workflow"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkFlowAction"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkFlowAction"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkFlowAction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Workflow/getWorkListDetails": {
+      "get": {
+        "tags": [
+          "Workflow"
+        ],
+        "parameters": [
+          {
+            "name": "requestNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "taskName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Workflow/getRegionContributor": {
+      "get": {
+        "tags": [
+          "Workflow"
+        ],
+        "parameters": [
+          {
+            "name": "requestNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Workflow/submitWorkflowAction": {
+      "post": {
+        "tags": [
+          "Workflow"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkFlowAction"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkFlowAction"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkFlowAction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Workflow/getRedirects": {
+      "post": {
+        "tags": [
+          "Workflow"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Workflow/addorUpdateRedirectAsync": {
+      "post": {
+        "tags": [
+          "Workflow"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowRedirect"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowRedirect"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowRedirect"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Workflow/getDelegates": {
+      "post": {
+        "tags": [
+          "Workflow"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDelegation"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDelegation"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDelegation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Workflow/addorUpdateDelegationAsync": {
+      "post": {
+        "tags": [
+          "Workflow"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDelegation"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDelegation"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowDelegation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "APIRequestModel": {
+        "type": "object",
+        "properties": {
+          "requestLogID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "roleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "appModuleMappingID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "employeeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "apiEndPoint": {
+            "type": "string",
+            "nullable": true
+          },
+          "roleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "sessionID": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestBody": {
+            "type": "string",
+            "nullable": true
+          },
+          "httpMethod": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestTimeStamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "responseBody": {
+            "type": "string",
+            "nullable": true
+          },
+          "esponseTimeStamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "layerID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApiRequestAndPerformanceLogRequest": {
+        "type": "object",
+        "properties": {
+          "appModuleMappingID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "apiEndPoint": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestBody": {
+            "type": "string",
+            "nullable": true
+          },
+          "httpMethod": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "requestTimeStamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "responseBody": {
+            "type": "string",
+            "nullable": true
+          },
+          "responseTimeStamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "layerID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "componentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "actionName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AuthenticationResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "nullable": true
+          },
+          "refreshToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BaseFilterResult": {
+        "type": "object",
+        "properties": {
+          "regionID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "regionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "countryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "affiliateCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "affiliateName": {
+            "type": "string",
+            "nullable": true
+          },
+          "profitCenterID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "profitCenterName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DateFilter": {
+        "type": "object",
+        "properties": {
+          "fromDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "toDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeactivateUserReq": {
+        "type": "object",
+        "properties": {
+          "userID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isActivated": {
+            "type": "boolean"
+          },
+          "updatedBy": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExceptionDetails": {
+        "type": "object",
+        "properties": {
+          "errorLogID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "roleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sessionID": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicationID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "screenID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "moduleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "appModuleMappingID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "functionID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "layerID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "apiid": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "storedProcedureID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "errorNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "errorState": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorSeverity": {
+            "type": "string",
+            "nullable": true
+          },
+          "stackTrace": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestBody": {
+            "type": "string",
+            "nullable": true
+          },
+          "responseBody": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "hostName": {
+            "type": "string",
+            "nullable": true
+          },
+          "environment": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "updatedOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ipAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorStatusID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "assignTo": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FilterModel": {
+        "type": "object",
+        "properties": {
+          "typeID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "regionID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "countryID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "companyID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sbuID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "buID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "profitCenterID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "wareHouseID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "roleID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseFilterResult": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BaseFilterResult"
+            },
+            "nullable": true
+          },
+          "moreFiltersSBUandBUResult": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MoreFiltersSBUandBUResult"
+            },
+            "nullable": true
+          },
+          "moreFiltersProfitCenterWarehouseResult": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MoreFiltersProfitCenterResult"
+            },
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "statusMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InsertUpdateUserReq": {
+        "type": "object",
+        "properties": {
+          "userID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userRoleIDs": {
+            "type": "string",
+            "nullable": true
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "employeeID": {
+            "type": "string",
+            "nullable": true
+          },
+          "affiliateID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "statusID": {
+            "type": "boolean"
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "isInsert": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InsertUserActivity": {
+        "type": "object",
+        "properties": {
+          "activityTrackerID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "userActionID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "screenID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "functionID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LogExceptionModel": {
+        "type": "object",
+        "properties": {
+          "employeeID": {
+            "type": "string",
+            "nullable": true
+          },
+          "roleID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "applicationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "screen": {
+            "type": "string",
+            "nullable": true
+          },
+          "functionality": {
+            "type": "string",
+            "nullable": true
+          },
+          "userAction": {
+            "type": "string",
+            "nullable": true
+          },
+          "stackTrace": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MoreFiltersProfitCenterResult": {
+        "type": "object",
+        "properties": {
+          "profitCenterID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "profitCenterName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MoreFiltersSBUandBUResult": {
+        "type": "object",
+        "properties": {
+          "sbuID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sbuName": {
+            "type": "string",
+            "nullable": true
+          },
+          "buID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "buName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RevenueFilterReq": {
+        "type": "object",
+        "properties": {
+          "typeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "companyCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "profitCenterID": {
+            "type": "string",
+            "nullable": true
+          },
+          "fromDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "toDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sbu": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bu": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkFlowAction": {
+        "type": "object",
+        "properties": {
+          "typeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "companyCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "profitCenterID": {
+            "type": "string",
+            "nullable": true
+          },
+          "fromDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "toDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sbu": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bu": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recommendationId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "action": {
+            "type": "string",
+            "nullable": true
+          },
+          "loginId": {
+            "type": "string",
+            "nullable": true
+          },
+          "comments": {
+            "type": "string",
+            "nullable": true
+          },
+          "newRequest": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkflowDelegation": {
+        "type": "object",
+        "properties": {
+          "delegationID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "fromUserDomainLoginID": {
+            "type": "string",
+            "nullable": true
+          },
+          "toUserDomainLoginID": {
+            "type": "string",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updatedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "updatedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkflowRedirect": {
+        "type": "object",
+        "properties": {
+          "worklistRedirectionID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "processInstanceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recommendationRequestID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "fromUserDomainLoginID": {
+            "type": "string",
+            "nullable": true
+          },
+          "toUserDomainLoginID": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [
+        "Bearer"
+      ]
+    }
+  ]
+}
