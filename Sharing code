@@ -1,39 +1,384 @@
-TableName	ColumnOrder	ColumnName	DataType	KeyType
-ADM_ActivityTracker	1	ActivityTrackerID	int	PK
-ADM_ActivityTracker	2	UserID	int	FK
-ADM_ActivityTracker	3	RoleID	int	FK
-ADM_ActivityTracker	4	RoleName	varchar	
-ADM_ActivityTracker	5	IpAddress	varchar	
-ADM_ActivityTracker	6	BrowserName	varchar	
-ADM_ActivityTracker	7	ApplicationID	int	FK
-ADM_ActivityTracker	8	ScreenID	int	
-ADM_ActivityTracker	9	FunctionID	int	
-ADM_ActivityTracker	10	UserActionID	int	
-ADM_ActivityTracker	11	LoginTime	datetime	
-ADM_ActivityTracker	12	LogoutTime	datetime	
-ADM_ActivityTracker	13	SessionDuration	float	
-ADM_ActivityTracker	14	SessionID	varchar	
-ADM_ActivityTracker	15	IsOnline	bit	
-ADM_ActivityTracker	16	CreatedBy	varchar	
-ADM_ActivityTracker	17	CreatedOn	datetime	
-ADM_ActivityTracker	18	UpdatedBy	varchar	
-ADM_ActivityTracker	19	UpdatedOn	datetime	
-ADM_ActivityTracker	20	UserAgent	nvarchar	
-ADM_ActivityTracker	21	Browser	nvarchar	
-ADM_ActivityTracker	22	BrowserVersion	nvarchar	
-ADM_ActivityTracker	23	SessionStartTimeStamp	datetime	
-ADM_API	1	APIID	int	PK
-ADM_API	2	APIName	nvarchar	
-ADM_API	3	IsActive	bit	
-ADM_API	4	CreatedBy	nvarchar	
-ADM_API	5	CreatedOn	datetime	
-ADM_API	6	UpdatedBy	nvarchar	
-ADM_API	7	UpdatedOn	datetime	
-ADM_API	8	FunctionalityID	int	FK
-ADM_APIRequestLog	1	RequestLogID	int	PK
-ADM_APIRequestLog	2	UserID	int	FK
-ADM_APIRequestLog	3	RoleID	int	FK
-ADM_APIRequestLog	4	AppModuleMappingID	int	FK
+ADM_ActivityTracker
+Column
+Description
+Example
+ActivityTrackerID (PK)
+Auto-increment primary key
+1
+UserID (FK)
+Reference to user
+101
+RoleID (FK)
+Reference to role
+5
+RoleName
+Role name of the user
+Admin
+IpAddress
+User IP Address
+10.10.5.21
+BrowserName
+Name of browser
+Chrome
+ApplicationID (FK)
+Linked application reference
+1
+ScreenID
+Screen reference ID
+10
+FunctionID
+Function reference ID
+20
+UserActionID
+Action performed reference
+2
+LoginTime
+Session login time
+2023-08-20
+LogoutTime
+Session logout time
+2023-08-20
+SessionDuration
+Total session duration
+45.20
+SessionID
+Unique session identifier
+ABC123
+IsOnline
+Online / Offline status
+0
+CreatedBy
+Record created by
+Admin
+CreatedOn
+Record created date
+2023-08-20
+UpdatedBy
+Record updated by
+Admin
+UpdatedOn
+Record updated date
+2023-08-21
+UserAgent
+Browser user agent text
+Mozilla/5.0
+Browser
+Browser name
+Chrome
+BrowserVersion
+Browser version
+121.0
+SessionStartTimeStamp
+Session start date/time
+2023-08-20
+
+
+ADM_API
+Stores master details of APIs configured in the application.
+Column
+Description
+Example
+APIID (PK)
+Auto-increment primary key
+1
+APIName
+Name of the API
+GetUserDetails
+IsActive
+API active / inactive status
+1
+CreatedBy
+User who created the record
+Admin
+CreatedOn
+Record created date
+2023-08-20
+UpdatedBy
+User who last updated the record
+Admin
+UpdatedOn
+Record updated date
+2023-08-21
+FunctionalityID (FK)
+Linked functionality reference
+5
+
+
+ADM_APIRequestLog
+Stores logs for every API request and response executed in the system.
+Column
+Description
+Example
+RequestLogID (PK)
+Auto-increment primary key
+1
+UserID (FK)
+Reference to user
+101
+RoleID (FK)
+Reference to role
+5
+AppModuleMappingID (FK)
+Application module mapping reference
+10
+SessionID
+Unique session identifier
+ABC123
+ApiEndPoint
+API endpoint URL
+/api/user/get
+HttpMethod
+HTTP request method
+GET
+StatusCode
+API response status code
+200
+RequestBody
+API request payload
+{"id":1}
+RequestTimeStamp
+API request time
+2023-08-20
+ResponseBody
+API response payload
+{"name":"John"}
+ResponseTimeStamp
+API response time
+2023-08-20
+Duration
+Request execution time
+120ms
+CreatedBy
+Record created by
+Admin
+CreatedOn
+Record created date
+2023-08-20
+LayerID
+Application layer reference
+3
+ADM_Application
+Stores master details of all applications configured in the system.
+Column
+Description
+Example
+ApplicationID (PK)
+Auto-increment primary key
+1
+ApplicationName
+Name of the application
+ERP Portal
+IsActive
+Application active status
+1
+CreatedBy
+User who created the record
+Admin
+CreatedDate
+Record created date
+2023-08-10
+UpdatedBy
+User who last updated the record
+Admin
+UpdatedDate
+Record updated date
+2023-08-20
+ADM_BU_Delete
+Stores deleted Business Unit (BU) information for audit purposes.
+Column
+Description
+Example
+BuID (PK)
+Business Unit unique ID
+1001
+BuName
+Business Unit name
+Retail BU
+SbuID (FK)
+Sub Business Unit reference
+210
+IsActive
+Active / Inactive status
+0
+CreatedBy
+Record created by
+System
+CreatedDate
+Created date
+2023-06-10
+UpdatedBy
+Record updated by
+Admin
+UpdatedDate
+Updated date
+2023-08-10
+ADM_ErrorLogging
+Stores detailed error information generated in the system.
+Column
+Description
+Example
+ErrorLogID (PK)
+Auto-increment primary key
+1
+UserID (FK)
+Reference to user
+101
+RoleID (FK)
+Reference to role
+5
+SessionID
+User session identifier
+ABC123
+ApplicationID (FK)
+Linked application reference
+1
+ScreenID
+Screen reference
+10
+ModuleID (FK)
+Application module reference
+4
+FunctionID
+Function reference
+20
+LayerID
+Layer reference
+2
+APIID
+API reference
+11
+StoredProcedureID
+Stored procedure reference
+55
+ErrorNumber
+System error number
+50001
+ErrorState
+Error state code
+1
+ErrorSeverity
+Error severity level
+HIGH
+StackTrace
+Technical error trace
+at login()…
+ErrorMessage
+Error message text
+Object reference error
+RequestBody
+Request data
+{"id":1}
+ResponseBody
+Response data
+null
+ErrorStatusID (FK)
+Error status reference
+2
+Status
+Current error status
+Open
+AssignTo
+Assigned user
+SupportUser
+HostName
+Server host name
+APP01
+Environment
+System environment
+PROD
+CreatedBy
+Created user
+System
+CreatedOn
+Created date
+2023-08-20
+UpdatedBy
+Updated user
+Admin
+UpdatedDate
+Updated date
+2023-08-21
+IpAddress
+Client IP Address
+10.10.5.21
+ADM_ErrorStatus
+Stores all available error status types.
+Column
+Description
+Example
+ErrorStatusID (PK)
+Auto-increment primary key
+1
+StatusName
+Name of status
+Open
+Description
+Status meaning
+Error not resolved
+IsActive
+Active status flag
+1
+ADM_Functionality
+Stores functionality details mapped to application screens.
+Column
+Description
+Example
+FunctionalityID (PK)
+Unique functionality ID
+10
+FunctionalityName
+Name of functionality
+Save User
+IsActive
+Active / inactive status
+1
+CreatedBy
+Record created by
+Admin
+CreatedOn
+Created date
+2023-08-15
+UpdatedBy
+Record updated by
+Admin
+UpdatedOn
+Updated date
+2023-08-20
+ScreenID
+Linked screen reference
+5
+IsDisplay
+Display allowed flag
+1
+ADM_Layer
+Stores details of different logical layers in the application.
+Column
+Description
+Example
+LayerID (PK)
+Unique layer ID
+1
+LayerName
+Name of layer
+API Layer
+IsActive
+Active status
+1
+CreatedBy
+Record created by
+Admin
+CreatedOn
+Created date
+2023-08-01
+UpdatedBy
+Record updated by
+Admin
+UpdatedOn
+Updated date
+2023-08-20
+
+
+
 ADM_APIRequestLog	5	SessionID	varchar	
 ADM_APIRequestLog	6	ApiEndPoint	varchar	
 ADM_APIRequestLog	7	HttpMethod	varchar	
