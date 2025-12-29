@@ -1,812 +1,569 @@
-TableName	ColumnName	DataType	KeyType
-ADM_ActivityTracker	ActivityTrackerID	int	PK
-ADM_ActivityTracker	ActivityTrackerID	int	PK
-ADM_ActivityTracker	ActivityTrackerID	int	PK
-ADM_ActivityTracker	UserID	int	FK
-ADM_ActivityTracker	UserID	int	FK
-ADM_ActivityTracker	UserID	int	FK
-ADM_ActivityTracker	RoleID	int	FK
-ADM_ActivityTracker	RoleID	int	FK
-ADM_ActivityTracker	RoleID	int	FK
-ADM_ActivityTracker	RoleName	varchar	
-ADM_ActivityTracker	RoleName	varchar	
-ADM_ActivityTracker	RoleName	varchar	
-ADM_ActivityTracker	IpAddress	varchar	
-ADM_ActivityTracker	IpAddress	varchar	
-ADM_ActivityTracker	IpAddress	varchar	
-ADM_ActivityTracker	BrowserName	varchar	
-ADM_ActivityTracker	BrowserName	varchar	
-ADM_ActivityTracker	BrowserName	varchar	
-ADM_ActivityTracker	ApplicationID	int	FK
-ADM_ActivityTracker	ApplicationID	int	FK
-ADM_ActivityTracker	ApplicationID	int	FK
-ADM_ActivityTracker	ScreenID	int	
-ADM_ActivityTracker	ScreenID	int	
-ADM_ActivityTracker	ScreenID	int	
-ADM_ActivityTracker	FunctionID	int	
-ADM_ActivityTracker	FunctionID	int	
-ADM_ActivityTracker	FunctionID	int	
-ADM_ActivityTracker	UserActionID	int	
-ADM_ActivityTracker	UserActionID	int	
-ADM_ActivityTracker	UserActionID	int	
-ADM_ActivityTracker	LoginTime	datetime	
-ADM_ActivityTracker	LoginTime	datetime	
-ADM_ActivityTracker	LoginTime	datetime	
-ADM_ActivityTracker	LogoutTime	datetime	
-ADM_ActivityTracker	LogoutTime	datetime	
-ADM_ActivityTracker	LogoutTime	datetime	
-ADM_ActivityTracker	SessionDuration	float	
-ADM_ActivityTracker	SessionDuration	float	
-ADM_ActivityTracker	SessionDuration	float	
-ADM_ActivityTracker	SessionID	varchar	
-ADM_ActivityTracker	SessionID	varchar	
-ADM_ActivityTracker	SessionID	varchar	
-ADM_ActivityTracker	IsOnline	bit	
-ADM_ActivityTracker	IsOnline	bit	
-ADM_ActivityTracker	IsOnline	bit	
-ADM_ActivityTracker	CreatedBy	varchar	
-ADM_ActivityTracker	CreatedBy	varchar	
-ADM_ActivityTracker	CreatedBy	varchar	
-ADM_ActivityTracker	CreatedOn	datetime	
-ADM_ActivityTracker	CreatedOn	datetime	
-ADM_ActivityTracker	CreatedOn	datetime	
-ADM_ActivityTracker	UpdatedBy	varchar	
-ADM_ActivityTracker	UpdatedBy	varchar	
-ADM_ActivityTracker	UpdatedBy	varchar	
-ADM_ActivityTracker	UpdatedOn	datetime	
-ADM_ActivityTracker	UpdatedOn	datetime	
-ADM_ActivityTracker	UpdatedOn	datetime	
-ADM_ActivityTracker	UserAgent	nvarchar	
-ADM_ActivityTracker	UserAgent	nvarchar	
-ADM_ActivityTracker	UserAgent	nvarchar	
-ADM_ActivityTracker	Browser	nvarchar	
-ADM_ActivityTracker	Browser	nvarchar	
-ADM_ActivityTracker	Browser	nvarchar	
-ADM_ActivityTracker	BrowserVersion	nvarchar	
-ADM_ActivityTracker	BrowserVersion	nvarchar	
-ADM_ActivityTracker	BrowserVersion	nvarchar	
-ADM_ActivityTracker	SessionStartTimeStamp	datetime	
-ADM_ActivityTracker	SessionStartTimeStamp	datetime	
-ADM_ActivityTracker	SessionStartTimeStamp	datetime	
-ADM_API	APIID	int	PK
-ADM_API	APIName	nvarchar	
-ADM_API	IsActive	bit	
-ADM_API	CreatedBy	nvarchar	
-ADM_API	CreatedOn	datetime	
-ADM_API	UpdatedBy	nvarchar	
-ADM_API	UpdatedOn	datetime	
-ADM_API	FunctionalityID	int	FK
-ADM_APIRequestLog	RequestLogID	int	PK
-ADM_APIRequestLog	RequestLogID	int	PK
-ADM_APIRequestLog	RequestLogID	int	PK
-ADM_APIRequestLog	UserID	int	FK
-ADM_APIRequestLog	UserID	int	FK
-ADM_APIRequestLog	UserID	int	FK
-ADM_APIRequestLog	RoleID	int	FK
-ADM_APIRequestLog	RoleID	int	FK
-ADM_APIRequestLog	RoleID	int	FK
-ADM_APIRequestLog	AppModuleMappingID	int	FK
-ADM_APIRequestLog	AppModuleMappingID	int	FK
-ADM_APIRequestLog	AppModuleMappingID	int	FK
-ADM_APIRequestLog	SessionID	varchar	
-ADM_APIRequestLog	SessionID	varchar	
-ADM_APIRequestLog	SessionID	varchar	
-ADM_APIRequestLog	ApiEndPoint	varchar	
-ADM_APIRequestLog	ApiEndPoint	varchar	
-ADM_APIRequestLog	ApiEndPoint	varchar	
-ADM_APIRequestLog	HttpMethod	varchar	
-ADM_APIRequestLog	HttpMethod	varchar	
-ADM_APIRequestLog	HttpMethod	varchar	
-ADM_APIRequestLog	StatusCode	int	
-ADM_APIRequestLog	StatusCode	int	
-ADM_APIRequestLog	StatusCode	int	
-ADM_APIRequestLog	RequestBody	varchar	
-ADM_APIRequestLog	RequestBody	varchar	
-ADM_APIRequestLog	RequestBody	varchar	
-ADM_APIRequestLog	RequestTimeStamp	datetime	
-ADM_APIRequestLog	RequestTimeStamp	datetime	
-ADM_APIRequestLog	RequestTimeStamp	datetime	
-ADM_APIRequestLog	ResponseBody	varchar	
-ADM_APIRequestLog	ResponseBody	varchar	
-ADM_APIRequestLog	ResponseBody	varchar	
-ADM_APIRequestLog	ResponseTimeStamp	datetime	
-ADM_APIRequestLog	ResponseTimeStamp	datetime	
-ADM_APIRequestLog	ResponseTimeStamp	datetime	
-ADM_APIRequestLog	Duration	varchar	
-ADM_APIRequestLog	Duration	varchar	
-ADM_APIRequestLog	Duration	varchar	
-ADM_APIRequestLog	CreatedBy	varchar	
-ADM_APIRequestLog	CreatedBy	varchar	
-ADM_APIRequestLog	CreatedBy	varchar	
-ADM_APIRequestLog	CreatedOn	datetime	
-ADM_APIRequestLog	CreatedOn	datetime	
-ADM_APIRequestLog	CreatedOn	datetime	
-ADM_APIRequestLog	LayerID	int	
-ADM_APIRequestLog	LayerID	int	
-ADM_APIRequestLog	LayerID	int	
-ADM_Application	ApplicationID	int	PK
-ADM_Application	ApplicationName	nvarchar	
-ADM_Application	IsActive	bit	
-ADM_Application	CreatedBy	nvarchar	
-ADM_Application	CreatedDate	datetime	
-ADM_Application	UpdatedBy	nvarchar	
-ADM_Application	UpdatedDate	datetime	
-ADM_BU_Delete	BuID	int	PK
-ADM_BU_Delete	BuName	nvarchar	
-ADM_BU_Delete	SbuID	int	FK
-ADM_BU_Delete	IsActive	bit	
-ADM_BU_Delete	CreatedBy	nvarchar	
-ADM_BU_Delete	CreatedDate	datetime	
-ADM_BU_Delete	UpdatedBy	nvarchar	
-ADM_BU_Delete	UpdatedDate	datetime	
-ADM_ErrorLogging	ErrorLogID	int	PK
-ADM_ErrorLogging	ErrorLogID	int	PK
-ADM_ErrorLogging	ErrorLogID	int	PK
-ADM_ErrorLogging	ErrorLogID	int	PK
-ADM_ErrorLogging	ErrorLogID	int	PK
-ADM_ErrorLogging	UserID	int	FK
-ADM_ErrorLogging	UserID	int	FK
-ADM_ErrorLogging	UserID	int	FK
-ADM_ErrorLogging	UserID	int	FK
-ADM_ErrorLogging	UserID	int	FK
-ADM_ErrorLogging	RoleID	int	FK
-ADM_ErrorLogging	RoleID	int	FK
-ADM_ErrorLogging	RoleID	int	FK
-ADM_ErrorLogging	RoleID	int	FK
-ADM_ErrorLogging	RoleID	int	FK
-ADM_ErrorLogging	SessionID	varchar	
-ADM_ErrorLogging	SessionID	varchar	
-ADM_ErrorLogging	SessionID	varchar	
-ADM_ErrorLogging	SessionID	varchar	
-ADM_ErrorLogging	SessionID	varchar	
-ADM_ErrorLogging	ApplicationID	int	FK
-ADM_ErrorLogging	ApplicationID	int	FK
-ADM_ErrorLogging	ApplicationID	int	FK
-ADM_ErrorLogging	ApplicationID	int	FK
-ADM_ErrorLogging	ApplicationID	int	FK
-ADM_ErrorLogging	ScreenID	int	
-ADM_ErrorLogging	ScreenID	int	
-ADM_ErrorLogging	ScreenID	int	
-ADM_ErrorLogging	ScreenID	int	
-ADM_ErrorLogging	ScreenID	int	
-ADM_ErrorLogging	ModuleID	int	FK
-ADM_ErrorLogging	ModuleID	int	FK
-ADM_ErrorLogging	ModuleID	int	FK
-ADM_ErrorLogging	ModuleID	int	FK
-ADM_ErrorLogging	ModuleID	int	FK
-ADM_ErrorLogging	FunctionID	int	
-ADM_ErrorLogging	FunctionID	int	
-ADM_ErrorLogging	FunctionID	int	
-ADM_ErrorLogging	FunctionID	int	
-ADM_ErrorLogging	FunctionID	int	
-ADM_ErrorLogging	LayerID	int	
-ADM_ErrorLogging	LayerID	int	
-ADM_ErrorLogging	LayerID	int	
-ADM_ErrorLogging	LayerID	int	
-ADM_ErrorLogging	LayerID	int	
-ADM_ErrorLogging	APIID	int	
-ADM_ErrorLogging	APIID	int	
-ADM_ErrorLogging	APIID	int	
-ADM_ErrorLogging	APIID	int	
-ADM_ErrorLogging	APIID	int	
-ADM_ErrorLogging	StoredProcedureID	int	
-ADM_ErrorLogging	StoredProcedureID	int	
-ADM_ErrorLogging	StoredProcedureID	int	
-ADM_ErrorLogging	StoredProcedureID	int	
-ADM_ErrorLogging	StoredProcedureID	int	
-ADM_ErrorLogging	ErrorNumber	int	
-ADM_ErrorLogging	ErrorNumber	int	
-ADM_ErrorLogging	ErrorNumber	int	
-ADM_ErrorLogging	ErrorNumber	int	
-ADM_ErrorLogging	ErrorNumber	int	
-ADM_ErrorLogging	ErrorState	int	
-ADM_ErrorLogging	ErrorState	int	
-ADM_ErrorLogging	ErrorState	int	
-ADM_ErrorLogging	ErrorState	int	
-ADM_ErrorLogging	ErrorState	int	
-ADM_ErrorLogging	ErrorSeverity	varchar	
-ADM_ErrorLogging	ErrorSeverity	varchar	
-ADM_ErrorLogging	ErrorSeverity	varchar	
-ADM_ErrorLogging	ErrorSeverity	varchar	
-ADM_ErrorLogging	ErrorSeverity	varchar	
-ADM_ErrorLogging	StackTrace	nvarchar	
-ADM_ErrorLogging	StackTrace	nvarchar	
-ADM_ErrorLogging	StackTrace	nvarchar	
-ADM_ErrorLogging	StackTrace	nvarchar	
-ADM_ErrorLogging	StackTrace	nvarchar	
-ADM_ErrorLogging	ErrorMessage	nvarchar	
-ADM_ErrorLogging	ErrorMessage	nvarchar	
-ADM_ErrorLogging	ErrorMessage	nvarchar	
-ADM_ErrorLogging	ErrorMessage	nvarchar	
-ADM_ErrorLogging	ErrorMessage	nvarchar	
-ADM_ErrorLogging	RequestBody	nvarchar	
-ADM_ErrorLogging	RequestBody	nvarchar	
-ADM_ErrorLogging	RequestBody	nvarchar	
-ADM_ErrorLogging	RequestBody	nvarchar	
-ADM_ErrorLogging	RequestBody	nvarchar	
-ADM_ErrorLogging	ResponseBody	nvarchar	
-ADM_ErrorLogging	ResponseBody	nvarchar	
-ADM_ErrorLogging	ResponseBody	nvarchar	
-ADM_ErrorLogging	ResponseBody	nvarchar	
-ADM_ErrorLogging	ResponseBody	nvarchar	
-ADM_ErrorLogging	ErrorStatusID	int	FK
-ADM_ErrorLogging	ErrorStatusID	int	FK
-ADM_ErrorLogging	ErrorStatusID	int	FK
-ADM_ErrorLogging	ErrorStatusID	int	FK
-ADM_ErrorLogging	ErrorStatusID	int	FK
-ADM_ErrorLogging	Status	varchar	
-ADM_ErrorLogging	Status	varchar	
-ADM_ErrorLogging	Status	varchar	
-ADM_ErrorLogging	Status	varchar	
-ADM_ErrorLogging	Status	varchar	
-ADM_ErrorLogging	AssignTo	varchar	
-ADM_ErrorLogging	AssignTo	varchar	
-ADM_ErrorLogging	AssignTo	varchar	
-ADM_ErrorLogging	AssignTo	varchar	
-ADM_ErrorLogging	AssignTo	varchar	
-ADM_ErrorLogging	HostName	varchar	
-ADM_ErrorLogging	HostName	varchar	
-ADM_ErrorLogging	HostName	varchar	
-ADM_ErrorLogging	HostName	varchar	
-ADM_ErrorLogging	HostName	varchar	
-ADM_ErrorLogging	Environment	varchar	
-ADM_ErrorLogging	Environment	varchar	
-ADM_ErrorLogging	Environment	varchar	
-ADM_ErrorLogging	Environment	varchar	
-ADM_ErrorLogging	Environment	varchar	
-ADM_ErrorLogging	CreatedBy	varchar	
-ADM_ErrorLogging	CreatedBy	varchar	
-ADM_ErrorLogging	CreatedBy	varchar	
-ADM_ErrorLogging	CreatedBy	varchar	
-ADM_ErrorLogging	CreatedBy	varchar	
-ADM_ErrorLogging	CreatedOn	datetime	
-ADM_ErrorLogging	CreatedOn	datetime	
-ADM_ErrorLogging	CreatedOn	datetime	
-ADM_ErrorLogging	CreatedOn	datetime	
-ADM_ErrorLogging	CreatedOn	datetime	
-ADM_ErrorLogging	UpdatedBy	varchar	
-ADM_ErrorLogging	UpdatedBy	varchar	
-ADM_ErrorLogging	UpdatedBy	varchar	
-ADM_ErrorLogging	UpdatedBy	varchar	
-ADM_ErrorLogging	UpdatedBy	varchar	
-ADM_ErrorLogging	UpdatedDate	datetime	
-ADM_ErrorLogging	UpdatedDate	datetime	
-ADM_ErrorLogging	UpdatedDate	datetime	
-ADM_ErrorLogging	UpdatedDate	datetime	
-ADM_ErrorLogging	UpdatedDate	datetime	
-ADM_ErrorLogging	IpAddress	nvarchar	
-ADM_ErrorLogging	IpAddress	nvarchar	
-ADM_ErrorLogging	IpAddress	nvarchar	
-ADM_ErrorLogging	IpAddress	nvarchar	
-ADM_ErrorLogging	IpAddress	nvarchar	
-ADM_ErrorStatus	ErrorStatusID	int	PK
-ADM_ErrorStatus	StatusName	nvarchar	
-ADM_ErrorStatus	Description	nvarchar	
-ADM_ErrorStatus	IsActive	bit	
-ADM_Functionality	FunctionalityID	int	PK
-ADM_Functionality	FunctionalityName	nvarchar	
-ADM_Functionality	IsActive	bit	
-ADM_Functionality	CreatedBy	nvarchar	
-ADM_Functionality	CreatedOn	datetime	
-ADM_Functionality	UpdatedBy	nvarchar	
-ADM_Functionality	UpdatedOn	datetime	
-ADM_Functionality	ScreenID	int	
-ADM_Functionality	IsDisplay	bit	
-ADM_Layer	LayerID	int	PK
-ADM_Layer	LayerName	nvarchar	
-ADM_Layer	IsActive	bit	
-ADM_Layer	CreatedBy	nvarchar	
-ADM_Layer	CreatedOn	datetime	
-ADM_Layer	UpdatedBy	nvarchar	
-ADM_Layer	UpdatedOn	datetime	
-ADM_LoginActivity	LoginID	int	PK
-ADM_LoginActivity	LoginID	int	PK
-ADM_LoginActivity	LoginID	int	PK
-ADM_LoginActivity	RoleID	int	FK
-ADM_LoginActivity	RoleID	int	FK
-ADM_LoginActivity	RoleID	int	FK
-ADM_LoginActivity	IpAddress	varchar	
-ADM_LoginActivity	IpAddress	varchar	
-ADM_LoginActivity	IpAddress	varchar	
-ADM_LoginActivity	BrowserName	varchar	
-ADM_LoginActivity	BrowserName	varchar	
-ADM_LoginActivity	BrowserName	varchar	
-ADM_LoginActivity	ApplicationID	int	FK
-ADM_LoginActivity	ApplicationID	int	FK
-ADM_LoginActivity	ApplicationID	int	FK
-ADM_LoginActivity	LoginTime	datetime	
-ADM_LoginActivity	LoginTime	datetime	
-ADM_LoginActivity	LoginTime	datetime	
-ADM_LoginActivity	LogoutTime	datetime	
-ADM_LoginActivity	LogoutTime	datetime	
-ADM_LoginActivity	LogoutTime	datetime	
-ADM_LoginActivity	SessionID	varchar	
-ADM_LoginActivity	SessionID	varchar	
-ADM_LoginActivity	SessionID	varchar	
-ADM_LoginActivity	IsOnline	bit	
-ADM_LoginActivity	IsOnline	bit	
-ADM_LoginActivity	IsOnline	bit	
-ADM_LoginActivity	CreatedBy	varchar	
-ADM_LoginActivity	CreatedBy	varchar	
-ADM_LoginActivity	CreatedBy	varchar	
-ADM_LoginActivity	CreatedOn	datetime	
-ADM_LoginActivity	CreatedOn	datetime	
-ADM_LoginActivity	CreatedOn	datetime	
-ADM_LoginActivity	UpdatedBy	varchar	
-ADM_LoginActivity	UpdatedBy	varchar	
-ADM_LoginActivity	UpdatedBy	varchar	
-ADM_LoginActivity	UpdatedOn	datetime	
-ADM_LoginActivity	UpdatedOn	datetime	
-ADM_LoginActivity	UpdatedOn	datetime	
-ADM_LoginActivity	UserID	int	FK
-ADM_LoginActivity	UserID	int	FK
-ADM_LoginActivity	UserID	int	FK
-ADM_LoginActivity	UserAgent	nvarchar	
-ADM_LoginActivity	UserAgent	nvarchar	
-ADM_LoginActivity	UserAgent	nvarchar	
-ADM_LoginActivity	Browser	nvarchar	
-ADM_LoginActivity	Browser	nvarchar	
-ADM_LoginActivity	Browser	nvarchar	
-ADM_LoginActivity	BrowserVersion	nvarchar	
-ADM_LoginActivity	BrowserVersion	nvarchar	
-ADM_LoginActivity	BrowserVersion	nvarchar	
-ADM_LoginActivity	SessionStartTimeStamp	datetime	
-ADM_LoginActivity	SessionStartTimeStamp	datetime	
-ADM_LoginActivity	SessionStartTimeStamp	datetime	
-ADM_Menu	MenuID	int	PK
-ADM_Menu	MenuName	varchar	
-ADM_Menu	ActionLink	varchar	
-ADM_Menu	ActionName	varchar	
-ADM_Menu	ControllerName	varchar	
-ADM_Menu	Title	varchar	
-ADM_Menu	Svg	nvarchar	
-ADM_Menu	NavPosition	int	
-ADM_Menu	IsActive	bit	
-ADM_Menu	CreatedBy	varchar	
-ADM_Menu	CreatedDate	datetime	
-ADM_Menu	UpdatedBy	varchar	
-ADM_Menu	UpdatedDate	datetime	
-ADM_Menu	ModuleID	int	
-ADM_Module	ModuleID	int	PK
-ADM_Module	ModuleName	varchar	
-ADM_Module	Description	varchar	
-ADM_Module	IsActive	bit	
-ADM_Module	CreatedBy	varchar	
-ADM_Module	CreatedDate	datetime	
-ADM_Module	UpdatedBy	varchar	
-ADM_Module	UpdatedDate	datetime	
-ADM_Module	ApplicationID	int	FK
-ADM_PerformanceLog	PerformanceLogID	int	PK
-ADM_PerformanceLog	UserID	int	
-ADM_PerformanceLog	RoleID	int	
-ADM_PerformanceLog	SessionID	varchar	
-ADM_PerformanceLog	ComponentName	varchar	
-ADM_PerformanceLog	ActionName	varchar	
-ADM_PerformanceLog	StartTime	datetime	
-ADM_PerformanceLog	EndTime	datetime	
-ADM_PerformanceLog	Duration	varchar	
-ADM_PerformanceLog	CreatedBy	varchar	
-ADM_PerformanceLog	CreatedOn	datetime	
-ADM_QueryTracker	TrackID	int	PK
-ADM_QueryTracker	StoredProcedureID	int	
-ADM_QueryTracker	TotalRecords	nvarchar	
-ADM_QueryTracker	Totaltime	int	
-ADM_QueryTracker	Size	nvarchar	
-ADM_QueryTracker	CreatedDate	datetime	
-ADM_QueryTracker	WebServer	varchar	
-ADM_QueryTracker	ActionUrl	varchar	
-ADM_QueryTracker	ErrorMessage	varchar	
-ADM_QueryTracker	ParallelSql	varchar	
-ADM_Role	RoleID	int	PK
-ADM_Role	RoleName	varchar	
-ADM_Role	IsActive	bit	
-ADM_Role	CreatedBy	nvarchar	
-ADM_Role	CreatedDate	datetime	
-ADM_Role	UpdatedBy	nvarchar	
-ADM_Role	UpdatedDate	datetime	
-ADM_RoleMenuMapping	RoleMenuMappingID	int	PK
-ADM_RoleMenuMapping	RoleMenuMappingID	int	PK
-ADM_RoleMenuMapping	RoleID	int	FK
-ADM_RoleMenuMapping	RoleID	int	FK
-ADM_RoleMenuMapping	MenuID	int	FK
-ADM_RoleMenuMapping	MenuID	int	FK
-ADM_RoleMenuMapping	CreatedBy	nvarchar	
-ADM_RoleMenuMapping	CreatedBy	nvarchar	
-ADM_RoleMenuMapping	CreatedDate	datetime	
-ADM_RoleMenuMapping	CreatedDate	datetime	
-ADM_RoleMenuMapping	UpdatedBy	nvarchar	
-ADM_RoleMenuMapping	UpdatedBy	nvarchar	
-ADM_RoleMenuMapping	UpdatedDate	datetime	
-ADM_RoleMenuMapping	UpdatedDate	datetime	
-ADM_RoleProfitCenterMapping	RoleProfitCenterMappingID	int	PK
-ADM_RoleProfitCenterMapping	RoleID	int	FK
-ADM_RoleProfitCenterMapping	ProfitCenterID	int	
-ADM_RoleProfitCenterMapping	IsActive	bit	
-ADM_RoleProfitCenterMapping	CreatedBy	nvarchar	
-ADM_RoleProfitCenterMapping	CreatedDate	datetime	
-ADM_RoleProfitCenterMapping	UpdatedBy	nvarchar	
-ADM_RoleProfitCenterMapping	UpdatedDate	datetime	
-ADM_SBU_Delete	SbuID	int	PK
-ADM_SBU_Delete	SbuName	nvarchar	
-ADM_SBU_Delete	AffiliateID	int	
-ADM_SBU_Delete	IsActive	bit	
-ADM_SBU_Delete	CreatedBy	nvarchar	
-ADM_SBU_Delete	CreatedDate	datetime	
-ADM_SBU_Delete	UpdatedBy	nvarchar	
-ADM_SBU_Delete	UpdatedDate	datetime	
-ADM_Screen	ScreenID	int	PK
-ADM_Screen	ScreenName	varchar	
-ADM_Screen	Description	varchar	
-ADM_Screen	IsActive	bit	
-ADM_Screen	CreatedBy	varchar	
-ADM_Screen	CreatedDate	datetime	
-ADM_Screen	UpdatedBy	varchar	
-ADM_Screen	UpdatedDate	datetime	
-ADM_Screen	MenuID	int	FK
-ADM_Screen	IsDisplay	bit	
-ADM_StoredProcedure	StoredProcedureID	int	PK
-ADM_StoredProcedure	StoredProcedureName	nvarchar	
-ADM_StoredProcedure	IsActive	bit	
-ADM_StoredProcedure	CreatedBy	nvarchar	
-ADM_StoredProcedure	CreatedOn	datetime	
-ADM_StoredProcedure	UpdatedBy	nvarchar	
-ADM_StoredProcedure	UpdatedOn	datetime	
-ADM_User	UserID	int	PK
-ADM_User	Username	nvarchar	
-ADM_User	Email	nvarchar	
-ADM_User	FirstName	nvarchar	
-ADM_User	LastName	nvarchar	
-ADM_User	EmployeeID	nvarchar	
-ADM_User	IsDeleted	bit	
-ADM_User	IsActive	bit	
-ADM_User	LastLoginDate	datetime	
-ADM_User	CreatedBy	nvarchar	
-ADM_User	CreatedDate	datetime	
-ADM_User	UpdatedBy	nvarchar	
-ADM_User	UpdatedDate	datetime	
-ADM_User	AffiliateID	int	
-ADM_UserRoleMapping	UserRoleMappingID	int	PK
-ADM_UserRoleMapping	UserRoleMappingID	int	PK
-ADM_UserRoleMapping	UserID	int	FK
-ADM_UserRoleMapping	UserID	int	FK
-ADM_UserRoleMapping	RoleID	int	FK
-ADM_UserRoleMapping	RoleID	int	FK
-ADM_UserRoleMapping	IsActive	bit	
-ADM_UserRoleMapping	IsActive	bit	
-ADM_UserRoleMapping	IsDeleted	bit	
-ADM_UserRoleMapping	IsDeleted	bit	
-ADM_UserRoleMapping	IsSelectedRole	bit	
-ADM_UserRoleMapping	IsSelectedRole	bit	
-ADM_UserRoleMapping	CreatedBy	varchar	
-ADM_UserRoleMapping	CreatedBy	varchar	
-ADM_UserRoleMapping	CreatedDate	datetime	
-ADM_UserRoleMapping	CreatedDate	datetime	
-ADM_UserRoleMapping	UpdatedBy	varchar	
-ADM_UserRoleMapping	UpdatedBy	varchar	
-ADM_UserRoleMapping	UpdatedDate	datetime	
-ADM_UserRoleMapping	UpdatedDate	datetime	
-ADM_UserToken	ID	int	PK
-ADM_UserToken	SessionID	nvarchar	
-ADM_UserToken	Token	varchar	
-ADM_UserToken	IsActive	bit	
-ADM_UserToken	UserID	int	FK
-ADM_UserToken	CreatedBy	varchar	
-ADM_UserToken	CreatedOn	datetime	
-LOG_AdminActivities	LogID	int	PK
-LOG_AdminActivities	TableName	nvarchar	
-LOG_AdminActivities	OldValue	xml	
-LOG_AdminActivities	NewValue	xml	
-LOG_AdminActivities	IdentityColumnID	int	
-LOG_AdminActivities	ActivityType	nvarchar	
-LOG_AdminActivities	CreatedBy	nvarchar	
-LOG_AdminActivities	CreatedDateTime	datetime	
-MST_AccessType	AccessTypeID	int	PK
-MST_AccessType	AccessTypeName	varchar	
-MST_AccessType	Description	nvarchar	
-MST_AccessType	RoleID	int	FK
-MST_AccessType	IsActive	bit	
-MST_AccessType	CreatedBy	nvarchar	
-MST_AccessType	CreatedDate	datetime	
-MST_AccessType	UpdatedBy	nvarchar	
-MST_AccessType	UpdatedDate	datetime	
-MST_Affiliate	AffiliateID	int	PK
-MST_Affiliate	AffiliateName	varchar	
-MST_Affiliate	IsActive	bit	
-MST_Affiliate	CreatedBy	nvarchar	
-MST_Affiliate	CreatedDate	datetime	
-MST_Affiliate	UpdatedBy	nvarchar	
-MST_Affiliate	UpdatedDate	datetime	
-MST_API	APIID	int	PK
-MST_API	APIName	varchar	
-MST_API	LayerName	varchar	
-MST_API	IsActive	bit	
-MST_API	CreatedBy	varchar	
-MST_API	CreatedDate	datetime	
-MST_API	UpdatedBy	varchar	
-MST_API	UpdatedDate	datetime	
-MST_ConfigurationMaster	ConfigurationID	int	PK
-MST_ConfigurationMaster	ConfiguationName	varchar	
-MST_ConfigurationMaster	ConfiguationValue	varchar	
-MST_ConfigurationMaster	ConfigurationType	varchar	
-MST_ConfigurationMaster	IsActive	bit	
-MST_ConfigurationMaster	CreatedBy	varchar	
-MST_ConfigurationMaster	CreatedDate	datetime	
-MST_ConfigurationMaster	UpdatedBy	varchar	
-MST_ConfigurationMaster	UpdatedDate	datetime	
-MST_Status	StatusID	int	PK
-MST_Status	StatusName	varchar	
-MST_Status	StatusDisplayName	varchar	
-MST_Status	StatusDisplayNameAr	nvarchar	
-MST_Status	StatusType	varchar	
-MST_Status	IsActive	bit	
-MST_Status	CreatedBy	varchar	
-MST_Status	CreatedDate	datetime	
-MST_Status	UpdateDate	datetime	
-MST_Status	UpdatedBy	varchar	
-SF_Contribution_Margin	RecID	int	PK
-SF_Contribution_Margin	YEAR	varchar	
-SF_Contribution_Margin	Month	varchar	
-SF_Contribution_Margin	CompanyCode	varchar	
-SF_Contribution_Margin	CompanyCountryCode	varchar	
-SF_Contribution_Margin	ProfitCenter	varchar	
-SF_Contribution_Margin	SaleQuantityTo	decimal	
-SF_Contribution_Margin	TotalRevenueInUSD	decimal	
-SF_Contribution_Margin	TotalRevenueInSAR	decimal	
-SF_Contribution_Margin	TotalCOGSInSAR	decimal	
-SF_Contribution_Margin	TotalCOGSInUSD	decimal	
-SF_Contribution_Margin	LogisticsCostInSAR	decimal	
-SF_Contribution_Margin	LogisticsCostInUSD	decimal	
-SF_Contribution_Margin	ContributionMarginInSAR	decimal	
-SF_Contribution_Margin	ContributionMarginInUSD	decimal	
-SF_Contribution_Margin	CreatedOn	datetime	
-SF_Historic_COGS_CM	RecID	int	PK
-SF_Historic_COGS_CM	FiscalYear	int	
-SF_Historic_COGS_CM	FiscalMonth	int	
-SF_Historic_COGS_CM	CompanyCode	varchar	
-SF_Historic_COGS_CM	Plant	nvarchar	
-SF_Historic_COGS_CM	ProductionLine	varchar	
-SF_Historic_COGS_CM	HeaderMaterialNumber	varchar	
-SF_Historic_COGS_CM	ProfitCenter	varchar	
-SF_Historic_COGS_CM	TransactionCurrency	varchar	
-SF_Historic_COGS_CM	PostedUOM	varchar	
-SF_Historic_COGS_CM	ProductionQuantityInTons	decimal	
-SF_Historic_COGS_CM	TotalCOGSInLocalCurrency	decimal	
-SF_Historic_COGS_CM	TotalCOGSInSAR	decimal	
-SF_Historic_COGS_CM	TotalCOGSInMillionSAR	decimal	
-SF_Historic_COGS_CM	TotalCOGSInUSD	decimal	
-SF_Historic_COGS_CM	TotalCOGSInMillionUSD	decimal	
-SF_Historic_COGS_CM	COGSPerTonInLocalCurrency	decimal	
-SF_Historic_COGS_CM	COGSPerTonInSAR	decimal	
-SF_Historic_COGS_CM	COGSPerTonInMillionSAR	decimal	
-SF_Historic_COGS_CM	COGSPerTonInUSD	decimal	
-SF_Historic_COGS_CM	COGSPerTonInMillionUSD	decimal	
-SF_Historic_COGS_CM	CreatedOn	datetime	
-SF_Historic_SalesRevenue	RecID	int	PK
-SF_Historic_SalesRevenue	Year	int	
-SF_Historic_SalesRevenue	Month	int	
-SF_Historic_SalesRevenue	CompanyCode	varchar	
-SF_Historic_SalesRevenue	CompanyCountryCode	varchar	
-SF_Historic_SalesRevenue	ProfitCenter	varchar	
-SF_Historic_SalesRevenue	Plant	varchar	
-SF_Historic_SalesRevenue	SalesOrg	varchar	
-SF_Historic_SalesRevenue	SalesDistrict	varchar	
-SF_Historic_SalesRevenue	ShipToCountry	varchar	
-SF_Historic_SalesRevenue	CurrencyCode	varchar	
-SF_Historic_SalesRevenue	TotalRevenueInUSD	decimal	
-SF_Historic_SalesRevenue	TotalRevenueInMillionUSD	decimal	
-SF_Historic_SalesRevenue	TotalRevenueInSAR	decimal	
-SF_Historic_SalesRevenue	TotalRevenueInMillionSAR	decimal	
-SF_Historic_SalesRevenue	SaleQuantityToInMetricTon	decimal	
-SF_Historic_SalesRevenue	AverageSellingPriceInUSD	decimal	
-SF_Historic_SalesRevenue	AverageSellingPriceInSAR	decimal	
-SF_Historic_SalesRevenue	CreatedOn	datetime	
-sysdiagrams	name	sysname	
-sysdiagrams	principal_id	int	
-sysdiagrams	diagram_id	int	PK
-sysdiagrams	version	int	
-sysdiagrams	definition	varbinary	
-TRN_Recommendation	RecommendationID	int	PK
-TRN_Recommendation	ProfitCenterID	int	
-TRN_Recommendation	ProfitCenter	varchar	
-TRN_Recommendation	calMonth	int	
-TRN_Recommendation	calYear	int	
-TRN_Recommendation	Production_Message	varchar	
-TRN_Recommendation	Production_Plant	varchar	
-TRN_Recommendation	Production_VolumeinMT	float	
-TRN_Recommendation	Production_ForCountry	varchar	
-TRN_Recommendation	Production_Capacity	float	
-TRN_Recommendation	Production_CostPerTon	float	
-TRN_Recommendation	Sales_Message	varchar	
-TRN_Recommendation	Sales_ForCountry	varchar	
-TRN_Recommendation	Sales_FromVolumeinMT	float	
-TRN_Recommendation	Sales_ToVolumeinMT	float	
-TRN_Recommendation	Sales_Demand	float	
-TRN_Recommendation	Sales_SalesPriceinUSD	float	
-TRN_Recommendation	CM_ABP	float	
-TRN_Recommendation	CM_SF	float	
-TRN_Recommendation	IsActive	bit	
-TRN_Recommendation	StatusID	int	
-TRN_Recommendation	CreatedBy	nvarchar	
-TRN_Recommendation	CreatedDate	datetime	
-TRN_Recommendation	UpdatedBy	nvarchar	
-TRN_Recommendation	UpdatedDate	datetime	
-TRN_Recommendation	Comments	nvarchar	
-TRN_Recommendation	ActionTakenBy	varchar	
-TRN_Recommendation	WorkFlowStageName	varchar	
-TRN_Recommendation_Bkp	RecommendationID	int	
-TRN_Recommendation_Bkp	ProfitCenterID	int	
-TRN_Recommendation_Bkp	ProfitCenter	varchar	
-TRN_Recommendation_Bkp	calMonth	int	
-TRN_Recommendation_Bkp	calYear	int	
-TRN_Recommendation_Bkp	Production_Message	varchar	
-TRN_Recommendation_Bkp	Production_Plant	varchar	
-TRN_Recommendation_Bkp	Production_VolumeinMT	float	
-TRN_Recommendation_Bkp	Production_ForCountry	varchar	
-TRN_Recommendation_Bkp	Production_Capacity	float	
-TRN_Recommendation_Bkp	Production_CostPerTon	float	
-TRN_Recommendation_Bkp	Sales_Message	varchar	
-TRN_Recommendation_Bkp	Sales_ForCountry	varchar	
-TRN_Recommendation_Bkp	Sales_FromVolumeinMT	float	
-TRN_Recommendation_Bkp	Sales_ToVolumeinMT	float	
-TRN_Recommendation_Bkp	Sales_Demand	float	
-TRN_Recommendation_Bkp	Sales_SalesPriceinUSD	float	
-TRN_Recommendation_Bkp	CM_ABP	float	
-TRN_Recommendation_Bkp	CM_SF	float	
-TRN_Recommendation_Bkp	IsActive	bit	
-TRN_Recommendation_Bkp	CreatedBy	nvarchar	
-TRN_Recommendation_Bkp	CreatedDate	datetime	
-TRN_Recommendation_Bkp	UpdatedBy	nvarchar	
-TRN_Recommendation_Bkp	UpdatedDate	datetime	
-TRN_RecommendationDetails	RecommendationDetailsID	int	PK
-TRN_RecommendationDetails	RecommendationID	int	FK
-TRN_RecommendationDetails	RecommendationTypeID	int	
-TRN_RecommendationDetails	RecommendationTypeName	varchar	
-TRN_RecommendationDetails	Contributors	varchar	
-TRN_RecommendationDetails	UnderlyingFacts	varchar	
-TRN_UserLoginSession	UserLoginSessionID	int	PK
-TRN_UserLoginSession	UserID	int	FK
-TRN_UserLoginSession	SessionID	varchar	
-TRN_UserLoginSession	IsActive	bit	
-TRN_UserLoginSession	CreatedBy	nvarchar	
-TRN_UserLoginSession	CreatedDate	datetime	
-TRN_UserLoginSession	UpdatedBy	nvarchar	
-TRN_UserLoginSession	UpdatedOn	datetime	
-vw_sf_contribution_margin_Delete	RecID	int	PK
-vw_sf_contribution_margin_Delete	YEAR	varchar	
-vw_sf_contribution_margin_Delete	Month	varchar	
-vw_sf_contribution_margin_Delete	Company_Country_code	varchar	
-vw_sf_contribution_margin_Delete	Company_Code	varchar	
-vw_sf_contribution_margin_Delete	Profit_Center	varchar	
-vw_sf_contribution_margin_Delete	Plant	varchar	
-vw_sf_contribution_margin_Delete	posted_unit_of_measure	varchar	
-vw_sf_contribution_margin_Delete	Sale_Quantity_TO	decimal	
-vw_sf_contribution_margin_Delete	transaction_currency	varchar	
-vw_sf_contribution_margin_Delete	Total_Revenue_SAR	decimal	
-vw_sf_contribution_margin_Delete	COGS_SAR	decimal	
-vw_sf_contribution_margin_Delete	contribution_margin_SAR	decimal	
-vw_sf_contribution_margin_Delete	contribution_margin_USD	decimal	
-vw_sf_historic_cogs_cm	RecID	int	PK
-vw_sf_historic_cogs_cm	fiscal_year	int	
-vw_sf_historic_cogs_cm	fiscal_Month	int	
-vw_sf_historic_cogs_cm	company_code	nvarchar	
-vw_sf_historic_cogs_cm	plant	nvarchar	
-vw_sf_historic_cogs_cm	production_line	nvarchar	
-vw_sf_historic_cogs_cm	header_material_number	nvarchar	
-vw_sf_historic_cogs_cm	Total_cogs_MillionSAR	decimal	
-vw_sf_historic_cogs_cm	Total_cogs_MillionUSD	decimal	
-vw_sf_historic_cogs_cm	Contribution_Margin	decimal	
-vw_sf_historic_cogs_cm_source_view	RecID	int	PK
-vw_sf_historic_cogs_cm_source_view	fiscal_year	int	
-vw_sf_historic_cogs_cm_source_view	fiscal_Month	int	
-vw_sf_historic_cogs_cm_source_view	company_code	nvarchar	
-vw_sf_historic_cogs_cm_source_view	plant	nvarchar	
-vw_sf_historic_cogs_cm_source_view	production_line	nvarchar	
-vw_sf_historic_cogs_cm_source_view	header_material_number	nvarchar	
-vw_sf_historic_cogs_cm_source_view	production_quantity_tons	decimal	
-vw_sf_historic_cogs_cm_source_view	Total_cogs	decimal	
-vw_sf_historic_cogs_cm_source_view	cogs_per_ton	decimal	
-vw_sf_historic_cogs_cm_source_view	transaction_currency	varchar	
-vw_sf_historic_cogs_cm_source_view	posted_unit_of_measure	varchar	
-vw_sf_historic_cogs_cm_source_view	CreatedOn	datetime	
-vw_sf_historic_salesrevenue	RecID	int	PK
-vw_sf_historic_salesrevenue	Year	int	
-vw_sf_historic_salesrevenue	Month	int	
-vw_sf_historic_salesrevenue	Company_Code	varchar	
-vw_sf_historic_salesrevenue	Profit_Center	varchar	
-vw_sf_historic_salesrevenue	Plant	varchar	
-vw_sf_historic_salesrevenue	Sales_Org	varchar	
-vw_sf_historic_salesrevenue	total_revenue_in_usd	decimal	
-vw_sf_historic_salesrevenue	total_revenue_in_MillionUSD	decimal	
-vw_sf_historic_salesrevenue	total_revenue_in_MillionSAR	decimal	
-vw_sf_historic_salesrevenue	sale_quantity_in_MetricTon	decimal	
-vw_sf_historic_salesrevenue	average_selling_price_in_USD	decimal	
-vw_sf_historic_salesrevenue	average_selling_price_in_SAR	decimal	
-vw_sf_historic_salesrevenue_source_view	RecID	int	PK
-vw_sf_historic_salesrevenue_source_view	Year	int	
-vw_sf_historic_salesrevenue_source_view	Month	int	
-vw_sf_historic_salesrevenue_source_view	Company_Country_code	varchar	
-vw_sf_historic_salesrevenue_source_view	Company_Code	varchar	
-vw_sf_historic_salesrevenue_source_view	Profit_Center	varchar	
-vw_sf_historic_salesrevenue_source_view	Plant	varchar	
-vw_sf_historic_salesrevenue_source_view	Sales_Org	varchar	
-vw_sf_historic_salesrevenue_source_view	Sales_district	varchar	
-vw_sf_historic_salesrevenue_source_view	Ship_to_Country	varchar	
-vw_sf_historic_salesrevenue_source_view	total_revenue_in_usd	decimal	
-vw_sf_historic_salesrevenue_source_view	sale_quantity_in_ton	decimal	
-vw_sf_historic_salesrevenue_source_view	average_selling_price_in_usd	decimal	
-vw_sf_historic_salesrevenue_source_view	currency_code	varchar	
-vw_sf_historic_salesrevenue_source_view	CreatedOn	datetime	
-VW_Web_SAC_COGS_CM	RecID	int	PK
-VW_Web_SAC_COGS_CM	sal_year	int	
-VW_Web_SAC_COGS_CM	sal_month	int	
-VW_Web_SAC_COGS_CM	date_sales_revmonth	varchar	
-VW_Web_SAC_COGS_CM	company_code	varchar	
-VW_Web_SAC_COGS_CM	product_id	varchar	
-VW_Web_SAC_COGS_CM	profit_centerid	varchar	
-VW_Web_SAC_COGS_CM	sales_volumes	decimal	
-VW_Web_SAC_COGS_CM	sales_revs	decimal	
-VW_Web_SAC_COGS_CM	MI_Price	decimal	
-VW_Web_SAC_COGS_CM	logistic_cost	decimal	
-VW_Web_SAC_COGS_CM	mfg_variable_cost_MillionSAR	decimal	
-VW_Web_SAC_COGS_CM	Contri_Margin_MillionSAR	decimal	
-VW_Web_SalesandRev_Salesrev_ASP	RecID	int	PK
-VW_Web_SalesandRev_Salesrev_ASP	sal_year	int	
-VW_Web_SalesandRev_Salesrev_ASP	sal_month	int	
-VW_Web_SalesandRev_Salesrev_ASP	Date_Sales_RevMonth	varchar	
-VW_Web_SalesandRev_Salesrev_ASP	company_codeid	varchar	
-VW_Web_SalesandRev_Salesrev_ASP	company_codeidoriginal	varchar	
-VW_Web_SalesandRev_Salesrev_ASP	productid	varchar	
-VW_Web_SalesandRev_Salesrev_ASP	profit_centerid	varchar	
-VW_Web_SalesandRev_Salesrev_ASP	sales_regionid	varchar	
-VW_Web_SalesandRev_Salesrev_ASP	sales_volume_in_MetricTon	decimal	
-VW_Web_SalesandRev_Salesrev_ASP	sales_revenue_in_MillionSAR	decimal	
-VW_Web_SalesandRev_Salesrev_ASP	sales_revenue_uom	varchar	
-VW_Web_SalesandRev_Salesrev_ASP	asp_in_SAR	decimal	
-WareHouse	WareHouseID	int	PK
-WareHouse	WareHouseName	nvarchar	
-WareHouse	ProfitCenterID	int	
-WareHouse	IsActive	bit	
-WareHouse	CreatedBy	nvarchar	
-WareHouse	CreatedDate	datetime	
-WareHouse	UpdatedBy	nvarchar	
-WareHouse	UpdatedDate	datetime	
-WorkflowDelegation	DelegationId	int	PK
-WorkflowDelegation	ProcessId	int	
-WorkflowDelegation	FromUserId	nvarchar	
-WorkflowDelegation	ToUserId	nvarchar	
-WorkflowDelegation	FromDate	date	
-WorkflowDelegation	ToDate	date	
-WorkflowDelegation	IsEffective	bit	
-WorkflowDelegation	CreatedBy	nvarchar	
-WorkflowDelegation	CreatedDate	datetime	
-WorkflowDelegation	UpdatedBy	nvarchar	
-WorkflowDelegation	UpdatedDate	datetime	
-WorkflowRedirects	Id	int	PK
-WorkflowRedirects	WorkflowNumber	nvarchar	
-WorkflowRedirects	RedirectedFrom	nvarchar	
-WorkflowRedirects	RedirectedFromEmail	nvarchar	
-WorkflowRedirects	RedirectedTo	nvarchar	
-WorkflowRedirects	RedirectedToEmail	nvarchar	
-WorkflowRedirects	RedirectedOn	datetime	
-WorkflowRedirects	Reason	nvarchar	
-WorkflowRedirects	PendingWithId	nvarchar	
-WorkflowRedirects	PendingWithName	nvarchar	
-WorkflowRedirects	PendingWithDesignate	nvarchar	
-WorkflowRedirects	AssignedDate	date	
-WorkflowRedirects	Department	nvarchar	
-WorkRecommendationActions	Id	int	PK
-WorkRecommendationActions	WorkRecommendationId	int	FK
-WorkRecommendationActions	StageName	varchar	
-WorkRecommendationActions	ActionTaken	varchar	
-WorkRecommendationActions	ActionBy	varchar	
-WorkRecommendationActions	Comments	nvarchar	
-WorkRecommendationActions	ActionTime	datetime	
-WorkRecommendations	Id	int	PK
-WorkRecommendations	RequestNumber	varchar	
-WorkRecommendations	RecommendationDescription	nvarchar	
-WorkRecommendations	RevenueForecast	decimal	
-WorkRecommendations	AIForecast	decimal	
-WorkRecommendations	AIChangePercent	decimal	
-WorkRecommendations	Status	varchar	
-WorkRecommendations	CurrentAction	varchar	
-WorkRecommendations	CreatedOn	datetime	
+TableName	ColumnOrder	ColumnName	DataType	KeyType
+ADM_ActivityTracker	1	ActivityTrackerID	int	PK
+ADM_ActivityTracker	2	UserID	int	FK
+ADM_ActivityTracker	3	RoleID	int	FK
+ADM_ActivityTracker	4	RoleName	varchar	
+ADM_ActivityTracker	5	IpAddress	varchar	
+ADM_ActivityTracker	6	BrowserName	varchar	
+ADM_ActivityTracker	7	ApplicationID	int	FK
+ADM_ActivityTracker	8	ScreenID	int	
+ADM_ActivityTracker	9	FunctionID	int	
+ADM_ActivityTracker	10	UserActionID	int	
+ADM_ActivityTracker	11	LoginTime	datetime	
+ADM_ActivityTracker	12	LogoutTime	datetime	
+ADM_ActivityTracker	13	SessionDuration	float	
+ADM_ActivityTracker	14	SessionID	varchar	
+ADM_ActivityTracker	15	IsOnline	bit	
+ADM_ActivityTracker	16	CreatedBy	varchar	
+ADM_ActivityTracker	17	CreatedOn	datetime	
+ADM_ActivityTracker	18	UpdatedBy	varchar	
+ADM_ActivityTracker	19	UpdatedOn	datetime	
+ADM_ActivityTracker	20	UserAgent	nvarchar	
+ADM_ActivityTracker	21	Browser	nvarchar	
+ADM_ActivityTracker	22	BrowserVersion	nvarchar	
+ADM_ActivityTracker	23	SessionStartTimeStamp	datetime	
+ADM_API	1	APIID	int	PK
+ADM_API	2	APIName	nvarchar	
+ADM_API	3	IsActive	bit	
+ADM_API	4	CreatedBy	nvarchar	
+ADM_API	5	CreatedOn	datetime	
+ADM_API	6	UpdatedBy	nvarchar	
+ADM_API	7	UpdatedOn	datetime	
+ADM_API	8	FunctionalityID	int	FK
+ADM_APIRequestLog	1	RequestLogID	int	PK
+ADM_APIRequestLog	2	UserID	int	FK
+ADM_APIRequestLog	3	RoleID	int	FK
+ADM_APIRequestLog	4	AppModuleMappingID	int	FK
+ADM_APIRequestLog	5	SessionID	varchar	
+ADM_APIRequestLog	6	ApiEndPoint	varchar	
+ADM_APIRequestLog	7	HttpMethod	varchar	
+ADM_APIRequestLog	8	StatusCode	int	
+ADM_APIRequestLog	9	RequestBody	varchar	
+ADM_APIRequestLog	10	RequestTimeStamp	datetime	
+ADM_APIRequestLog	11	ResponseBody	varchar	
+ADM_APIRequestLog	12	ResponseTimeStamp	datetime	
+ADM_APIRequestLog	13	Duration	varchar	
+ADM_APIRequestLog	14	CreatedBy	varchar	
+ADM_APIRequestLog	15	CreatedOn	datetime	
+ADM_APIRequestLog	16	LayerID	int	
+ADM_Application	1	ApplicationID	int	PK
+ADM_Application	2	ApplicationName	nvarchar	
+ADM_Application	3	IsActive	bit	
+ADM_Application	4	CreatedBy	nvarchar	
+ADM_Application	5	CreatedDate	datetime	
+ADM_Application	6	UpdatedBy	nvarchar	
+ADM_Application	7	UpdatedDate	datetime	
+ADM_BU_Delete	1	BuID	int	PK
+ADM_BU_Delete	2	BuName	nvarchar	
+ADM_BU_Delete	3	SbuID	int	FK
+ADM_BU_Delete	4	IsActive	bit	
+ADM_BU_Delete	5	CreatedBy	nvarchar	
+ADM_BU_Delete	6	CreatedDate	datetime	
+ADM_BU_Delete	7	UpdatedBy	nvarchar	
+ADM_BU_Delete	8	UpdatedDate	datetime	
+ADM_ErrorLogging	1	ErrorLogID	int	PK
+ADM_ErrorLogging	2	UserID	int	FK
+ADM_ErrorLogging	3	RoleID	int	FK
+ADM_ErrorLogging	4	SessionID	varchar	
+ADM_ErrorLogging	5	ApplicationID	int	FK
+ADM_ErrorLogging	6	ScreenID	int	
+ADM_ErrorLogging	7	ModuleID	int	FK
+ADM_ErrorLogging	8	FunctionID	int	
+ADM_ErrorLogging	9	LayerID	int	
+ADM_ErrorLogging	10	APIID	int	
+ADM_ErrorLogging	11	StoredProcedureID	int	
+ADM_ErrorLogging	12	ErrorNumber	int	
+ADM_ErrorLogging	13	ErrorState	int	
+ADM_ErrorLogging	14	ErrorSeverity	varchar	
+ADM_ErrorLogging	15	StackTrace	nvarchar	
+ADM_ErrorLogging	16	ErrorMessage	nvarchar	
+ADM_ErrorLogging	17	RequestBody	nvarchar	
+ADM_ErrorLogging	18	ResponseBody	nvarchar	
+ADM_ErrorLogging	19	ErrorStatusID	int	FK
+ADM_ErrorLogging	20	Status	varchar	
+ADM_ErrorLogging	21	AssignTo	varchar	
+ADM_ErrorLogging	22	HostName	varchar	
+ADM_ErrorLogging	23	Environment	varchar	
+ADM_ErrorLogging	25	CreatedBy	varchar	
+ADM_ErrorLogging	26	CreatedOn	datetime	
+ADM_ErrorLogging	27	UpdatedBy	varchar	
+ADM_ErrorLogging	28	UpdatedDate	datetime	
+ADM_ErrorLogging	29	IpAddress	nvarchar	
+ADM_ErrorStatus	1	ErrorStatusID	int	PK
+ADM_ErrorStatus	2	StatusName	nvarchar	
+ADM_ErrorStatus	3	Description	nvarchar	
+ADM_ErrorStatus	4	IsActive	bit	
+ADM_Functionality	1	FunctionalityID	int	PK
+ADM_Functionality	2	FunctionalityName	nvarchar	
+ADM_Functionality	3	IsActive	bit	
+ADM_Functionality	4	CreatedBy	nvarchar	
+ADM_Functionality	5	CreatedOn	datetime	
+ADM_Functionality	6	UpdatedBy	nvarchar	
+ADM_Functionality	7	UpdatedOn	datetime	
+ADM_Functionality	8	ScreenID	int	
+ADM_Functionality	9	IsDisplay	bit	
+ADM_Layer	1	LayerID	int	PK
+ADM_Layer	2	LayerName	nvarchar	
+ADM_Layer	3	IsActive	bit	
+ADM_Layer	4	CreatedBy	nvarchar	
+ADM_Layer	5	CreatedOn	datetime	
+ADM_Layer	6	UpdatedBy	nvarchar	
+ADM_Layer	7	UpdatedOn	datetime	
+ADM_LoginActivity	1	LoginID	int	PK
+ADM_LoginActivity	2	RoleID	int	FK
+ADM_LoginActivity	3	IpAddress	varchar	
+ADM_LoginActivity	4	BrowserName	varchar	
+ADM_LoginActivity	5	ApplicationID	int	FK
+ADM_LoginActivity	6	LoginTime	datetime	
+ADM_LoginActivity	7	LogoutTime	datetime	
+ADM_LoginActivity	8	SessionID	varchar	
+ADM_LoginActivity	9	IsOnline	bit	
+ADM_LoginActivity	10	CreatedBy	varchar	
+ADM_LoginActivity	11	CreatedOn	datetime	
+ADM_LoginActivity	12	UpdatedBy	varchar	
+ADM_LoginActivity	13	UpdatedOn	datetime	
+ADM_LoginActivity	14	UserID	int	FK
+ADM_LoginActivity	15	UserAgent	nvarchar	
+ADM_LoginActivity	16	Browser	nvarchar	
+ADM_LoginActivity	17	BrowserVersion	nvarchar	
+ADM_LoginActivity	18	SessionStartTimeStamp	datetime	
+ADM_Menu	1	MenuID	int	PK
+ADM_Menu	2	MenuName	varchar	
+ADM_Menu	3	ActionLink	varchar	
+ADM_Menu	4	ActionName	varchar	
+ADM_Menu	5	ControllerName	varchar	
+ADM_Menu	6	Title	varchar	
+ADM_Menu	7	Svg	nvarchar	
+ADM_Menu	8	NavPosition	int	
+ADM_Menu	9	IsActive	bit	
+ADM_Menu	10	CreatedBy	varchar	
+ADM_Menu	11	CreatedDate	datetime	
+ADM_Menu	12	UpdatedBy	varchar	
+ADM_Menu	13	UpdatedDate	datetime	
+ADM_Menu	14	ModuleID	int	
+ADM_Module	1	ModuleID	int	PK
+ADM_Module	2	ModuleName	varchar	
+ADM_Module	3	Description	varchar	
+ADM_Module	4	IsActive	bit	
+ADM_Module	5	CreatedBy	varchar	
+ADM_Module	6	CreatedDate	datetime	
+ADM_Module	7	UpdatedBy	varchar	
+ADM_Module	8	UpdatedDate	datetime	
+ADM_Module	9	ApplicationID	int	FK
+ADM_PerformanceLog	1	PerformanceLogID	int	PK
+ADM_PerformanceLog	2	UserID	int	
+ADM_PerformanceLog	3	RoleID	int	
+ADM_PerformanceLog	4	SessionID	varchar	
+ADM_PerformanceLog	5	ComponentName	varchar	
+ADM_PerformanceLog	6	ActionName	varchar	
+ADM_PerformanceLog	7	StartTime	datetime	
+ADM_PerformanceLog	8	EndTime	datetime	
+ADM_PerformanceLog	9	Duration	varchar	
+ADM_PerformanceLog	10	CreatedBy	varchar	
+ADM_PerformanceLog	11	CreatedOn	datetime	
+ADM_QueryTracker	1	TrackID	int	PK
+ADM_QueryTracker	2	StoredProcedureID	int	
+ADM_QueryTracker	3	TotalRecords	nvarchar	
+ADM_QueryTracker	4	Totaltime	int	
+ADM_QueryTracker	5	Size	nvarchar	
+ADM_QueryTracker	6	CreatedDate	datetime	
+ADM_QueryTracker	7	WebServer	varchar	
+ADM_QueryTracker	8	ActionUrl	varchar	
+ADM_QueryTracker	9	ErrorMessage	varchar	
+ADM_QueryTracker	10	ParallelSql	varchar	
+ADM_Role	1	RoleID	int	PK
+ADM_Role	2	RoleName	varchar	
+ADM_Role	3	IsActive	bit	
+ADM_Role	4	CreatedBy	nvarchar	
+ADM_Role	5	CreatedDate	datetime	
+ADM_Role	6	UpdatedBy	nvarchar	
+ADM_Role	7	UpdatedDate	datetime	
+ADM_RoleMenuMapping	1	RoleMenuMappingID	int	PK
+ADM_RoleMenuMapping	2	RoleID	int	FK
+ADM_RoleMenuMapping	3	MenuID	int	FK
+ADM_RoleMenuMapping	4	CreatedBy	nvarchar	
+ADM_RoleMenuMapping	5	CreatedDate	datetime	
+ADM_RoleMenuMapping	6	UpdatedBy	nvarchar	
+ADM_RoleMenuMapping	7	UpdatedDate	datetime	
+ADM_RoleProfitCenterMapping	1	RoleProfitCenterMappingID	int	PK
+ADM_RoleProfitCenterMapping	2	RoleID	int	FK
+ADM_RoleProfitCenterMapping	3	ProfitCenterID	int	
+ADM_RoleProfitCenterMapping	4	IsActive	bit	
+ADM_RoleProfitCenterMapping	5	CreatedBy	nvarchar	
+ADM_RoleProfitCenterMapping	6	CreatedDate	datetime	
+ADM_RoleProfitCenterMapping	7	UpdatedBy	nvarchar	
+ADM_RoleProfitCenterMapping	8	UpdatedDate	datetime	
+ADM_SBU_Delete	1	SbuID	int	PK
+ADM_SBU_Delete	2	SbuName	nvarchar	
+ADM_SBU_Delete	3	AffiliateID	int	
+ADM_SBU_Delete	4	IsActive	bit	
+ADM_SBU_Delete	5	CreatedBy	nvarchar	
+ADM_SBU_Delete	6	CreatedDate	datetime	
+ADM_SBU_Delete	7	UpdatedBy	nvarchar	
+ADM_SBU_Delete	8	UpdatedDate	datetime	
+ADM_Screen	1	ScreenID	int	PK
+ADM_Screen	2	ScreenName	varchar	
+ADM_Screen	3	Description	varchar	
+ADM_Screen	4	IsActive	bit	
+ADM_Screen	5	CreatedBy	varchar	
+ADM_Screen	6	CreatedDate	datetime	
+ADM_Screen	7	UpdatedBy	varchar	
+ADM_Screen	8	UpdatedDate	datetime	
+ADM_Screen	9	MenuID	int	FK
+ADM_Screen	10	IsDisplay	bit	
+ADM_StoredProcedure	1	StoredProcedureID	int	PK
+ADM_StoredProcedure	2	StoredProcedureName	nvarchar	
+ADM_StoredProcedure	3	IsActive	bit	
+ADM_StoredProcedure	4	CreatedBy	nvarchar	
+ADM_StoredProcedure	5	CreatedOn	datetime	
+ADM_StoredProcedure	6	UpdatedBy	nvarchar	
+ADM_StoredProcedure	7	UpdatedOn	datetime	
+ADM_User	1	UserID	int	PK
+ADM_User	2	Username	nvarchar	
+ADM_User	3	Email	nvarchar	
+ADM_User	4	FirstName	nvarchar	
+ADM_User	5	LastName	nvarchar	
+ADM_User	6	EmployeeID	nvarchar	
+ADM_User	7	IsDeleted	bit	
+ADM_User	8	IsActive	bit	
+ADM_User	9	LastLoginDate	datetime	
+ADM_User	10	CreatedBy	nvarchar	
+ADM_User	11	CreatedDate	datetime	
+ADM_User	12	UpdatedBy	nvarchar	
+ADM_User	13	UpdatedDate	datetime	
+ADM_User	14	AffiliateID	int	
+ADM_UserRoleMapping	1	UserRoleMappingID	int	PK
+ADM_UserRoleMapping	2	UserID	int	FK
+ADM_UserRoleMapping	3	RoleID	int	FK
+ADM_UserRoleMapping	4	IsActive	bit	
+ADM_UserRoleMapping	5	IsDeleted	bit	
+ADM_UserRoleMapping	6	IsSelectedRole	bit	
+ADM_UserRoleMapping	7	CreatedBy	varchar	
+ADM_UserRoleMapping	8	CreatedDate	datetime	
+ADM_UserRoleMapping	9	UpdatedBy	varchar	
+ADM_UserRoleMapping	10	UpdatedDate	datetime	
+ADM_UserToken	1	ID	int	PK
+ADM_UserToken	2	SessionID	nvarchar	
+ADM_UserToken	3	Token	varchar	
+ADM_UserToken	4	IsActive	bit	
+ADM_UserToken	5	UserID	int	FK
+ADM_UserToken	6	CreatedBy	varchar	
+ADM_UserToken	7	CreatedOn	datetime	
+LOG_AdminActivities	1	LogID	int	PK
+LOG_AdminActivities	2	TableName	nvarchar	
+LOG_AdminActivities	3	OldValue	xml	
+LOG_AdminActivities	4	NewValue	xml	
+LOG_AdminActivities	5	IdentityColumnID	int	
+LOG_AdminActivities	6	ActivityType	nvarchar	
+LOG_AdminActivities	7	CreatedBy	nvarchar	
+LOG_AdminActivities	8	CreatedDateTime	datetime	
+MST_AccessType	1	AccessTypeID	int	PK
+MST_AccessType	2	AccessTypeName	varchar	
+MST_AccessType	3	Description	nvarchar	
+MST_AccessType	4	RoleID	int	FK
+MST_AccessType	5	IsActive	bit	
+MST_AccessType	6	CreatedBy	nvarchar	
+MST_AccessType	7	CreatedDate	datetime	
+MST_AccessType	8	UpdatedBy	nvarchar	
+MST_AccessType	9	UpdatedDate	datetime	
+MST_Affiliate	1	AffiliateID	int	PK
+MST_Affiliate	2	AffiliateName	varchar	
+MST_Affiliate	3	IsActive	bit	
+MST_Affiliate	4	CreatedBy	nvarchar	
+MST_Affiliate	5	CreatedDate	datetime	
+MST_Affiliate	6	UpdatedBy	nvarchar	
+MST_Affiliate	7	UpdatedDate	datetime	
+MST_API	1	APIID	int	PK
+MST_API	2	APIName	varchar	
+MST_API	3	LayerName	varchar	
+MST_API	4	IsActive	bit	
+MST_API	5	CreatedBy	varchar	
+MST_API	6	CreatedDate	datetime	
+MST_API	7	UpdatedBy	varchar	
+MST_API	8	UpdatedDate	datetime	
+MST_ConfigurationMaster	1	ConfigurationID	int	PK
+MST_ConfigurationMaster	2	ConfiguationName	varchar	
+MST_ConfigurationMaster	3	ConfiguationValue	varchar	
+MST_ConfigurationMaster	4	ConfigurationType	varchar	
+MST_ConfigurationMaster	5	IsActive	bit	
+MST_ConfigurationMaster	6	CreatedBy	varchar	
+MST_ConfigurationMaster	7	CreatedDate	datetime	
+MST_ConfigurationMaster	8	UpdatedBy	varchar	
+MST_ConfigurationMaster	9	UpdatedDate	datetime	
+MST_Status	1	StatusID	int	PK
+MST_Status	2	StatusName	varchar	
+MST_Status	3	StatusDisplayName	varchar	
+MST_Status	4	StatusDisplayNameAr	nvarchar	
+MST_Status	5	StatusType	varchar	
+MST_Status	6	IsActive	bit	
+MST_Status	7	CreatedBy	varchar	
+MST_Status	8	CreatedDate	datetime	
+MST_Status	9	UpdateDate	datetime	
+MST_Status	10	UpdatedBy	varchar	
+SF_Contribution_Margin	1	RecID	int	PK
+SF_Contribution_Margin	2	YEAR	varchar	
+SF_Contribution_Margin	3	Month	varchar	
+SF_Contribution_Margin	4	CompanyCode	varchar	
+SF_Contribution_Margin	5	CompanyCountryCode	varchar	
+SF_Contribution_Margin	6	ProfitCenter	varchar	
+SF_Contribution_Margin	7	SaleQuantityTo	decimal	
+SF_Contribution_Margin	8	TotalRevenueInUSD	decimal	
+SF_Contribution_Margin	9	TotalRevenueInSAR	decimal	
+SF_Contribution_Margin	10	TotalCOGSInSAR	decimal	
+SF_Contribution_Margin	11	TotalCOGSInUSD	decimal	
+SF_Contribution_Margin	12	LogisticsCostInSAR	decimal	
+SF_Contribution_Margin	13	LogisticsCostInUSD	decimal	
+SF_Contribution_Margin	14	ContributionMarginInSAR	decimal	
+SF_Contribution_Margin	15	ContributionMarginInUSD	decimal	
+SF_Contribution_Margin	16	CreatedOn	datetime	
+SF_Historic_COGS_CM	1	RecID	int	PK
+SF_Historic_COGS_CM	2	FiscalYear	int	
+SF_Historic_COGS_CM	3	FiscalMonth	int	
+SF_Historic_COGS_CM	4	CompanyCode	varchar	
+SF_Historic_COGS_CM	5	Plant	nvarchar	
+SF_Historic_COGS_CM	6	ProductionLine	varchar	
+SF_Historic_COGS_CM	7	HeaderMaterialNumber	varchar	
+SF_Historic_COGS_CM	8	ProfitCenter	varchar	
+SF_Historic_COGS_CM	9	TransactionCurrency	varchar	
+SF_Historic_COGS_CM	10	PostedUOM	varchar	
+SF_Historic_COGS_CM	11	ProductionQuantityInTons	decimal	
+SF_Historic_COGS_CM	12	TotalCOGSInLocalCurrency	decimal	
+SF_Historic_COGS_CM	13	TotalCOGSInSAR	decimal	
+SF_Historic_COGS_CM	14	TotalCOGSInMillionSAR	decimal	
+SF_Historic_COGS_CM	15	TotalCOGSInUSD	decimal	
+SF_Historic_COGS_CM	16	TotalCOGSInMillionUSD	decimal	
+SF_Historic_COGS_CM	17	COGSPerTonInLocalCurrency	decimal	
+SF_Historic_COGS_CM	18	COGSPerTonInSAR	decimal	
+SF_Historic_COGS_CM	19	COGSPerTonInMillionSAR	decimal	
+SF_Historic_COGS_CM	20	COGSPerTonInUSD	decimal	
+SF_Historic_COGS_CM	21	COGSPerTonInMillionUSD	decimal	
+SF_Historic_COGS_CM	22	CreatedOn	datetime	
+SF_Historic_SalesRevenue	1	RecID	int	PK
+SF_Historic_SalesRevenue	2	Year	int	
+SF_Historic_SalesRevenue	3	Month	int	
+SF_Historic_SalesRevenue	4	CompanyCode	varchar	
+SF_Historic_SalesRevenue	5	CompanyCountryCode	varchar	
+SF_Historic_SalesRevenue	6	ProfitCenter	varchar	
+SF_Historic_SalesRevenue	7	Plant	varchar	
+SF_Historic_SalesRevenue	8	SalesOrg	varchar	
+SF_Historic_SalesRevenue	9	SalesDistrict	varchar	
+SF_Historic_SalesRevenue	10	ShipToCountry	varchar	
+SF_Historic_SalesRevenue	11	CurrencyCode	varchar	
+SF_Historic_SalesRevenue	12	TotalRevenueInUSD	decimal	
+SF_Historic_SalesRevenue	13	TotalRevenueInMillionUSD	decimal	
+SF_Historic_SalesRevenue	14	TotalRevenueInSAR	decimal	
+SF_Historic_SalesRevenue	15	TotalRevenueInMillionSAR	decimal	
+SF_Historic_SalesRevenue	16	SaleQuantityToInMetricTon	decimal	
+SF_Historic_SalesRevenue	17	AverageSellingPriceInUSD	decimal	
+SF_Historic_SalesRevenue	18	AverageSellingPriceInSAR	decimal	
+SF_Historic_SalesRevenue	19	CreatedOn	datetime	
+sysdiagrams	1	name	sysname	
+sysdiagrams	2	principal_id	int	
+sysdiagrams	3	diagram_id	int	PK
+sysdiagrams	4	version	int	
+sysdiagrams	5	definition	varbinary	
+TRN_Recommendation	1	RecommendationID	int	PK
+TRN_Recommendation	2	ProfitCenterID	int	
+TRN_Recommendation	3	ProfitCenter	varchar	
+TRN_Recommendation	4	calMonth	int	
+TRN_Recommendation	5	calYear	int	
+TRN_Recommendation	6	Production_Message	varchar	
+TRN_Recommendation	7	Production_Plant	varchar	
+TRN_Recommendation	8	Production_VolumeinMT	float	
+TRN_Recommendation	9	Production_ForCountry	varchar	
+TRN_Recommendation	10	Production_Capacity	float	
+TRN_Recommendation	11	Production_CostPerTon	float	
+TRN_Recommendation	12	Sales_Message	varchar	
+TRN_Recommendation	13	Sales_ForCountry	varchar	
+TRN_Recommendation	14	Sales_FromVolumeinMT	float	
+TRN_Recommendation	15	Sales_ToVolumeinMT	float	
+TRN_Recommendation	16	Sales_Demand	float	
+TRN_Recommendation	17	Sales_SalesPriceinUSD	float	
+TRN_Recommendation	18	CM_ABP	float	
+TRN_Recommendation	19	CM_SF	float	
+TRN_Recommendation	20	IsActive	bit	
+TRN_Recommendation	21	StatusID	int	
+TRN_Recommendation	22	CreatedBy	nvarchar	
+TRN_Recommendation	23	CreatedDate	datetime	
+TRN_Recommendation	24	UpdatedBy	nvarchar	
+TRN_Recommendation	25	UpdatedDate	datetime	
+TRN_Recommendation	26	Comments	nvarchar	
+TRN_Recommendation	27	ActionTakenBy	varchar	
+TRN_Recommendation	28	WorkFlowStageName	varchar	
+TRN_Recommendation_Bkp	1	RecommendationID	int	
+TRN_Recommendation_Bkp	2	ProfitCenterID	int	
+TRN_Recommendation_Bkp	3	ProfitCenter	varchar	
+TRN_Recommendation_Bkp	4	calMonth	int	
+TRN_Recommendation_Bkp	5	calYear	int	
+TRN_Recommendation_Bkp	6	Production_Message	varchar	
+TRN_Recommendation_Bkp	7	Production_Plant	varchar	
+TRN_Recommendation_Bkp	8	Production_VolumeinMT	float	
+TRN_Recommendation_Bkp	9	Production_ForCountry	varchar	
+TRN_Recommendation_Bkp	10	Production_Capacity	float	
+TRN_Recommendation_Bkp	11	Production_CostPerTon	float	
+TRN_Recommendation_Bkp	12	Sales_Message	varchar	
+TRN_Recommendation_Bkp	13	Sales_ForCountry	varchar	
+TRN_Recommendation_Bkp	14	Sales_FromVolumeinMT	float	
+TRN_Recommendation_Bkp	15	Sales_ToVolumeinMT	float	
+TRN_Recommendation_Bkp	16	Sales_Demand	float	
+TRN_Recommendation_Bkp	17	Sales_SalesPriceinUSD	float	
+TRN_Recommendation_Bkp	18	CM_ABP	float	
+TRN_Recommendation_Bkp	19	CM_SF	float	
+TRN_Recommendation_Bkp	20	IsActive	bit	
+TRN_Recommendation_Bkp	21	CreatedBy	nvarchar	
+TRN_Recommendation_Bkp	22	CreatedDate	datetime	
+TRN_Recommendation_Bkp	23	UpdatedBy	nvarchar	
+TRN_Recommendation_Bkp	24	UpdatedDate	datetime	
+TRN_RecommendationDetails	1	RecommendationDetailsID	int	PK
+TRN_RecommendationDetails	2	RecommendationID	int	FK
+TRN_RecommendationDetails	3	RecommendationTypeID	int	
+TRN_RecommendationDetails	4	RecommendationTypeName	varchar	
+TRN_RecommendationDetails	5	Contributors	varchar	
+TRN_RecommendationDetails	6	UnderlyingFacts	varchar	
+TRN_UserLoginSession	1	UserLoginSessionID	int	PK
+TRN_UserLoginSession	2	UserID	int	FK
+TRN_UserLoginSession	3	SessionID	varchar	
+TRN_UserLoginSession	4	IsActive	bit	
+TRN_UserLoginSession	5	CreatedBy	nvarchar	
+TRN_UserLoginSession	6	CreatedDate	datetime	
+TRN_UserLoginSession	7	UpdatedBy	nvarchar	
+TRN_UserLoginSession	8	UpdatedOn	datetime	
+vw_sf_contribution_margin_Delete	1	RecID	int	PK
+vw_sf_contribution_margin_Delete	2	YEAR	varchar	
+vw_sf_contribution_margin_Delete	3	Month	varchar	
+vw_sf_contribution_margin_Delete	4	Company_Country_code	varchar	
+vw_sf_contribution_margin_Delete	5	Company_Code	varchar	
+vw_sf_contribution_margin_Delete	6	Profit_Center	varchar	
+vw_sf_contribution_margin_Delete	7	Plant	varchar	
+vw_sf_contribution_margin_Delete	8	posted_unit_of_measure	varchar	
+vw_sf_contribution_margin_Delete	9	Sale_Quantity_TO	decimal	
+vw_sf_contribution_margin_Delete	10	transaction_currency	varchar	
+vw_sf_contribution_margin_Delete	11	Total_Revenue_SAR	decimal	
+vw_sf_contribution_margin_Delete	12	COGS_SAR	decimal	
+vw_sf_contribution_margin_Delete	13	contribution_margin_SAR	decimal	
+vw_sf_contribution_margin_Delete	14	contribution_margin_USD	decimal	
+vw_sf_historic_cogs_cm	1	RecID	int	PK
+vw_sf_historic_cogs_cm	2	fiscal_year	int	
+vw_sf_historic_cogs_cm	3	fiscal_Month	int	
+vw_sf_historic_cogs_cm	4	company_code	nvarchar	
+vw_sf_historic_cogs_cm	5	plant	nvarchar	
+vw_sf_historic_cogs_cm	6	production_line	nvarchar	
+vw_sf_historic_cogs_cm	7	header_material_number	nvarchar	
+vw_sf_historic_cogs_cm	8	Total_cogs_MillionSAR	decimal	
+vw_sf_historic_cogs_cm	9	Total_cogs_MillionUSD	decimal	
+vw_sf_historic_cogs_cm	10	Contribution_Margin	decimal	
+vw_sf_historic_cogs_cm_source_view	1	RecID	int	PK
+vw_sf_historic_cogs_cm_source_view	2	fiscal_year	int	
+vw_sf_historic_cogs_cm_source_view	3	fiscal_Month	int	
+vw_sf_historic_cogs_cm_source_view	4	company_code	nvarchar	
+vw_sf_historic_cogs_cm_source_view	5	plant	nvarchar	
+vw_sf_historic_cogs_cm_source_view	6	production_line	nvarchar	
+vw_sf_historic_cogs_cm_source_view	7	header_material_number	nvarchar	
+vw_sf_historic_cogs_cm_source_view	8	production_quantity_tons	decimal	
+vw_sf_historic_cogs_cm_source_view	9	Total_cogs	decimal	
+vw_sf_historic_cogs_cm_source_view	10	cogs_per_ton	decimal	
+vw_sf_historic_cogs_cm_source_view	11	transaction_currency	varchar	
+vw_sf_historic_cogs_cm_source_view	12	posted_unit_of_measure	varchar	
+vw_sf_historic_cogs_cm_source_view	13	CreatedOn	datetime	
+vw_sf_historic_salesrevenue	1	RecID	int	PK
+vw_sf_historic_salesrevenue	2	Year	int	
+vw_sf_historic_salesrevenue	3	Month	int	
+vw_sf_historic_salesrevenue	4	Company_Code	varchar	
+vw_sf_historic_salesrevenue	5	Profit_Center	varchar	
+vw_sf_historic_salesrevenue	6	Plant	varchar	
+vw_sf_historic_salesrevenue	7	Sales_Org	varchar	
+vw_sf_historic_salesrevenue	8	total_revenue_in_usd	decimal	
+vw_sf_historic_salesrevenue	9	total_revenue_in_MillionUSD	decimal	
+vw_sf_historic_salesrevenue	10	total_revenue_in_MillionSAR	decimal	
+vw_sf_historic_salesrevenue	11	sale_quantity_in_MetricTon	decimal	
+vw_sf_historic_salesrevenue	12	average_selling_price_in_USD	decimal	
+vw_sf_historic_salesrevenue	13	average_selling_price_in_SAR	decimal	
+vw_sf_historic_salesrevenue_source_view	1	RecID	int	PK
+vw_sf_historic_salesrevenue_source_view	2	Year	int	
+vw_sf_historic_salesrevenue_source_view	3	Month	int	
+vw_sf_historic_salesrevenue_source_view	5	Company_Country_code	varchar	
+vw_sf_historic_salesrevenue_source_view	6	Company_Code	varchar	
+vw_sf_historic_salesrevenue_source_view	7	Profit_Center	varchar	
+vw_sf_historic_salesrevenue_source_view	8	Plant	varchar	
+vw_sf_historic_salesrevenue_source_view	9	Sales_Org	varchar	
+vw_sf_historic_salesrevenue_source_view	10	Sales_district	varchar	
+vw_sf_historic_salesrevenue_source_view	13	Ship_to_Country	varchar	
+vw_sf_historic_salesrevenue_source_view	15	total_revenue_in_usd	decimal	
+vw_sf_historic_salesrevenue_source_view	16	sale_quantity_in_ton	decimal	
+vw_sf_historic_salesrevenue_source_view	17	average_selling_price_in_usd	decimal	
+vw_sf_historic_salesrevenue_source_view	18	currency_code	varchar	
+vw_sf_historic_salesrevenue_source_view	19	CreatedOn	datetime	
+VW_Web_SAC_COGS_CM	1	RecID	int	PK
+VW_Web_SAC_COGS_CM	2	sal_year	int	
+VW_Web_SAC_COGS_CM	3	sal_month	int	
+VW_Web_SAC_COGS_CM	4	date_sales_revmonth	varchar	
+VW_Web_SAC_COGS_CM	5	company_code	varchar	
+VW_Web_SAC_COGS_CM	6	product_id	varchar	
+VW_Web_SAC_COGS_CM	7	profit_centerid	varchar	
+VW_Web_SAC_COGS_CM	8	sales_volumes	decimal	
+VW_Web_SAC_COGS_CM	9	sales_revs	decimal	
+VW_Web_SAC_COGS_CM	10	MI_Price	decimal	
+VW_Web_SAC_COGS_CM	11	logistic_cost	decimal	
+VW_Web_SAC_COGS_CM	12	mfg_variable_cost_MillionSAR	decimal	
+VW_Web_SAC_COGS_CM	13	Contri_Margin_MillionSAR	decimal	
+VW_Web_SalesandRev_Salesrev_ASP	1	RecID	int	PK
+VW_Web_SalesandRev_Salesrev_ASP	2	sal_year	int	
+VW_Web_SalesandRev_Salesrev_ASP	3	sal_month	int	
+VW_Web_SalesandRev_Salesrev_ASP	4	Date_Sales_RevMonth	varchar	
+VW_Web_SalesandRev_Salesrev_ASP	5	company_codeid	varchar	
+VW_Web_SalesandRev_Salesrev_ASP	6	company_codeidoriginal	varchar	
+VW_Web_SalesandRev_Salesrev_ASP	7	productid	varchar	
+VW_Web_SalesandRev_Salesrev_ASP	8	profit_centerid	varchar	
+VW_Web_SalesandRev_Salesrev_ASP	9	sales_regionid	varchar	
+VW_Web_SalesandRev_Salesrev_ASP	10	sales_volume_in_MetricTon	decimal	
+VW_Web_SalesandRev_Salesrev_ASP	11	sales_revenue_in_MillionSAR	decimal	
+VW_Web_SalesandRev_Salesrev_ASP	12	sales_revenue_uom	varchar	
+VW_Web_SalesandRev_Salesrev_ASP	13	asp_in_SAR	decimal	
+WareHouse	1	WareHouseID	int	PK
+WareHouse	2	WareHouseName	nvarchar	
+WareHouse	3	ProfitCenterID	int	
+WareHouse	4	IsActive	bit	
+WareHouse	5	CreatedBy	nvarchar	
+WareHouse	6	CreatedDate	datetime	
+WareHouse	7	UpdatedBy	nvarchar	
+WareHouse	8	UpdatedDate	datetime	
+WorkflowDelegation	1	DelegationId	int	PK
+WorkflowDelegation	2	ProcessId	int	
+WorkflowDelegation	3	FromUserId	nvarchar	
+WorkflowDelegation	4	ToUserId	nvarchar	
+WorkflowDelegation	5	FromDate	date	
+WorkflowDelegation	6	ToDate	date	
+WorkflowDelegation	7	IsEffective	bit	
+WorkflowDelegation	8	CreatedBy	nvarchar	
+WorkflowDelegation	9	CreatedDate	datetime	
+WorkflowDelegation	10	UpdatedBy	nvarchar	
+WorkflowDelegation	11	UpdatedDate	datetime	
+WorkflowRedirects	1	Id	int	PK
+WorkflowRedirects	2	WorkflowNumber	nvarchar	
+WorkflowRedirects	3	RedirectedFrom	nvarchar	
+WorkflowRedirects	4	RedirectedFromEmail	nvarchar	
+WorkflowRedirects	5	RedirectedTo	nvarchar	
+WorkflowRedirects	6	RedirectedToEmail	nvarchar	
+WorkflowRedirects	7	RedirectedOn	datetime	
+WorkflowRedirects	8	Reason	nvarchar	
+WorkflowRedirects	9	PendingWithId	nvarchar	
+WorkflowRedirects	10	PendingWithName	nvarchar	
+WorkflowRedirects	11	PendingWithDesignate	nvarchar	
+WorkflowRedirects	12	AssignedDate	date	
+WorkflowRedirects	13	Department	nvarchar	
+WorkRecommendationActions	1	Id	int	PK
+WorkRecommendationActions	2	WorkRecommendationId	int	FK
+WorkRecommendationActions	3	StageName	varchar	
+WorkRecommendationActions	4	ActionTaken	varchar	
+WorkRecommendationActions	5	ActionBy	varchar	
+WorkRecommendationActions	6	Comments	nvarchar	
+WorkRecommendationActions	7	ActionTime	datetime	
+WorkRecommendations	1	Id	int	PK
+WorkRecommendations	2	RequestNumber	varchar	
+WorkRecommendations	3	RecommendationDescription	nvarchar	
+WorkRecommendations	4	RevenueForecast	decimal	
+WorkRecommendations	5	AIForecast	decimal	
+WorkRecommendations	6	AIChangePercent	decimal	
+WorkRecommendations	7	Status	varchar	
+WorkRecommendations	8	CurrentAction	varchar	
+WorkRecommendations	9	CreatedOn	datetime	
