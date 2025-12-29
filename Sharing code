@@ -1,589 +1,103 @@
-👍 Got it.
-I’ll continue exactly in the SAME 3-column format:
-Column | Description | Example
-And one short line before each table name — just like earlier.
-SF_Contribution_Margin – Stores contribution margin details by company, month, and profit center.
-Column
-Description
-Example
-RecID
-Primary key identifier
-101
-YEAR
-Financial year
-2024
-Month
-Financial month
-03
-CompanyCode
-SAP company code
-1001
-CompanyCountryCode
-Country code
-SA
-ProfitCenter
-Profit center identifier
-PC100
-SaleQuantityTo
-Total sales quantity (Tons)
-12500.50
-TotalRevenueInUSD
-Revenue in USD
-2500000.75
-TotalRevenueInSAR
-Revenue in SAR
-9500000.00
-TotalCOGSInSAR
-COGS in SAR
-6000000.00
-TotalCOGSInUSD
-COGS in USD
-1580000.00
-LogisticsCostInSAR
-Logistics cost SAR
-350000.00
-LogisticsCostInUSD
-Logistics cost USD
-90000.00
-ContributionMarginInSAR
-Contribution margin SAR
-3150000.00
-ContributionMarginInUSD
-Contribution margin USD
-950000.00
-CreatedOn
-Record created date
-2024-03-31
-SF_Historic_COGS_CM – Historical cost of goods sold and contribution margin data.
-Column
-Description
-Example
-RecID
-Primary key
-1
-FiscalYear
-Fiscal year
-2024
-FiscalMonth
-Fiscal period month
-5
-CompanyCode
-SAP company code
-2001
-Plant
-Plant code
-PL01
-ProductionLine
-Production line code
-LINE-A
-HeaderMaterialNumber
-Material number
-MAT1001
-ProfitCenter
-Profit center
-PC200
-TransactionCurrency
-Currency code
-USD
-PostedUOM
-Unit of measure
-TON
-ProductionQuantityInTons
-Produced quantity
-8500.75
-TotalCOGSInLocalCurrency
-COGS in local currency
-12000000.00
-TotalCOGSInSAR
-COGS in SAR
-12500000.00
-TotalCOGSInMillionSAR
-COGS in million SAR
-12.5
-TotalCOGSInUSD
-COGS in USD
-3350000.00
-TotalCOGSInMillionUSD
-COGS in million USD
-3.35
-COGSPerTonInLocalCurrency
-COGS per ton (local)
-1500.50
-COGSPerTonInSAR
-COGS per ton (SAR)
-1550.25
-COGSPerTonInMillionSAR
-COGS/ton million SAR
-0.0015
-COGSPerTonInUSD
-COGS per ton USD
-420.25
-COGSPerTonInMillionUSD
-COGS/ton million USD
-0.00042
-CreatedOn
-Record created date
-2024-05-31
-SF_Historic_SalesRevenue – Historical sales revenue and volume details.
-Column
-Description
-Example
-RecID
-Primary key
-1
-Year
-Financial year
-2024
-Month
-Financial month
-6
-CompanyCode
-Company code
-1001
-CompanyCountryCode
-Country
-SA
-ProfitCenter
-Profit center
-PC150
-Plant
-Plant code
-PL02
-SalesOrg
-Sales organization
-SO01
-SalesDistrict
-Sales district code
-D100
-ShipToCountry
-Shipment destination country
-IN
-CurrencyCode
-Currency
-USD
-TotalRevenueInUSD
-Revenue USD
-4500000.00
-TotalRevenueInMillionUSD
-Revenue million USD
-4.5
-TotalRevenueInSAR
-Revenue SAR
-16800000.00
-TotalRevenueInMillionSAR
-Revenue million SAR
-16.8
-SaleQuantityToInMetricTon
-Sales tons
-18000.75
-AverageSellingPriceInUSD
-Avg price USD
-250.25
-AverageSellingPriceInSAR
-Avg price SAR
-935.00
-CreatedOn
-Created date
-2024-06-30
-TRN_Recommendation – Stores recommendation records and workflow actions.
-Column
-Description
-Example
-RecommendationID
-Primary key
-5001
-ProfitCenterID
-Profit center ID
-12
-ProfitCenter
-Profit center
-PC220
-calMonth
-Calendar month
-9
-calYear
-Calendar year
-2025
-Production_Message
-Production suggestion
-Increase production
-Production_Plant
-Plant name/code
-PL03
-Production_VolumeinMT
-Recommended volume
-2500
-Production_ForCountry
-Target country
-SA
-Production_Capacity
-Total capacity
-3000
-Production_CostPerTon
-Cost per ton
-150.25
-Sales_Message
-Sales recommendation
-Expand sales to UAE
-Sales_ForCountry
-Sales country
-AE
-Sales_FromVolumeinMT
-From volume
-1200
-Sales_ToVolumeinMT
-To volume
-1800
-Sales_Demand
-Demand tons
-2000
-Sales_SalesPriceinUSD
-Price per ton
-290
-CM_ABP
-ABP contribution margin
-1.25
-CM_SF
-SF contribution margin
-1.15
-IsActive
-Active flag
-1
-StatusID
-Workflow status
-3
-CreatedBy
-Created user
-admin
-CreatedDate
-Created date
-2025-01-05
-UpdatedBy
-Updated user
-manager
-UpdatedDate
-Updated date
-2025-01-10
-Comments
-Remarks
-Approved
-ActionTakenBy
-Action owner
-Supervisor
-WorkFlowStageName
-Workflow stage
-Review Completed
-TRN_RecommendationDetails – Detailed justification behind a recommendation.
-Column
-Description
-Example
-RecommendationDetailsID
-Primary key
-9001
-RecommendationID
-Linked recommendation
-5001
-RecommendationTypeID
-Type ID
-2
-RecommendationTypeName
-Recommendation category
-Sales Strategy
-Contributors
-People involved
-John, Ali
-UnderlyingFacts
-Supporting facts
-Demand trend increasing
-TRN_UserLoginSession – Tracks user login session history.
-Column
-Description
-Example
-UserLoginSessionID
-Primary key
-3001
-UserID
-User identifier
-25
-SessionID
-Session token/key
-A1B2C3
-IsActive
-Active session flag
-1
-CreatedBy
-Created user
-system
-CreatedDate
-Created timestamp
-2025-01-20
-UpdatedBy
-Updated user
-admin
-UpdatedOn
-Updated timestamp
-2025-01-21
-vw_sf_contribution_margin_Delete – View for deleted contribution margin records.
-Column
-Description
-Example
-RecID
-Primary key
-1
-YEAR
-Year
-2023
-Month
-Month
-12
-Company_Country_code
-Country
-SA
-Company_Code
-Company code
-1001
-Profit_Center
-Profit center
-PC300
-Plant
-Plant code
-PL05
-posted_unit_of_measure
-UOM
-TON
-Sale_Quantity_TO
-Sales quantity
-7500.25
-transaction_currency
-Currency
-USD
-Total_Revenue_SAR
-Revenue SAR
-9500000.00
-COGS_SAR
-COGS SAR
-6000000.00
-contribution_margin_SAR
-CM SAR
-3500000.00
-contribution_margin_USD
-CM USD
-950000.00
-vw_sf_historic_cogs_cm – View summarizing historic COGS and CM in millions.
-Column
-Description
-Example
-RecID
-Primary key
-1
-fiscal_year
-Fiscal year
-2024
-fiscal_Month
-Fiscal month
-7
-company_code
-Company code
-2002
-plant
-Plant code
-PL04
-production_line
-Production line
-LINE-B
-header_material_number
-Material number
-MAT500
-Total_cogs_MillionSAR
-Total COGS million SAR
-10.5
-Total_cogs_MillionUSD
-Total COGS million USD
-2.8
-Contribution_Margin
-Contribution margin
-1.2
-vw_sf_historic_cogs_cm_source_view – Detailed source view for historic COGS and production.
-Column
-Description
-Example
-RecID
-Primary key
-1
-fiscal_year
-Fiscal year
-2024
-fiscal_Month
-Fiscal month
-4
-company_code
-Company code
-2002
-plant
-Plant code
-PL04
-production_line
-Production line
-LINE-C
-header_material_number
-Material number
-MAT700
-production_quantity_tons
-Production tons
-12000.50
-Total_cogs
-Total COGS
-14500000.00
-cogs_per_ton
-COGS per ton
-1205.75
-transaction_currency
-Currency
-USD
-posted_unit_of_measure
-UOM
-TON
-CreatedOn
-Created date
-2024-04-30
-✅ Completed — SAME FORMAT THROUGHOUT
-If you paste the next set of tables,
-I’ll continue in this identical structure.
-
 TableName	ColumnOrder	ColumnName	DataType	KeyType
-SF_Contribution_Margin	1	RecID	int	PK
-SF_Contribution_Margin	2	YEAR	varchar	
-SF_Contribution_Margin	3	Month	varchar	
-SF_Contribution_Margin	4	CompanyCode	varchar	
-SF_Contribution_Margin	5	CompanyCountryCode	varchar	
-SF_Contribution_Margin	6	ProfitCenter	varchar	
-SF_Contribution_Margin	7	SaleQuantityTo	decimal	
-SF_Contribution_Margin	8	TotalRevenueInUSD	decimal	
-SF_Contribution_Margin	9	TotalRevenueInSAR	decimal	
-SF_Contribution_Margin	10	TotalCOGSInSAR	decimal	
-SF_Contribution_Margin	11	TotalCOGSInUSD	decimal	
-SF_Contribution_Margin	12	LogisticsCostInSAR	decimal	
-SF_Contribution_Margin	13	LogisticsCostInUSD	decimal	
-SF_Contribution_Margin	14	ContributionMarginInSAR	decimal	
-SF_Contribution_Margin	15	ContributionMarginInUSD	decimal	
-SF_Contribution_Margin	16	CreatedOn	datetime	
-SF_Historic_COGS_CM	1	RecID	int	PK
-SF_Historic_COGS_CM	2	FiscalYear	int	
-SF_Historic_COGS_CM	3	FiscalMonth	int	
-SF_Historic_COGS_CM	4	CompanyCode	varchar	
-SF_Historic_COGS_CM	5	Plant	nvarchar	
-SF_Historic_COGS_CM	6	ProductionLine	varchar	
-SF_Historic_COGS_CM	7	HeaderMaterialNumber	varchar	
-SF_Historic_COGS_CM	8	ProfitCenter	varchar	
-SF_Historic_COGS_CM	9	TransactionCurrency	varchar	
-SF_Historic_COGS_CM	10	PostedUOM	varchar	
-SF_Historic_COGS_CM	11	ProductionQuantityInTons	decimal	
-SF_Historic_COGS_CM	12	TotalCOGSInLocalCurrency	decimal	
-SF_Historic_COGS_CM	13	TotalCOGSInSAR	decimal	
-SF_Historic_COGS_CM	14	TotalCOGSInMillionSAR	decimal	
-SF_Historic_COGS_CM	15	TotalCOGSInUSD	decimal	
-SF_Historic_COGS_CM	16	TotalCOGSInMillionUSD	decimal	
-SF_Historic_COGS_CM	17	COGSPerTonInLocalCurrency	decimal	
-SF_Historic_COGS_CM	18	COGSPerTonInSAR	decimal	
-SF_Historic_COGS_CM	19	COGSPerTonInMillionSAR	decimal	
-SF_Historic_COGS_CM	20	COGSPerTonInUSD	decimal	
-SF_Historic_COGS_CM	21	COGSPerTonInMillionUSD	decimal	
-SF_Historic_COGS_CM	22	CreatedOn	datetime	
-SF_Historic_SalesRevenue	1	RecID	int	PK
-SF_Historic_SalesRevenue	2	Year	int	
-SF_Historic_SalesRevenue	3	Month	int	
-SF_Historic_SalesRevenue	4	CompanyCode	varchar	
-SF_Historic_SalesRevenue	5	CompanyCountryCode	varchar	
-SF_Historic_SalesRevenue	6	ProfitCenter	varchar	
-SF_Historic_SalesRevenue	7	Plant	varchar	
-SF_Historic_SalesRevenue	8	SalesOrg	varchar	
-SF_Historic_SalesRevenue	9	SalesDistrict	varchar	
-SF_Historic_SalesRevenue	10	ShipToCountry	varchar	
-SF_Historic_SalesRevenue	11	CurrencyCode	varchar	
-SF_Historic_SalesRevenue	12	TotalRevenueInUSD	decimal	
-SF_Historic_SalesRevenue	13	TotalRevenueInMillionUSD	decimal	
-SF_Historic_SalesRevenue	14	TotalRevenueInSAR	decimal	
-SF_Historic_SalesRevenue	15	TotalRevenueInMillionSAR	decimal	
-SF_Historic_SalesRevenue	16	SaleQuantityToInMetricTon	decimal	
-SF_Historic_SalesRevenue	17	AverageSellingPriceInUSD	decimal	
-SF_Historic_SalesRevenue	18	AverageSellingPriceInSAR	decimal	
-SF_Historic_SalesRevenue	19	CreatedOn	datetime	
-TRN_Recommendation	1	RecommendationID	int	PK
-TRN_Recommendation	2	ProfitCenterID	int	
-TRN_Recommendation	3	ProfitCenter	varchar	
-TRN_Recommendation	4	calMonth	int	
-TRN_Recommendation	5	calYear	int	
-TRN_Recommendation	6	Production_Message	varchar	
-TRN_Recommendation	7	Production_Plant	varchar	
-TRN_Recommendation	8	Production_VolumeinMT	float	
-TRN_Recommendation	9	Production_ForCountry	varchar	
-TRN_Recommendation	10	Production_Capacity	float	
-TRN_Recommendation	11	Production_CostPerTon	float	
-TRN_Recommendation	12	Sales_Message	varchar	
-TRN_Recommendation	13	Sales_ForCountry	varchar	
-TRN_Recommendation	14	Sales_FromVolumeinMT	float	
-TRN_Recommendation	15	Sales_ToVolumeinMT	float	
-TRN_Recommendation	16	Sales_Demand	float	
-TRN_Recommendation	17	Sales_SalesPriceinUSD	float	
-TRN_Recommendation	18	CM_ABP	float	
-TRN_Recommendation	19	CM_SF	float	
-TRN_Recommendation	20	IsActive	bit	
-TRN_Recommendation	21	StatusID	int	
-TRN_Recommendation	22	CreatedBy	nvarchar	
-TRN_Recommendation	23	CreatedDate	datetime	
-TRN_Recommendation	24	UpdatedBy	nvarchar	
-TRN_Recommendation	25	UpdatedDate	datetime	
-TRN_Recommendation	26	Comments	nvarchar	
-TRN_Recommendation	27	ActionTakenBy	varchar	
-TRN_Recommendation	28	WorkFlowStageName	varchar	
-TRN_RecommendationDetails	1	RecommendationDetailsID	int	PK
-TRN_RecommendationDetails	2	RecommendationID	int	FK
-TRN_RecommendationDetails	3	RecommendationTypeID	int	
-TRN_RecommendationDetails	4	RecommendationTypeName	varchar	
-TRN_RecommendationDetails	5	Contributors	varchar	
-TRN_RecommendationDetails	6	UnderlyingFacts	varchar	
-TRN_UserLoginSession	1	UserLoginSessionID	int	PK
-TRN_UserLoginSession	2	UserID	int	FK
-TRN_UserLoginSession	3	SessionID	varchar	
-TRN_UserLoginSession	4	IsActive	bit	
-TRN_UserLoginSession	5	CreatedBy	nvarchar	
-TRN_UserLoginSession	6	CreatedDate	datetime	
-TRN_UserLoginSession	7	UpdatedBy	nvarchar	
-TRN_UserLoginSession	8	UpdatedOn	datetime	
-vw_sf_contribution_margin_Delete	1	RecID	int	PK
-vw_sf_contribution_margin_Delete	2	YEAR	varchar	
-vw_sf_contribution_margin_Delete	3	Month	varchar	
-vw_sf_contribution_margin_Delete	4	Company_Country_code	varchar	
-vw_sf_contribution_margin_Delete	5	Company_Code	varchar	
-vw_sf_contribution_margin_Delete	6	Profit_Center	varchar	
-vw_sf_contribution_margin_Delete	7	Plant	varchar	
-vw_sf_contribution_margin_Delete	8	posted_unit_of_measure	varchar	
-vw_sf_contribution_margin_Delete	9	Sale_Quantity_TO	decimal	
-vw_sf_contribution_margin_Delete	10	transaction_currency	varchar	
-vw_sf_contribution_margin_Delete	11	Total_Revenue_SAR	decimal	
-vw_sf_contribution_margin_Delete	12	COGS_SAR	decimal	
-vw_sf_contribution_margin_Delete	13	contribution_margin_SAR	decimal	
-vw_sf_contribution_margin_Delete	14	contribution_margin_USD	decimal	
-vw_sf_historic_cogs_cm	1	RecID	int	PK
-vw_sf_historic_cogs_cm	2	fiscal_year	int	
-vw_sf_historic_cogs_cm	3	fiscal_Month	int	
-vw_sf_historic_cogs_cm	4	company_code	nvarchar	
-vw_sf_historic_cogs_cm	5	plant	nvarchar	
-vw_sf_historic_cogs_cm	6	production_line	nvarchar	
-vw_sf_historic_cogs_cm	7	header_material_number	nvarchar	
-vw_sf_historic_cogs_cm	8	Total_cogs_MillionSAR	decimal	
-vw_sf_historic_cogs_cm	9	Total_cogs_MillionUSD	decimal	
-vw_sf_historic_cogs_cm	10	Contribution_Margin	decimal	
-vw_sf_historic_cogs_cm_source_view	1	RecID	int	PK
-vw_sf_historic_cogs_cm_source_view	2	fiscal_year	int	
-vw_sf_historic_cogs_cm_source_view	3	fiscal_Month	int	
-vw_sf_historic_cogs_cm_source_view	4	company_code	nvarchar	
-vw_sf_historic_cogs_cm_source_view	5	plant	nvarchar	
-vw_sf_historic_cogs_cm_source_view	6	production_line	nvarchar	
-vw_sf_historic_cogs_cm_source_view	7	header_material_number	nvarchar	
-vw_sf_historic_cogs_cm_source_view	8	production_quantity_tons	decimal	
-vw_sf_historic_cogs_cm_source_view	9	Total_cogs	decimal	
-vw_sf_historic_cogs_cm_source_view	10	cogs_per_ton	decimal	
-vw_sf_historic_cogs_cm_source_view	11	transaction_currency	varchar	
-vw_sf_historic_cogs_cm_source_view	12	posted_unit_of_measure	varchar	
-vw_sf_historic_cogs_cm_source_view	13	CreatedOn	datetime	
+vw_sf_historic_salesrevenue	1	RecID	int	PK
+vw_sf_historic_salesrevenue	2	Year	int	
+vw_sf_historic_salesrevenue	3	Month	int	
+vw_sf_historic_salesrevenue	4	Company_Code	varchar	
+vw_sf_historic_salesrevenue	5	Profit_Center	varchar	
+vw_sf_historic_salesrevenue	6	Plant	varchar	
+vw_sf_historic_salesrevenue	7	Sales_Org	varchar	
+vw_sf_historic_salesrevenue	8	total_revenue_in_usd	decimal	
+vw_sf_historic_salesrevenue	9	total_revenue_in_MillionUSD	decimal	
+vw_sf_historic_salesrevenue	10	total_revenue_in_MillionSAR	decimal	
+vw_sf_historic_salesrevenue	11	sale_quantity_in_MetricTon	decimal	
+vw_sf_historic_salesrevenue	12	average_selling_price_in_USD	decimal	
+vw_sf_historic_salesrevenue	13	average_selling_price_in_SAR	decimal	
+vw_sf_historic_salesrevenue_source_view	1	RecID	int	PK
+vw_sf_historic_salesrevenue_source_view	2	Year	int	
+vw_sf_historic_salesrevenue_source_view	3	Month	int	
+vw_sf_historic_salesrevenue_source_view	5	Company_Country_code	varchar	
+vw_sf_historic_salesrevenue_source_view	6	Company_Code	varchar	
+vw_sf_historic_salesrevenue_source_view	7	Profit_Center	varchar	
+vw_sf_historic_salesrevenue_source_view	8	Plant	varchar	
+vw_sf_historic_salesrevenue_source_view	9	Sales_Org	varchar	
+vw_sf_historic_salesrevenue_source_view	10	Sales_district	varchar	
+vw_sf_historic_salesrevenue_source_view	13	Ship_to_Country	varchar	
+vw_sf_historic_salesrevenue_source_view	15	total_revenue_in_usd	decimal	
+vw_sf_historic_salesrevenue_source_view	16	sale_quantity_in_ton	decimal	
+vw_sf_historic_salesrevenue_source_view	17	average_selling_price_in_usd	decimal	
+vw_sf_historic_salesrevenue_source_view	18	currency_code	varchar	
+vw_sf_historic_salesrevenue_source_view	19	CreatedOn	datetime	
+VW_Web_SAC_COGS_CM	1	RecID	int	PK
+VW_Web_SAC_COGS_CM	2	sal_year	int	
+VW_Web_SAC_COGS_CM	3	sal_month	int	
+VW_Web_SAC_COGS_CM	4	date_sales_revmonth	varchar	
+VW_Web_SAC_COGS_CM	5	company_code	varchar	
+VW_Web_SAC_COGS_CM	6	product_id	varchar	
+VW_Web_SAC_COGS_CM	7	profit_centerid	varchar	
+VW_Web_SAC_COGS_CM	8	sales_volumes	decimal	
+VW_Web_SAC_COGS_CM	9	sales_revs	decimal	
+VW_Web_SAC_COGS_CM	10	MI_Price	decimal	
+VW_Web_SAC_COGS_CM	11	logistic_cost	decimal	
+VW_Web_SAC_COGS_CM	12	mfg_variable_cost_MillionSAR	decimal	
+VW_Web_SAC_COGS_CM	13	Contri_Margin_MillionSAR	decimal	
+VW_Web_SalesandRev_Salesrev_ASP	1	RecID	int	PK
+VW_Web_SalesandRev_Salesrev_ASP	2	sal_year	int	
+VW_Web_SalesandRev_Salesrev_ASP	3	sal_month	int	
+VW_Web_SalesandRev_Salesrev_ASP	4	Date_Sales_RevMonth	varchar	
+VW_Web_SalesandRev_Salesrev_ASP	5	company_codeid	varchar	
+VW_Web_SalesandRev_Salesrev_ASP	6	company_codeidoriginal	varchar	
+VW_Web_SalesandRev_Salesrev_ASP	7	productid	varchar	
+VW_Web_SalesandRev_Salesrev_ASP	8	profit_centerid	varchar	
+VW_Web_SalesandRev_Salesrev_ASP	9	sales_regionid	varchar	
+VW_Web_SalesandRev_Salesrev_ASP	10	sales_volume_in_MetricTon	decimal	
+VW_Web_SalesandRev_Salesrev_ASP	11	sales_revenue_in_MillionSAR	decimal	
+VW_Web_SalesandRev_Salesrev_ASP	12	sales_revenue_uom	varchar	
+VW_Web_SalesandRev_Salesrev_ASP	13	asp_in_SAR	decimal	
+WareHouse	1	WareHouseID	int	PK
+WareHouse	2	WareHouseName	nvarchar	
+WareHouse	3	ProfitCenterID	int	
+WareHouse	4	IsActive	bit	
+WareHouse	5	CreatedBy	nvarchar	
+WareHouse	6	CreatedDate	datetime	
+WareHouse	7	UpdatedBy	nvarchar	
+WareHouse	8	UpdatedDate	datetime	
+WorkflowDelegation	1	DelegationId	int	PK
+WorkflowDelegation	2	ProcessId	int	
+WorkflowDelegation	3	FromUserId	nvarchar	
+WorkflowDelegation	4	ToUserId	nvarchar	
+WorkflowDelegation	5	FromDate	date	
+WorkflowDelegation	6	ToDate	date	
+WorkflowDelegation	7	IsEffective	bit	
+WorkflowDelegation	8	CreatedBy	nvarchar	
+WorkflowDelegation	9	CreatedDate	datetime	
+WorkflowDelegation	10	UpdatedBy	nvarchar	
+WorkflowDelegation	11	UpdatedDate	datetime	
+WorkflowRedirects	1	Id	int	PK
+WorkflowRedirects	2	WorkflowNumber	nvarchar	
+WorkflowRedirects	3	RedirectedFrom	nvarchar	
+WorkflowRedirects	4	RedirectedFromEmail	nvarchar	
+WorkflowRedirects	5	RedirectedTo	nvarchar	
+WorkflowRedirects	6	RedirectedToEmail	nvarchar	
+WorkflowRedirects	7	RedirectedOn	datetime	
+WorkflowRedirects	8	Reason	nvarchar	
+WorkflowRedirects	9	PendingWithId	nvarchar	
+WorkflowRedirects	10	PendingWithName	nvarchar	
+WorkflowRedirects	11	PendingWithDesignate	nvarchar	
+WorkflowRedirects	12	AssignedDate	date	
+WorkflowRedirects	13	Department	nvarchar	
+WorkRecommendationActions	1	Id	int	PK
+WorkRecommendationActions	2	WorkRecommendationId	int	FK
+WorkRecommendationActions	3	StageName	varchar	
+WorkRecommendationActions	4	ActionTaken	varchar	
+WorkRecommendationActions	5	ActionBy	varchar	
+WorkRecommendationActions	6	Comments	nvarchar	
+WorkRecommendationActions	7	ActionTime	datetime	
+WorkRecommendations	1	Id	int	PK
+WorkRecommendations	2	RequestNumber	varchar	
+WorkRecommendations	3	RecommendationDescription	nvarchar	
+WorkRecommendations	4	RevenueForecast	decimal	
+WorkRecommendations	5	AIForecast	decimal	
+WorkRecommendations	6	AIChangePercent	decimal	
+WorkRecommendations	7	Status	varchar	
+WorkRecommendations	8	CurrentAction	varchar	
+WorkRecommendations	9	CreatedOn	datetime	
