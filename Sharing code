@@ -1,3 +1,455 @@
+👍 Got it.
+I’ll continue exactly in the SAME 3-column format:
+Column | Description | Example
+And one short line before each table name — just like earlier.
+SF_Contribution_Margin – Stores contribution margin details by company, month, and profit center.
+Column
+Description
+Example
+RecID
+Primary key identifier
+101
+YEAR
+Financial year
+2024
+Month
+Financial month
+03
+CompanyCode
+SAP company code
+1001
+CompanyCountryCode
+Country code
+SA
+ProfitCenter
+Profit center identifier
+PC100
+SaleQuantityTo
+Total sales quantity (Tons)
+12500.50
+TotalRevenueInUSD
+Revenue in USD
+2500000.75
+TotalRevenueInSAR
+Revenue in SAR
+9500000.00
+TotalCOGSInSAR
+COGS in SAR
+6000000.00
+TotalCOGSInUSD
+COGS in USD
+1580000.00
+LogisticsCostInSAR
+Logistics cost SAR
+350000.00
+LogisticsCostInUSD
+Logistics cost USD
+90000.00
+ContributionMarginInSAR
+Contribution margin SAR
+3150000.00
+ContributionMarginInUSD
+Contribution margin USD
+950000.00
+CreatedOn
+Record created date
+2024-03-31
+SF_Historic_COGS_CM – Historical cost of goods sold and contribution margin data.
+Column
+Description
+Example
+RecID
+Primary key
+1
+FiscalYear
+Fiscal year
+2024
+FiscalMonth
+Fiscal period month
+5
+CompanyCode
+SAP company code
+2001
+Plant
+Plant code
+PL01
+ProductionLine
+Production line code
+LINE-A
+HeaderMaterialNumber
+Material number
+MAT1001
+ProfitCenter
+Profit center
+PC200
+TransactionCurrency
+Currency code
+USD
+PostedUOM
+Unit of measure
+TON
+ProductionQuantityInTons
+Produced quantity
+8500.75
+TotalCOGSInLocalCurrency
+COGS in local currency
+12000000.00
+TotalCOGSInSAR
+COGS in SAR
+12500000.00
+TotalCOGSInMillionSAR
+COGS in million SAR
+12.5
+TotalCOGSInUSD
+COGS in USD
+3350000.00
+TotalCOGSInMillionUSD
+COGS in million USD
+3.35
+COGSPerTonInLocalCurrency
+COGS per ton (local)
+1500.50
+COGSPerTonInSAR
+COGS per ton (SAR)
+1550.25
+COGSPerTonInMillionSAR
+COGS/ton million SAR
+0.0015
+COGSPerTonInUSD
+COGS per ton USD
+420.25
+COGSPerTonInMillionUSD
+COGS/ton million USD
+0.00042
+CreatedOn
+Record created date
+2024-05-31
+SF_Historic_SalesRevenue – Historical sales revenue and volume details.
+Column
+Description
+Example
+RecID
+Primary key
+1
+Year
+Financial year
+2024
+Month
+Financial month
+6
+CompanyCode
+Company code
+1001
+CompanyCountryCode
+Country
+SA
+ProfitCenter
+Profit center
+PC150
+Plant
+Plant code
+PL02
+SalesOrg
+Sales organization
+SO01
+SalesDistrict
+Sales district code
+D100
+ShipToCountry
+Shipment destination country
+IN
+CurrencyCode
+Currency
+USD
+TotalRevenueInUSD
+Revenue USD
+4500000.00
+TotalRevenueInMillionUSD
+Revenue million USD
+4.5
+TotalRevenueInSAR
+Revenue SAR
+16800000.00
+TotalRevenueInMillionSAR
+Revenue million SAR
+16.8
+SaleQuantityToInMetricTon
+Sales tons
+18000.75
+AverageSellingPriceInUSD
+Avg price USD
+250.25
+AverageSellingPriceInSAR
+Avg price SAR
+935.00
+CreatedOn
+Created date
+2024-06-30
+TRN_Recommendation – Stores recommendation records and workflow actions.
+Column
+Description
+Example
+RecommendationID
+Primary key
+5001
+ProfitCenterID
+Profit center ID
+12
+ProfitCenter
+Profit center
+PC220
+calMonth
+Calendar month
+9
+calYear
+Calendar year
+2025
+Production_Message
+Production suggestion
+Increase production
+Production_Plant
+Plant name/code
+PL03
+Production_VolumeinMT
+Recommended volume
+2500
+Production_ForCountry
+Target country
+SA
+Production_Capacity
+Total capacity
+3000
+Production_CostPerTon
+Cost per ton
+150.25
+Sales_Message
+Sales recommendation
+Expand sales to UAE
+Sales_ForCountry
+Sales country
+AE
+Sales_FromVolumeinMT
+From volume
+1200
+Sales_ToVolumeinMT
+To volume
+1800
+Sales_Demand
+Demand tons
+2000
+Sales_SalesPriceinUSD
+Price per ton
+290
+CM_ABP
+ABP contribution margin
+1.25
+CM_SF
+SF contribution margin
+1.15
+IsActive
+Active flag
+1
+StatusID
+Workflow status
+3
+CreatedBy
+Created user
+admin
+CreatedDate
+Created date
+2025-01-05
+UpdatedBy
+Updated user
+manager
+UpdatedDate
+Updated date
+2025-01-10
+Comments
+Remarks
+Approved
+ActionTakenBy
+Action owner
+Supervisor
+WorkFlowStageName
+Workflow stage
+Review Completed
+TRN_RecommendationDetails – Detailed justification behind a recommendation.
+Column
+Description
+Example
+RecommendationDetailsID
+Primary key
+9001
+RecommendationID
+Linked recommendation
+5001
+RecommendationTypeID
+Type ID
+2
+RecommendationTypeName
+Recommendation category
+Sales Strategy
+Contributors
+People involved
+John, Ali
+UnderlyingFacts
+Supporting facts
+Demand trend increasing
+TRN_UserLoginSession – Tracks user login session history.
+Column
+Description
+Example
+UserLoginSessionID
+Primary key
+3001
+UserID
+User identifier
+25
+SessionID
+Session token/key
+A1B2C3
+IsActive
+Active session flag
+1
+CreatedBy
+Created user
+system
+CreatedDate
+Created timestamp
+2025-01-20
+UpdatedBy
+Updated user
+admin
+UpdatedOn
+Updated timestamp
+2025-01-21
+vw_sf_contribution_margin_Delete – View for deleted contribution margin records.
+Column
+Description
+Example
+RecID
+Primary key
+1
+YEAR
+Year
+2023
+Month
+Month
+12
+Company_Country_code
+Country
+SA
+Company_Code
+Company code
+1001
+Profit_Center
+Profit center
+PC300
+Plant
+Plant code
+PL05
+posted_unit_of_measure
+UOM
+TON
+Sale_Quantity_TO
+Sales quantity
+7500.25
+transaction_currency
+Currency
+USD
+Total_Revenue_SAR
+Revenue SAR
+9500000.00
+COGS_SAR
+COGS SAR
+6000000.00
+contribution_margin_SAR
+CM SAR
+3500000.00
+contribution_margin_USD
+CM USD
+950000.00
+vw_sf_historic_cogs_cm – View summarizing historic COGS and CM in millions.
+Column
+Description
+Example
+RecID
+Primary key
+1
+fiscal_year
+Fiscal year
+2024
+fiscal_Month
+Fiscal month
+7
+company_code
+Company code
+2002
+plant
+Plant code
+PL04
+production_line
+Production line
+LINE-B
+header_material_number
+Material number
+MAT500
+Total_cogs_MillionSAR
+Total COGS million SAR
+10.5
+Total_cogs_MillionUSD
+Total COGS million USD
+2.8
+Contribution_Margin
+Contribution margin
+1.2
+vw_sf_historic_cogs_cm_source_view – Detailed source view for historic COGS and production.
+Column
+Description
+Example
+RecID
+Primary key
+1
+fiscal_year
+Fiscal year
+2024
+fiscal_Month
+Fiscal month
+4
+company_code
+Company code
+2002
+plant
+Plant code
+PL04
+production_line
+Production line
+LINE-C
+header_material_number
+Material number
+MAT700
+production_quantity_tons
+Production tons
+12000.50
+Total_cogs
+Total COGS
+14500000.00
+cogs_per_ton
+COGS per ton
+1205.75
+transaction_currency
+Currency
+USD
+posted_unit_of_measure
+UOM
+TON
+CreatedOn
+Created date
+2024-04-30
+✅ Completed — SAME FORMAT THROUGHOUT
+If you paste the next set of tables,
+I’ll continue in this identical structure.
+
 TableName	ColumnOrder	ColumnName	DataType	KeyType
 SF_Contribution_Margin	1	RecID	int	PK
 SF_Contribution_Margin	2	YEAR	varchar	
