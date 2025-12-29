@@ -1,3 +1,468 @@
+Great — thanks for sharing the exact table format 👍
+I’ll now document each API in the same structure (Field → Value style).
+I’ll also keep realistic sample JSON responses following your pattern.
+✅ Dashboard Module
+API: Get Base Filter List
+Purpose: Retrieves the list of base filters such as Company, Profit Center, SBU, BU etc.
+HTTP Method
+GET
+API Route
+/api/Dashboard/getBaseFilterList
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Dashboard/getBaseFilterList
+Request Body
+N/A
+Response Body (200)
+json {"isSuccess": true,"data": [{"companyCode": "1000","profitCenterID": 12,"profitCenterName": "ABC PC"},{"companyCode": "2000","profitCenterID": 15,"profitCenterName": "XYZ PC"}],"statusCode": 200,"message": "Base filter list retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request."}
+Response Body (500)
+json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Internal Server Error occurred while fetching base filter list."}
+API: Get SBU/BU More Filters
+Purpose: Retrieves SBU and BU list for additional filtering.**
+HTTP Method
+GET
+API Route
+/api/Dashboard/getMoreFiltersSBUandBUList
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Dashboard/getMoreFiltersSBUandBUList
+Request Body
+N/A
+Response Body (200)
+json {"isSuccess": true,"data": [{"sbuID": 1,"sbuName": "Industrial","buID": 5,"buName": "Manufacturing"},{"sbuID": 2,"sbuName": "Commercial","buID": 7,"buName": "Retail"}],"statusCode": 200,"message": "SBU and BU list retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Unable to process request."}
+Response Body (500)
+json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Server error while retrieving SBU/BU data."}
+API: Get Profit Center More Filters
+Purpose: Retrieves profit center list for additional filtering.**
+HTTP Method
+GET
+API Route
+/api/Dashboard/getMoreFiltersProfitCenterList
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Dashboard/getMoreFiltersProfitCenterList
+Request Body
+N/A
+Response Body (200)
+json {"isSuccess": true,"data": [{"profitCenterID": 11,"profitCenterName": "South Zone"},{"profitCenterID": 22,"profitCenterName": "North Zone"}],"statusCode": 200,"message": "Profit center list retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Bad Request."}
+Response Body (500)
+json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Internal Server Error occurred while retrieving profit centers."}
+API: Get Date Range List
+Purpose: Returns available historical date ranges.**
+HTTP Method
+GET
+API Route
+/api/Dashboard/getDateRangeList
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Dashboard/getDateRangeList
+Request Body
+N/A
+Response Body (200)
+json {"isSuccess": true,"data": [{"fromDate": "2023-01-01","toDate": "2023-12-31"},{"fromDate": "2024-01-01","toDate": "2024-12-31"}],"statusCode": 200,"message": "Date ranges retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request format."}
+Response Body (500)
+json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Server error while fetching date ranges."}
+✅ Production Module
+API: Get Production Map Details
+Purpose: Retrieves production mapping data for dashboards.**
+HTTP Method
+POST
+API Route
+/api/Production/getProductionMapDetails
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Production/getProductionMapDetails
+Request Body
+json {"typeID":1,"companyCode":"1000","profitCenterID":"12","fromDate":"2024-01-01","toDate":"2024-12-31","sbu":2,"bu":5}
+Response Body (200)
+json {"isSuccess": true,"data": [{"region":"India","productionVolume":25000},{"region":"USA","productionVolume":18000}],"statusCode": 200,"message": "Production map details retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid filter criteria."}
+Response Body (500)
+json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Server failure while retrieving production data."}
+API: Get Historical Savings
+Purpose: Retrieves historical savings trend data.**
+HTTP Method
+POST
+API Route
+/api/Production/getHistoricalSavings
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Production/getHistoricalSavings
+Request Body
+json {"typeID":1,"companyCode":"1000","profitCenterID":"12","fromDate":"2024-01-01","toDate":"2024-12-31"}
+Response Body (200)
+json {"isSuccess": true,"data": [{"month":"Jan","savings":12000},{"month":"Feb","savings":15000}],"statusCode": 200,"message": "Historical savings retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request."}
+Response Body (500)
+json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Internal error retrieving savings."}
+✅ Revenue Module (First Set)
+I will continue in the same format for:
+getRevenueMapDetails
+getContributionMarginTrend
+getRevenueTrend
+getSalesVolumeTrend
+GetAverageSellingPrice
+GetRecommendationDetails
+getCostofGoodsSoldGraphComparisonData
+GetRecommendationsCardDetails
+GetContributionMarginCardDetails
+getContributionMarginRecommendations
+getContributionMarginRecommendationRegionData/{id}
+…and then Workflow & Logs APIs after that.
+👉 Please confirm
+Do you want me to:
+✔ continue in same structured table format
+✔ same naming & JSON style
+✔ grouped by module
+I’ll then generate the remaining APIs in one go 👍
+
+Great 👍 — continuing in the same 2-column structured format and same JSON style.
+✅ Revenue Module
+API: Get Revenue Map Details
+Purpose: Retrieves revenue data mapped by region/location.
+HTTP Method
+POST
+API Route
+/api/Revenue/getRevenueMapDetails
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/getRevenueMapDetails
+Request Body
+json {"typeID":1,"companyCode":"1000","profitCenterID":"12","fromDate":"2024-01-01","toDate":"2024-12-31","sbu":2,"bu":5}
+Response Body (200)
+json {"isSuccess": true,"data": [{"region":"India","revenue":4500000},{"region":"USA","revenue":3200000}],"statusCode": 200,"message": "Revenue map details retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request parameters."}
+Response Body (500)
+json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Server error while retrieving revenue map data."}
+API: Get Contribution Margin Trend
+Purpose: Returns contribution margin trend over time.
+HTTP Method
+POST
+API Route
+/api/Revenue/getContributionMariginTrend
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/getContributionMariginTrend
+Request Body
+json {"typeID":1,"companyCode":"1000","profitCenterID":"12","fromDate":"2024-01-01","toDate":"2024-12-31"}
+Response Body (200)
+json {"isSuccess": true,"data": [{"month":"Jan","contributionMargin":18.5},{"month":"Feb","contributionMargin":20.1}],"statusCode": 200,"message": "Contribution margin trend retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Bad Request: invalid inputs."}
+Response Body (500)
+json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Internal server error retrieving contribution margin."}
+API: Get Revenue Trend
+Purpose: Provides historical revenue trend graph data.
+HTTP Method
+POST
+API Route
+/api/Revenue/getRevenueTrend
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/getRevenueTrend
+Request Body
+json {"typeID":1,"companyCode":"1000","profitCenterID":"12","fromDate":"2024-01-01","toDate":"2024-12-31"}
+Response Body (200)
+json {"isSuccess": true,"data": [{"month":"Jan","revenue":1200000},{"month":"Feb","revenue":1350000}],"statusCode": 200,"message": "Revenue trend retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request format."}
+Response Body (500)
+json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Internal server error retrieving revenue trend."}
+API: Get Sales Volume Trend
+Purpose: Returns product sales volume trend.
+HTTP Method
+POST
+API Route
+/api/Revenue/getSalesVolumeTrend
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/getSalesVolumeTrend
+Request Body
+json {"typeID":1,"companyCode":"1000","profitCenterID":"12","fromDate":"2024-01-01","toDate":"2024-12-31"}
+Response Body (200)
+json {"isSuccess": true,"data": [{"month":"Jan","salesVolume":5600},{"month":"Feb","salesVolume":6200}],"statusCode": 200,"message": "Sales volume trend retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request values."}
+Response Body (500)
+json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Server error fetching sales volume trend."}
+API: Get Average Selling Price
+Purpose: Returns ASP trend data.
+HTTP Method
+POST
+API Route
+/api/Revenue/GetAverageSellingPrice
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/GetAverageSellingPrice
+Request Body
+json {"typeID":1,"companyCode":"1000","profitCenterID":"12","fromDate":"2024-01-01","toDate":"2024-12-31"}
+Response Body (200)
+json {"isSuccess": true,"data": [{"month":"Jan","asp":225.75},{"month":"Feb","asp":230.20}],"statusCode": 200,"message": "Average selling price retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request."}
+Response Body (500)
+json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Internal error fetching ASP data."}
+API: Get Recommendation Details
+Purpose: Returns detailed recommendation data.
+HTTP Method
+POST
+API Route
+/api/Revenue/GetRecommendationDetails
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/GetRecommendationDetails
+Request Body
+json {"recommendationId":12345}
+Response Body (200)
+json {"isSuccess": true,"data": {"recommendationId":12345,"title":"Reduce discounting","description":"Optimize pricing strategy"},"statusCode": 200,"message": "Recommendation details retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid recommendation ID."}
+Response Body (500)
+json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Server error while retrieving recommendation details."}
+API: Get COGS Comparison Data
+Purpose: Returns comparison data of Cost of Goods Sold.
+HTTP Method
+POST
+API Route
+/api/Revenue/getCostofGoodsSoldGraphComparisonData
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/getCostofGoodsSoldGraphComparisonData
+Request Body
+json {"typeID":1,"companyCode":"1000","profitCenterID":"12","fromDate":"2024-01-01","toDate":"2024-12-31"}
+Response Body (200)
+json {"isSuccess": true,"data": [{"month":"Jan","cogs":780000},{"month":"Feb","cogs":810000}],"statusCode": 200,"message": "COGS comparison data retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Bad request."}
+Response Body (500)
+json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Internal server error while retrieving COGS."}
+API: Get Recommendations Card Details
+Purpose: Returns dashboard card data for recommendations.
+HTTP Method
+POST
+API Route
+/api/Revenue/GetRecommendationsCardDetails
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/GetRecommendationsCardDetails
+Request Body
+json {"typeID":1}
+Response Body (200)
+json {"isSuccess": true,"data": {"totalRecommendations":12,"pending":5,"approved":4,"rejected":3},"statusCode": 200,"message": "Recommendation card details retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request."}
+Response Body (500)
+json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Server error retrieving recommendation cards."}
+API: Get Contribution Margin Card Details
+Purpose: Returns dashboard card values for contribution margin.
+HTTP Method
+POST
+API Route
+/api/Revenue/GetContributionMarginCardDetails
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/GetContributionMarginCardDetails
+Request Body
+json {"typeID":1}
+Response Body (200)
+json {"isSuccess": true,"data": {"currentMargin":22.5,"previousMargin":20.3},"statusCode": 200,"message": "Contribution margin card data retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Bad request."}
+Response Body (500)
+json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Error retrieving contribution margin card."}
+API: Get Contribution Margin Recommendations
+Purpose: Returns list of contribution-margin related recommendations.
+HTTP Method
+POST
+API Route
+/api/Revenue/getContributionMarginRecommendations
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/getContributionMarginRecommendations
+Request Body
+json {"typeID":1}
+Response Body (200)
+json {"isSuccess": true,"data": [{"recommendationId":101,"title":"Optimize sourcing"},{"recommendationId":102,"title":"Reduce scrap cost"}],"statusCode": 200,"message": "Contribution margin recommendations retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request input."}
+Response Body (500)
+json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Server error retrieving recommendations."}
+API: Get Region Contributor Data
+Purpose: Returns region contribution data for a recommendation.
+HTTP Method
+GET
+API Route
+/api/Revenue/getContributionMarginRecommendationRegionData/{recommendationID}
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/getContributionMarginRecommendationRegionData/123
+Request Body
+N/A
+Response Body (200)
+json {"isSuccess": true,"data": [{"region":"India","contribution":60},{"region":"USA","contribution":40}],"statusCode": 200,"message": "Region contribution data retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid recommendation ID."}
+Response Body (500)
+json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Error retrieving region contributor details."}
+⏭ Next I will continue with:
+✅ Workflow APIs
+✅ API Request Logs API
+in the same format.
+Reply “Continue” 👍
+
+
+Great 👍 — continuing in the same 2-column format with 200 / 400 / 500 structured responses.
+✅ Workflow Module
+API: Get All Worklist
+Purpose: Retrieves the logged-in user’s complete workflow worklist.
+HTTP Method
+GET
+API Route
+/api/Workflow/getAllWorkList
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Workflow/getAllWorkList
+Request Body
+N/A
+Response Body (200)
+json {"isSuccess": true,"data":[{"workItemID":101,"title":"Approve Pricing","status":"Pending","dueDate":"2025-01-15"},{"workItemID":102,"title":"Review Revenue Plan","status":"In Progress","dueDate":"2025-01-20"}],"statusCode":200,"message":"Worklist retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data":null,"statusCode":400,"message":"Bad Request: Invalid query params."}
+Response Body (500)
+json {"isSuccess": false,"data":null,"statusCode":500,"message":"Internal Server Error: Failed to retrieve worklist."}
+API: Get Worklist Details
+Purpose: Returns detailed information of a specific workflow item.
+HTTP Method
+POST
+API Route
+/api/Workflow/getWorkListDetails
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Workflow/getWorkListDetails
+Request Body
+json {"workItemID":101}
+Response Body (200)
+json {"isSuccess": true,"data":{"workItemID":101,"title":"Approve Pricing","description":"Approve pricing change for Region A","status":"Pending","assignedUser":"john.doe"},"statusCode":200,"message":"Worklist details retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data":null,"statusCode":400,"message":"Invalid work item ID."}
+Response Body (500)
+json {"isSuccess": false,"data":null,"statusCode":500,"message":"Internal Server Error while fetching worklist details."}
+API: Get Region Contributor
+Purpose: Retrieves list of region contributors for workflow review.
+HTTP Method
+POST
+API Route
+/api/Workflow/getRegionContributor
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Workflow/getRegionContributor
+Request Body
+json {"recommendationID":123}
+Response Body (200)
+json {"isSuccess": true,"data":[{"region":"India","owner":"user.a"},{"region":"USA","owner":"user.b"}],"statusCode":200,"message":"Region contributor data retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data":null,"statusCode":400,"message":"Invalid recommendation ID."}
+Response Body (500)
+json {"isSuccess": false,"data":null,"statusCode":500,"message":"Server error retrieving region contributors."}
+API: Submit Workflow Action
+Purpose: Submits approval / rejection workflow action.
+HTTP Method
+POST
+API Route
+/api/Workflow/submitWorkflowAction
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Workflow/submitWorkflowAction
+Request Body
+json {"workItemID":101,"action":"Approve","comments":"Approved as per policy","updatedBy":"admin.user"}
+Response Body (200)
+json {"isSuccess": true,"data":null,"statusCode":200,"message":"Workflow action submitted successfully."}
+Response Body (400)
+json {"isSuccess": false,"data":null,"statusCode":400,"message":"Invalid workflow action request."}
+Response Body (500)
+json {"isSuccess": false,"data":null,"statusCode":500,"message":"Internal error submitting workflow action."}
+API: Get Redirects
+Purpose: Retrieves all workflow redirection records.
+HTTP Method
+GET
+API Route
+/api/Workflow/getRedirects
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Workflow/getRedirects
+Request Body
+N/A
+Response Body (200)
+json {"isSuccess": true,"data":[{"redirectID":11,"fromUser":"user.a","toUser":"user.b","isActive":true}],"statusCode":200,"message":"Redirect records retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data":null,"statusCode":400,"message":"Invalid request."}
+Response Body (500)
+json {"isSuccess": false,"data":null,"statusCode":500,"message":"Internal server error retrieving redirects."}
+API: Add or Update Redirect
+Purpose: Creates or updates workflow redirect rules.
+HTTP Method
+POST
+API Route
+/api/Workflow/addorUpdateRedirectAsync
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Workflow/addorUpdateRedirectAsync
+Request Body
+json {"redirectID":11,"fromUser":"user.a","toUser":"user.b","isActive":true}
+Response Body (200)
+json {"isSuccess": true,"data":null,"statusCode":200,"message":"Workflow redirect saved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data":null,"statusCode":400,"message":"Invalid redirect request."}
+Response Body (500)
+json {"isSuccess": false,"data":null,"statusCode":500,"message":"Error saving workflow redirect."}
+API: Get Delegations
+Purpose: Retrieves workflow delegation list.
+HTTP Method
+GET
+API Route
+/api/Workflow/getDelegates
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Workflow/getDelegates
+Request Body
+N/A
+Response Body (200)
+json {"isSuccess": true,"data":[{"delegationID":5,"fromUser":"manager.a","toUser":"lead.b","isActive":true}],"statusCode":200,"message":"Delegation records retrieved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data":null,"statusCode":400,"message":"Bad Request."}
+Response Body (500)
+json {"isSuccess": false,"data":null,"statusCode":500,"message":"Internal error retrieving delegations."}
+API: Add or Update Delegation
+Purpose: Creates or updates workflow delegation.
+HTTP Method
+POST
+API Route
+/api/Workflow/addorUpdateDelegationAsync
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/Workflow/addorUpdateDelegationAsync
+Request Body
+json {"delegationID":5,"fromUser":"manager.a","toUser":"lead.b","startDate":"2025-01-01","endDate":"2025-01-31","reason":"Leave","isActive":true}
+Response Body (200)
+json {"isSuccess": true,"data":null,"statusCode":200,"message":"Workflow delegation saved successfully."}
+Response Body (400)
+json {"isSuccess": false,"data":null,"statusCode":400,"message":"Invalid delegation request."}
+Response Body (500)
+json {"isSuccess": false,"data":null,"statusCode":500,"message":"Internal server error updating delegation."}
+✅ API Request Logs Module
+API: Insert API Request Logs
+Purpose: Logs API activity into audit storage.
+HTTP Method
+POST
+API Route
+/api/APIRequestLog/insertAPIRequestLogs
+Sample URL
+https://<YOUR_DOMAIN_HERE>/WCI_api/api/APIRequestLog/insertAPIRequestLogs
+Request Body
+json {"apiName":"getRevenueTrend","requestBody":"{}","responseStatus":200,"createdBy":"system","createdDate":"2025-01-10T10:00:00Z"}
+Response Body (200)
+json {"isSuccess": true,"data":null,"statusCode":200,"message":"API log inserted successfully."}
+Response Body (400)
+json {"isSuccess": false,"data":null,"statusCode":400,"message":"Bad Request: invalid log entry."}
+Response Body (500)
+json {"isSuccess": false,"data":null,"statusCode":500,"message":"Server error inserting API logs."}
+✅ Done 🎯
+All Dashboard / Production / Revenue / Workflow / Logs APIs are now covered in the same format.
+If you want:
+✔ group per module in Word layout
+✔ numbering (API-01, API-02…)
+✔ table borders
+✔ simpler language
+Just tell me 👍
+
+
+
 /api/Dashboard/getBaseFilterList
 /api/Dashboard/getMoreFiltersSBUandBUList
 /api/Dashboard/getMoreFiltersProfitCenterList
