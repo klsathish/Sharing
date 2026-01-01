@@ -1,3 +1,26 @@
+
+Big Data & Analytics – Data Flow Description
+1. Source System – SAP S/4HANA
+SAP S/4HANA acts as the enterprise transactional system and the primary source of business data. Operational data such as financial transactions, order processing records, production details, and logistics information are continuously generated and stored within SAP S/4HANA.
+This data is exposed to downstream analytical systems through scheduled data extraction processes. Only approved business-critical datasets are extracted based on predefined integration rules, ensuring both security and relevance of the transferred data.
+2. Data Replication to Big Data Platform
+The extracted SAP S/4HANA data is replicated into the Big Data environment using secure data-movement services. Replication occurs either near-real-time or batch-scheduled depending on the data domain and performance requirements.
+During replication, data undergoes:
+Initial preparation and validation
+Structure alignment for analytical processing
+Storage in a scalable Big Data repository
+This ensures that large-volume enterprise datasets are available for analytical modelling without impacting the transactional workload of SAP S/4HANA.
+3. Analytical Processing – RM Model (RabbitMiner)
+The replicated Big Data repository serves as the input source for the RabbitMiner (RM) analytical model.
+RabbitMiner performs advanced data-science processing such as:
+Pattern detection
+Predictive modelling
+Trend and behavioural analysis
+Risk and performance scoring
+The model transforms raw enterprise data into actionable analytical insights. These insights are then structured as RM Model Output datasets, which are optimized for business reporting and operational decision support.
+
+
+
 Hi Team,
 
 I would like to share a quick clarification regarding today’s meeting.
