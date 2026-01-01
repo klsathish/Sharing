@@ -1,3 +1,17 @@
+Hi Team,
+
+I would like to kindly share a clarification regarding the feedback from our last meeting.
+
+It was mentioned during the discussion that the document is not aligned with the standards. However, it appeared that the complete document may not have been fully reviewed before this conclusion was made. We are currently updating the content to align with the expected standards, and I request that the revised version be reviewed in full before any final observations are shared. This will help ensure that the feedback is accurate and based on complete information.
+
+In addition, I request that we please schedule a follow-up meeting once the updated document is shared, so that we can walk through the content together and address any queries.
+
+Thank you for your understanding and support.
+Please let me know a suitable time for the meeting.
+
+Thanks & Regards,
+K. L. Sathish
+
 The Service Layer is the .NET application layer responsible for processing business logic. It receives requests from the Presentation Layer, executes the necessary business rules, and interacts with the Database Layer. Authentication has transitioned from Active Directory to Windows Authentication using the InfoPoint SQL Database, providing secure database-level authentication and authorization.
 
 
