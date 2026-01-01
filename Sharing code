@@ -1,3 +1,78 @@
+[Fact]
+public async Task AuthenticateAsync_WhenValidUser_ReturnsToken()
+{
+    _accountRepository.Setup(x => x.GetUserByLoginIdAsync("abc"))
+        .ReturnsAsync(new List<UserDto>
+        {
+            new UserDto { UserID="1", RoleID = 2 }
+        });
+
+    _accountRepository.Setup(x => x.GetDataForAuthenticationByUserIdAsync(1))
+        .ReturnsAsync(new object());
+
+    _service.MockGenerateToken("jwt-token");
+
+    var result = await _service.AuthenticateAsync("abc", "1.1.1.1", "Chrome");
+
+    Assert.Equal(SabicConstants.SuccessStatusCode, result.StatusCode);
+    Assert.Equal("jwt-token", result.Token);
+}
+
+[Fact]
+public async Task AuthenticateAsync_WhenTokenNull_ReturnsUnauthorized()
+{
+    _accountRepository.Setup(x => x.GetUserByLoginIdAsync("abc"))
+        .ReturnsAsync(new List<UserDto>
+        {
+            new UserDto { UserID="1", RoleID = 2 }
+        });
+
+    _accountRepository.Setup(x => x.GetDataForAuthenticationByUserIdAsync(1))
+        .ReturnsAsync(new object());
+
+    _service.MockGenerateToken(null); // however you mock token
+
+    var result = await _service.AuthenticateAsync("abc", "1.1.1.1", "Chrome");
+
+    Assert.Equal(SabicConstants.UnAuthorizedStatusCode, result.StatusCode);
+}
+
+[Fact]
+public async Task AuthenticateAsync_WhenRoleIsZero_ReturnsUnauthorized()
+{
+    _accountRepository.Setup(x => x.GetUserByLoginIdAsync("abc"))
+        .ReturnsAsync(new List<UserDto>
+        {
+            new UserDto { UserID="1", RoleID = 0 }
+        });
+
+    var result = await _service.AuthenticateAsync("abc", "1.1.1.1", "Chrome");
+
+    Assert.Equal(SabicConstants.UnAuthorizedStatusCode, result.StatusCode);
+}
+
+[Fact]
+public async Task AuthenticateAsync_WhenUserNotFound_ReturnsUnauthorized()
+{
+    _accountRepository.Setup(x => x.GetUserByLoginIdAsync("abc"))
+        .ReturnsAsync((List<UserDto>)null);
+
+    var result = await _service.AuthenticateAsync("abc", "1.1.1.1", "Chrome");
+
+    Assert.Equal(SabicConstants.UnAuthorizedStatusCode, result.StatusCode);
+}
+
+
+[Fact]
+public async Task AuthenticateAsync_WhenUserNameEmpty_ReturnsUnauthorized()
+{
+    var result = await _service.AuthenticateAsync("", "1.1.1.1", "Chrome");
+
+    Assert.Equal(SabicConstants.UnAuthorizedStatusCode, result.StatusCode);
+    Assert.Null(result.Token);
+}
+
+
 Hi Team,
 
 I would like to kindly share a clarification regarding the feedback from our last meeting.
