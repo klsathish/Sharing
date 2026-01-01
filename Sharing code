@@ -1,3 +1,6 @@
+The Service Layer is the .NET application layer responsible for processing business logic. It receives requests from the Presentation Layer, executes the necessary business rules, and interacts with the Database Layer. Authentication has transitioned from Active Directory to Windows Authentication using the InfoPoint SQL Database, providing secure database-level authentication and authorization.
+
+
 
 Big Data & Analytics – Data Flow Description
 1. Source System – SAP S/4HANA
