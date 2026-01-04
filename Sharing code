@@ -1,3 +1,34 @@
+Got it 👍
+You want short paragraph-style explanations for each module (like your controller names), similar to what you showed earlier. I’ll keep them simple, clear, and professional.
+📌 Paragraph Descriptions for Your Application Modules
+Account Controller
+The Account Controller manages all authentication-related operations for users within the application. It handles activities such as login, logout, password validation, and session creation to ensure that only authorized users can access the system. This module plays a key role in maintaining the security and proper identity verification of users.
+Activity Monitoring Controller
+The Activity Monitoring Controller is responsible for tracking user actions and system activities across the application. It helps administrators view logs, identify unusual behavior, and analyze application usage patterns. This module supports auditing and improves application transparency and accountability.
+API Request Log Controller
+The API Request Log Controller records details of all incoming API requests, including request type, timestamp, and response status. This helps in troubleshooting, performance tracking, and maintaining historical logs. It also supports debugging and compliance-related reporting.
+Authentication Controller
+The Authentication Controller provides the core logic for validating user credentials and issuing tokens for secure access. It integrates with identity providers and ensures that every API call is properly authenticated. This controller safeguards the application by preventing unauthorized access.
+Base Controller
+The Base Controller serves as a common parent class for other controllers in the application. It defines shared logic, reusable methods, and consistent behavior for API responses and error handling. This improves maintainability and reduces duplicate code across modules.
+Dashboard Controller
+The Dashboard Controller retrieves and manages all the data displayed on the user dashboard. It consolidates information from various services and presents insights in a simplified way. This module enhances user experience by providing quick access to key business metrics.
+Exception Handler Controller
+The Exception Handler Controller centralizes error-handling across the application. It captures runtime exceptions, logs them, and returns user-friendly error messages. This ensures system stability and helps developers quickly diagnose and resolve issues.
+Performance Controller
+The Performance Controller monitors system performance, including processing efficiency and response times. It provides insights to optimize backend operations and improve application speed. This module is essential for maintaining a smooth user experience under high-load scenarios.
+Raw Materials Controller
+The Raw Materials Controller manages data and operations related to raw materials within the system. It supports activities such as viewing inventory, updating availability, and tracking consumption. This helps ensure proper material planning and supply-chain efficiency.
+User Management Controller
+The User Management Controller handles administrative functions for managing users. This includes creating new users, updating roles, modifying permissions, and maintaining profiles. It ensures structured role-based access across the application.
+If you want, I can also:
+✔ Simplify the language
+✔ Make them formal for documentation
+✔ Add Tamil versions
+✔ Convert to bullet points
+✔ Format for SRS / ISRT / architecture doc
+Just tell me 👍
+
 Got it 👍 —
 You want one short professional paragraph for each bullet-point title exactly as shown in your image.
 Here you go 👇
