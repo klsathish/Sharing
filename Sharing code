@@ -1,718 +1,94 @@
+ [HttpPost("insertAPIRequestLogsAndPerformanceLogs")]
+ public async Task<IActionResult> InsertAPIRequestLogsAndPerformanceLogs([FromBody] ApiRequestAndPerformanceLogRequest apiRequestAndPerformanceLogRequest)
+ {
+     ApiRequestAndPerformanceLogModel apiRequestAndPerformanceLogModel = new ApiRequestAndPerformanceLogModel();
+     var loginSession = CommonUtils.GetCurrentSession(HttpContext);
+     if (!string.IsNullOrEmpty(loginSession) && loginSession.Contains(":"))
+     {
+         var inpSes = loginSession.Split(':');
+         apiRequestAndPerformanceLogModel.UserID = !string.IsNullOrEmpty(inpSes[0]) ? Int32.Parse(inpSes[0]) : 0;
+         apiRequestAndPerformanceLogModel.SessionID = inpSes[1];
+         apiRequestAndPerformanceLogModel.RoleID = !string.IsNullOrEmpty(inpSes[2]) ? Int32.Parse(inpSes[2]) : 0;
+         apiRequestAndPerformanceLogModel.EmployeeName = inpSes[3];
+         apiRequestAndPerformanceLogModel.CreatedBy = inpSes[3];
+     }
+     apiRequestAndPerformanceLogModel.CreatedOn = DateTime.Now;
+     TimeSpan elapsedTime = apiRequestAndPerformanceLogRequest.ResponseTimeStamp - apiRequestAndPerformanceLogRequest.RequestTimeStamp;
+     apiRequestAndPerformanceLogModel.Duration = $"{elapsedTime.TotalMilliseconds} ms";
+     var response = await _iAPIRequestLogService.InsertAPIRequestLogsAndPerformanceLogs(apiRequestAndPerformanceLogRequest, apiRequestAndPerformanceLogModel);
+     return StatusCode(response.StatusCode, response);
+ }
 
-Overview:
-This document provides a comprehensive overview of the database design and implementation for the application. It describes the logical structure of the database, including the ERD diagram, entity relationships, and key data flows across modules. The objective of this document is to define a standardized and scalable database schema that supports the functional and non-functional requirements of the system. It also outlines the creation and maintenance of database objects such as tables, views, stored procedures, and functions, ensuring data integrity, security, and performance optimization. This serves as a technical reference for developers, DBAs, and stakeholders involved in the design, development, deployment, and ongoing support of the database.
 
-
-Got it 👍
-You want short paragraph-style explanations for each module (like your controller names), similar to what you showed earlier. I’ll keep them simple, clear, and professional.
-📌 Paragraph Descriptions for Your Application Modules
-Account Controller
-The Account Controller manages all authentication-related operations for users within the application. It handles activities such as login, logout, password validation, and session creation to ensure that only authorized users can access the system. This module plays a key role in maintaining the security and proper identity verification of users.
-Activity Monitoring Controller
-The Activity Monitoring Controller is responsible for tracking user actions and system activities across the application. It helps administrators view logs, identify unusual behavior, and analyze application usage patterns. This module supports auditing and improves application transparency and accountability.
-API Request Log Controller
-The API Request Log Controller records details of all incoming API requests, including request type, timestamp, and response status. This helps in troubleshooting, performance tracking, and maintaining historical logs. It also supports debugging and compliance-related reporting.
-Authentication Controller
-The Authentication Controller provides the core logic for validating user credentials and issuing tokens for secure access. It integrates with identity providers and ensures that every API call is properly authenticated. This controller safeguards the application by preventing unauthorized access.
-Base Controller
-The Base Controller serves as a common parent class for other controllers in the application. It defines shared logic, reusable methods, and consistent behavior for API responses and error handling. This improves maintainability and reduces duplicate code across modules.
-Dashboard Controller
-The Dashboard Controller retrieves and manages all the data displayed on the user dashboard. It consolidates information from various services and presents insights in a simplified way. This module enhances user experience by providing quick access to key business metrics.
-Exception Handler Controller
-The Exception Handler Controller centralizes error-handling across the application. It captures runtime exceptions, logs them, and returns user-friendly error messages. This ensures system stability and helps developers quickly diagnose and resolve issues.
-Performance Controller
-The Performance Controller monitors system performance, including processing efficiency and response times. It provides insights to optimize backend operations and improve application speed. This module is essential for maintaining a smooth user experience under high-load scenarios.
-Raw Materials Controller
-The Raw Materials Controller manages data and operations related to raw materials within the system. It supports activities such as viewing inventory, updating availability, and tracking consumption. This helps ensure proper material planning and supply-chain efficiency.
-User Management Controller
-The User Management Controller handles administrative functions for managing users. This includes creating new users, updating roles, modifying permissions, and maintaining profiles. It ensures structured role-based access across the application.
-If you want, I can also:
-✔ Simplify the language
-✔ Make them formal for documentation
-✔ Add Tamil versions
-✔ Convert to bullet points
-✔ Format for SRS / ISRT / architecture doc
-Just tell me 👍
-
-Got it 👍 —
-You want one short professional paragraph for each bullet-point title exactly as shown in your image.
-Here you go 👇
-🔹 Authentication & Authorization
-The Authentication and Authorization module is responsible for securing the application by ensuring that only verified and approved users can access system resources. It manages user login, identity validation, and token-based authentication, along with enforcing role-based access control to restrict actions according to user privileges. This module ensures data privacy, prevents unauthorized access, and maintains overall system security.
-🔹 User & Role Management
-The User and Role Management module enables administrators to create, configure, and maintain user accounts and their associated access roles. It allows assignment of permissions based on job responsibilities, ensuring users have the appropriate level of system access. This module supports user onboarding, updates, and deactivation while maintaining consistent governance and security alignment across the platform.
-🔹 Business Processing Modules
-The Business Processing Modules form the core operational layer of the application, handling various business workflows and transactions. These modules are designed to execute domain-specific logic and ensure that day-to-day business operations run efficiently while maintaining accuracy, consistency, and traceability across all processes.
-▪ Performance
-The Performance module monitors, analyses, and reports key operational and financial indicators to help measure productivity and efficiency. It supports management teams with actionable insights, enabling data-driven performance improvements across the organization.
-▪ Production
-The Production module manages and tracks production-related activities and outputs. It ensures accurate recording of production data, supports workflow execution, and provides real-time visibility into production status to help optimize planning and resource utilization.
-▪ Revenue
-The Revenue module focuses on financial inflows, including revenue calculation, allocation, and reporting. It ensures accurate financial tracking, supports financial analytics, and helps business stakeholders evaluate profitability and revenue performance trends.
-▪ User Management
-The User Management sub-module handles operational-level user data, preferences, and activity tracking within the system. It ensures smooth user interaction with business workflows while maintaining proper data governance and consistency.
-▪ Workflow
-The Workflow module automates and streamlines sequential business processes. It ensures that each task follows the correct approval path, maintains process integrity, and improves operational efficiency by reducing manual intervention.
-🔹 Reporting / Dashboard Features
-The Reporting and Dashboard module provides visual and analytical insights into key business and operational data. It consolidates information from multiple modules and presents it through charts, dashboards, and structured reports to support real-time monitoring and strategic decision-making.
-🔹 Audit & Logging
-The Audit and Logging module records critical user actions, system activities, and transaction events to ensure accountability and traceability. It supports security monitoring, compliance reporting, and incident investigation by maintaining a reliable audit trail across the application.
-🔹 Overall System Behavior
-Each module operates independently to ensure flexibility and maintainability; however, all modules are governed by a centralized security and architectural framework. This unified design ensures system consistency, scalability, and seamless integration across functional areas.
-If you want, I can also:
-✔ shorten each paragraph
-✔ make it more formal
-✔ convert to Tamil
-✔ or format for Word / PPT
-Just tell me 👍
-
-[Fact]
-public async Task AuthenticateAsync_WhenValidUser_ReturnsToken()
+[ExcludeFromCodeCoverage]
+public class ApiRequestAndPerformanceLogRequest
 {
-    _accountRepository.Setup(x => x.GetUserByLoginIdAsync("abc"))
-        .ReturnsAsync(new List<UserDto>
+    public int AppModuleMappingID { get; set; }
+    public string? ApiEndPoint { get; set; }
+    public string? RequestBody { get; set; }
+    public string? HttpMethod { get; set; }
+    public int? StatusCode { get; set; }
+    public DateTime RequestTimeStamp { get; set; }
+    public string? ResponseBody { get; set; }
+    public DateTime ResponseTimeStamp { get; set; }
+    public int? LayerID { get; set; }
+    public string? ComponentName { get; set; }
+    public string? ActionName { get; set; }
+}
+[ExcludeFromCodeCoverage]
+public class ApiRequestAndPerformanceLogModel
+{
+    public int UserID { get; set; }
+    public int RoleID { get; set; }
+    public string? EmployeeName { get; set; }
+    public string? RoleName { get; set; }
+    public string? SessionID { get; set; }
+    public string? Duration { get; set; }
+    public string? CreatedBy { get; set; }
+    public DateTime CreatedOn { get; set; }
+}
+
+
+
+        public async Task<string> InsertAPIRequestLogsAndPerformanceLogs(ApiRequestAndPerformanceLogRequest apiRequestAndPerformanceLogRequest, ApiRequestAndPerformanceLogModel apiRequestAndPerformanceLogModel)
         {
-            new UserDto { UserID="1", RoleID = 2 }
-        });
-
-    _accountRepository.Setup(x => x.GetDataForAuthenticationByUserIdAsync(1))
-        .ReturnsAsync(new object());
-
-    _service.MockGenerateToken("jwt-token");
-
-    var result = await _service.AuthenticateAsync("abc", "1.1.1.1", "Chrome");
-
-    Assert.Equal(SabicConstants.SuccessStatusCode, result.StatusCode);
-    Assert.Equal("jwt-token", result.Token);
-}
-
-[Fact]
-public async Task AuthenticateAsync_WhenTokenNull_ReturnsUnauthorized()
-{
-    _accountRepository.Setup(x => x.GetUserByLoginIdAsync("abc"))
-        .ReturnsAsync(new List<UserDto>
-        {
-            new UserDto { UserID="1", RoleID = 2 }
-        });
-
-    _accountRepository.Setup(x => x.GetDataForAuthenticationByUserIdAsync(1))
-        .ReturnsAsync(new object());
-
-    _service.MockGenerateToken(null); // however you mock token
-
-    var result = await _service.AuthenticateAsync("abc", "1.1.1.1", "Chrome");
-
-    Assert.Equal(SabicConstants.UnAuthorizedStatusCode, result.StatusCode);
-}
-
-[Fact]
-public async Task AuthenticateAsync_WhenRoleIsZero_ReturnsUnauthorized()
-{
-    _accountRepository.Setup(x => x.GetUserByLoginIdAsync("abc"))
-        .ReturnsAsync(new List<UserDto>
-        {
-            new UserDto { UserID="1", RoleID = 0 }
-        });
-
-    var result = await _service.AuthenticateAsync("abc", "1.1.1.1", "Chrome");
-
-    Assert.Equal(SabicConstants.UnAuthorizedStatusCode, result.StatusCode);
-}
-
-[Fact]
-public async Task AuthenticateAsync_WhenUserNotFound_ReturnsUnauthorized()
-{
-    _accountRepository.Setup(x => x.GetUserByLoginIdAsync("abc"))
-        .ReturnsAsync((List<UserDto>)null);
-
-    var result = await _service.AuthenticateAsync("abc", "1.1.1.1", "Chrome");
-
-    Assert.Equal(SabicConstants.UnAuthorizedStatusCode, result.StatusCode);
-}
-
-
-[Fact]
-public async Task AuthenticateAsync_WhenUserNameEmpty_ReturnsUnauthorized()
-{
-    var result = await _service.AuthenticateAsync("", "1.1.1.1", "Chrome");
-
-    Assert.Equal(SabicConstants.UnAuthorizedStatusCode, result.StatusCode);
-    Assert.Null(result.Token);
-}
-
-
-Hi Team,
-
-I would like to kindly share a clarification regarding the feedback from our last meeting.
-
-It was mentioned during the discussion that the document is not aligned with the standards. However, it appeared that the complete document may not have been fully reviewed before this conclusion was made. We are currently updating the content to align with the expected standards, and I request that the revised version be reviewed in full before any final observations are shared. This will help ensure that the feedback is accurate and based on complete information.
-
-In addition, I request that we please schedule a follow-up meeting once the updated document is shared, so that we can walk through the content together and address any queries.
-
-Thank you for your understanding and support.
-Please let me know a suitable time for the meeting.
-
-Thanks & Regards,
-K. L. Sathish
-
-The Service Layer is the .NET application layer responsible for processing business logic. It receives requests from the Presentation Layer, executes the necessary business rules, and interacts with the Database Layer. Authentication has transitioned from Active Directory to Windows Authentication using the InfoPoint SQL Database, providing secure database-level authentication and authorization.
-
-
-
-Big Data & Analytics – Data Flow Description
-1. Source System – SAP S/4HANA
-SAP S/4HANA acts as the enterprise transactional system and the primary source of business data. Operational data such as financial transactions, order processing records, production details, and logistics information are continuously generated and stored within SAP S/4HANA.
-This data is exposed to downstream analytical systems through scheduled data extraction processes. Only approved business-critical datasets are extracted based on predefined integration rules, ensuring both security and relevance of the transferred data.
-2. Data Replication to Big Data Platform
-The extracted SAP S/4HANA data is replicated into the Big Data environment using secure data-movement services. Replication occurs either near-real-time or batch-scheduled depending on the data domain and performance requirements.
-During replication, data undergoes:
-Initial preparation and validation
-Structure alignment for analytical processing
-Storage in a scalable Big Data repository
-This ensures that large-volume enterprise datasets are available for analytical modelling without impacting the transactional workload of SAP S/4HANA.
-3. Analytical Processing – RM Model (RabbitMiner)
-The replicated Big Data repository serves as the input source for the RabbitMiner (RM) analytical model.
-RabbitMiner performs advanced data-science processing such as:
-Pattern detection
-Predictive modelling
-Trend and behavioural analysis
-Risk and performance scoring
-The model transforms raw enterprise data into actionable analytical insights. These insights are then structured as RM Model Output datasets, which are optimized for business reporting and operational decision support.
-
-
-
-Hi Team,
-
-I would like to share a quick clarification regarding today’s meeting.
-
-Participants:
-
-- [Name 1]
-- [Name 2]
-- [Name 3]
-- [Name 4]
-
-During the discussion, there were a few queries related to the technical architecture. The call ended earlier than expected, and hence all the required details could not be discussed or clarified during the session.
-
-For any further clarification on the architecture, it would be helpful if the concerned stakeholders could join so that we can provide the required inputs and proceed smoothly.
-
-Please let me know if any details are needed from my side — I will be happy to support.
-
-Thanks & Regards,
-[Your Name]
-
-Hi Team,
-
-I would like to share a quick clarification regarding today’s meeting.
-
-During the discussion, there were a few queries related to the technical architecture. The call ended earlier than expected, and hence all the required details could not be discussed or clarified during the session.
-
-For any further clarification on the architecture, it would be helpful if the concerned stakeholders could join so that we can provide the required inputs and proceed smoothly.
-
-Please let me know if any details are needed from my side — I will be happy to support.
-
-Thanks & Regards,
-[Your Name]
-
-Great — thanks for sharing the exact table format 👍
-I’ll now document each API in the same structure (Field → Value style).
-I’ll also keep realistic sample JSON responses following your pattern.
-✅ Dashboard Module
-API: Get Base Filter List
-Purpose: Retrieves the list of base filters such as Company, Profit Center, SBU, BU etc.
-HTTP Method
-GET
-API Route
-/api/Dashboard/getBaseFilterList
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Dashboard/getBaseFilterList
-Request Body
-N/A
-Response Body (200)
-json {"isSuccess": true,"data": [{"companyCode": "1000","profitCenterID": 12,"profitCenterName": "ABC PC"},{"companyCode": "2000","profitCenterID": 15,"profitCenterName": "XYZ PC"}],"statusCode": 200,"message": "Base filter list retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request."}
-Response Body (500)
-json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Internal Server Error occurred while fetching base filter list."}
-API: Get SBU/BU More Filters
-Purpose: Retrieves SBU and BU list for additional filtering.**
-HTTP Method
-GET
-API Route
-/api/Dashboard/getMoreFiltersSBUandBUList
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Dashboard/getMoreFiltersSBUandBUList
-Request Body
-N/A
-Response Body (200)
-json {"isSuccess": true,"data": [{"sbuID": 1,"sbuName": "Industrial","buID": 5,"buName": "Manufacturing"},{"sbuID": 2,"sbuName": "Commercial","buID": 7,"buName": "Retail"}],"statusCode": 200,"message": "SBU and BU list retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Unable to process request."}
-Response Body (500)
-json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Server error while retrieving SBU/BU data."}
-API: Get Profit Center More Filters
-Purpose: Retrieves profit center list for additional filtering.**
-HTTP Method
-GET
-API Route
-/api/Dashboard/getMoreFiltersProfitCenterList
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Dashboard/getMoreFiltersProfitCenterList
-Request Body
-N/A
-Response Body (200)
-json {"isSuccess": true,"data": [{"profitCenterID": 11,"profitCenterName": "South Zone"},{"profitCenterID": 22,"profitCenterName": "North Zone"}],"statusCode": 200,"message": "Profit center list retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Bad Request."}
-Response Body (500)
-json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Internal Server Error occurred while retrieving profit centers."}
-API: Get Date Range List
-Purpose: Returns available historical date ranges.**
-HTTP Method
-GET
-API Route
-/api/Dashboard/getDateRangeList
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Dashboard/getDateRangeList
-Request Body
-N/A
-Response Body (200)
-json {"isSuccess": true,"data": [{"fromDate": "2023-01-01","toDate": "2023-12-31"},{"fromDate": "2024-01-01","toDate": "2024-12-31"}],"statusCode": 200,"message": "Date ranges retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request format."}
-Response Body (500)
-json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Server error while fetching date ranges."}
-✅ Production Module
-API: Get Production Map Details
-Purpose: Retrieves production mapping data for dashboards.**
-HTTP Method
-POST
-API Route
-/api/Production/getProductionMapDetails
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Production/getProductionMapDetails
-Request Body
-json {"typeID":1,"companyCode":"1000","profitCenterID":"12","fromDate":"2024-01-01","toDate":"2024-12-31","sbu":2,"bu":5}
-Response Body (200)
-json {"isSuccess": true,"data": [{"region":"India","productionVolume":25000},{"region":"USA","productionVolume":18000}],"statusCode": 200,"message": "Production map details retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid filter criteria."}
-Response Body (500)
-json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Server failure while retrieving production data."}
-API: Get Historical Savings
-Purpose: Retrieves historical savings trend data.**
-HTTP Method
-POST
-API Route
-/api/Production/getHistoricalSavings
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Production/getHistoricalSavings
-Request Body
-json {"typeID":1,"companyCode":"1000","profitCenterID":"12","fromDate":"2024-01-01","toDate":"2024-12-31"}
-Response Body (200)
-json {"isSuccess": true,"data": [{"month":"Jan","savings":12000},{"month":"Feb","savings":15000}],"statusCode": 200,"message": "Historical savings retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request."}
-Response Body (500)
-json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Internal error retrieving savings."}
-✅ Revenue Module (First Set)
-I will continue in the same format for:
-getRevenueMapDetails
-getContributionMarginTrend
-getRevenueTrend
-getSalesVolumeTrend
-GetAverageSellingPrice
-GetRecommendationDetails
-getCostofGoodsSoldGraphComparisonData
-GetRecommendationsCardDetails
-GetContributionMarginCardDetails
-getContributionMarginRecommendations
-getContributionMarginRecommendationRegionData/{id}
-…and then Workflow & Logs APIs after that.
-👉 Please confirm
-Do you want me to:
-✔ continue in same structured table format
-✔ same naming & JSON style
-✔ grouped by module
-I’ll then generate the remaining APIs in one go 👍
-
-Great 👍 — continuing in the same 2-column structured format and same JSON style.
-✅ Revenue Module
-API: Get Revenue Map Details
-Purpose: Retrieves revenue data mapped by region/location.
-HTTP Method
-POST
-API Route
-/api/Revenue/getRevenueMapDetails
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/getRevenueMapDetails
-Request Body
-json {"typeID":1,"companyCode":"1000","profitCenterID":"12","fromDate":"2024-01-01","toDate":"2024-12-31","sbu":2,"bu":5}
-Response Body (200)
-json {"isSuccess": true,"data": [{"region":"India","revenue":4500000},{"region":"USA","revenue":3200000}],"statusCode": 200,"message": "Revenue map details retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request parameters."}
-Response Body (500)
-json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Server error while retrieving revenue map data."}
-API: Get Contribution Margin Trend
-Purpose: Returns contribution margin trend over time.
-HTTP Method
-POST
-API Route
-/api/Revenue/getContributionMariginTrend
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/getContributionMariginTrend
-Request Body
-json {"typeID":1,"companyCode":"1000","profitCenterID":"12","fromDate":"2024-01-01","toDate":"2024-12-31"}
-Response Body (200)
-json {"isSuccess": true,"data": [{"month":"Jan","contributionMargin":18.5},{"month":"Feb","contributionMargin":20.1}],"statusCode": 200,"message": "Contribution margin trend retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Bad Request: invalid inputs."}
-Response Body (500)
-json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Internal server error retrieving contribution margin."}
-API: Get Revenue Trend
-Purpose: Provides historical revenue trend graph data.
-HTTP Method
-POST
-API Route
-/api/Revenue/getRevenueTrend
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/getRevenueTrend
-Request Body
-json {"typeID":1,"companyCode":"1000","profitCenterID":"12","fromDate":"2024-01-01","toDate":"2024-12-31"}
-Response Body (200)
-json {"isSuccess": true,"data": [{"month":"Jan","revenue":1200000},{"month":"Feb","revenue":1350000}],"statusCode": 200,"message": "Revenue trend retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request format."}
-Response Body (500)
-json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Internal server error retrieving revenue trend."}
-API: Get Sales Volume Trend
-Purpose: Returns product sales volume trend.
-HTTP Method
-POST
-API Route
-/api/Revenue/getSalesVolumeTrend
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/getSalesVolumeTrend
-Request Body
-json {"typeID":1,"companyCode":"1000","profitCenterID":"12","fromDate":"2024-01-01","toDate":"2024-12-31"}
-Response Body (200)
-json {"isSuccess": true,"data": [{"month":"Jan","salesVolume":5600},{"month":"Feb","salesVolume":6200}],"statusCode": 200,"message": "Sales volume trend retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request values."}
-Response Body (500)
-json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Server error fetching sales volume trend."}
-API: Get Average Selling Price
-Purpose: Returns ASP trend data.
-HTTP Method
-POST
-API Route
-/api/Revenue/GetAverageSellingPrice
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/GetAverageSellingPrice
-Request Body
-json {"typeID":1,"companyCode":"1000","profitCenterID":"12","fromDate":"2024-01-01","toDate":"2024-12-31"}
-Response Body (200)
-json {"isSuccess": true,"data": [{"month":"Jan","asp":225.75},{"month":"Feb","asp":230.20}],"statusCode": 200,"message": "Average selling price retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request."}
-Response Body (500)
-json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Internal error fetching ASP data."}
-API: Get Recommendation Details
-Purpose: Returns detailed recommendation data.
-HTTP Method
-POST
-API Route
-/api/Revenue/GetRecommendationDetails
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/GetRecommendationDetails
-Request Body
-json {"recommendationId":12345}
-Response Body (200)
-json {"isSuccess": true,"data": {"recommendationId":12345,"title":"Reduce discounting","description":"Optimize pricing strategy"},"statusCode": 200,"message": "Recommendation details retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid recommendation ID."}
-Response Body (500)
-json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Server error while retrieving recommendation details."}
-API: Get COGS Comparison Data
-Purpose: Returns comparison data of Cost of Goods Sold.
-HTTP Method
-POST
-API Route
-/api/Revenue/getCostofGoodsSoldGraphComparisonData
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/getCostofGoodsSoldGraphComparisonData
-Request Body
-json {"typeID":1,"companyCode":"1000","profitCenterID":"12","fromDate":"2024-01-01","toDate":"2024-12-31"}
-Response Body (200)
-json {"isSuccess": true,"data": [{"month":"Jan","cogs":780000},{"month":"Feb","cogs":810000}],"statusCode": 200,"message": "COGS comparison data retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Bad request."}
-Response Body (500)
-json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Internal server error while retrieving COGS."}
-API: Get Recommendations Card Details
-Purpose: Returns dashboard card data for recommendations.
-HTTP Method
-POST
-API Route
-/api/Revenue/GetRecommendationsCardDetails
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/GetRecommendationsCardDetails
-Request Body
-json {"typeID":1}
-Response Body (200)
-json {"isSuccess": true,"data": {"totalRecommendations":12,"pending":5,"approved":4,"rejected":3},"statusCode": 200,"message": "Recommendation card details retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request."}
-Response Body (500)
-json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Server error retrieving recommendation cards."}
-API: Get Contribution Margin Card Details
-Purpose: Returns dashboard card values for contribution margin.
-HTTP Method
-POST
-API Route
-/api/Revenue/GetContributionMarginCardDetails
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/GetContributionMarginCardDetails
-Request Body
-json {"typeID":1}
-Response Body (200)
-json {"isSuccess": true,"data": {"currentMargin":22.5,"previousMargin":20.3},"statusCode": 200,"message": "Contribution margin card data retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Bad request."}
-Response Body (500)
-json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Error retrieving contribution margin card."}
-API: Get Contribution Margin Recommendations
-Purpose: Returns list of contribution-margin related recommendations.
-HTTP Method
-POST
-API Route
-/api/Revenue/getContributionMarginRecommendations
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/getContributionMarginRecommendations
-Request Body
-json {"typeID":1}
-Response Body (200)
-json {"isSuccess": true,"data": [{"recommendationId":101,"title":"Optimize sourcing"},{"recommendationId":102,"title":"Reduce scrap cost"}],"statusCode": 200,"message": "Contribution margin recommendations retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid request input."}
-Response Body (500)
-json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Server error retrieving recommendations."}
-API: Get Region Contributor Data
-Purpose: Returns region contribution data for a recommendation.
-HTTP Method
-GET
-API Route
-/api/Revenue/getContributionMarginRecommendationRegionData/{recommendationID}
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Revenue/getContributionMarginRecommendationRegionData/123
-Request Body
-N/A
-Response Body (200)
-json {"isSuccess": true,"data": [{"region":"India","contribution":60},{"region":"USA","contribution":40}],"statusCode": 200,"message": "Region contribution data retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data": null,"statusCode": 400,"message": "Invalid recommendation ID."}
-Response Body (500)
-json {"isSuccess": false,"data": null,"statusCode": 500,"message": "Error retrieving region contributor details."}
-⏭ Next I will continue with:
-✅ Workflow APIs
-✅ API Request Logs API
-in the same format.
-Reply “Continue” 👍
-
-
-Great 👍 — continuing in the same 2-column format with 200 / 400 / 500 structured responses.
-✅ Workflow Module
-API: Get All Worklist
-Purpose: Retrieves the logged-in user’s complete workflow worklist.
-HTTP Method
-GET
-API Route
-/api/Workflow/getAllWorkList
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Workflow/getAllWorkList
-Request Body
-N/A
-Response Body (200)
-json {"isSuccess": true,"data":[{"workItemID":101,"title":"Approve Pricing","status":"Pending","dueDate":"2025-01-15"},{"workItemID":102,"title":"Review Revenue Plan","status":"In Progress","dueDate":"2025-01-20"}],"statusCode":200,"message":"Worklist retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data":null,"statusCode":400,"message":"Bad Request: Invalid query params."}
-Response Body (500)
-json {"isSuccess": false,"data":null,"statusCode":500,"message":"Internal Server Error: Failed to retrieve worklist."}
-API: Get Worklist Details
-Purpose: Returns detailed information of a specific workflow item.
-HTTP Method
-POST
-API Route
-/api/Workflow/getWorkListDetails
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Workflow/getWorkListDetails
-Request Body
-json {"workItemID":101}
-Response Body (200)
-json {"isSuccess": true,"data":{"workItemID":101,"title":"Approve Pricing","description":"Approve pricing change for Region A","status":"Pending","assignedUser":"john.doe"},"statusCode":200,"message":"Worklist details retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data":null,"statusCode":400,"message":"Invalid work item ID."}
-Response Body (500)
-json {"isSuccess": false,"data":null,"statusCode":500,"message":"Internal Server Error while fetching worklist details."}
-API: Get Region Contributor
-Purpose: Retrieves list of region contributors for workflow review.
-HTTP Method
-POST
-API Route
-/api/Workflow/getRegionContributor
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Workflow/getRegionContributor
-Request Body
-json {"recommendationID":123}
-Response Body (200)
-json {"isSuccess": true,"data":[{"region":"India","owner":"user.a"},{"region":"USA","owner":"user.b"}],"statusCode":200,"message":"Region contributor data retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data":null,"statusCode":400,"message":"Invalid recommendation ID."}
-Response Body (500)
-json {"isSuccess": false,"data":null,"statusCode":500,"message":"Server error retrieving region contributors."}
-API: Submit Workflow Action
-Purpose: Submits approval / rejection workflow action.
-HTTP Method
-POST
-API Route
-/api/Workflow/submitWorkflowAction
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Workflow/submitWorkflowAction
-Request Body
-json {"workItemID":101,"action":"Approve","comments":"Approved as per policy","updatedBy":"admin.user"}
-Response Body (200)
-json {"isSuccess": true,"data":null,"statusCode":200,"message":"Workflow action submitted successfully."}
-Response Body (400)
-json {"isSuccess": false,"data":null,"statusCode":400,"message":"Invalid workflow action request."}
-Response Body (500)
-json {"isSuccess": false,"data":null,"statusCode":500,"message":"Internal error submitting workflow action."}
-API: Get Redirects
-Purpose: Retrieves all workflow redirection records.
-HTTP Method
-GET
-API Route
-/api/Workflow/getRedirects
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Workflow/getRedirects
-Request Body
-N/A
-Response Body (200)
-json {"isSuccess": true,"data":[{"redirectID":11,"fromUser":"user.a","toUser":"user.b","isActive":true}],"statusCode":200,"message":"Redirect records retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data":null,"statusCode":400,"message":"Invalid request."}
-Response Body (500)
-json {"isSuccess": false,"data":null,"statusCode":500,"message":"Internal server error retrieving redirects."}
-API: Add or Update Redirect
-Purpose: Creates or updates workflow redirect rules.
-HTTP Method
-POST
-API Route
-/api/Workflow/addorUpdateRedirectAsync
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Workflow/addorUpdateRedirectAsync
-Request Body
-json {"redirectID":11,"fromUser":"user.a","toUser":"user.b","isActive":true}
-Response Body (200)
-json {"isSuccess": true,"data":null,"statusCode":200,"message":"Workflow redirect saved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data":null,"statusCode":400,"message":"Invalid redirect request."}
-Response Body (500)
-json {"isSuccess": false,"data":null,"statusCode":500,"message":"Error saving workflow redirect."}
-API: Get Delegations
-Purpose: Retrieves workflow delegation list.
-HTTP Method
-GET
-API Route
-/api/Workflow/getDelegates
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Workflow/getDelegates
-Request Body
-N/A
-Response Body (200)
-json {"isSuccess": true,"data":[{"delegationID":5,"fromUser":"manager.a","toUser":"lead.b","isActive":true}],"statusCode":200,"message":"Delegation records retrieved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data":null,"statusCode":400,"message":"Bad Request."}
-Response Body (500)
-json {"isSuccess": false,"data":null,"statusCode":500,"message":"Internal error retrieving delegations."}
-API: Add or Update Delegation
-Purpose: Creates or updates workflow delegation.
-HTTP Method
-POST
-API Route
-/api/Workflow/addorUpdateDelegationAsync
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/Workflow/addorUpdateDelegationAsync
-Request Body
-json {"delegationID":5,"fromUser":"manager.a","toUser":"lead.b","startDate":"2025-01-01","endDate":"2025-01-31","reason":"Leave","isActive":true}
-Response Body (200)
-json {"isSuccess": true,"data":null,"statusCode":200,"message":"Workflow delegation saved successfully."}
-Response Body (400)
-json {"isSuccess": false,"data":null,"statusCode":400,"message":"Invalid delegation request."}
-Response Body (500)
-json {"isSuccess": false,"data":null,"statusCode":500,"message":"Internal server error updating delegation."}
-✅ API Request Logs Module
-API: Insert API Request Logs
-Purpose: Logs API activity into audit storage.
-HTTP Method
-POST
-API Route
-/api/APIRequestLog/insertAPIRequestLogs
-Sample URL
-https://<YOUR_DOMAIN_HERE>/WCI_api/api/APIRequestLog/insertAPIRequestLogs
-Request Body
-json {"apiName":"getRevenueTrend","requestBody":"{}","responseStatus":200,"createdBy":"system","createdDate":"2025-01-10T10:00:00Z"}
-Response Body (200)
-json {"isSuccess": true,"data":null,"statusCode":200,"message":"API log inserted successfully."}
-Response Body (400)
-json {"isSuccess": false,"data":null,"statusCode":400,"message":"Bad Request: invalid log entry."}
-Response Body (500)
-json {"isSuccess": false,"data":null,"statusCode":500,"message":"Server error inserting API logs."}
-✅ Done 🎯
-All Dashboard / Production / Revenue / Workflow / Logs APIs are now covered in the same format.
-If you want:
-✔ group per module in Word layout
-✔ numbering (API-01, API-02…)
-✔ table borders
-✔ simpler language
-Just tell me 👍
-
-
-
-/api/Dashboard/getBaseFilterList
-/api/Dashboard/getMoreFiltersSBUandBUList
-/api/Dashboard/getMoreFiltersProfitCenterList
-/api/Dashboard/getDateRangeList
-/api/Production/getProductionMapDetails
-/api/Production/getHistoricalSavings
-/api/Revenue/getRevenueMapDetails
-/api/Revenue/getContributionMariginTrend
-/api/Revenue/getRevenueTrend
-/api/Revenue/getSalesVolumeTrend
-/api/Revenue/GetAverageSellingPrice
-/api/Revenue/GetRecommendationDetails
-/api/Revenue/getCostofGoodsSoldGraphComparisonData
-/api/Revenue/GetRecommendationsCardDetails
-/api/Revenue/GetContributionMarginCardDetails
-/api/Revenue/getContributionMarginRecommendations
-/api/Revenue/getContributionMarginRecommendationRegionData/{recommendationID}
-/api/Workflow/getAllWorkList
-/api/Workflow/getWorkListDetails
-/api/Workflow/getRegionContributor
-/api/Workflow/submitWorkflowAction
-/api/Workflow/getRedirects
-/api/Workflow/addorUpdateRedirectAsync
-/api/Workflow/getDelegates
-/api/Workflow/addorUpdateDelegationAsync
-/api/APIRequestLog/insertAPIRequestLogs
-
-
-below i shared table formate. i want like that format
-HTTP Method	GET
-API Route	/api/exceptionHandler/getErrorLogAssignDetailsAsync 85
-Sample URL	https://<YOUR_DOMAIN_HERE>/WCI_api/api/exceptionHandler/getErrorLogAssignDetailsAsync
-Request Body	N/A
-Response Body (200)	{"isSuccess": true, "data": [{"assignee": "Developer.A", "count": 10}, {"assignee": "Developer.B", "count": 5}], "statusCode": 200, "message": "Assignee details retrieved."}
-Response Body (400)	{"isSuccess": false, "data": null, "statusCode": 400, "message": "Bad Request: Invalid request format."}
-Response Body (500)	{"isSuccess": false, "data": null, "statusCode": 500, "message": "Internal Server Error. Failed to asynchronously fetch assignment data."}
-
+            var apiRequestLog = await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_APIRequestLog] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14}"
+                   , 0
+                   , apiRequestAndPerformanceLogModel.UserID
+                   , apiRequestAndPerformanceLogModel.RoleID
+                   , apiRequestAndPerformanceLogModel.SessionID
+                   , apiRequestAndPerformanceLogRequest.AppModuleMappingID
+                   , apiRequestAndPerformanceLogRequest.ApiEndPoint
+                   , apiRequestAndPerformanceLogRequest.HttpMethod
+                   , apiRequestAndPerformanceLogRequest.StatusCode
+                   , apiRequestAndPerformanceLogRequest.RequestBody
+                   , apiRequestAndPerformanceLogRequest.RequestTimeStamp
+                   , apiRequestAndPerformanceLogRequest.ResponseBody
+                   , apiRequestAndPerformanceLogRequest.RequestTimeStamp
+                   , apiRequestAndPerformanceLogModel.Duration
+                   , apiRequestAndPerformanceLogModel.CreatedBy
+                   , apiRequestAndPerformanceLogRequest.LayerID
+                   );
+            if (apiRequestLog == 0)
+            {
+                return SabicConstants.BadRequestMessage;
+            }
+            var performanceLog = await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_PerformanceLog] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}"
+                   , 0
+                   , apiRequestAndPerformanceLogModel.UserID
+                   , apiRequestAndPerformanceLogModel.RoleID
+                   , apiRequestAndPerformanceLogModel.SessionID
+                   , apiRequestAndPerformanceLogRequest.ComponentName
+                   , apiRequestAndPerformanceLogRequest.ActionName
+                   , apiRequestAndPerformanceLogRequest.RequestTimeStamp
+                   , apiRequestAndPerformanceLogRequest.ResponseTimeStamp
+                   , apiRequestAndPerformanceLogModel.Duration
+                   , apiRequestAndPerformanceLogModel.CreatedBy
+                   , apiRequestAndPerformanceLogModel.CreatedOn
+                   );
+            if (performanceLog == 0)
+            {
+                return SabicConstants.BadRequestMessage;
+            }
+            return SabicConstants.SuccessMessage;
+        }
