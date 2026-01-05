@@ -349,4 +349,69 @@ public class ApiLoggingMiddleware
     }
 }
 
+-----
+
+public class RoleAuthorizationMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly YourDbContext _db;
+
+    public RoleAuthorizationMiddleware(RequestDelegate next, YourDbContext db)
+    {
+        _next = next;
+        _db = db;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        var path = context.Request.Path.ToString().ToLower();
+
+        // Skip login / swagger / health check etc.
+        if (path.Contains("login") || path.StartsWith("/swagger"))
+        {
+            await _next(context);
+            return;
+        }
+
+        // ===== Read Session =====
+        var loginSession = CommonUtils.GetCurrentSession(context);
+
+        int roleId = 0;
+
+        if (!string.IsNullOrEmpty(loginSession) && loginSession.Contains(":"))
+        {
+            var ses = loginSession.Split(':');
+
+            // ses[2] = RoleId
+            int.TryParse(ses[2], out roleId);
+        }
+
+        // If role not resolved -> not authorized
+        if (roleId == 0)
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsync("Role missing or invalid");
+            return;
+        }
+
+        // ===== Call Stored Procedure =====
+        var result = await _db.MyAccessChecks
+            .FromSqlRaw(
+                "EXEC SP_Validate_RolePageAccess {0}, {1}",
+                roleId,
+                path)
+            .ToListAsync();
+
+        var isAllowed = result.Any();
+
+        if (!isAllowed)
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            await context.Response.WriteAsync("Access Denied");
+            return;
+        }
+
+        await _next(context);
+    }
+}
 
