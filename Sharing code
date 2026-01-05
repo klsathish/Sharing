@@ -98,3 +98,174 @@ need to work
 Performance Log - need to log every API call which are called, need to log from middleware not from react
 Restrict the page access using role level routing from middleware  
 
+
+
+----------------------
+
+
+✅ Middleware 1 — Performance + API Request Log Middleware
+
+This middleware:
+
+Captures Request Timestamp
+
+Reads body (optional)
+
+Calls next()
+
+Captures Response Timestamp
+
+Reads session details (same as your code)
+
+Calls your service method
+
+You can adjust logs as needed
+
+public class ApiLoggingMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly IAPIRequestLogService _logService;
+
+    public ApiLoggingMiddleware(RequestDelegate next,
+        IAPIRequestLogService logService)
+    {
+        _next = next;
+        _logService = logService;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        var requestTime = DateTime.Now;
+
+        // READ REQUEST BODY
+        context.Request.EnableBuffering();
+        string requestBody = "";
+        using (var reader = new StreamReader(context.Request.Body, leaveOpen: true))
+        {
+            requestBody = await reader.ReadToEndAsync();
+            context.Request.Body.Position = 0;
+        }
+
+        // CALL API
+        await _next(context);
+
+        var responseTime = DateTime.Now;
+
+        // READ SESSION (SAME AS YOUR CODE)
+        var loginSession = CommonUtils.GetCurrentSession(context);
+
+        var model = new ApiRequestAndPerformanceLogModel();
+
+        if (!string.IsNullOrEmpty(loginSession) && loginSession.Contains(":"))
+        {
+            var inpSes = loginSession.Split(':');
+
+            model.UserID = int.TryParse(inpSes[0], out var uid) ? uid : 0;
+            model.SessionID = inpSes[1];
+            model.RoleID = int.TryParse(inpSes[2], out var rid) ? rid : 0;
+            model.EmployeeName = inpSes[3];
+            model.CreatedBy = inpSes[3];
+        }
+
+        model.CreatedOn = DateTime.Now;
+        model.Duration = (responseTime - requestTime).TotalMilliseconds + " ms";
+
+        var apiReq = new ApiRequestAndPerformanceLogRequest
+        {
+            ApiEndPoint = context.Request.Path,
+            HttpMethod = context.Request.Method,
+            StatusCode = context.Response.StatusCode,
+            RequestBody = requestBody,
+            RequestTimeStamp = requestTime,
+            ResponseTimeStamp = responseTime,
+            ResponseBody = null, // If needed capture response
+            ComponentName = "API",
+            ActionName = context.Request.Path
+        };
+
+        await _logService.InsertAPIRequestLogsAndPerformanceLogs(apiReq, model);
+    }
+}
+
+🚀 Register Middleware (Program.cs)
+app.UseMiddleware<ApiLoggingMiddleware>();
+
+
+👉 Put it after authentication but before MapControllers
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseMiddleware<ApiLoggingMiddleware>();
+
+app.MapControllers();
+
+🛑 Middleware 2 — Role Based Access Restriction
+🎯 Requirement
+
+Restrict endpoint based on role
+
+Middleware should read role from session
+
+✅ Example Usage Pattern
+
+You can define allowed role mapping like:
+
+public static class RoleAccessConfig
+{
+    public static Dictionary<string, List<int>> RoleAccess = new()
+    {
+        { "/admin", new List<int>{1} }, // Only role 1
+        { "/reports", new List<int>{1,2} }
+    };
+}
+
+🔒 Middleware Code
+public class RoleAuthorizationMiddleware
+{
+    private readonly RequestDelegate _next;
+
+    public RoleAuthorizationMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        var path = context.Request.Path.ToString().ToLower();
+
+        // Check if restriction exists
+        var restricted = RoleAccessConfig.RoleAccess
+            .FirstOrDefault(r => path.StartsWith(r.Key));
+
+        if (!string.IsNullOrEmpty(restricted.Key))
+        {
+            var loginSession = CommonUtils.GetCurrentSession(context);
+
+            int roleId = 0;
+
+            if (!string.IsNullOrEmpty(loginSession)
+                && loginSession.Contains(":"))
+            {
+                var inpSes = loginSession.Split(':');
+                int.TryParse(inpSes[2], out roleId);
+            }
+
+            if (!restricted.Value.Contains(roleId))
+            {
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                await context.Response.WriteAsync("Access Denied");
+                return;
+            }
+        }
+
+        await _next(context);
+    }
+}
+
+🧩 Register Role Middleware (Before Logging)
+app.UseMiddleware<RoleAuthorizationMiddleware>();
+app.UseMiddleware<ApiLoggingMiddleware>();
+
+🎉 Result
+
