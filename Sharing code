@@ -92,3 +92,9 @@ public class ApiRequestAndPerformanceLogModel
             }
             return SabicConstants.SuccessMessage;
         }
+
+
+need to work 
+Performance Log - need to log every API call which are called, need to log from middleware not from react
+Restrict the page access using role level routing from middleware  
+
