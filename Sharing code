@@ -268,4 +268,85 @@ app.UseMiddleware<RoleAuthorizationMiddleware>();
 app.UseMiddleware<ApiLoggingMiddleware>();
 
 🎉 Result
+====================
+
+public class ApiLoggingMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly IAPIRequestLogService _logService;
+
+    public ApiLoggingMiddleware(RequestDelegate next,
+        IAPIRequestLogService logService)
+    {
+        _next = next;
+        _logService = logService;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        var requestTime = DateTime.Now;
+
+        // ===== READ REQUEST BODY =====
+        context.Request.EnableBuffering();
+        string requestBody = "";
+        using (var reader = new StreamReader(context.Request.Body, leaveOpen: true))
+        {
+            requestBody = await reader.ReadToEndAsync();
+            context.Request.Body.Position = 0;
+        }
+
+        // ===== CAPTURE RESPONSE BODY =====
+        var originalBodyStream = context.Response.Body;
+        using var responseBodyStream = new MemoryStream();
+        context.Response.Body = responseBodyStream;
+
+        // ===== CALL NEXT MIDDLEWARE =====
+        await _next(context);
+
+        var responseTime = DateTime.Now;
+
+        // ===== READ RESPONSE BODY =====
+        context.Response.Body.Seek(0, SeekOrigin.Begin);
+        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync();
+        context.Response.Body.Seek(0, SeekOrigin.Begin);
+
+        // ===== COPY BACK TO ORIGINAL STREAM =====
+        await responseBodyStream.CopyToAsync(originalBodyStream);
+
+        // ===== READ SESSION DATA (SAME AS YOUR CODE) =====
+        var loginSession = CommonUtils.GetCurrentSession(context);
+
+        var model = new ApiRequestAndPerformanceLogModel();
+
+        if (!string.IsNullOrEmpty(loginSession) && loginSession.Contains(":"))
+        {
+            var inpSes = loginSession.Split(':');
+
+            model.UserID = int.TryParse(inpSes[0], out var uid) ? uid : 0;
+            model.SessionID = inpSes[1];
+            model.RoleID = int.TryParse(inpSes[2], out var rid) ? rid : 0;
+            model.EmployeeName = inpSes[3];
+            model.CreatedBy = inpSes[3];
+        }
+
+        model.CreatedOn = DateTime.Now;
+        model.Duration = (responseTime - requestTime).TotalMilliseconds + " ms";
+
+        var apiReq = new ApiRequestAndPerformanceLogRequest
+        {
+            ApiEndPoint = context.Request.Path,
+            HttpMethod = context.Request.Method,
+            StatusCode = context.Response.StatusCode,
+            RequestBody = requestBody,
+            RequestTimeStamp = requestTime,
+            ResponseTimeStamp = responseTime,
+            ResponseBody = responseBody,
+            ComponentName = "API",
+            ActionName = context.Request.Path
+        };
+
+        await _logService.InsertAPIRequestLogsAndPerformanceLogs(apiReq, model);
+    }
+}
+
 
