@@ -1,4 +1,135 @@
- [HttpPost("insertAPIRequestLogsAndPerformanceLogs")]
+Great 👍 — let’s do it the clean way using IMemoryCache in .NET.
+You want:
+✔ Load all page URLs from DB
+✔ Store them in memory cache
+✔ Reuse them in middleware
+✔ Refresh only when needed
+✅ Step-by-Step Implementation
+1️⃣ Register MemoryCache
+In Program.cs
+Copy code
+Csharp
+builder.Services.AddMemoryCache();
+2️⃣ Create a Service to Load & Cache Page URLs
+This keeps middleware clean 👍
+Copy code
+Csharp
+public interface IPageService
+{
+    Task<List<string>> GetPageUrlsAsync();
+}
+Implementation
+Copy code
+Csharp
+public class PageService : IPageService
+{
+    private readonly IMemoryCache _cache;
+    private readonly MyDbContext _db;
+    private const string CacheKey = "PAGE_URL_LIST";
+
+    public PageService(IMemoryCache cache, MyDbContext db)
+    {
+        _cache = cache;
+        _db = db;
+    }
+
+    public async Task<List<string>> GetPageUrlsAsync()
+    {
+        if (!_cache.TryGetValue(CacheKey, out List<string> urls))
+        {
+            urls = await _db.Pages
+                .Select(x => x.ApiUrl)
+                .ToListAsync();
+
+            var cacheOptions = new MemoryCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromMinutes(30))   // reset if accessed
+                .SetAbsoluteExpiration(TimeSpan.FromHours(4));     // refresh max time
+
+            _cache.Set(CacheKey, urls, cacheOptions);
+        }
+
+        return urls;
+    }
+}
+3️⃣ Register the Service
+Copy code
+Csharp
+builder.Services.AddScoped<IPageService, PageService>();
+4️⃣ Use It in Your Middleware
+Copy code
+Csharp
+public class RoleAuthorizationMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly IPageService _pageService;
+
+    public RoleAuthorizationMiddleware(RequestDelegate next, IPageService pageService)
+    {
+        _next = next;
+        _pageService = pageService;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        var path = context.Request.Path.Value!.ToLower().TrimEnd('/');
+
+        var pageUrls = await _pageService.GetPageUrlsAsync();
+
+        bool isPageApi = pageUrls.Any(url =>
+            path.StartsWith(url.ToLower(), StringComparison.OrdinalIgnoreCase));
+
+        if (isPageApi)
+        {
+            var roleId = context.User.FindFirst("roleid")?.Value;
+
+            bool hasAccess = await CheckRoleAccess(roleId, path);
+
+            if (!hasAccess)
+            {
+                context.Response.StatusCode = 403;
+                await context.Response.WriteAsync("Access denied.");
+                return;
+            }
+        }
+
+        await _next(context);
+    }
+}
+💨 Performance Result
+✔ DB hit only once
+✔ Reused for 30 mins (or until restart)
+✔ Blazing fast middleware
+✔ You control cache policy
+🔁 Optional: Force Refresh Cache When Menu Updates
+Add:
+Copy code
+Csharp
+_cache.Remove("PAGE_URL_LIST");
+After admin updates menu
+(Example: inside save/update method)
+🛡 Bonus Hardening
+Normalize URLs before match:
+Copy code
+Csharp
+path = path.Split('?')[0];
+🎯 Summary
+Feature
+Status
+Page APIs
+🔐 Role Checked
+Chart/Grid APIs
+🟢 Auto Allowed
+DB Load
+⚡ Cached
+Code
+Clean & maintainable
+If you want, I can also help you:
+✅ add reload signal
+✅ add logging
+✅ unit test
+✅ Redis cache (for multi-server)
+Just tell me 👍
+[HttpPost("insertAPIRequestLogsAndPerformanceLogs")]
  public async Task<IActionResult> InsertAPIRequestLogsAndPerformanceLogs([FromBody] ApiRequestAndPerformanceLogRequest apiRequestAndPerformanceLogRequest)
  {
      ApiRequestAndPerformanceLogModel apiRequestAndPerformanceLogModel = new ApiRequestAndPerformanceLogModel();
