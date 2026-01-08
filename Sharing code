@@ -1,3 +1,16 @@
+const resolveEnv = (value, fallback) => {
+
+  if (!value) return fallback;
+
+  // remove spaces
+  value = value.trim();
+
+  // if looks like #VAR#
+  if (/^#.+#$/.test(value)) return fallback;
+
+  return value;
+};
+
 Great 👍 — let’s do it the clean way using IMemoryCache in .NET.
 You want:
 ✔ Load all page URLs from DB
