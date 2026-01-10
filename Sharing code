@@ -1,3 +1,111 @@
+INSERT INTO Functionality
+(
+    FunctionalityID,
+    FunctionalityName,
+    IsActive,
+    CreatedBy,
+    CreatedOn,
+    UpdatedBy,
+    UpdatedOn,
+    ScreenID,
+    IsDisplay
+)
+VALUES
+/* ===================== AUDIT & ACTIVITY ===================== */
+(1,  'Add Admin Activity Log', 1, 'system', GETDATE(), NULL, NULL, 2, 0),
+(9,  'Display User and Login Activity Logs', 1, 'system', GETDATE(), NULL, NULL, 2, 1),
+
+/* ===================== ERROR & EXCEPTION ===================== */
+(2,  'Insert/Update Error Log', 1, 'system', GETDATE(), NULL, NULL, 6, 1),
+(10, 'Display Error Log', 1, 'system', GETDATE(), NULL, NULL, 4, 0),
+
+/* ===================== API & PERFORMANCE ===================== */
+(8,  'Display Performance Logs and API Request Logs', 1, 'system', GETDATE(), NULL, NULL, 7, 1),
+
+/* ===================== USER MANAGEMENT ===================== */
+(3,  'Insert/Update User Role Mapping', 1, 'system', GETDATE(), NULL, NULL, 8, 0),
+(4,  'Get User', 1, 'system', GETDATE(), NULL, NULL, 8, 1),
+(5,  'Activate/Deactivate User', 1, 'system', GETDATE(), NULL, NULL, 8, 0),
+(6,  'Get Menus', 1, 'system', GETDATE(), NULL, NULL, 5, 1),
+
+/* ===================== AUTHENTICATION ===================== */
+(12, 'Login / Token Management', 1, 'system', GETDATE(), NULL, NULL, 0, 0),
+(13, 'Logout', 1, 'system', GETDATE(), NULL, NULL, 0, 0),
+
+/* ===================== DASHBOARD – FINISHED GOODS ===================== */
+(14, 'View Finished Goods Dashboard', 1, 'system', GETDATE(), NULL, NULL, 1, 1),
+
+/* ===================== DASHBOARD – RAW MATERIALS ===================== */
+(15, 'View Raw Materials Dashboard', 1, 'system', GETDATE(), NULL, NULL, 1, 1),
+
+/* ===================== DASHBOARD – INSIGHTS ===================== */
+(16, 'View Inventory Insights', 1, 'system', GETDATE(), NULL, NULL, 1, 1);
+
+/////////
+
+
+UPDATE API_Master
+SET FunctionalityID =
+CASE
+    /* ---------- Activity & Login Logs ---------- */
+    WHEN APIEndPointURL IN (
+        '/api/ActivityMonitoring/getLoginUserActivity',
+        '/api/ActivityMonitoring/getLoginActivity',
+        '/api/ActivityMonitoring/InsertUserActivity'
+    ) THEN 9   -- Display user & login activity logs
+
+    /* ---------- API Request & Performance Logs ---------- */
+    WHEN APIEndPointURL IN (
+        '/api/APIRequestLog/getAPIRequestLog',
+        '/api/APIRequestLog/insertAPIRequestLogsAndPerformanceLogs',
+        '/api/APIPerformance/getPerformanceLogs'
+    ) THEN 8   -- Performance & API request logs
+
+    /* ---------- Error Log Insert / Update ---------- */
+    WHEN APIEndPointURL IN (
+        '/api/exceptionHandler/LogException',
+        '/api/exceptionHandler/updateErrorLoggingAssigneeWithStatus'
+    ) THEN 2   -- Insert/Update Error Log
+
+    /* ---------- Error Log Display ---------- */
+    WHEN APIEndPointURL IN (
+        '/api/exceptionHandler/getErrorLogs',
+        '/api/exceptionHandler/getAllErrorLogs',
+        '/api/exceptionHandler/getErrorLogAssignDetailsAsync',
+        '/api/exceptionHandler/getExceptionUserActivityDetailsBySessionID'
+    ) THEN 10  -- Display Error Log
+
+    /* ---------- User Management ---------- */
+    WHEN APIEndPointURL IN (
+        '/api/userManagement/getUserList',
+        '/api/userManagement/getSearchUserListFromAD/{searchText}'
+    ) THEN 4   -- Get User
+
+    WHEN APIEndPointURL = '/api/userManagement/insertupdateUserDetails'
+    THEN 3     -- Insert/Update User Role Mapping
+
+    WHEN APIEndPointURL = '/api/userManagement/deactivateUser'
+    THEN 5     -- Activate/Deactivate User
+
+    WHEN APIEndPointURL IN (
+        '/api/userManagement/getUserMenuList',
+        '/api/userManagement/isAuthorizedUserMenu'
+    ) THEN 6   -- Get Menus
+
+    /* ---------- Account ---------- */
+    WHEN APIEndPointURL = '/api/Account/GetUserDetails'
+    THEN 4     -- Get User
+
+    /* ---------- Dashboard (screen level – keep 0) ---------- */
+    WHEN APIEndPointURL LIKE '/api/dashboard/%'
+    THEN 0
+
+    /* ---------- Default ---------- */
+    ELSE FunctionalityID
+END;
+
+
+
 FunctionalityID	FunctionalityName	IsActive	CreatedBy	CreatedOn	UpdatedBy	UpdatedOn	ScreenID	IsDisplay
 1	Add Admin Activity Log	1	sabicorp/30790095	2025-09-10 11:42:27.320	NULL	NULL	2	0
 2	Insert/Update Error Log	1	sabicorp/30790095	2025-09-10 11:42:27.320	NULL	NULL	6	1
