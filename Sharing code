@@ -1,3 +1,95 @@
+INSERT INTO API_Master
+(
+    APIName,
+    APIEndPointURL,
+    IsActive,
+    CreatedBy,
+    CreatedOn,
+    UpdatedBy,
+    UpdatedOn,
+    FunctionalityID
+)
+VALUES
+-- Account
+('Get User Details', '/api/Account/GetUserDetails', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Logout', '/api/Account/logout', 1, 'system', GETDATE(), NULL, NULL, 0),
+
+-- Activity Monitoring
+('Get Login User Activity', '/api/ActivityMonitoring/getLoginUserActivity', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Login Activity', '/api/ActivityMonitoring/getLoginActivity', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Insert User Activity', '/api/ActivityMonitoring/InsertUserActivity', 1, 'system', GETDATE(), NULL, NULL, 0),
+
+-- API Request Log
+('Get API Request Log', '/api/APIRequestLog/getAPIRequestLog', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Insert API Request & Performance Logs', '/api/APIRequestLog/insertAPIRequestLogsAndPerformanceLogs', 1, 'system', GETDATE(), NULL, NULL, 0),
+
+-- Authentication
+('Login', '/api/Authentication/login', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Refresh Token', '/api/Authentication/refreshToken', 1, 'system', GETDATE(), NULL, NULL, 0),
+
+-- Dashboard
+('Get Base Filter List', '/api/dashboard/getBaseFilterList', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get More Filters SBU & BU List', '/api/dashboard/getMoreFiltersSBUandBUList', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get More Filters Profit Center List', '/api/dashboard/getMoreFiltersProfitCenterList', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get More Filters Plant List', '/api/dashboard/getMoreFiltersPlantList', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Inventory Difference Value', '/api/dashboard/getInventoryDifferenceValue', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Inventory Difference Volume', '/api/dashboard/getInventoryDifferenceVolume', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Inventory AI Forecast Value', '/api/dashboard/getInventoryAIForecastValue', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Finished Goods Demand Comparison Value', '/api/dashboard/getFinishedGoodsDemandComparisonValue', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Finished Goods Production Comparison Value', '/api/dashboard/getFinishedGoodsProductionComparisonValue', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Finished Goods Demand Chart Data', '/api/dashboard/getFinishedGoodsDemandChartData', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Finished Goods Production Chart Data', '/api/dashboard/getFinishedGoodsProductionChartData', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Finished Goods Purchase Chart Data', '/api/dashboard/getFinishedGoodsPurchaseChartData', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Finished Goods Purchase Comparison Value', '/api/dashboard/getFinishedGoodsPurchaseComparisonValue', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Inter Company Transfer Comparison Value', '/api/dashboard/getInterCompanyTransferComparisonValue', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get FG InterCompany Transfer STO Chart', '/api/dashboard/getFinishedGoodsInterCompanyTransferChartDataForSTO', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Total Inventory Value Difference', '/api/dashboard/getTotalInventoryValueDifference', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Total Inventory Volume Difference', '/api/dashboard/getTotalInventoryVolumeDifference', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Inventory DIO', '/api/dashboard/getInventoryDIO', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Inventory Insights Grid Data', '/api/dashboard/getInventoryInsightsGridData', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get FG InterCompany Transfer AIFC GIT Chart', '/api/dashboard/getFGInterCompanyTransferAIFCChartDataForGIT', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get FG InterCompany Transfer AIFC WIP Chart', '/api/dashboard/getFGInterCompanyTransferAIFCChartDataForWIP', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get FG InterCompany Transfer Comparison GIT Chart', '/api/dashboard/getFGInterCompanyTransferComparisonChartDataForGIT', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Inventory Map Details', '/api/dashboard/getInventoryMapDetails', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Closing Inventory Balance Chart', '/api/dashboard/getClosingInventoryBalanceChart', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Closing Inventory Balance Detail Chart', '/api/dashboard/getClosingInventoryBalanceDetailChart', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Unit Of Measure', '/api/dashboard/getUnitOfMeasure', 1, 'system', GETDATE(), NULL, NULL, 0),
+
+-- Exception Handler
+('Log Exception', '/api/exceptionHandler/LogException', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Error Logs', '/api/exceptionHandler/getErrorLogs', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get All Error Logs', '/api/exceptionHandler/getAllErrorLogs', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Exception User Activity By Session', '/api/exceptionHandler/getExceptionUserActivityDetailsBySessionID', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Update Error Logging Assignee', '/api/exceptionHandler/updateErrorLoggingAssigneeWithStatus', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Error Log Assign Details', '/api/exceptionHandler/getErrorLogAssignDetailsAsync', 1, 'system', GETDATE(), NULL, NULL, 0),
+
+-- Performance
+('Get API Performance Logs', '/api/APIPerformance/getPerformanceLogs', 1, 'system', GETDATE(), NULL, NULL, 0),
+
+-- Raw Materials
+('Get RM Goods Receipt Chart', '/api/APIRawMaterials/getRawMaterialsGoodsReceiptChartData', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get RM Consumed Production Chart', '/api/APIRawMaterials/getRawMaterialsConsumedProductionChartData', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get RM Consumed Comparison Value', '/api/APIRawMaterials/getRawMaterialsConsumedComparisonValue', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get RM Goods Receipt Comparison Value', '/api/APIRawMaterials/getRawMaterialsGoodsReceiptComparisonValue', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get RM InterCompany Transfer Chart', '/api/APIRawMaterials/getRMInterCompanyTransferChartData', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get RM InterCompany Transfer Comparison Value', '/api/APIRawMaterials/getRMInterCompanyTransferComparisonValue', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get RM Consumption Trend Chart', '/api/APIRawMaterials/getRMConsumptionTrendChartData', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get RM Consumption Trend Comparison Data', '/api/APIRawMaterials/getRMConsumptionTrendComparisonData', 1, 'system', GETDATE(), NULL, NULL, 0),
+
+-- User Management
+('Get User List', '/api/userManagement/getUserList', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get User Menu List', '/api/userManagement/getUserMenuList', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Insert/Update User Details', '/api/userManagement/insertupdateUserDetails', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Deactivate User', '/api/userManagement/deactivateUser', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Search User From AD', '/api/userManagement/getSearchUserListFromAD/{searchText}', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Role List', '/api/userManagement/getRoleList', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Get Affiliate List', '/api/userManagement/getAffiliateList', 1, 'system', GETDATE(), NULL, NULL, 0),
+('Is Authorized User Menu', '/api/userManagement/isAuthorizedUserMenu', 1, 'system', GETDATE(), NULL, NULL, 0);
+
+
+
+
+
 Table 
 APIID	APIName	APIEndPointURL	IsActive	CreatedBy	CreatedOn	UpdatedBy	UpdatedOn	FunctionalityID
 1	Get User Details	/api/Account/GetUserDetails	1	sabiccorp\30790093	2025-03-19 16:09:10.703	NULL	NULL	4
