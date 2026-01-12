@@ -1,33 +1,101 @@
-   public async Task LogExceptionAsync(ExceptionDetails obj)
-   {
-       await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_ErrorLogging] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9}" +
-           ",{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21},{22},{23}",
-           obj.ErrorLogID, obj.UserID, obj.RoleID, obj.SessionID, obj.ApplicationID, obj.ScreenID, obj.ModuleID, obj.FunctionID, obj.LayerID, obj.APIID,
-           obj.StoredProcedureID, obj.ErrorNumber, obj.ErrorState, obj.ErrorSeverity, obj.StackTrace, obj.ErrorMessage, obj.RequestBody, obj.ResponseBody,
-           obj.Status, obj.HostName, obj.Environment, obj.CreatedBy, obj.UpdatedBy, obj.IPAddress);
-   }
-  
-   public async Task<List<ExceptionResults>> GetExceptionLogs(string ErrorMessage)
-   {
-       return await _dbContext.ExceptionResults.FromSqlRaw("EXEC [dbo].[SP_GetErrorLogging]  {0}", ErrorMessage).ToListAsync();
-   }
+public async Task LogExceptionAsync(ExceptionDetails obj)
+{
+    await _dbContext.Database.ExecuteSqlRawAsync(
+        @"EXEC [dbo].[SP_Insert_Update_ErrorLogging]
+            @ErrorLogID           = @ErrorLogID,
+            @UserID               = @UserID,
+            @RoleID               = @RoleID,
+            @SessionID            = @SessionID,
+            @ApplicationID        = @ApplicationID,
+            @ScreenID             = @ScreenID,
+            @ModuleID             = @ModuleID,
+            @FunctionID           = @FunctionID,
+            @LayerID              = @LayerID,
+            @APIID                = @APIID,
+            @StoredProcedureID    = @StoredProcedureID,
+            @ErrorNumber          = @ErrorNumber,
+            @ErrorState           = @ErrorState,
+            @ErrorSeverity        = @ErrorSeverity,
+            @StackTrace           = @StackTrace,
+            @ErrorMessage         = @ErrorMessage,
+            @RequestBody          = @RequestBody,
+            @ResponseBody         = @ResponseBody,
+            @Status               = @Status,
+            @HostName             = @HostName,
+            @Environment          = @Environment,
+            @CreatedBy            = @CreatedBy,
+            @UpdatedBy            = @UpdatedBy,
+            @IPAddress            = @IPAddress",
+        new SqlParameter("@ErrorLogID", obj.ErrorLogID),
+        new SqlParameter("@UserID", obj.UserID),
+        new SqlParameter("@RoleID", obj.RoleID),
+        new SqlParameter("@SessionID", obj.SessionID),
+        new SqlParameter("@ApplicationID", obj.ApplicationID),
+        new SqlParameter("@ScreenID", obj.ScreenID),
+        new SqlParameter("@ModuleID", obj.ModuleID),
+        new SqlParameter("@FunctionID", obj.FunctionID),
+        new SqlParameter("@LayerID", obj.LayerID),
+        new SqlParameter("@APIID", obj.APIID),
+        new SqlParameter("@StoredProcedureID", obj.StoredProcedureID),
+        new SqlParameter("@ErrorNumber", obj.ErrorNumber),
+        new SqlParameter("@ErrorState", obj.ErrorState),
+        new SqlParameter("@ErrorSeverity", obj.ErrorSeverity),
+        new SqlParameter("@StackTrace", obj.StackTrace),
+        new SqlParameter("@ErrorMessage", obj.ErrorMessage),
+        new SqlParameter("@RequestBody", obj.RequestBody),
+        new SqlParameter("@ResponseBody", obj.ResponseBody),
+        new SqlParameter("@Status", obj.Status),
+        new SqlParameter("@HostName", obj.HostName),
+        new SqlParameter("@Environment", obj.Environment),
+        new SqlParameter("@CreatedBy", obj.CreatedBy),
+        new SqlParameter("@UpdatedBy", obj.UpdatedBy),
+        new SqlParameter("@IPAddress", obj.IPAddress)
+    );
+}
 
-   public async Task<List<ExceptionResults>> GetAllExceptionLogs(DateFilter model) => await _dbContext.ExceptionResults.FromSqlRaw("EXEC [dbo].[SP_GetAllErrorLogging] {0},{1}",
-          model.FromDate,
-          model.ToDate).ToListAsync();
+public async Task<List<ExceptionResults>> GetExceptionLogs(string errorMessage)
+{
+    return await _dbContext.ExceptionResults
+        .FromSqlRaw(
+            "EXEC [dbo].[SP_GetErrorLogging] @ErrorMessage = @ErrorMessage",
+            new SqlParameter("@ErrorMessage", errorMessage))
+        .ToListAsync();
+}
 
- public async Task UpdateErrorLoggingAssigneeWithStatus(ExceptionDetails obj)
- {
-     await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Update_ErrorLogging_AssigneeWith_Status] {0},{1},{2},{3}",
-         obj.ErrorLogID, obj.AssignTo, obj.ErrorStatusID, obj.UpdatedBy);
- }
+public async Task<List<ExceptionResults>> GetAllExceptionLogs(DateFilter model)
+{
+    return await _dbContext.ExceptionResults
+        .FromSqlRaw(
+            "EXEC [dbo].[SP_GetAllErrorLogging] @FromDate = @FromDate, @ToDate = @ToDate",
+            new SqlParameter("@FromDate", model.FromDate),
+            new SqlParameter("@ToDate", model.ToDate))
+        .ToListAsync();
+}
 
- public async Task<ExceptionHandlerModel> GetErrorLogAssignDetailsAsync()
- {
-     var result = new ExceptionHandlerModel();
-     var errorLogStstus = await _dbContext.ErrorLogStatus.FromSqlRaw("EXEC [dbo].[SP_GetErrorLogStatus]").ToListAsync();
-     var assignToUsers = await _dbContext.ErrorLogAssignToUser.FromSqlRaw("EXEC [dbo].[SP_GetErrorLog_AssignToUser]").ToListAsync();
-     result.LstErrorLogStatus = errorLogStstus;
-     result.LstErrorLogAssignToUser = assignToUsers;
-     return result;
- }
+public async Task UpdateErrorLoggingAssigneeWithStatus(ExceptionDetails obj)
+{
+    await _dbContext.Database.ExecuteSqlRawAsync(
+        "EXEC [dbo].[SP_Update_ErrorLogging_AssigneeWith_Status] " +
+        "@ErrorLogID = @ErrorLogID, @AssignTo = @AssignTo, @ErrorStatusID = @ErrorStatusID, @UpdatedBy = @UpdatedBy",
+        new SqlParameter("@ErrorLogID", obj.ErrorLogID),
+        new SqlParameter("@AssignTo", obj.AssignTo),
+        new SqlParameter("@ErrorStatusID", obj.ErrorStatusID),
+        new SqlParameter("@UpdatedBy", obj.UpdatedBy)
+    );
+}
+
+public async Task<ExceptionHandlerModel> GetErrorLogAssignDetailsAsync()
+{
+    var result = new ExceptionHandlerModel
+    {
+        LstErrorLogStatus = await _dbContext.ErrorLogStatus
+            .FromSqlRaw("EXEC [dbo].[SP_GetErrorLogStatus]")
+            .ToListAsync(),
+
+        LstErrorLogAssignToUser = await _dbContext.ErrorLogAssignToUser
+            .FromSqlRaw("EXEC [dbo].[SP_GetErrorLog_AssignToUser]")
+            .ToListAsync()
+    };
+
+    return result;
+}
