@@ -1,231 +1,91 @@
-using Xunit;
-using Moq;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using System.IO;
-using System.Threading.Tasks;
-using WCI_APIs.Middlewares;
-using WCICore.Contract.Services;
-
-public class RoleAuthorizationMiddlewareTests
-{
-    private DefaultHttpContext CreateContext(string path, string? session = null)
-    {
-        var context = new DefaultHttpContext();
-        context.Request.Path = path;
-        context.Response.Body = new MemoryStream();
-
-        if (session != null)
-        {
-            // Assuming CommonUtils reads from Items
-            context.Items["Session"] = session;
-        }
-
-        return context;
-    }
-
-    private RoleAuthorizationMiddleware CreateMiddleware(
-        IAccountService accountService,
-        out bool nextCalled)
-    {
-        nextCalled = false;
-
-        RequestDelegate next = ctx =>
-        {
-            nextCalled = true;
-            return Task.CompletedTask;
-        };
-
-        var serviceProviderMock = new Mock<IServiceProvider>();
-        serviceProviderMock
-            .Setup(s => s.GetService(typeof(IAccountService)))
-            .Returns(accountService);
-
-        var scopeMock = new Mock<IServiceScope>();
-        scopeMock.Setup(s => s.ServiceProvider)
-                 .Returns(serviceProviderMock.Object);
-
-        var scopeFactoryMock = new Mock<IServiceScopeFactory>();
-        scopeFactoryMock.Setup(f => f.CreateScope())
-                        .Returns(scopeMock.Object);
-
-        var configuration = new ConfigurationBuilder().Build();
-
-        return new RoleAuthorizationMiddleware(
-            next,
-            scopeFactoryMock.Object,
-            configuration
-        );
-    }
-
-    [Fact]
-    public async Task Login_Api_Should_Bypass_Middleware()
-    {
-        var context = CreateContext("/api/login");
-        var middleware = CreateMiddleware(Mock.Of<IAccountService>(), out var nextCalled);
-
-        await middleware.InvokeAsync(context);
-
-        Assert.True(nextCalled);
-        Assert.Equal(StatusCodes.Status200OK, context.Response.StatusCode);
-    }
-
-    [Fact]
-    public async Task Swagger_Api_Should_Bypass_Middleware()
-    {
-        var context = CreateContext("/swagger/index.html");
-        var middleware = CreateMiddleware(Mock.Of<IAccountService>(), out var nextCalled);
-
-        await middleware.InvokeAsync(context);
-
-        Assert.True(nextCalled);
-    }
-
-    [Fact]
-    public async Task Missing_Session_Should_Return_401()
-    {
-        var context = CreateContext("/api/orders");
-        var middleware = CreateMiddleware(Mock.Of<IAccountService>(), out var nextCalled);
-
-        await middleware.InvokeAsync(context);
-
-        Assert.False(nextCalled);
-        Assert.Equal(StatusCodes.Status401Unauthorized, context.Response.StatusCode);
-    }
-
-    [Fact]
-    public async Task Invalid_Role_Should_Return_401()
-    {
-        var context = CreateContext("/api/orders", "user:token:0");
-        var middleware = CreateMiddleware(Mock.Of<IAccountService>(), out var nextCalled);
-
-        await middleware.InvokeAsync(context);
-
-        Assert.False(nextCalled);
-        Assert.Equal(StatusCodes.Status401Unauthorized, context.Response.StatusCode);
-    }
-
-    [Fact]
-    public async Task Role_Not_Authorized_Should_Return_403()
-    {
-        var context = CreateContext("/api/orders", "user:token:2");
-
-        var accountServiceMock = new Mock<IAccountService>();
-        accountServiceMock
-            .Setup(s => s.IsAuthorizedRoleApi(2, "/api/orders"))
-            .ReturnsAsync(new { HasAccess = false });
-
-        var middleware = CreateMiddleware(accountServiceMock.Object, out var nextCalled);
-
-        await middleware.InvokeAsync(context);
-
-        Assert.False(nextCalled);
-        Assert.Equal(StatusCodes.Status403Forbidden, context.Response.StatusCode);
-    }
-
-    [Fact]
-    public async Task Role_Authorized_Should_Call_Next()
-    {
-        var context = CreateContext("/api/orders", "user:token:1");
-
-        var accountServiceMock = new Mock<IAccountService>();
-        accountServiceMock
-            .Setup(s => s.IsAuthorizedRoleApi(1, "/api/orders"))
-            .ReturnsAsync(new { HasAccess = true });
-
-        var middleware = CreateMiddleware(accountServiceMock.Object, out var nextCalled);
-
-        await middleware.InvokeAsync(context);
-
-        Assert.True(nextCalled);
-        Assert.Equal(StatusCodes.Status200OK, context.Response.StatusCode);
-    }
-}
-
-
-
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using WCI_APIs.Utils;
 using WCICore.Contract;
-using WCICore.Contract.Services;
-using WCIInfrastructure.Service;
+using WCICore.Model;
 
 namespace WCI_APIs.Middlewares
 {
-    public class RoleAuthorizationMiddleware
+
+    public class ApiLoggingMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly IServiceScopeFactory _scopeFactory;
-        private readonly IConfiguration _configuration;
 
 
-        public RoleAuthorizationMiddleware(RequestDelegate next, IServiceScopeFactory scopeFactory, IConfiguration configuration)
+        public ApiLoggingMiddleware(RequestDelegate next, IServiceScopeFactory scopeFactory)
         {
             _next = next;
             _scopeFactory = scopeFactory;
-            _configuration = configuration;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var api = context.Request.Path.ToString().ToLower();
-            //api = api.Split("/").Last();
-            var pageUrls = new List<string>();
-            var AcceptedUrls = new List<string> { "Login" };
+            var requestTime = DateTime.Now;
 
-
-            // Skip login / swagger / health check etc.
-            if (api.Contains("login") || api.StartsWith("/swagger"))
+            context.Request.EnableBuffering();
+            string requestBody = "";
+            using (var reader = new StreamReader(context.Request.Body, leaveOpen: true))
             {
-                await _next(context);
-                return;
+                requestBody = await reader.ReadToEndAsync();
+                context.Request.Body.Position = 0;
             }
 
-          
-            // ===== Read Session =====
-            var loginSession = CommonUtils.GetCurrentSession(context);
-
-            int roleId = 0;
-
-            if (!string.IsNullOrEmpty(loginSession) && loginSession.Contains(":"))
-            {
-                var ses = loginSession.Split(':');
-
-                // ses[2] = RoleId
-                int.TryParse(ses[2], out roleId);
-            }
-
-            // If role not resolved -> not authorized
-            if (roleId == 0)
-            {
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                await context.Response.WriteAsync("Role missing or invalid");
-                return;
-            }
-
-
-            using (var scope = _scopeFactory.CreateScope())
-            {
-                var accountService = scope.ServiceProvider.GetService<IAccountService>();
-
-                // ===== Call Stored Procedure =====
-                var result = await accountService!.IsAuthorizedRoleApi(roleId, api);
-
-                var isAllowed = result.HasAccess;
-
-                if (!isAllowed)
-                {
-                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                    await context.Response.WriteAsync("Access Denied: the requested page is restricted for your role");
-                    return;
-                }
-            }
+            var originalBodyStream = context.Response.Body;
+            using var responseBodyStream = new MemoryStream();
+            context.Response.Body = responseBodyStream;
 
             await _next(context);
 
+            var responseTime = DateTime.Now;
 
+            context.Response.Body.Seek(0, SeekOrigin.Begin);
+            var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync();
+            context.Response.Body.Seek(0, SeekOrigin.Begin);
+
+            await responseBodyStream.CopyToAsync(originalBodyStream);
+
+            var loginSession = CommonUtils.GetCurrentSession(context);
+
+            var model = new ApiRequestAndPerformanceLogModel();
+
+            if (!string.IsNullOrEmpty(loginSession) && loginSession.Contains(":"))
+            {
+                var inpSes = loginSession.Split(':');
+
+                model.UserID = int.TryParse(inpSes[0], out var uid) ? uid : 0;
+                model.SessionID = inpSes[1];
+                model.RoleID = int.TryParse(inpSes[2], out var rid) ? rid : 0;
+                model.EmployeeName = inpSes[3];
+                model.CreatedBy = inpSes[3];
+            }
+
+            model.CreatedOn = DateTime.Now;
+            model.Duration = (responseTime - requestTime).TotalMilliseconds + " ms";
+            var action = context.Request.RouteValues["action"]?.ToString();
+            var path = context.Request.Path.ToString();
+            var cleanPath = path.Replace($"/{action}", "", StringComparison.InvariantCultureIgnoreCase);
+
+            var apiReq = new ApiRequestAndPerformanceLogRequest
+            {
+                ApiEndPoint = context.Request.Path,
+                HttpMethod = context.Request.Method,
+                StatusCode = context.Response.StatusCode,
+                RequestBody = requestBody,
+                RequestTimeStamp = requestTime,
+                ResponseTimeStamp = responseTime,
+                ResponseBody = responseBody,
+                ComponentName = context.Request.Scheme + "://" + context.Request.Host + cleanPath,
+                ActionName = context.Request.Path,
+                LayerID = (int)Layer.Service
+            };
+            if (model.UserID > 0)
+            {
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    var apiRequestLogService = scope.ServiceProvider.GetService<IAPIRequestLogService>();
+                    await apiRequestLogService!.InsertAPIRequestLogsAndPerformanceLogs(apiReq, model);
+                }
+            }
         }
-
     }
+
 }
