@@ -1,53 +1,112 @@
-/// <summary>
-/// To get performance logs within a date range
-/// </summary>
-/// <param name="model"></param>
-/// <returns></returns>
-public async Task<List<PerformanceAPIResults>> GetPerformanceLogs(DateFilter model)
-{
-    return await _dbContext.PerformanceAPIResults
-        .FromSqlRaw(
-            @"EXEC [dbo].[SP_GetPerformanceLog]
-                @FromDate = @FromDate,
-                @ToDate   = @ToDate",
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate)
-        )
-        .ToListAsync();
-}
+ public async Task<List<RawMaterialsGoodsReceiptChart>> GetRawMaterialsGoodsReceiptChartData(ChartDataFilterReq chartDataFilterReq)
+ {
+     return await _dbContext.RawMaterialsGoodsReceiptChart.FromSqlRaw("EXEC [dbo].[SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}",
+         chartDataFilterReq.CurrencyType,
+         chartDataFilterReq.Metrics,
+         chartDataFilterReq.RegionCode,
+         chartDataFilterReq.CountryCode,
+         chartDataFilterReq.CompanyCode,
+         chartDataFilterReq.ProfitCenterID,
+         chartDataFilterReq.PlantID,
+         chartDataFilterReq.SbuName,
+         chartDataFilterReq.BuName,
+         chartDataFilterReq.FromDate,
+         chartDataFilterReq.ToDate,
+         chartDataFilterReq.UnitOfMeasure).ToListAsync();
+ }
+ public async Task<List<RawMaterialsConsumedProductionChart>> GetRawMaterialsConsumedProductionChartData(InvChartDataFilterReq fGChartDataFilterReq)
+ {
+     return await _dbContext.RawMaterialsConsumedProductionChart.FromSqlRaw("EXEC [dbo].[SP_GetRawMaterialsCPChartData] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}",
+             fGChartDataFilterReq.CurrencyType,
+             fGChartDataFilterReq.Metrics,
+             fGChartDataFilterReq.RegionCode,
+             fGChartDataFilterReq.CountryCode,
+             fGChartDataFilterReq.CompanyCode,
+             fGChartDataFilterReq.ProfitCenterID,
+             fGChartDataFilterReq.PlantID,
+             fGChartDataFilterReq.SbuName,
+             fGChartDataFilterReq.BuName,
+             fGChartDataFilterReq.FromDate,
+             fGChartDataFilterReq.ToDate,
+             fGChartDataFilterReq.UnitOfMeasure).ToListAsync();
+ }
+ public async Task<List<RawMaterialsConsumedComparison>> GetRawMaterialsConsumedComparisonValue(InventoryFilterReq inventoryFilterReq)
+ {
+     return await _dbContext.RawMaterialsConsumedComparison.FromSqlRaw("EXEC [dbo].[SP_GetRawMaterialsConsumedGraphComparisonData] {0},{1},{2},{3},{4},{5},{6}",
+         inventoryFilterReq.CompanyCode,
+         inventoryFilterReq.ProfitCenterID,
+         inventoryFilterReq.PlantID,
+         inventoryFilterReq.SbuName,
+         inventoryFilterReq.BuName,
+         inventoryFilterReq.FromDate,
+         inventoryFilterReq.ToDate).ToListAsync();
+ }
+ public async Task<List<RawMaterialsGoodsReceiptComparison>> GetRawMaterialsGoodsReceiptComparisonValue(InventoryFilterReq inventoryFilterReq)
+ {
+     return await _dbContext.RawMaterialsGoodsReceiptComparison.FromSqlRaw("EXEC [dbo].[SP_GetGoodsReceiptGraphComparisonData] {0},{1},{2},{3},{4},{5},{6}",
+         inventoryFilterReq.CompanyCode,
+         inventoryFilterReq.ProfitCenterID,
+         inventoryFilterReq.PlantID,
+         inventoryFilterReq.SbuName,
+         inventoryFilterReq.BuName,
+         inventoryFilterReq.FromDate,
+         inventoryFilterReq.ToDate).ToListAsync();
+ }
 
-/// <summary>
-/// To insert or update a performance log
-/// </summary>
-/// <param name="performanceLog"></param>
-/// <returns></returns>
-public async Task<string> InsertPerformanceLog(PerformanceLog performanceLog)
-{
-    var response = await _dbContext.Database.ExecuteSqlRawAsync(
-        @"EXEC [dbo].[SP_Insert_Update_PerformanceLog]
-            @LogID         = @LogID,
-            @UserID        = @UserID,
-            @RoleID        = @RoleID,
-            @SessionID     = @SessionID,
-            @ComponentName = @ComponentName,
-            @ActionName    = @ActionName,
-            @StartTime     = @StartTime,
-            @EndTime       = @EndTime,
-            @Duration      = @Duration,
-            @CreatedBy     = @CreatedBy,
-            @CreatedOn     = @CreatedOn",
-        new SqlParameter("@LogID", 0), // Assuming 0 for new insert
-        new SqlParameter("@UserID", performanceLog.UserID),
-        new SqlParameter("@RoleID", performanceLog.RoleID),
-        new SqlParameter("@SessionID", performanceLog.SessionID),
-        new SqlParameter("@ComponentName", performanceLog.ComponentName),
-        new SqlParameter("@ActionName", performanceLog.ActionName),
-        new SqlParameter("@StartTime", performanceLog.StartTime),
-        new SqlParameter("@EndTime", performanceLog.EndTime),
-        new SqlParameter("@Duration", performanceLog.Duration),
-        new SqlParameter("@CreatedBy", performanceLog.CreatedBy),
-        new SqlParameter("@CreatedOn", performanceLog.CreatedOn)
-    );
+ public async Task<List<RMInterCompanyTransferChart>> GetRMInterCompanyTransferChartData(InvChartDataFilterReq invChartDataFilterReq)
+ {
+     return await _dbContext.RMInterCompanyTransferChart.FromSqlRaw("EXEC [dbo].[SP_GetRMInterCompanyTransferChartData] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}",
+             invChartDataFilterReq.CurrencyType,
+             invChartDataFilterReq.Metrics,
+             invChartDataFilterReq.RegionCode,
+             invChartDataFilterReq.CountryCode,
+             invChartDataFilterReq.CompanyCode,
+             invChartDataFilterReq.ProfitCenterID,
+             invChartDataFilterReq.PlantID,
+             invChartDataFilterReq.SbuName,
+             invChartDataFilterReq.BuName,
+             invChartDataFilterReq.FromDate,
+             invChartDataFilterReq.ToDate,
+             invChartDataFilterReq.UnitOfMeasure).ToListAsync();
+ }
 
-    return response == 0 ? SabicConstants.BadRequestMessage : SabicConstants.SuccessMessage;
-}
+ public async Task<List<RMInterCompanyTransferComparison>> GetRMInterCompanyTransferComparisonValue(InvInterCompanyTransferComparisonChartData invInterCompanyTransferComparisonChartData)
+ {
+     return await _dbContext.RMInterCompanyTransferComparison.FromSqlRaw("EXEC [dbo].[SP_GetRMInterCompanyTransferComparisonChartData] {0},{1},{2},{3},{4},{5},{6}",
+         invInterCompanyTransferComparisonChartData.CompanyCode,
+         invInterCompanyTransferComparisonChartData.ProfitCenterID,
+         invInterCompanyTransferComparisonChartData.PlantID,
+         invInterCompanyTransferComparisonChartData.SbuName,
+         invInterCompanyTransferComparisonChartData.BuName,
+         invInterCompanyTransferComparisonChartData.FromDate,
+         invInterCompanyTransferComparisonChartData.ToDate).ToListAsync();
+ }
+
+ public async Task<List<RMConsumptionTrendChart>> GetRMConsumptionTrendChartData(InvChartDataFilterReq req)
+ {
+     return await _dbContext.RMConsumptionTrendChart.FromSqlRaw("EXEC [dbo].[SP_GetRMConsumptionTrendData] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}",
+             req.CurrencyType,
+             req.Metrics,
+             req.RegionCode,
+             req.CountryCode,
+             req.CompanyCode,
+             req.ProfitCenterID,
+             req.PlantID,
+             req.SbuName,
+             req.BuName,
+             req.FromDate,
+             req.ToDate,
+             req.UnitOfMeasure).ToListAsync();
+ }
+
+ public async Task<List<RMConsumptionTrendComparison>> GetRMConsumptionTrendComparisonData(InvInterCompanyTransferComparisonChartData req)
+ {
+     return await _dbContext.RMConsumptionTrendComparison.FromSqlRaw("EXEC [dbo].[SP_GetRMConsumptionTrendComparisonData] {0},{1},{2},{3},{4},{5},{6}",
+         req.CompanyCode,
+         req.ProfitCenterID,
+         req.PlantID,
+         req.SbuName,
+         req.BuName,
+         req.FromDate,
+         req.ToDate).ToListAsync();
+ }
