@@ -1,64 +1,65 @@
-ProcedureName
-SP_CheckUserMenuAccess
-SP_CheckRolePageAccess
-SP_GetAffiliateForUserManagement
-SP_GetAllErrorLogging
-SP_GetAPIRequestLog
-SP_GetAuthenticatedUserDetails
-SP_GetBaseFilters
-SP_GetClosingInventoryBalanceChartDetailData
-SP_GetCountry
-SP_GetDataForAuthenticationByUserId
-SP_GetDiffrencesValues
-SP_GetDiffrencesVolumes
-SP_GetErrorLog_AssignToUser
-SP_GetErrorLogging
-SP_GetErrorLogStatus
-SP_GetExceptionUserActivityDetailsBySessionID
-SP_GetFGClosingInventoryBalanceChartData
-SP_GetFGInterCompanyTransferAIFCChartDataForGIT
-SP_GetFGInterCompanyTransferAIFCChartDataForSTO
-SP_GetFGInterCompanyTransferAIFCChartDataForWIP
-SP_GetFGPurchasesAIFCChartData
-SP_GetFinishedGoodsDemandChartAIEnhancedForecastData
-SP_GetFinishedGoodsProductionChartAIEnhancedForecastData
-SP_GetInventoryGlobalMap
-SP_GetInventoryInsightsGridData
-SP_GetLoginActivity
-SP_GetLoginUserActivity
-SP_GetMoreFiltersPlant
-SP_GetMoreFiltersProfitCenter
-SP_GetMoreFiltersSBUandBU
-SP_GetPerformanceLog
-SP_GetRawMaterialsCPChartData
-SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData
-SP_GetRegion
-SP_GetRMConsumptionTrendData
-SP_GetRMInterCompanyTransferChartData
-SP_GetRole
-SP_GetSessionDetails
-SP_GetTotalInventoryValueDifference
-SP_GetTotalInventoryVolumeDifference
-SP_GetUserDetails
-SP_GetUserMenus
-SP_GetUsers
-SP_Insert_Update_ActivityTracker
-SP_Insert_Update_APIRequestLog
-SP_Insert_Update_AssignedUser
-SP_Insert_Update_ErrorLogging
-SP_Insert_Update_LoginActivity
-SP_Insert_Update_PerformanceLog
-SP_Insert_Update_UserLoginSession
-SP_Insert_Update_UserRoleMapping
-SP_Insert_Update_UserToken
-SP_InsertMaterialMovements_Actuals_FG
-SP_InsertMaterialMovements_Actuals_RM
-SP_InsertOpeningAndClosingInventoryDetails_FG
-SP_InsertOpeningAndClosingInventoryDetails_RM
-SP_InsertOpeningInventory_Actuals_FG
-SP_InsertOpeningInventory_Actuals_RM
-SP_IsInternal_AuthenticatedUser
-SP_LogoutAndEndSessionByUserId
-SP_Update_ErrorLogging_AssigneeWith_Status
-SP_Update_User_IsActivated
-usp_AddandUpdateUserAndRoleMapping
+| ProcedureName                                             | Description                                                                        |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| SP_CheckUserMenuAccess                                    | Checks whether a user has access to a specific menu based on user and role mapping |
+| SP_CheckRolePageAccess                                    | Validates role-based access for pages or screens                                   |
+| SP_GetAffiliateForUserManagement                          | Retrieves affiliate list used in user management screens                           |
+| SP_GetAllErrorLogging                                     | Fetches all error logs recorded in the system                                      |
+| SP_GetAPIRequestLog                                       | Retrieves API request and response logging details                                 |
+| SP_GetAuthenticatedUserDetails                            | Gets authenticated user details after successful login                             |
+| SP_GetBaseFilters                                         | Retrieves base filter data used across dashboards                                  |
+| SP_GetClosingInventoryBalanceChartDetailData              | Returns detailed closing inventory balance chart data                              |
+| SP_GetCountry                                             | Retrieves country master data                                                      |
+| SP_GetDataForAuthenticationByUserId                       | Fetches user authentication data using User ID                                     |
+| SP_GetDiffrencesValues                                    | Retrieves inventory value difference data                                          |
+| SP_GetDiffrencesVolumes                                   | Retrieves inventory volume difference data                                         |
+| SP_GetErrorLog_AssignToUser                               | Gets error logs assigned to specific users                                         |
+| SP_GetErrorLogging                                        | Retrieves filtered error logging data                                              |
+| SP_GetErrorLogStatus                                      | Fetches error log status master data                                               |
+| SP_GetExceptionUserActivityDetailsBySessionID             | Retrieves user activity exceptions based on session ID                             |
+| SP_GetFGClosingInventoryBalanceChartData                  | Returns finished goods closing inventory balance chart data                        |
+| SP_GetFGInterCompanyTransferAIFCChartDataForGIT           | Retrieves FG inter-company transfer AI forecast data for GIT                       |
+| SP_GetFGInterCompanyTransferAIFCChartDataForSTO           | Retrieves FG inter-company transfer AI forecast data for STO                       |
+| SP_GetFGInterCompanyTransferAIFCChartDataForWIP           | Retrieves FG inter-company transfer AI forecast data for WIP                       |
+| SP_GetFGPurchasesAIFCChartData                            | Retrieves finished goods purchase AI forecast chart data                           |
+| SP_GetFinishedGoodsDemandChartAIEnhancedForecastData      | Retrieves AI-enhanced finished goods demand forecast data                          |
+| SP_GetFinishedGoodsProductionChartAIEnhancedForecastData  | Retrieves AI-enhanced finished goods production forecast data                      |
+| SP_GetInventoryGlobalMap                                  | Retrieves inventory data for global map visualization                              |
+| SP_GetInventoryInsightsGridData                           | Fetches inventory insights grid data                                               |
+| SP_GetLoginActivity                                       | Retrieves user login activity logs                                                 |
+| SP_GetLoginUserActivity                                   | Retrieves detailed user activity during login sessions                             |
+| SP_GetMoreFiltersPlant                                    | Retrieves plant filter values                                                      |
+| SP_GetMoreFiltersProfitCenter                             | Retrieves profit center filter values                                              |
+| SP_GetMoreFiltersSBUandBU                                 | Retrieves SBU and BU filter values                                                 |
+| SP_GetPerformanceLog                                      | Retrieves API and UI performance log details                                       |
+| SP_GetRawMaterialsCPChartData                             | Retrieves raw materials consumption and production chart data                      |
+| SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData | Retrieves AI-enhanced forecast data for raw material goods receipt                 |
+| SP_GetRegion                                              | Retrieves region master data                                                       |
+| SP_GetRMConsumptionTrendData                              | Retrieves raw material consumption trend data                                      |
+| SP_GetRMInterCompanyTransferChartData                     | Retrieves raw material inter-company transfer chart data                           |
+| SP_GetRole                                                | Retrieves role master data                                                         |
+| SP_GetSessionDetails                                      | Retrieves user session details                                                     |
+| SP_GetTotalInventoryValueDifference                       | Retrieves total inventory value difference                                         |
+| SP_GetTotalInventoryVolumeDifference                      | Retrieves total inventory volume difference                                        |
+| SP_GetUserDetails                                         | Retrieves detailed user profile information                                        |
+| SP_GetUserMenus                                           | Retrieves menu list mapped to user and role                                        |
+| SP_GetUsers                                               | Retrieves all users                                                                |
+| SP_Insert_Update_ActivityTracker                          | Inserts or updates user activity tracking data                                     |
+| SP_Insert_Update_APIRequestLog                            | Inserts or updates API request logging data                                        |
+| SP_Insert_Update_AssignedUser                             | Inserts or updates assigned user and role details                                  |
+| SP_Insert_Update_ErrorLogging                             | Inserts or updates error logging records                                           |
+| SP_Insert_Update_LoginActivity                            | Inserts or updates user login activity                                             |
+| SP_Insert_Update_PerformanceLog                           | Inserts or updates performance log data                                            |
+| SP_Insert_Update_UserLoginSession                         | Inserts or updates user login session details                                      |
+| SP_Insert_Update_UserRoleMapping                          | Inserts or updates user-role mapping                                               |
+| SP_Insert_Update_UserToken                                | Inserts or updates user token details                                              |
+| SP_InsertMaterialMovements_Actuals_FG                     | Inserts finished goods actual material movement data                               |
+| SP_InsertMaterialMovements_Actuals_RM                     | Inserts raw material actual material movement data                                 |
+| SP_InsertOpeningAndClosingInventoryDetails_FG             | Inserts opening and closing inventory details for finished goods                   |
+| SP_InsertOpeningAndClosingInventoryDetails_RM             | Inserts opening and closing inventory details for raw materials                    |
+| SP_InsertOpeningInventory_Actuals_FG                      | Inserts opening inventory actuals for finished goods                               |
+| SP_InsertOpeningInventory_Actuals_RM                      | Inserts opening inventory actuals for raw materials                                |
+| SP_IsInternal_AuthenticatedUser                           | Validates whether the internal user is authenticated                               |
+| SP_LogoutAndEndSessionByUserId                            | Logs out user and ends active session                                              |
+| SP_Update_ErrorLogging_AssigneeWith_Status                | Updates error log assignee and status                                              |
+| SP_Update_User_IsActivated                                | Activates or deactivates a user                                                    |
+| usp_AddandUpdateUserAndRoleMapping                        | Adds or updates user and role mapping                                              |
