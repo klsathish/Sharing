@@ -1,24 +1,33 @@
-public async Task<List<InventoryAIForecastValue>> GetInventoryAIForecastValue(InventoryAIForecastReq r)
-    => await _dbContext.InventoryAIForecastValue
-        .FromSqlRaw(
-            @"EXEC [dbo].[SP_GetInventoryAIForecastValue]
-              @RegionCode      = @RegionCode,
-              @CountryCode     = @CountryCode,
-              @CompanyCode     = @CompanyCode,
-              @ProfitCenterID  = @ProfitCenterID,
-              @PlantID         = @PlantID,
-              @SbuName         = @SbuName,
-              @BuName          = @BuName,
-              @FromDate        = @FromDate,
-              @ToDate          = @ToDate",
-            new SqlParameter("@RegionCode", r.RegionCode),
-            new SqlParameter("@CountryCode", r.CountryCode),
-            new SqlParameter("@CompanyCode", r.CompanyCode),
-            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
-            new SqlParameter("@PlantID", r.PlantID),
-            new SqlParameter("@SbuName", r.SbuName),
-            new SqlParameter("@BuName", r.BuName),
-            new SqlParameter("@FromDate", r.FromDate),
-            new SqlParameter("@ToDate", r.ToDate))
-        .AsNoTracking()
-        .ToListAsync();
+   public async Task LogExceptionAsync(ExceptionDetails obj)
+   {
+       await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_ErrorLogging] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9}" +
+           ",{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21},{22},{23}",
+           obj.ErrorLogID, obj.UserID, obj.RoleID, obj.SessionID, obj.ApplicationID, obj.ScreenID, obj.ModuleID, obj.FunctionID, obj.LayerID, obj.APIID,
+           obj.StoredProcedureID, obj.ErrorNumber, obj.ErrorState, obj.ErrorSeverity, obj.StackTrace, obj.ErrorMessage, obj.RequestBody, obj.ResponseBody,
+           obj.Status, obj.HostName, obj.Environment, obj.CreatedBy, obj.UpdatedBy, obj.IPAddress);
+   }
+  
+   public async Task<List<ExceptionResults>> GetExceptionLogs(string ErrorMessage)
+   {
+       return await _dbContext.ExceptionResults.FromSqlRaw("EXEC [dbo].[SP_GetErrorLogging]  {0}", ErrorMessage).ToListAsync();
+   }
+
+   public async Task<List<ExceptionResults>> GetAllExceptionLogs(DateFilter model) => await _dbContext.ExceptionResults.FromSqlRaw("EXEC [dbo].[SP_GetAllErrorLogging] {0},{1}",
+          model.FromDate,
+          model.ToDate).ToListAsync();
+
+ public async Task UpdateErrorLoggingAssigneeWithStatus(ExceptionDetails obj)
+ {
+     await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Update_ErrorLogging_AssigneeWith_Status] {0},{1},{2},{3}",
+         obj.ErrorLogID, obj.AssignTo, obj.ErrorStatusID, obj.UpdatedBy);
+ }
+
+ public async Task<ExceptionHandlerModel> GetErrorLogAssignDetailsAsync()
+ {
+     var result = new ExceptionHandlerModel();
+     var errorLogStstus = await _dbContext.ErrorLogStatus.FromSqlRaw("EXEC [dbo].[SP_GetErrorLogStatus]").ToListAsync();
+     var assignToUsers = await _dbContext.ErrorLogAssignToUser.FromSqlRaw("EXEC [dbo].[SP_GetErrorLog_AssignToUser]").ToListAsync();
+     result.LstErrorLogStatus = errorLogStstus;
+     result.LstErrorLogAssignToUser = assignToUsers;
+     return result;
+ }
