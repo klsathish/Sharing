@@ -1,48 +1,86 @@
- public async Task<List<APIRequestResults>> GetAPIRequestLog(DateFilter model) => await _dbContext.APIRequestResults.FromSqlRaw("EXEC [dbo].[SP_GetAPIRequestLog] {0},{1}",
-        model.FromDate,
-        model.ToDate
-        ).ToListAsync();
+public async Task<List<APIRequestResults>> GetAPIRequestLog(DateFilter model)
+{
+    return await _dbContext.APIRequestResults
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetAPIRequestLog]
+                @FromDate = @FromDate,
+                @ToDate = @ToDate",
+            new SqlParameter("@FromDate", model.FromDate),
+            new SqlParameter("@ToDate", model.ToDate)
+        )
+        .AsNoTracking()
+        .ToListAsync();
+}
 
+public async Task<string> InsertAPIRequestLogsAndPerformanceLogs(
+    ApiRequestAndPerformanceLogRequest apiRequestAndPerformanceLogRequest,
+    ApiRequestAndPerformanceLogModel apiRequestAndPerformanceLogModel)
+{
+    var apiRequestLog = await _dbContext.Database.ExecuteSqlRawAsync(
+        @"EXEC [dbo].[SP_Insert_Update_APIRequestLog]
+            @ApiEndPoint = @ApiEndPoint,
+            @AppModuleMappingID = @AppModuleMappingID,
+            @CreatedBy = @CreatedBy,
+            @Duration = @Duration,
+            @HttpMethod = @HttpMethod,
+            @LayerID = @LayerID,
+            @SessionID = @SessionID,
+            @StatusCode = @StatusCode,
+            @UserID = @UserID,
+            @RequestBody = @RequestBody,
+            @RequestLogID = @RequestLogID,
+            @RequestTimeStamp = @RequestTimeStamp,
+            @ResponseBody = @ResponseBody,
+            @ResponseTimeStamp = @ResponseTimeStamp,
+            @RoleID = @RoleID",
+        new SqlParameter("@ApiEndPoint", apiRequestAndPerformanceLogRequest.ApiEndPoint),
+        new SqlParameter("@AppModuleMappingID", apiRequestAndPerformanceLogRequest.AppModuleMappingID),
+        new SqlParameter("@CreatedBy", apiRequestAndPerformanceLogModel.CreatedBy),
+        new SqlParameter("@Duration", apiRequestAndPerformanceLogModel.Duration),
+        new SqlParameter("@HttpMethod", apiRequestAndPerformanceLogRequest.HttpMethod),
+        new SqlParameter("@LayerID", apiRequestAndPerformanceLogRequest.LayerID),
+        new SqlParameter("@SessionID", apiRequestAndPerformanceLogModel.SessionID),
+        new SqlParameter("@StatusCode", apiRequestAndPerformanceLogRequest.StatusCode),
+        new SqlParameter("@UserID", apiRequestAndPerformanceLogModel.UserID),
+        new SqlParameter("@RequestBody", apiRequestAndPerformanceLogRequest.RequestBody ?? (object)DBNull.Value),
+        new SqlParameter("@RequestLogID", 0),
+        new SqlParameter("@RequestTimeStamp", apiRequestAndPerformanceLogRequest.RequestTimeStamp),
+        new SqlParameter("@ResponseBody", apiRequestAndPerformanceLogRequest.ResponseBody ?? (object)DBNull.Value),
+        new SqlParameter("@ResponseTimeStamp", apiRequestAndPerformanceLogRequest.ResponseTimeStamp),
+        new SqlParameter("@RoleID", apiRequestAndPerformanceLogModel.RoleID)
+    );
 
- public async Task<string> InsertAPIRequestLogsAndPerformanceLogs(ApiRequestAndPerformanceLogRequest apiRequestAndPerformanceLogRequest, ApiRequestAndPerformanceLogModel apiRequestAndPerformanceLogModel)
- {
-     var apiRequestLog = await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_APIRequestLog] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14}"
-            , 0
-            , apiRequestAndPerformanceLogModel.UserID
-            , apiRequestAndPerformanceLogModel.RoleID
-            , apiRequestAndPerformanceLogModel.SessionID
-            , apiRequestAndPerformanceLogRequest.AppModuleMappingID
-            , apiRequestAndPerformanceLogRequest.ApiEndPoint
-            , apiRequestAndPerformanceLogRequest.HttpMethod
-            , apiRequestAndPerformanceLogRequest.StatusCode
-            , apiRequestAndPerformanceLogRequest.RequestBody
-            , apiRequestAndPerformanceLogRequest.RequestTimeStamp
-            , apiRequestAndPerformanceLogRequest.ResponseBody
-            , apiRequestAndPerformanceLogRequest.RequestTimeStamp
-            , apiRequestAndPerformanceLogModel.Duration
-            , apiRequestAndPerformanceLogModel.CreatedBy
-            , apiRequestAndPerformanceLogRequest.LayerID
-            );
-     if (apiRequestLog == 0)
-     {
-         return SabicConstants.BadRequestMessage;
-     }
-     var performanceLog = await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_PerformanceLog] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}"
-            , 0
-            , apiRequestAndPerformanceLogModel.UserID
-            , apiRequestAndPerformanceLogModel.RoleID
-            , apiRequestAndPerformanceLogModel.SessionID
-            , apiRequestAndPerformanceLogRequest.ComponentName
-            , apiRequestAndPerformanceLogRequest.ActionName
-            , apiRequestAndPerformanceLogRequest.RequestTimeStamp
-            , apiRequestAndPerformanceLogRequest.ResponseTimeStamp
-            , apiRequestAndPerformanceLogModel.Duration
-            , apiRequestAndPerformanceLogModel.CreatedBy
-            , apiRequestAndPerformanceLogModel.CreatedOn
-            );
-     if (performanceLog == 0)
-     {
-         return SabicConstants.BadRequestMessage;
-     }
-     return SabicConstants.SuccessMessage;
- }
+    if (apiRequestLog == 0)
+        return SabicConstants.BadRequestMessage;
+
+    var performanceLog = await _dbContext.Database.ExecuteSqlRawAsync(
+        @"EXEC [dbo].[SP_Insert_Update_PerformanceLog]
+            @ActionName = @ActionName,
+            @ComponentName = @ComponentName,
+            @CreatedBy = @CreatedBy,
+            @CreatedOn = @CreatedOn,
+            @Duration = @Duration,
+            @EndTime = @EndTime,
+            @PerformanceLogID = @PerformanceLogID,
+            @RoleID = @RoleID,
+            @SessionID = @SessionID,
+            @StartTime = @StartTime,
+            @UserID = @UserID",
+        new SqlParameter("@ActionName", apiRequestAndPerformanceLogRequest.ActionName),
+        new SqlParameter("@ComponentName", apiRequestAndPerformanceLogRequest.ComponentName),
+        new SqlParameter("@CreatedBy", apiRequestAndPerformanceLogModel.CreatedBy),
+        new SqlParameter("@CreatedOn", apiRequestAndPerformanceLogModel.CreatedOn),
+        new SqlParameter("@Duration", apiRequestAndPerformanceLogModel.Duration),
+        new SqlParameter("@EndTime", apiRequestAndPerformanceLogRequest.ResponseTimeStamp),
+        new SqlParameter("@PerformanceLogID", 0),
+        new SqlParameter("@RoleID", apiRequestAndPerformanceLogModel.RoleID),
+        new SqlParameter("@SessionID", apiRequestAndPerformanceLogModel.SessionID),
+        new SqlParameter("@StartTime", apiRequestAndPerformanceLogRequest.RequestTimeStamp),
+        new SqlParameter("@UserID", apiRequestAndPerformanceLogModel.UserID)
+    );
+
+    if (performanceLog == 0)
+        return SabicConstants.BadRequestMessage;
+
+    return SabicConstants.SuccessMessage;
+}
