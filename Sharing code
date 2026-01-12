@@ -1,125 +1,64 @@
-INSERT INTO ProcedureMaster (SchemaName, ProcedureName)
-SELECT s.name, p.name
-FROM sys.procedures p
-JOIN sys.schemas s ON p.schema_id = s.schema_id
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM ProcedureMaster pm
-    WHERE pm.SchemaName = s.name
-      AND pm.ProcedureName = p.name
-);
-
-
-public async Task<List<UserAuth>> IsAuthenticationUser(string userName)
-{
-    return await _dbContext.UserAuth
-        .FromSqlRaw("EXEC [dbo].[SP_IsInternal_AuthenticatedUser] @UserName",
-            new SqlParameter("@UserName", userName))
-        .ToListAsync();
-}
-
-public async Task<List<UserMenu>> GetUserMenuList(int? userId, int? roleId)
-{
-    return await _dbContext.UserMenu
-        .FromSqlRaw("EXEC [dbo].[SP_GetUserMenus] @UserID, @RoleID",
-            new SqlParameter("@UserID", userId ?? (object)DBNull.Value),
-            new SqlParameter("@RoleID", roleId ?? (object)DBNull.Value))
-        .ToListAsync();
-}
-
-public async Task<List<User>> GetUserList()
-{
-    return await _dbContext.User
-        .FromSqlRaw("EXEC [dbo].[SP_GetUsers]")
-        .ToListAsync();
-}
-
-public async Task<InsertUpdateUserRes> InsertUpdateUserReq(InsertUpdateUserReq req)
-{
-    var parameters = new[]
-    {
-        new SqlParameter("@UserID", req.UserID),
-        new SqlParameter("@UserRoleIDs", req.UserRoleIDs ?? string.Empty),
-        new SqlParameter("@UserName", req.UserName ?? string.Empty),
-        new SqlParameter("@Email", req.Email ?? string.Empty),
-        new SqlParameter("@FirstName", req.FirstName ?? string.Empty),
-        new SqlParameter("@LastName", req.LastName ?? string.Empty),
-        new SqlParameter("@EmployeeID", req.EmployeeID ?? string.Empty),
-        new SqlParameter("@AffiliateID", req.AffiliateID ?? string.Empty),
-        new SqlParameter("@StatusID", req.StatusID),
-        new SqlParameter("@CreatedBy", req.CreatedBy),
-        new SqlParameter("@IsInsert", req.IsInsert)
-    };
-
-    var result = _dbContext.Database.SqlQueryRaw<string>(
-        "EXEC dbo.SP_Insert_Update_AssignedUser @UserID, @UserRoleIDs, @UserName, @Email, @FirstName, @LastName, @EmployeeID, @AffiliateID, @StatusID, @CreatedBy, @IsInsert",
-        parameters)
-        .AsEnumerable()
-        .FirstOrDefault();
-
-    return new InsertUpdateUserRes { Message = result ?? string.Empty };
-}
-
-public async Task<string> DeactivateUserReq(DeactivateUserReq req)
-{
-    var response = await _dbContext.Database.ExecuteSqlRawAsync(
-        "EXEC dbo.SP_Update_User_IsActivated @UserID, @IsActivated, @UpdatedBy",
-        new SqlParameter("@UserID", req.UserID),
-        new SqlParameter("@IsActivated", req.IsActivated),
-        new SqlParameter("@UpdatedBy", req.UpdatedBy)
-    );
-
-    return response == 0 ? SabicConstants.RecordNotFoundMessage : SabicConstants.SuccessMessage;
-}
-
-public async Task<List<SearchUser>> GetSearchUserListFromAD(string searchText)
-{
-    var searchUsers = new List<SearchUser>();
-
-    if (!string.IsNullOrWhiteSpace(searchText) && searchText.Length > 3)
-    {
-        var lstSearchUserFromCommonDb = await _commonDbContext.MST_UserDetails_Infopoint
-            .Where(x =>
-                (x.DomainLoginID ?? "").Replace("SABICCORP\\", "").ToLower().Contains(searchText.ToLower().Trim()) ||
-                (x.Email ?? "").ToLower().Contains(searchText.ToLower().Trim()) ||
-                (x.EmployeeName ?? "").ToLower().Contains(searchText.ToLower().Trim()))
-            .ToListAsync();
-
-        searchUsers.AddRange(lstSearchUserFromCommonDb.Select(item => new SearchUser
-        {
-            EmployeeID = Convert.ToString(item.EmployeeID),
-            LoginName = item.DomainLoginID!.Replace("SABIC\\", "SABICCORP\\"),
-            FirstName = item.FirstName!,
-            LastName = item.LastName!,
-            UserName = item.FirstName + " " + item.LastName,
-            Email = item.Email!
-        }));
-    }
-
-    return searchUsers;
-}
-
-public async Task<List<Role>> GetRoleList()
-{
-    return await _dbContext.Roles
-        .FromSqlRaw("EXEC [dbo].[SP_GetRole]")
-        .ToListAsync();
-}
-
-public async Task<List<Affiliate>> GetAffiliateList()
-{
-    return await _dbContext.Affiliates
-        .FromSqlRaw("EXEC [dbo].[SP_GetAffiliateForUserManagement]")
-        .ToListAsync();
-}
-
-public async Task<UserMenuAccessModel> IsAuthorizedUserMenu(UserNameWithMenu req)
-{
-    var res = await _dbContext.UserMenuAccessModel
-        .FromSqlRaw("EXEC dbo.SP_CheckUserMenuAccess @UserID, @MenuID",
-            new SqlParameter("@UserID", req.UserID!),
-            new SqlParameter("@MenuID", req.MenuID))
-        .ToListAsync();
-
-    return res.FirstOrDefault()!;
-}
+ProcedureName
+SP_CheckUserMenuAccess
+SP_CheckRolePageAccess
+SP_GetAffiliateForUserManagement
+SP_GetAllErrorLogging
+SP_GetAPIRequestLog
+SP_GetAuthenticatedUserDetails
+SP_GetBaseFilters
+SP_GetClosingInventoryBalanceChartDetailData
+SP_GetCountry
+SP_GetDataForAuthenticationByUserId
+SP_GetDiffrencesValues
+SP_GetDiffrencesVolumes
+SP_GetErrorLog_AssignToUser
+SP_GetErrorLogging
+SP_GetErrorLogStatus
+SP_GetExceptionUserActivityDetailsBySessionID
+SP_GetFGClosingInventoryBalanceChartData
+SP_GetFGInterCompanyTransferAIFCChartDataForGIT
+SP_GetFGInterCompanyTransferAIFCChartDataForSTO
+SP_GetFGInterCompanyTransferAIFCChartDataForWIP
+SP_GetFGPurchasesAIFCChartData
+SP_GetFinishedGoodsDemandChartAIEnhancedForecastData
+SP_GetFinishedGoodsProductionChartAIEnhancedForecastData
+SP_GetInventoryGlobalMap
+SP_GetInventoryInsightsGridData
+SP_GetLoginActivity
+SP_GetLoginUserActivity
+SP_GetMoreFiltersPlant
+SP_GetMoreFiltersProfitCenter
+SP_GetMoreFiltersSBUandBU
+SP_GetPerformanceLog
+SP_GetRawMaterialsCPChartData
+SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData
+SP_GetRegion
+SP_GetRMConsumptionTrendData
+SP_GetRMInterCompanyTransferChartData
+SP_GetRole
+SP_GetSessionDetails
+SP_GetTotalInventoryValueDifference
+SP_GetTotalInventoryVolumeDifference
+SP_GetUserDetails
+SP_GetUserMenus
+SP_GetUsers
+SP_Insert_Update_ActivityTracker
+SP_Insert_Update_APIRequestLog
+SP_Insert_Update_AssignedUser
+SP_Insert_Update_ErrorLogging
+SP_Insert_Update_LoginActivity
+SP_Insert_Update_PerformanceLog
+SP_Insert_Update_UserLoginSession
+SP_Insert_Update_UserRoleMapping
+SP_Insert_Update_UserToken
+SP_InsertMaterialMovements_Actuals_FG
+SP_InsertMaterialMovements_Actuals_RM
+SP_InsertOpeningAndClosingInventoryDetails_FG
+SP_InsertOpeningAndClosingInventoryDetails_RM
+SP_InsertOpeningInventory_Actuals_FG
+SP_InsertOpeningInventory_Actuals_RM
+SP_IsInternal_AuthenticatedUser
+SP_LogoutAndEndSessionByUserId
+SP_Update_ErrorLogging_AssigneeWith_Status
+SP_Update_User_IsActivated
+usp_AddandUpdateUserAndRoleMapping
