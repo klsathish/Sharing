@@ -1,26 +1,53 @@
- public async Task<List<PerformanceAPIResults>> GetPerformanceLogs(DateFilter model) => await _dbContext.PerformanceAPIResults.FromSqlRaw("EXEC [dbo].[SP_GetPerformanceLog] {0},{1}",
-        model.FromDate,
-        model.ToDate
-        ).ToListAsync();
+/// <summary>
+/// To get performance logs within a date range
+/// </summary>
+/// <param name="model"></param>
+/// <returns></returns>
+public async Task<List<PerformanceAPIResults>> GetPerformanceLogs(DateFilter model)
+{
+    return await _dbContext.PerformanceAPIResults
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetPerformanceLog]
+                @FromDate = @FromDate,
+                @ToDate   = @ToDate",
+            new SqlParameter("@FromDate", model.FromDate),
+            new SqlParameter("@ToDate", model.ToDate)
+        )
+        .ToListAsync();
+}
 
- public async Task<string> InsertPerformanceLog(PerformanceLog performanceLog)
- {
-     var response = await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_PerformanceLog] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}"
-           , 0
-           , performanceLog.UserID
-           , performanceLog.RoleID
-           , performanceLog.SessionID
-           , performanceLog.ComponentName
-           , performanceLog.ActionName
-           , performanceLog.StartTime
-           , performanceLog.EndTime
-           , performanceLog.Duration
-           , performanceLog.CreatedBy
-           , performanceLog.CreatedOn
-           );
-     if (response == 0)
-     {
-         return SabicConstants.BadRequestMessage;
-     }
-     return SabicConstants.SuccessMessage;
- }
+/// <summary>
+/// To insert or update a performance log
+/// </summary>
+/// <param name="performanceLog"></param>
+/// <returns></returns>
+public async Task<string> InsertPerformanceLog(PerformanceLog performanceLog)
+{
+    var response = await _dbContext.Database.ExecuteSqlRawAsync(
+        @"EXEC [dbo].[SP_Insert_Update_PerformanceLog]
+            @LogID         = @LogID,
+            @UserID        = @UserID,
+            @RoleID        = @RoleID,
+            @SessionID     = @SessionID,
+            @ComponentName = @ComponentName,
+            @ActionName    = @ActionName,
+            @StartTime     = @StartTime,
+            @EndTime       = @EndTime,
+            @Duration      = @Duration,
+            @CreatedBy     = @CreatedBy,
+            @CreatedOn     = @CreatedOn",
+        new SqlParameter("@LogID", 0), // Assuming 0 for new insert
+        new SqlParameter("@UserID", performanceLog.UserID),
+        new SqlParameter("@RoleID", performanceLog.RoleID),
+        new SqlParameter("@SessionID", performanceLog.SessionID),
+        new SqlParameter("@ComponentName", performanceLog.ComponentName),
+        new SqlParameter("@ActionName", performanceLog.ActionName),
+        new SqlParameter("@StartTime", performanceLog.StartTime),
+        new SqlParameter("@EndTime", performanceLog.EndTime),
+        new SqlParameter("@Duration", performanceLog.Duration),
+        new SqlParameter("@CreatedBy", performanceLog.CreatedBy),
+        new SqlParameter("@CreatedOn", performanceLog.CreatedOn)
+    );
+
+    return response == 0 ? SabicConstants.BadRequestMessage : SabicConstants.SuccessMessage;
+}
