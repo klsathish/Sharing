@@ -1,65 +1,84 @@
-| ProcedureName                                             | Description                                                                        |
-| --------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| SP_CheckUserMenuAccess                                    | Checks whether a user has access to a specific menu based on user and role mapping |
-| SP_CheckRolePageAccess                                    | Validates role-based access for pages or screens                                   |
-| SP_GetAffiliateForUserManagement                          | Retrieves affiliate list used in user management screens                           |
-| SP_GetAllErrorLogging                                     | Fetches all error logs recorded in the system                                      |
-| SP_GetAPIRequestLog                                       | Retrieves API request and response logging details                                 |
-| SP_GetAuthenticatedUserDetails                            | Gets authenticated user details after successful login                             |
-| SP_GetBaseFilters                                         | Retrieves base filter data used across dashboards                                  |
-| SP_GetClosingInventoryBalanceChartDetailData              | Returns detailed closing inventory balance chart data                              |
-| SP_GetCountry                                             | Retrieves country master data                                                      |
-| SP_GetDataForAuthenticationByUserId                       | Fetches user authentication data using User ID                                     |
-| SP_GetDiffrencesValues                                    | Retrieves inventory value difference data                                          |
-| SP_GetDiffrencesVolumes                                   | Retrieves inventory volume difference data                                         |
-| SP_GetErrorLog_AssignToUser                               | Gets error logs assigned to specific users                                         |
-| SP_GetErrorLogging                                        | Retrieves filtered error logging data                                              |
-| SP_GetErrorLogStatus                                      | Fetches error log status master data                                               |
-| SP_GetExceptionUserActivityDetailsBySessionID             | Retrieves user activity exceptions based on session ID                             |
-| SP_GetFGClosingInventoryBalanceChartData                  | Returns finished goods closing inventory balance chart data                        |
-| SP_GetFGInterCompanyTransferAIFCChartDataForGIT           | Retrieves FG inter-company transfer AI forecast data for GIT                       |
-| SP_GetFGInterCompanyTransferAIFCChartDataForSTO           | Retrieves FG inter-company transfer AI forecast data for STO                       |
-| SP_GetFGInterCompanyTransferAIFCChartDataForWIP           | Retrieves FG inter-company transfer AI forecast data for WIP                       |
-| SP_GetFGPurchasesAIFCChartData                            | Retrieves finished goods purchase AI forecast chart data                           |
-| SP_GetFinishedGoodsDemandChartAIEnhancedForecastData      | Retrieves AI-enhanced finished goods demand forecast data                          |
-| SP_GetFinishedGoodsProductionChartAIEnhancedForecastData  | Retrieves AI-enhanced finished goods production forecast data                      |
-| SP_GetInventoryGlobalMap                                  | Retrieves inventory data for global map visualization                              |
-| SP_GetInventoryInsightsGridData                           | Fetches inventory insights grid data                                               |
-| SP_GetLoginActivity                                       | Retrieves user login activity logs                                                 |
-| SP_GetLoginUserActivity                                   | Retrieves detailed user activity during login sessions                             |
-| SP_GetMoreFiltersPlant                                    | Retrieves plant filter values                                                      |
-| SP_GetMoreFiltersProfitCenter                             | Retrieves profit center filter values                                              |
-| SP_GetMoreFiltersSBUandBU                                 | Retrieves SBU and BU filter values                                                 |
-| SP_GetPerformanceLog                                      | Retrieves API and UI performance log details                                       |
-| SP_GetRawMaterialsCPChartData                             | Retrieves raw materials consumption and production chart data                      |
-| SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData | Retrieves AI-enhanced forecast data for raw material goods receipt                 |
-| SP_GetRegion                                              | Retrieves region master data                                                       |
-| SP_GetRMConsumptionTrendData                              | Retrieves raw material consumption trend data                                      |
-| SP_GetRMInterCompanyTransferChartData                     | Retrieves raw material inter-company transfer chart data                           |
-| SP_GetRole                                                | Retrieves role master data                                                         |
-| SP_GetSessionDetails                                      | Retrieves user session details                                                     |
-| SP_GetTotalInventoryValueDifference                       | Retrieves total inventory value difference                                         |
-| SP_GetTotalInventoryVolumeDifference                      | Retrieves total inventory volume difference                                        |
-| SP_GetUserDetails                                         | Retrieves detailed user profile information                                        |
-| SP_GetUserMenus                                           | Retrieves menu list mapped to user and role                                        |
-| SP_GetUsers                                               | Retrieves all users                                                                |
-| SP_Insert_Update_ActivityTracker                          | Inserts or updates user activity tracking data                                     |
-| SP_Insert_Update_APIRequestLog                            | Inserts or updates API request logging data                                        |
-| SP_Insert_Update_AssignedUser                             | Inserts or updates assigned user and role details                                  |
-| SP_Insert_Update_ErrorLogging                             | Inserts or updates error logging records                                           |
-| SP_Insert_Update_LoginActivity                            | Inserts or updates user login activity                                             |
-| SP_Insert_Update_PerformanceLog                           | Inserts or updates performance log data                                            |
-| SP_Insert_Update_UserLoginSession                         | Inserts or updates user login session details                                      |
-| SP_Insert_Update_UserRoleMapping                          | Inserts or updates user-role mapping                                               |
-| SP_Insert_Update_UserToken                                | Inserts or updates user token details                                              |
-| SP_InsertMaterialMovements_Actuals_FG                     | Inserts finished goods actual material movement data                               |
-| SP_InsertMaterialMovements_Actuals_RM                     | Inserts raw material actual material movement data                                 |
-| SP_InsertOpeningAndClosingInventoryDetails_FG             | Inserts opening and closing inventory details for finished goods                   |
-| SP_InsertOpeningAndClosingInventoryDetails_RM             | Inserts opening and closing inventory details for raw materials                    |
-| SP_InsertOpeningInventory_Actuals_FG                      | Inserts opening inventory actuals for finished goods                               |
-| SP_InsertOpeningInventory_Actuals_RM                      | Inserts opening inventory actuals for raw materials                                |
-| SP_IsInternal_AuthenticatedUser                           | Validates whether the internal user is authenticated                               |
-| SP_LogoutAndEndSessionByUserId                            | Logs out user and ends active session                                              |
-| SP_Update_ErrorLogging_AssigneeWith_Status                | Updates error log assignee and status                                              |
-| SP_Update_User_IsActivated                                | Activates or deactivates a user                                                    |
-| usp_AddandUpdateUserAndRoleMapping                        | Adds or updates user and role mapping                                              |
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using WCI_APIs.Utils;
+using WCICore.Contract;
+using WCICore.Contract.Services;
+using WCIInfrastructure.Service;
+
+namespace WCI_APIs.Middlewares
+{
+    public class RoleAuthorizationMiddleware
+    {
+        private readonly RequestDelegate _next;
+        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly IConfiguration _configuration;
+
+
+        public RoleAuthorizationMiddleware(RequestDelegate next, IServiceScopeFactory scopeFactory, IConfiguration configuration)
+        {
+            _next = next;
+            _scopeFactory = scopeFactory;
+            _configuration = configuration;
+        }
+
+        public async Task InvokeAsync(HttpContext context)
+        {
+            var api = context.Request.Path.ToString().ToLower();
+            //api = api.Split("/").Last();
+            var pageUrls = new List<string>();
+            var AcceptedUrls = new List<string> { "Login" };
+
+
+            // Skip login / swagger / health check etc.
+            if (api.Contains("login") || api.StartsWith("/swagger"))
+            {
+                await _next(context);
+                return;
+            }
+
+          
+            // ===== Read Session =====
+            var loginSession = CommonUtils.GetCurrentSession(context);
+
+            int roleId = 0;
+
+            if (!string.IsNullOrEmpty(loginSession) && loginSession.Contains(":"))
+            {
+                var ses = loginSession.Split(':');
+
+                // ses[2] = RoleId
+                int.TryParse(ses[2], out roleId);
+            }
+
+            // If role not resolved -> not authorized
+            if (roleId == 0)
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                await context.Response.WriteAsync("Role missing or invalid");
+                return;
+            }
+
+
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var accountService = scope.ServiceProvider.GetService<IAccountService>();
+
+                // ===== Call Stored Procedure =====
+                var result = await accountService!.IsAuthorizedRoleApi(roleId, api);
+
+                var isAllowed = result.HasAccess;
+
+                if (!isAllowed)
+                {
+                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    await context.Response.WriteAsync("Access Denied: the requested page is restricted for your role");
+                    return;
+                }
+            }
+
+            await _next(context);
+
+
+        }
+
+    }
+}
