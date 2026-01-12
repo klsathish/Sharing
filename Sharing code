@@ -1,326 +1,637 @@
- public class DashboardRepository : IDashboardRepository
- {
-     private readonly WCIDbContext _dbContext;
-     public DashboardRepository(WCIDbContext dbContext)
-     {
-         _dbContext = dbContext;
-     }
-     public async Task<List<BaseFilterResult>> GetBaseFilter(FilterModel model) => await _dbContext.BaseFilterResult.FromSqlRaw("EXEC [dbo].[SP_GetBaseFilters] {0},{1},{2}", model.RoleID, model.RegionCode, model.CountryCode).ToListAsync();
+public class DashboardRepository : IDashboardRepository
+{
+    private readonly WCIDbContext _dbContext;
 
-     public async Task<List<MoreFiltersSBUandBUResult>> GetMoreFiltersSBUandBU(FilterModel model) => await _dbContext.MoreFiltersSBUandBUResult.FromSqlRaw("EXEC [dbo].[SP_GetMoreFiltersSBUandBU]  {0}", model.SbuName, model.BuName, model.CompanyID).ToListAsync();
+    public DashboardRepository(WCIDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
 
-     public async Task<List<MoreFiltersProfitCenterResult>> GetMoreFiltersProfitCenter(FilterModel model) => await _dbContext.MoreFiltersProfitCenterResult.FromSqlRaw("EXEC [dbo].[SP_GetMoreFiltersProfitCenter] {0},{1},{2}", model.CompanyID, model.SbuName, model.BuName).ToListAsync();
-         
-     public async Task<List<MoreFiltersPlantResult>> GetMoreFiltersPlant(FilterModel model) => await _dbContext.MoreFiltersPlantResult.FromSqlRaw("EXEC [dbo].[SP_GetMoreFiltersPlant] {0},{1}", model.CompanyID, model.ProfitCenterID).ToListAsync();
+    public async Task<List<BaseFilterResult>> GetBaseFilter(FilterModel model)
+        => await _dbContext.BaseFilterResult
+            .FromSqlRaw(
+                @"EXEC [dbo].[SP_GetBaseFilters]
+                    @RoleID = @RoleID,
+                    @RegionCode = @RegionCode,
+                    @CountryCode = @CountryCode",
+                new SqlParameter("@RoleID", model.RoleID),
+                new SqlParameter("@RegionCode", model.RegionCode),
+                new SqlParameter("@CountryCode", model.CountryCode))
+            .AsNoTracking()
+            .ToListAsync();
 
-     public async Task<InventoryDiffValue> GetInventoryDifferenceValue(InventoryFilterReq inventoryFilterReq)
-     {
-         var res = await _dbContext.InventoryDiffValue.FromSqlRaw("EXEC [dbo].[SP_GetDiffrencesValues] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
-             inventoryFilterReq.TypeID,
-             inventoryFilterReq.RegionCode,
-             inventoryFilterReq.CountryCode,
-             inventoryFilterReq.CompanyCode,
-             inventoryFilterReq.ProfitCenterID,
-             inventoryFilterReq.PlantID,
-             inventoryFilterReq.SbuName,
-             inventoryFilterReq.BuName,
-             inventoryFilterReq.FromDate,
-             inventoryFilterReq.ToDate).ToListAsync();
-         return res.FirstOrDefault();
-     }
+    public async Task<List<MoreFiltersSBUandBUResult>> GetMoreFiltersSBUandBU(FilterModel model)
+        => await _dbContext.MoreFiltersSBUandBUResult
+            .FromSqlRaw(
+                @"EXEC [dbo].[SP_GetMoreFiltersSBUandBU]
+                    @SbuName = @SbuName,
+                    @BuName = @BuName,
+                    @CompanyID = @CompanyID",
+                new SqlParameter("@SbuName", model.SbuName),
+                new SqlParameter("@BuName", model.BuName),
+                new SqlParameter("@CompanyID", model.CompanyID))
+            .AsNoTracking()
+            .ToListAsync();
 
-     public async Task<InventoryDiffVolume> GetInventoryDifferenceVolume(InventoryFilterReq inventoryFilterReq)
-     {
-         var res = await _dbContext.InventoryDiffVolume.FromSqlRaw("EXEC [dbo].[SP_GetDiffrencesVolumes] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
-             inventoryFilterReq.TypeID,
-             inventoryFilterReq.RegionCode,
-             inventoryFilterReq.CountryCode,
-             inventoryFilterReq.CompanyCode,
-             inventoryFilterReq.ProfitCenterID,
-             inventoryFilterReq.PlantID,
-             inventoryFilterReq.SbuName,
-             inventoryFilterReq.BuName,
-             inventoryFilterReq.FromDate,
-             inventoryFilterReq.ToDate).ToListAsync();
-         return res.FirstOrDefault();
-     }
+    public async Task<List<MoreFiltersProfitCenterResult>> GetMoreFiltersProfitCenter(FilterModel model)
+        => await _dbContext.MoreFiltersProfitCenterResult
+            .FromSqlRaw(
+                @"EXEC [dbo].[SP_GetMoreFiltersProfitCenter]
+                    @CompanyID = @CompanyID,
+                    @SbuName = @SbuName,
+                    @BuName = @BuName",
+                new SqlParameter("@CompanyID", model.CompanyID),
+                new SqlParameter("@SbuName", model.SbuName),
+                new SqlParameter("@BuName", model.BuName))
+            .AsNoTracking()
+            .ToListAsync();
 
-     public async Task<InventoryAIForecastValue> GetInventoryAIForecastValue(InventoryFilterReq inventoryFilterReq)
-     {
-         var res = await _dbContext.InventoryAIForecastValue.FromSqlRaw("EXEC [dbo].[SP_GetAIForecastValue] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
-             inventoryFilterReq.TypeID,
-             inventoryFilterReq.RegionCode,
-             inventoryFilterReq.CountryCode,
-             inventoryFilterReq.CompanyCode,
-             inventoryFilterReq.ProfitCenterID,
-             inventoryFilterReq.PlantID,
-             inventoryFilterReq.SbuName,
-             inventoryFilterReq.BuName,
-             inventoryFilterReq.FromDate,
-             inventoryFilterReq.ToDate).ToListAsync();
-         return res.FirstOrDefault();
-     }
+    public async Task<List<MoreFiltersPlantResult>> GetMoreFiltersPlant(FilterModel model)
+        => await _dbContext.MoreFiltersPlantResult
+            .FromSqlRaw(
+                @"EXEC [dbo].[SP_GetMoreFiltersPlant]
+                    @CompanyID = @CompanyID,
+                    @ProfitCenterID = @ProfitCenterID",
+                new SqlParameter("@CompanyID", model.CompanyID),
+                new SqlParameter("@ProfitCenterID", model.ProfitCenterID))
+            .AsNoTracking()
+            .ToListAsync();
 
-     public async Task<List<FinishedGoodsDemandComparison>> GetFinishedGoodsDemandComparisonValue(InventoryFilterReq inventoryFilterReq)
-     {
-         return await _dbContext.FinishedGoodsDemandComparison.FromSqlRaw("EXEC [dbo].[SP_GetFinishedGoodsDemandGraphComparisonData] {0},{1},{2},{3},{4},{5},{6}",
-             inventoryFilterReq.CompanyCode,
-             inventoryFilterReq.ProfitCenterID,
-             inventoryFilterReq.PlantID,
-             inventoryFilterReq.SbuName,
-             inventoryFilterReq.BuName,
-             inventoryFilterReq.FromDate,
-             inventoryFilterReq.ToDate).ToListAsync();
-     }
-     public async Task<List<FinishedGoodsProductionComparison>> GetFinishedGoodsProductionComparisonValue(InventoryFilterReq inventoryFilterReq)
-     {
-         return await _dbContext.FinishedGoodsProductionComparison.FromSqlRaw("EXEC [dbo].[SP_GetFinishedGoodsProductionGraphComparisonData] {0},{1},{2},{3},{4},{5},{6}",
-             inventoryFilterReq.CompanyCode,
-             inventoryFilterReq.ProfitCenterID,
-             inventoryFilterReq.PlantID,
-             inventoryFilterReq.SbuName,
-             inventoryFilterReq.BuName,
-             inventoryFilterReq.FromDate,
-             inventoryFilterReq.ToDate).ToListAsync();
-     }
+    public async Task<InventoryDiffValue?> GetInventoryDifferenceValue(InventoryFilterReq r)
+        => (await _dbContext.InventoryDiffValue
+            .FromSqlRaw(
+                @"EXEC [dbo].[SP_GetDiffrencesValues]
+                    @TypeID=@TypeID,@RegionCode=@RegionCode,@CountryCode=@CountryCode,
+                    @CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,@PlantID=@PlantID,
+                    @SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+                new SqlParameter("@TypeID", r.TypeID),
+                new SqlParameter("@RegionCode", r.RegionCode),
+                new SqlParameter("@CountryCode", r.CountryCode),
+                new SqlParameter("@CompanyCode", r.CompanyCode),
+                new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+                new SqlParameter("@PlantID", r.PlantID),
+                new SqlParameter("@SbuName", r.SbuName),
+                new SqlParameter("@BuName", r.BuName),
+                new SqlParameter("@FromDate", r.FromDate),
+                new SqlParameter("@ToDate", r.ToDate))
+            .AsNoTracking()
+            .ToListAsync())
+            .FirstOrDefault();
 
-     public async Task<List<FinishedGoodsDemandChart>> GetFinishedGoodsDemandChartData(ChartDataFilterReq chartDataFilterReq)
-     {
-         return await _dbContext.FinishedGoodsDemandChart.FromSqlRaw("EXEC [dbo].[SP_GetFinishedGoodsDemandChartAIEnhancedForecastData] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}",
-         chartDataFilterReq.CurrencyType,
-         chartDataFilterReq.Metrics,
-         chartDataFilterReq.RegionCode,
-         chartDataFilterReq.CountryCode,
-         chartDataFilterReq.CompanyCode,
-         chartDataFilterReq.ProfitCenterID,
-         chartDataFilterReq.PlantID,
-         chartDataFilterReq.SbuName,
-         chartDataFilterReq.BuName,
-         chartDataFilterReq.FromDate,
-         chartDataFilterReq.ToDate).ToListAsync();
-     }
+    public async Task<InventoryDiffVolume?> GetInventoryDifferenceVolume(InventoryFilterReq r)
+        => (await _dbContext.InventoryDiffVolume
+            .FromSqlRaw(
+                @"EXEC [dbo].[SP_GetDiffrencesVolumes]
+                    @TypeID=@TypeID,@RegionCode=@RegionCode,@CountryCode=@CountryCode,
+                    @CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,@PlantID=@PlantID,
+                    @SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+                new SqlParameter("@TypeID", r.TypeID),
+                new SqlParameter("@RegionCode", r.RegionCode),
+                new SqlParameter("@CountryCode", r.CountryCode),
+                new SqlParameter("@CompanyCode", r.CompanyCode),
+                new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+                new SqlParameter("@PlantID", r.PlantID),
+                new SqlParameter("@SbuName", r.SbuName),
+                new SqlParameter("@BuName", r.BuName),
+                new SqlParameter("@FromDate", r.FromDate),
+                new SqlParameter("@ToDate", r.ToDate))
+            .AsNoTracking()
+            .ToListAsync())
+            .FirstOrDefault();
 
-     public async Task<List<FinishedGoodsProductionChart>> GetFinishedGoodsProductionChartData(ChartDataFilterReq chartDataFilterReq)
-     {
+    public async Task<InventoryDIO?> GetInventoryDIO(InventoryFilterReq r)
+        => (await _dbContext.InventoryDIO
+            .FromSqlRaw(
+                @"EXEC [dbo].[SP_GetInventoryDIO]
+                    @RegionCode=@RegionCode,@CountryCode=@CountryCode,@CompanyCode=@CompanyCode,
+                    @ProfitCenterID=@ProfitCenterID,@PlantID=@PlantID,@SbuName=@SbuName,
+                    @BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+                new SqlParameter("@RegionCode", r.RegionCode),
+                new SqlParameter("@CountryCode", r.CountryCode),
+                new SqlParameter("@CompanyCode", r.CompanyCode),
+                new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+                new SqlParameter("@PlantID", r.PlantID),
+                new SqlParameter("@SbuName", r.SbuName),
+                new SqlParameter("@BuName", r.BuName),
+                new SqlParameter("@FromDate", r.FromDate),
+                new SqlParameter("@ToDate", r.ToDate))
+            .AsNoTracking()
+            .ToListAsync())
+            .FirstOrDefault();
 
-         return await _dbContext.FinishedGoodsProductionChart.FromSqlRaw("EXEC [dbo].[SP_GetFinishedGoodsProductionChartAIEnhancedForecastData] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}",
-         chartDataFilterReq.CurrencyType,
-         chartDataFilterReq.Metrics,
-         chartDataFilterReq.RegionCode,
-         chartDataFilterReq.CountryCode,
-         chartDataFilterReq.CompanyCode,
-         chartDataFilterReq.ProfitCenterID,
-         chartDataFilterReq.PlantID,
-         chartDataFilterReq.SbuName,
-         chartDataFilterReq.BuName,
-         chartDataFilterReq.FromDate,
-         chartDataFilterReq.ToDate).ToListAsync();
-
-     }
-
-     public async Task<List<InventoryMap>> GetInventoryMapDetails(InventoryFilterReq inventoryFilterReq)
-     {
-         return await _dbContext.InventoryMap.FromSqlRaw("EXEC [dbo].[SP_GetInventoryGlobalMap] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
-              inventoryFilterReq.TypeID,
-              inventoryFilterReq.RegionCode,
-              inventoryFilterReq.CountryCode,
-              inventoryFilterReq.CompanyCode,
-              inventoryFilterReq.ProfitCenterID,
-              inventoryFilterReq.PlantID,
-              inventoryFilterReq.SbuName,
-              inventoryFilterReq.BuName,
-              inventoryFilterReq.FromDate,
-              inventoryFilterReq.ToDate).ToListAsync();
-     }
-
-     public async Task<List<FinishedGoodsPurchaseChart>> GetFinishedGoodsPurchaseChartData(ChartDataFilterReq chartDataFilterReq)
-     {
-         return await _dbContext.FinishedGoodsPurchaseChart.FromSqlRaw("EXEC [dbo].[SP_GetFGPurchasesAIFCChartData] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}",
-                 chartDataFilterReq.CurrencyType,
-                 chartDataFilterReq.Metrics,
-                 chartDataFilterReq.RegionCode,
-                 chartDataFilterReq.CountryCode,
-                 chartDataFilterReq.CompanyCode,
-                 chartDataFilterReq.ProfitCenterID,
-                 chartDataFilterReq.PlantID,
-                 chartDataFilterReq.SbuName,
-                 chartDataFilterReq.BuName,
-                 chartDataFilterReq.FromDate,
-                 chartDataFilterReq.ToDate).ToListAsync();
-     }
-
-     public async Task<List<FinishedGoodsPurchaseComparison>> GetFinishedGoodsPurchaseComparisonValue(InventoryFilterReq inventoryFilterReq)
-     {
-         return await _dbContext.FinishedGoodsPurchaseComparison.FromSqlRaw("EXEC [dbo].[SP_GetFGPurchasesComparisonChartData] {0},{1},{2},{3},{4},{5},{6}",
-             inventoryFilterReq.CompanyCode,
-             inventoryFilterReq.ProfitCenterID,
-             inventoryFilterReq.PlantID,
-             inventoryFilterReq.SbuName,
-             inventoryFilterReq.BuName,
-             inventoryFilterReq.FromDate,
-             inventoryFilterReq.ToDate).ToListAsync();
-     }
-
-     public async Task<List<InterCompanyTransferComparison>> GetInterCompanyTransferComparisonValue(InventoryFilterReq inventoryFilterReq)
-     {
-         return await _dbContext.InterCompanyTransferComparison.FromSqlRaw("EXEC [dbo].[SP_GetFGInterCompanyTransferComparisonChartData] {0},{1},{2},{3},{4},{5},{6}",
-             inventoryFilterReq.CompanyCode,
-             inventoryFilterReq.ProfitCenterID,
-             inventoryFilterReq.PlantID,
-             inventoryFilterReq.SbuName,
-             inventoryFilterReq.BuName,
-             inventoryFilterReq.FromDate,
-             inventoryFilterReq.ToDate).ToListAsync();
-     }
-
-     public async Task<List<FinishedGoodsInterCompanyTransferChart>> GetFinishedGoodsInterCompanyTransferChartDataForSTO(ChartDataFilterReq chartDataFilterReq)
-     {
-         return await _dbContext.FinishedGoodsInterCompanyTransferChart.FromSqlRaw("EXEC [dbo].[SP_GetFGInterCompanyTransferAIFCChartDataForSTO] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}",
-             chartDataFilterReq.CurrencyType,
-             chartDataFilterReq.Metrics,
-             chartDataFilterReq.RegionCode,
-             chartDataFilterReq.CountryCode,
-             chartDataFilterReq.CompanyCode,
-             chartDataFilterReq.ProfitCenterID,
-             chartDataFilterReq.PlantID,
-             chartDataFilterReq.SbuName,
-             chartDataFilterReq.BuName,
-             chartDataFilterReq.FromDate,
-             chartDataFilterReq.ToDate).ToListAsync();
-     }
-
-     public async Task<TotalInventoryValueDifference> GetTotalInventoryValueDifference(InventoryFilterReq inventoryFilterReq)
-     {
-         var res = await _dbContext.TotalInventoryValueDifference.FromSqlRaw("EXEC [dbo].[SP_GetTotalInventoryValueDifference] {0},{1},{2},{3},{4},{5},{6},{7},{8}",
-             inventoryFilterReq.RegionCode,
-             inventoryFilterReq.CountryCode,
-             inventoryFilterReq.CompanyCode,
-             inventoryFilterReq.ProfitCenterID,
-             inventoryFilterReq.PlantID,
-             inventoryFilterReq.SbuName,
-             inventoryFilterReq.BuName,
-             inventoryFilterReq.FromDate,
-             inventoryFilterReq.ToDate).ToListAsync();
-         return res.FirstOrDefault();
-     }
-     public async Task<TotalInventoryVolumeDifference> GetTotalInventoryVolumeDifference(InventoryFilterReq inventoryFilterReq)
-     {
-         var res = await _dbContext.TotalInventoryVolumeDifference.FromSqlRaw("EXEC [dbo].[SP_GetTotalInventoryVolumeDifference] {0},{1},{2},{3},{4},{5},{6},{7},{8}",
-             inventoryFilterReq.RegionCode,
-             inventoryFilterReq.CountryCode,
-             inventoryFilterReq.CompanyCode,
-             inventoryFilterReq.ProfitCenterID,
-             inventoryFilterReq.PlantID,
-             inventoryFilterReq.SbuName,
-             inventoryFilterReq.BuName,
-             inventoryFilterReq.FromDate,
-             inventoryFilterReq.ToDate).ToListAsync();
-         return res.FirstOrDefault();
-     }
-     public async Task<InventoryDIO> GetInventoryDIO(InventoryFilterReq inventoryFilterReq)
-     {
-         var res = await _dbContext.InventoryDIO.FromSqlRaw("EXEC [dbo].[SP_GetInventoryDIO] {0},{1},{2},{3},{4},{5},{6},{7},{8}",
-             inventoryFilterReq.RegionCode,
-             inventoryFilterReq.CountryCode,
-             inventoryFilterReq.CompanyCode,
-             inventoryFilterReq.ProfitCenterID,
-             inventoryFilterReq.PlantID,
-             inventoryFilterReq.SbuName,
-             inventoryFilterReq.BuName,
-             inventoryFilterReq.FromDate,
-             inventoryFilterReq.ToDate).ToListAsync();
-         return res.FirstOrDefault();
-     }
-
-     public async Task<List<ClosingInventoryBalanceChart>> GetClosingInventoryBalanceChart(ChartDataFilterReq chartDataFilterReq)
-     {
-         return await _dbContext.ClosingInventoryBalanceChart.FromSqlRaw("EXEC [dbo].[SP_GetFGClosingInventoryBalanceChartData] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}",
-             chartDataFilterReq.CurrencyType,
-             chartDataFilterReq.Metrics,
-             chartDataFilterReq.RegionCode,
-             chartDataFilterReq.CountryCode,
-             chartDataFilterReq.CompanyCode,
-             chartDataFilterReq.ProfitCenterID,
-             chartDataFilterReq.PlantID,
-             chartDataFilterReq.SbuName,
-             chartDataFilterReq.BuName,
-             chartDataFilterReq.FromDate,
-             chartDataFilterReq.ToDate).ToListAsync();
-     }
+    public async Task<List<UnitOfMeasure>> GetUnitOfMeasure()
+        => await _dbContext.UnitOfMeasure
+            .FromSqlRaw("EXEC [dbo].[SP_GetUnitofMeasure]")
+            .AsNoTracking()
+            .ToListAsync();
+}
 
 
-     public async Task<List<ClosingInventoryBalanceDetailChart>> GetClosingInventoryBalanceDetailChart(ChartDataFilterReq chartDataFilterReq)
-     {
-         return await _dbContext.ClosingInventoryBalanceDetailChart.FromSqlRaw("EXEC [dbo].[SP_GetClosingInventoryBalanceChartDetailData] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
-             chartDataFilterReq.CurrencyType,
-             chartDataFilterReq.RegionCode,
-             chartDataFilterReq.CountryCode,
-             chartDataFilterReq.CompanyCode,
-             chartDataFilterReq.ProfitCenterID,
-             chartDataFilterReq.PlantID,
-             chartDataFilterReq.SbuName,
-             chartDataFilterReq.BuName,
-             chartDataFilterReq.FromDate,
-             chartDataFilterReq.ToDate).ToListAsync();
-     }
+public async Task<List<FinishedGoodsDemandComparison>> GetFinishedGoodsDemandComparisonValue(InventoryFilterReq r)
+    => await _dbContext.FinishedGoodsDemandComparison
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetFinishedGoodsDemandGraphComparisonData]
+                @CompanyCode=@CompanyCode,
+                @ProfitCenterID=@ProfitCenterID,
+                @PlantID=@PlantID,
+                @SbuName=@SbuName,
+                @BuName=@BuName,
+                @FromDate=@FromDate,
+                @ToDate=@ToDate",
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
 
-     public async Task<List<InventoryInsightsGrid>> GetInventoryInsightsGridData(InventoryFilterReq inventoryFilterReq)
-     {
-         return await _dbContext.InventoryInsightsGrid.FromSqlRaw("EXEC [dbo].[SP_GetInventoryInsightsGridData] {0},{1},{2},{3},{4},{5},{6},{7},{8}",
-            inventoryFilterReq.RegionCode,
-            inventoryFilterReq.CountryCode,
-            inventoryFilterReq.CompanyCode,
-            inventoryFilterReq.ProfitCenterID,
-            inventoryFilterReq.PlantID,
-            inventoryFilterReq.SbuName,
-            inventoryFilterReq.BuName,
-            inventoryFilterReq.FromDate,
-            inventoryFilterReq.ToDate).ToListAsync();
-     }
-     public async Task<List<FinishedGoodsInterCompanyTransferChart>> GetFGInterCompanyTransferAIFCChartDataForGIT(InvChartDataFilterReq fGChartDataFilterReq)
-     {
-         return await _dbContext.FinishedGoodsInterCompanyTransferChart.FromSqlRaw("EXEC [dbo].[SP_GetFGInterCompanyTransferAIFCChartDataForGIT] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}",
-                 fGChartDataFilterReq.CurrencyType,
-                 fGChartDataFilterReq.Metrics,
-                 fGChartDataFilterReq.RegionCode,
-                 fGChartDataFilterReq.CountryCode,
-                 fGChartDataFilterReq.CompanyCode,
-                 fGChartDataFilterReq.ProfitCenterID,
-                 fGChartDataFilterReq.PlantID,
-                 fGChartDataFilterReq.SbuName,
-                 fGChartDataFilterReq.BuName,
-                 fGChartDataFilterReq.FromDate,
-                 fGChartDataFilterReq.ToDate).ToListAsync();
-     }
-     public async Task<List<FinishedGoodsInterCompanyTransferChart>> GetFGInterCompanyTransferAIFCChartDataForWIP(InvChartDataFilterReq fGChartDataFilterReq)
-     {
-         return await _dbContext.FinishedGoodsInterCompanyTransferChart.FromSqlRaw("EXEC [dbo].[SP_GetFGInterCompanyTransferAIFCChartDataForWIP] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}",
-                 fGChartDataFilterReq.CurrencyType,
-                 fGChartDataFilterReq.Metrics,
-                 fGChartDataFilterReq.RegionCode,
-                 fGChartDataFilterReq.CountryCode,
-                 fGChartDataFilterReq.CompanyCode,
-                 fGChartDataFilterReq.ProfitCenterID,
-                 fGChartDataFilterReq.PlantID,
-                 fGChartDataFilterReq.SbuName,
-                 fGChartDataFilterReq.BuName,
-                 fGChartDataFilterReq.FromDate,
-                 fGChartDataFilterReq.ToDate).ToListAsync();
-     }
-     public async Task<List<FinishedGoodsInterCompanyTransfer>> GetFGInterCompanyTransferComparisonChartDataForGIT(InvInterCompanyTransferComparisonChartData fGInterCompanyTransferComparisonChartData)
-     {
-         return await _dbContext.FinishedGoodsInterCompanyTransfer.FromSqlRaw("EXEC [dbo].[SP_GetFGInterCompanyTransferComparisonChartDataForGIT] {0},{1},{2},{3},{4},{5},{6}",
-             fGInterCompanyTransferComparisonChartData.CompanyCode,
-             fGInterCompanyTransferComparisonChartData.ProfitCenterID,
-             fGInterCompanyTransferComparisonChartData.PlantID,
-             fGInterCompanyTransferComparisonChartData.SbuName,
-             fGInterCompanyTransferComparisonChartData.BuName,
-             fGInterCompanyTransferComparisonChartData.FromDate,
-             fGInterCompanyTransferComparisonChartData.ToDate).ToListAsync();
-     }
+public async Task<List<FinishedGoodsProductionComparison>> GetFinishedGoodsProductionComparisonValue(InventoryFilterReq r)
+    => await _dbContext.FinishedGoodsProductionComparison
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetFinishedGoodsProductionGraphComparisonData]
+                @CompanyCode=@CompanyCode,
+                @ProfitCenterID=@ProfitCenterID,
+                @PlantID=@PlantID,
+                @SbuName=@SbuName,
+                @BuName=@BuName,
+                @FromDate=@FromDate,
+                @ToDate=@ToDate",
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
 
-     public async Task<List<UnitOfMeasure>> GetUnitOfMeasure()
-     {
-         return await _dbContext.UnitOfMeasure.FromSqlRaw("EXEC [dbo].[SP_GetUnitofMeasure]").ToListAsync();
-     }
- }
+public async Task<List<FinishedGoodsDemandChart>> GetFinishedGoodsDemandChartData(ChartDataFilterReq r)
+    => await _dbContext.FinishedGoodsDemandChart
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetFinishedGoodsDemandChartAIEnhancedForecastData]
+                @CurrencyType=@CurrencyType,@Metrics=@Metrics,@RegionCode=@RegionCode,
+                @CountryCode=@CountryCode,@CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,
+                @PlantID=@PlantID,@SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@CurrencyType", r.CurrencyType),
+            new SqlParameter("@Metrics", r.Metrics),
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<List<FinishedGoodsProductionChart>> GetFinishedGoodsProductionChartData(ChartDataFilterReq r)
+    => await _dbContext.FinishedGoodsProductionChart
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetFinishedGoodsProductionChartAIEnhancedForecastData]
+                @CurrencyType=@CurrencyType,@Metrics=@Metrics,@RegionCode=@RegionCode,
+                @CountryCode=@CountryCode,@CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,
+                @PlantID=@PlantID,@SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@CurrencyType", r.CurrencyType),
+            new SqlParameter("@Metrics", r.Metrics),
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<List<InventoryMap>> GetInventoryMapDetails(InventoryFilterReq r)
+    => await _dbContext.InventoryMap
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetInventoryGlobalMap]
+                @TypeID=@TypeID,@RegionCode=@RegionCode,@CountryCode=@CountryCode,
+                @CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,@PlantID=@PlantID,
+                @SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@TypeID", r.TypeID),
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+public async Task<List<FinishedGoodsPurchaseChart>> GetFinishedGoodsPurchaseChartData(ChartDataFilterReq r)
+    => await _dbContext.FinishedGoodsPurchaseChart
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetFGPurchasesAIFCChartData]
+                @CurrencyType=@CurrencyType,@Metrics=@Metrics,@RegionCode=@RegionCode,
+                @CountryCode=@CountryCode,@CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,
+                @PlantID=@PlantID,@SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@CurrencyType", r.CurrencyType),
+            new SqlParameter("@Metrics", r.Metrics),
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<List<FinishedGoodsPurchaseComparison>> GetFinishedGoodsPurchaseComparisonValue(InventoryFilterReq r)
+    => await _dbContext.FinishedGoodsPurchaseComparison
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetFGPurchasesComparisonChartData]
+                @CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,@PlantID=@PlantID,
+                @SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<List<InterCompanyTransferComparison>> GetInterCompanyTransferComparisonValue(InventoryFilterReq r)
+    => await _dbContext.InterCompanyTransferComparison
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetFGInterCompanyTransferComparisonChartData]
+                @CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,@PlantID=@PlantID,
+                @SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<List<FinishedGoodsInterCompanyTransferChart>> GetFinishedGoodsInterCompanyTransferChartDataForSTO(ChartDataFilterReq r)
+    => await _dbContext.FinishedGoodsInterCompanyTransferChart
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetFGInterCompanyTransferAIFCChartDataForSTO]
+                @CurrencyType=@CurrencyType,@Metrics=@Metrics,@RegionCode=@RegionCode,
+                @CountryCode=@CountryCode,@CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,
+                @PlantID=@PlantID,@SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@CurrencyType", r.CurrencyType),
+            new SqlParameter("@Metrics", r.Metrics),
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<TotalInventoryValueDifference?> GetTotalInventoryValueDifference(InventoryFilterReq r)
+    => (await _dbContext.TotalInventoryValueDifference
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetTotalInventoryValueDifference]
+                @RegionCode=@RegionCode,@CountryCode=@CountryCode,@CompanyCode=@CompanyCode,
+                @ProfitCenterID=@ProfitCenterID,@PlantID=@PlantID,@SbuName=@SbuName,
+                @BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync())
+        .FirstOrDefault();
+
+public async Task<TotalInventoryVolumeDifference?> GetTotalInventoryVolumeDifference(InventoryFilterReq r)
+    => (await _dbContext.TotalInventoryVolumeDifference
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetTotalInventoryVolumeDifference]
+                @RegionCode=@RegionCode,@CountryCode=@CountryCode,@CompanyCode=@CompanyCode,
+                @ProfitCenterID=@ProfitCenterID,@PlantID=@PlantID,@SbuName=@SbuName,
+                @BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync())
+        .FirstOrDefault();
+public async Task<InventoryDIO?> GetInventoryDIO(InventoryFilterReq r)
+    => (await _dbContext.InventoryDIO
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetInventoryDIO]
+              @RegionCode=@RegionCode,@CountryCode=@CountryCode,@CompanyCode=@CompanyCode,
+              @ProfitCenterID=@ProfitCenterID,@PlantID=@PlantID,
+              @SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync())
+        .FirstOrDefault();
+
+public async Task<List<ClosingInventoryBalanceChart>> GetClosingInventoryBalanceChart(ChartDataFilterReq r)
+    => await _dbContext.ClosingInventoryBalanceChart
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetFGClosingInventoryBalanceChartData]
+              @CurrencyType=@CurrencyType,@Metrics=@Metrics,@RegionCode=@RegionCode,
+              @CountryCode=@CountryCode,@CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,
+              @PlantID=@PlantID,@SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@CurrencyType", r.CurrencyType),
+            new SqlParameter("@Metrics", r.Metrics),
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<List<ClosingInventoryBalanceDetailChart>> GetClosingInventoryBalanceDetailChart(ChartDataFilterReq r)
+    => await _dbContext.ClosingInventoryBalanceDetailChart
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetClosingInventoryBalanceChartDetailData]
+              @CurrencyType=@CurrencyType,@RegionCode=@RegionCode,@CountryCode=@CountryCode,
+              @CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,
+              @PlantID=@PlantID,@SbuName=@SbuName,@BuName=@BuName,
+              @FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@CurrencyType", r.CurrencyType),
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<List<InventoryInsightsGrid>> GetInventoryInsightsGridData(InventoryFilterReq r)
+    => await _dbContext.InventoryInsightsGrid
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetInventoryInsightsGridData]
+              @RegionCode=@RegionCode,@CountryCode=@CountryCode,@CompanyCode=@CompanyCode,
+              @ProfitCenterID=@ProfitCenterID,@PlantID=@PlantID,
+              @SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<List<FinishedGoodsInterCompanyTransferChart>> GetFGInterCompanyTransferAIFCChartDataForGIT(InvChartDataFilterReq r)
+    => await _dbContext.FinishedGoodsInterCompanyTransferChart
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetFGInterCompanyTransferAIFCChartDataForGIT]
+              @CurrencyType=@CurrencyType,@Metrics=@Metrics,@RegionCode=@RegionCode,
+              @CountryCode=@CountryCode,@CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,
+              @PlantID=@PlantID,@SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@CurrencyType", r.CurrencyType),
+            new SqlParameter("@Metrics", r.Metrics),
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<List<FinishedGoodsInterCompanyTransferChart>> GetFGInterCompanyTransferAIFCChartDataForWIP(InvChartDataFilterReq r)
+    => await _dbContext.FinishedGoodsInterCompanyTransferChart
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetFGInterCompanyTransferAIFCChartDataForWIP]
+              @CurrencyType=@CurrencyType,@Metrics=@Metrics,@RegionCode=@RegionCode,
+              @CountryCode=@CountryCode,@CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,
+              @PlantID=@PlantID,@SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@CurrencyType", r.CurrencyType),
+            new SqlParameter("@Metrics", r.Metrics),
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<List<FinishedGoodsInterCompanyTransfer>> GetFGInterCompanyTransferComparisonChartDataForGIT(
+    InvInterCompanyTransferComparisonChartData r)
+    => await _dbContext.FinishedGoodsInterCompanyTransfer
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetFGInterCompanyTransferComparisonChartDataForGIT]
+              @CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,@PlantID=@PlantID,
+              @SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<List<UnitOfMeasure>> GetUnitOfMeasure()
+    => await _dbContext.UnitOfMeasure
+        .FromSqlRaw("EXEC [dbo].[SP_GetUnitofMeasure]")
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<InventoryDIO?> GetInventoryDIO(InventoryFilterReq r)
+    => (await _dbContext.InventoryDIO
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetInventoryDIO]
+              @RegionCode=@RegionCode,@CountryCode=@CountryCode,@CompanyCode=@CompanyCode,
+              @ProfitCenterID=@ProfitCenterID,@PlantID=@PlantID,
+              @SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync())
+        .FirstOrDefault();
+
+public async Task<List<ClosingInventoryBalanceChart>> GetClosingInventoryBalanceChart(ChartDataFilterReq r)
+    => await _dbContext.ClosingInventoryBalanceChart
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetFGClosingInventoryBalanceChartData]
+              @CurrencyType=@CurrencyType,@Metrics=@Metrics,@RegionCode=@RegionCode,
+              @CountryCode=@CountryCode,@CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,
+              @PlantID=@PlantID,@SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@CurrencyType", r.CurrencyType),
+            new SqlParameter("@Metrics", r.Metrics),
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<List<ClosingInventoryBalanceDetailChart>> GetClosingInventoryBalanceDetailChart(ChartDataFilterReq r)
+    => await _dbContext.ClosingInventoryBalanceDetailChart
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetClosingInventoryBalanceChartDetailData]
+              @CurrencyType=@CurrencyType,@RegionCode=@RegionCode,@CountryCode=@CountryCode,
+              @CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,
+              @PlantID=@PlantID,@SbuName=@SbuName,@BuName=@BuName,
+              @FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@CurrencyType", r.CurrencyType),
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<List<InventoryInsightsGrid>> GetInventoryInsightsGridData(InventoryFilterReq r)
+    => await _dbContext.InventoryInsightsGrid
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetInventoryInsightsGridData]
+              @RegionCode=@RegionCode,@CountryCode=@CountryCode,@CompanyCode=@CompanyCode,
+              @ProfitCenterID=@ProfitCenterID,@PlantID=@PlantID,
+              @SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<List<FinishedGoodsInterCompanyTransferChart>> GetFGInterCompanyTransferAIFCChartDataForGIT(InvChartDataFilterReq r)
+    => await _dbContext.FinishedGoodsInterCompanyTransferChart
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetFGInterCompanyTransferAIFCChartDataForGIT]
+              @CurrencyType=@CurrencyType,@Metrics=@Metrics,@RegionCode=@RegionCode,
+              @CountryCode=@CountryCode,@CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,
+              @PlantID=@PlantID,@SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@CurrencyType", r.CurrencyType),
+            new SqlParameter("@Metrics", r.Metrics),
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<List<FinishedGoodsInterCompanyTransferChart>> GetFGInterCompanyTransferAIFCChartDataForWIP(InvChartDataFilterReq r)
+    => await _dbContext.FinishedGoodsInterCompanyTransferChart
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetFGInterCompanyTransferAIFCChartDataForWIP]
+              @CurrencyType=@CurrencyType,@Metrics=@Metrics,@RegionCode=@RegionCode,
+              @CountryCode=@CountryCode,@CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,
+              @PlantID=@PlantID,@SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@CurrencyType", r.CurrencyType),
+            new SqlParameter("@Metrics", r.Metrics),
+            new SqlParameter("@RegionCode", r.RegionCode),
+            new SqlParameter("@CountryCode", r.CountryCode),
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<List<FinishedGoodsInterCompanyTransfer>> GetFGInterCompanyTransferComparisonChartDataForGIT(
+    InvInterCompanyTransferComparisonChartData r)
+    => await _dbContext.FinishedGoodsInterCompanyTransfer
+        .FromSqlRaw(
+            @"EXEC [dbo].[SP_GetFGInterCompanyTransferComparisonChartDataForGIT]
+              @CompanyCode=@CompanyCode,@ProfitCenterID=@ProfitCenterID,@PlantID=@PlantID,
+              @SbuName=@SbuName,@BuName=@BuName,@FromDate=@FromDate,@ToDate=@ToDate",
+            new SqlParameter("@CompanyCode", r.CompanyCode),
+            new SqlParameter("@ProfitCenterID", r.ProfitCenterID),
+            new SqlParameter("@PlantID", r.PlantID),
+            new SqlParameter("@SbuName", r.SbuName),
+            new SqlParameter("@BuName", r.BuName),
+            new SqlParameter("@FromDate", r.FromDate),
+            new SqlParameter("@ToDate", r.ToDate))
+        .AsNoTracking()
+        .ToListAsync();
+
+public async Task<List<UnitOfMeasure>> GetUnitOfMeasure()
+    => await _dbContext.UnitOfMeasure
+        .FromSqlRaw("EXEC [dbo].[SP_GetUnitofMeasure]")
+        .AsNoTracking()
+        .ToListAsync();
+
