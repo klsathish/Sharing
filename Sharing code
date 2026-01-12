@@ -1,207 +1,100 @@
-public async Task<List<RawMaterialsGoodsReceiptChart>> GetRawMaterialsGoodsReceiptChartData(ChartDataFilterReq chartDataFilterReq)
-{
-    return await _dbContext.RawMaterialsGoodsReceiptChart
-        .FromSqlRaw(@"EXEC [dbo].[SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData]
-                        @CurrencyType = @CurrencyType,
-                        @Metrics = @Metrics,
-                        @RegionCode = @RegionCode,
-                        @CountryCode = @CountryCode,
-                        @CompanyCode = @CompanyCode,
-                        @ProfitCenterID = @ProfitCenterID,
-                        @PlantID = @PlantID,
-                        @SbuName = @SbuName,
-                        @BuName = @BuName,
-                        @FromDate = @FromDate,
-                        @ToDate = @ToDate,
-                        @UnitOfMeasure = @UnitOfMeasure",
-            new SqlParameter("@CurrencyType", chartDataFilterReq.CurrencyType),
-            new SqlParameter("@Metrics", chartDataFilterReq.Metrics),
-            new SqlParameter("@RegionCode", chartDataFilterReq.RegionCode),
-            new SqlParameter("@CountryCode", chartDataFilterReq.CountryCode),
-            new SqlParameter("@CompanyCode", chartDataFilterReq.CompanyCode),
-            new SqlParameter("@ProfitCenterID", chartDataFilterReq.ProfitCenterID),
-            new SqlParameter("@PlantID", chartDataFilterReq.PlantID),
-            new SqlParameter("@SbuName", chartDataFilterReq.SbuName),
-            new SqlParameter("@BuName", chartDataFilterReq.BuName),
-            new SqlParameter("@FromDate", chartDataFilterReq.FromDate),
-            new SqlParameter("@ToDate", chartDataFilterReq.ToDate),
-            new SqlParameter("@UnitOfMeasure", chartDataFilterReq.UnitOfMeasure))
-        .ToListAsync();
-}
+ public async Task<List<UserAuth>> IsAuthenticationUser(string userName)
+ {
+     return await _dbContext.UserAuth.FromSqlRaw("EXEC [dbo].[SP_IsInternal_AuthenticatedUser] {0}", userName).ToListAsync();
+ }
+ public async Task<List<UserMenu>> GetUserMenuList(int? userId, int? roleId) => await _dbContext.UserMenu.FromSqlRaw("EXEC [dbo].[SP_GetUserMenus] {0},{1}", userId, roleId).ToListAsync();
+ public async Task<List<User>> GetUserList() => await _dbContext.User.FromSqlRaw("EXEC [dbo].[SP_GetUsers]").ToListAsync();
+ public async Task<InsertUpdateUserRes> InsertUpdateUserReq(InsertUpdateUserReq insertUpdateUserReq)
+ {
+     var parameters = new[]
+                       {
+                        new SqlParameter("@UserID", insertUpdateUserReq.UserID),
+                        new SqlParameter("@UserRoleIDs", insertUpdateUserReq.UserRoleIDs),
+                        new SqlParameter("@UserName", insertUpdateUserReq.UserName),
+                        new SqlParameter("@Email", insertUpdateUserReq.Email),
+                        new SqlParameter("@FirstName", insertUpdateUserReq.FirstName),
+                        new SqlParameter("@LastName", insertUpdateUserReq.LastName),
+                        new SqlParameter("@EmployeeID", insertUpdateUserReq.EmployeeID),
+                        new SqlParameter("@AffiliateID", insertUpdateUserReq.AffiliateID),
+                        new SqlParameter("@StatusID", insertUpdateUserReq.StatusID),
+                        new SqlParameter("@CreatedBy", insertUpdateUserReq.CreatedBy),
+                        new SqlParameter("@IsInsert", insertUpdateUserReq.IsInsert),
+                       };
 
-public async Task<List<RawMaterialsConsumedProductionChart>> GetRawMaterialsConsumedProductionChartData(InvChartDataFilterReq req)
-{
-    return await _dbContext.RawMaterialsConsumedProductionChart
-        .FromSqlRaw(@"EXEC [dbo].[SP_GetRawMaterialsCPChartData]
-                        @CurrencyType = @CurrencyType,
-                        @Metrics = @Metrics,
-                        @RegionCode = @RegionCode,
-                        @CountryCode = @CountryCode,
-                        @CompanyCode = @CompanyCode,
-                        @ProfitCenterID = @ProfitCenterID,
-                        @PlantID = @PlantID,
-                        @SbuName = @SbuName,
-                        @BuName = @BuName,
-                        @FromDate = @FromDate,
-                        @ToDate = @ToDate,
-                        @UnitOfMeasure = @UnitOfMeasure",
-            new SqlParameter("@CurrencyType", req.CurrencyType),
-            new SqlParameter("@Metrics", req.Metrics),
-            new SqlParameter("@RegionCode", req.RegionCode),
-            new SqlParameter("@CountryCode", req.CountryCode),
-            new SqlParameter("@CompanyCode", req.CompanyCode),
-            new SqlParameter("@ProfitCenterID", req.ProfitCenterID),
-            new SqlParameter("@PlantID", req.PlantID),
-            new SqlParameter("@SbuName", req.SbuName),
-            new SqlParameter("@BuName", req.BuName),
-            new SqlParameter("@FromDate", req.FromDate),
-            new SqlParameter("@ToDate", req.ToDate),
-            new SqlParameter("@UnitOfMeasure", req.UnitOfMeasure))
-        .ToListAsync();
-}
+     var result = _dbContext.Database.SqlQueryRaw<string>("dbo.SP_Insert_Update_AssignedUser @UserID, @UserRoleIDs,@UserName,@Email,@FirstName,@LastName,@EmployeeID,@AffiliateID,@StatusID,@CreatedBy,@IsInsert", parameters)
+         .AsEnumerable().FirstOrDefault();
+     //var res = await _dbContext.Database.ExecuteSqlRawAsync("dbo.SP_Insert_Update_AssignedUser" +
+     //           " {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}",
+     //           insertUpdateUserReq.UserID,
+     //           insertUpdateUserReq.UserRoleIDs,
+     //           insertUpdateUserReq.UserName,
+     //           insertUpdateUserReq.Email,
+     //           insertUpdateUserReq.FirstName,
+     //           insertUpdateUserReq.LastName,
+     //           insertUpdateUserReq.EmployeeID,
+     //           insertUpdateUserReq.AffiliateID,
+     //           insertUpdateUserReq.StatusID,
+     //           insertUpdateUserReq.CreatedBy,
+     //           insertUpdateUserReq.IsInsert
+     //           );
+     var insertUpdateUserRes = new InsertUpdateUserRes();
+     insertUpdateUserRes.Message = result!;
+     return insertUpdateUserRes;
+ }
+ public async Task<string> DeactivateUserReq(DeactivateUserReq deactivateUserReq)
+ {
+     var response = await _dbContext.Database.ExecuteSqlRawAsync("dbo.SP_Update_User_IsActivated {0},{1},{2}",
+            deactivateUserReq.UserID,
+            deactivateUserReq.IsActivated,
+            deactivateUserReq.UpdatedBy
+            );
+     if (response == 0)
+     {
+         return SabicConstants.RecordNotFoundMessage;
+     }
+     return SabicConstants.SuccessMessage;
+ }
 
-public async Task<List<RawMaterialsConsumedComparison>> GetRawMaterialsConsumedComparisonValue(InventoryFilterReq req)
-{
-    return await _dbContext.RawMaterialsConsumedComparison
-        .FromSqlRaw(@"EXEC [dbo].[SP_GetRawMaterialsConsumedGraphComparisonData]
-                        @CompanyCode = @CompanyCode,
-                        @ProfitCenterID = @ProfitCenterID,
-                        @PlantID = @PlantID,
-                        @SbuName = @SbuName,
-                        @BuName = @BuName,
-                        @FromDate = @FromDate,
-                        @ToDate = @ToDate",
-            new SqlParameter("@CompanyCode", req.CompanyCode),
-            new SqlParameter("@ProfitCenterID", req.ProfitCenterID),
-            new SqlParameter("@PlantID", req.PlantID),
-            new SqlParameter("@SbuName", req.SbuName),
-            new SqlParameter("@BuName", req.BuName),
-            new SqlParameter("@FromDate", req.FromDate),
-            new SqlParameter("@ToDate", req.ToDate))
-        .ToListAsync();
-}
+ public async Task<List<SearchUser>> GetSearchUserListFromAD(string searchText)
+ {
+     List<SearchUser> searchUsers = new List<SearchUser>();
+     if (!string.IsNullOrWhiteSpace(searchText) && searchText.Count() > 3)
+     {
+         //bool isNumber = Regex.IsMatch(searchText, @"^\d+$");
+         var lstSearchUserFromCommonDb = await _commonDbContext.MST_UserDetails_Infopoint
+             .Where(x =>
+                 (x.DomainLoginID ?? "").Replace("SABICCORP\\", "").ToLower().Contains(searchText.ToLower().Trim()) ||
+                 (x.Email ?? "").ToLower().Contains(searchText.ToLower().Trim()) ||
+                 (x.EmployeeName ?? "").ToLower().Contains(searchText.ToLower().Trim())).ToListAsync();
+         if (lstSearchUserFromCommonDb != null && lstSearchUserFromCommonDb.Count > 0)
+         {
+             foreach (var item in lstSearchUserFromCommonDb)
+             {
+                 searchUsers.Add(new SearchUser()
+                 {
+                     EmployeeID = Convert.ToString(item.EmployeeID),
+                     LoginName = item.DomainLoginID!.Replace("SABIC\\", "SABICCORP\\"),
+                     FirstName = item.FirstName!,
+                     LastName = item.LastName!,
+                     UserName = item.FirstName + " " + item.LastName,
+                     Email = item.Email!
+                 });
+             }
 
-public async Task<List<RawMaterialsGoodsReceiptComparison>> GetRawMaterialsGoodsReceiptComparisonValue(InventoryFilterReq req)
-{
-    return await _dbContext.RawMaterialsGoodsReceiptComparison
-        .FromSqlRaw(@"EXEC [dbo].[SP_GetGoodsReceiptGraphComparisonData]
-                        @CompanyCode = @CompanyCode,
-                        @ProfitCenterID = @ProfitCenterID,
-                        @PlantID = @PlantID,
-                        @SbuName = @SbuName,
-                        @BuName = @BuName,
-                        @FromDate = @FromDate,
-                        @ToDate = @ToDate",
-            new SqlParameter("@CompanyCode", req.CompanyCode),
-            new SqlParameter("@ProfitCenterID", req.ProfitCenterID),
-            new SqlParameter("@PlantID", req.PlantID),
-            new SqlParameter("@SbuName", req.SbuName),
-            new SqlParameter("@BuName", req.BuName),
-            new SqlParameter("@FromDate", req.FromDate),
-            new SqlParameter("@ToDate", req.ToDate))
-        .ToListAsync();
-}
+         }
+     }
+     return searchUsers;
+ }
 
-public async Task<List<RMInterCompanyTransferChart>> GetRMInterCompanyTransferChartData(InvChartDataFilterReq req)
-{
-    return await _dbContext.RMInterCompanyTransferChart
-        .FromSqlRaw(@"EXEC [dbo].[SP_GetRMInterCompanyTransferChartData]
-                        @CurrencyType = @CurrencyType,
-                        @Metrics = @Metrics,
-                        @RegionCode = @RegionCode,
-                        @CountryCode = @CountryCode,
-                        @CompanyCode = @CompanyCode,
-                        @ProfitCenterID = @ProfitCenterID,
-                        @PlantID = @PlantID,
-                        @SbuName = @SbuName,
-                        @BuName = @BuName,
-                        @FromDate = @FromDate,
-                        @ToDate = @ToDate,
-                        @UnitOfMeasure = @UnitOfMeasure",
-            new SqlParameter("@CurrencyType", req.CurrencyType),
-            new SqlParameter("@Metrics", req.Metrics),
-            new SqlParameter("@RegionCode", req.RegionCode),
-            new SqlParameter("@CountryCode", req.CountryCode),
-            new SqlParameter("@CompanyCode", req.CompanyCode),
-            new SqlParameter("@ProfitCenterID", req.ProfitCenterID),
-            new SqlParameter("@PlantID", req.PlantID),
-            new SqlParameter("@SbuName", req.SbuName),
-            new SqlParameter("@BuName", req.BuName),
-            new SqlParameter("@FromDate", req.FromDate),
-            new SqlParameter("@ToDate", req.ToDate),
-            new SqlParameter("@UnitOfMeasure", req.UnitOfMeasure))
-        .ToListAsync();
-}
+ public async Task<List<Role>> GetRoleList() => await _dbContext.Roles.FromSqlRaw("EXEC [dbo].[SP_GetRole]").ToListAsync();
+ public async Task<List<Affiliate>> GetAffiliateList() => await _dbContext.Affiliates.FromSqlRaw("EXEC [dbo].[SP_GetAffiliateForUserManagement]").ToListAsync();
 
-public async Task<List<RMInterCompanyTransferComparison>> GetRMInterCompanyTransferComparisonValue(InvInterCompanyTransferComparisonChartData req)
-{
-    return await _dbContext.RMInterCompanyTransferComparison
-        .FromSqlRaw(@"EXEC [dbo].[SP_GetRMInterCompanyTransferComparisonChartData]
-                        @CompanyCode = @CompanyCode,
-                        @ProfitCenterID = @ProfitCenterID,
-                        @PlantID = @PlantID,
-                        @SbuName = @SbuName,
-                        @BuName = @BuName,
-                        @FromDate = @FromDate,
-                        @ToDate = @ToDate",
-            new SqlParameter("@CompanyCode", req.CompanyCode),
-            new SqlParameter("@ProfitCenterID", req.ProfitCenterID),
-            new SqlParameter("@PlantID", req.PlantID),
-            new SqlParameter("@SbuName", req.SbuName),
-            new SqlParameter("@BuName", req.BuName),
-            new SqlParameter("@FromDate", req.FromDate),
-            new SqlParameter("@ToDate", req.ToDate))
-        .ToListAsync();
-}
+ public async Task<UserMenuAccessModel> IsAuthorizedUserMenu(UserNameWithMenu deactivateUserReq)
+ {
+     var res = await _dbContext.UserMenuAccessModel.FromSqlRaw("dbo.[SP_CheckUserMenuAccess] {0},{1}",
+            deactivateUserReq.UserID!,
+            deactivateUserReq.MenuID
+            ).ToListAsync();
 
-public async Task<List<RMConsumptionTrendChart>> GetRMConsumptionTrendChartData(InvChartDataFilterReq req)
-{
-    return await _dbContext.RMConsumptionTrendChart
-        .FromSqlRaw(@"EXEC [dbo].[SP_GetRMConsumptionTrendData]
-                        @CurrencyType = @CurrencyType,
-                        @Metrics = @Metrics,
-                        @RegionCode = @RegionCode,
-                        @CountryCode = @CountryCode,
-                        @CompanyCode = @CompanyCode,
-                        @ProfitCenterID = @ProfitCenterID,
-                        @PlantID = @PlantID,
-                        @SbuName = @SbuName,
-                        @BuName = @BuName,
-                        @FromDate = @FromDate,
-                        @ToDate = @ToDate,
-                        @UnitOfMeasure = @UnitOfMeasure",
-            new SqlParameter("@CurrencyType", req.CurrencyType),
-            new SqlParameter("@Metrics", req.Metrics),
-            new SqlParameter("@RegionCode", req.RegionCode),
-            new SqlParameter("@CountryCode", req.CountryCode),
-            new SqlParameter("@CompanyCode", req.CompanyCode),
-            new SqlParameter("@ProfitCenterID", req.ProfitCenterID),
-            new SqlParameter("@PlantID", req.PlantID),
-            new SqlParameter("@SbuName", req.SbuName),
-            new SqlParameter("@BuName", req.BuName),
-            new SqlParameter("@FromDate", req.FromDate),
-            new SqlParameter("@ToDate", req.ToDate),
-            new SqlParameter("@UnitOfMeasure", req.UnitOfMeasure))
-        .ToListAsync();
-}
-
-public async Task<List<RMConsumptionTrendComparison>> GetRMConsumptionTrendComparisonData(InvInterCompanyTransferComparisonChartData req)
-{
-    return await _dbContext.RMConsumptionTrendComparison
-        .FromSqlRaw(@"EXEC [dbo].[SP_GetRMConsumptionTrendComparisonData]
-                        @CompanyCode = @CompanyCode,
-                        @ProfitCenterID = @ProfitCenterID,
-                        @PlantID = @PlantID,
-                        @SbuName = @SbuName,
-                        @BuName = @BuName,
-                        @FromDate = @FromDate,
-                        @ToDate = @ToDate",
-            new SqlParameter("@CompanyCode", req.CompanyCode),
-            new SqlParameter("@ProfitCenterID", req.ProfitCenterID),
-            new SqlParameter("@PlantID", req.PlantID),
-            new SqlParameter("@SbuName", req.SbuName),
-            new SqlParameter("@BuName", req.BuName),
-            new SqlParameter("@FromDate", req.FromDate),
-            new SqlParameter("@ToDate", req.ToDate))
-        .ToListAsync();
-}
+     return res.FirstOrDefault()!;
+ }
