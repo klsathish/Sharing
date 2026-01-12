@@ -1,3 +1,15 @@
+INSERT INTO ProcedureMaster (SchemaName, ProcedureName)
+SELECT s.name, p.name
+FROM sys.procedures p
+JOIN sys.schemas s ON p.schema_id = s.schema_id
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM ProcedureMaster pm
+    WHERE pm.SchemaName = s.name
+      AND pm.ProcedureName = p.name
+);
+
+
 public async Task<List<UserAuth>> IsAuthenticationUser(string userName)
 {
     return await _dbContext.UserAuth
