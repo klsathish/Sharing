@@ -1,118 +1,80 @@
-INSERT INTO Functionality
-(
-    FunctionalityID,
-    FunctionalityName,
-    IsActive,
-    CreatedBy,
-    CreatedOn,
-    UpdatedBy,
-    UpdatedOn,
-    ScreenID,
-    IsDisplay
-)
-VALUES
-/* ===================== AUDIT & ACTIVITY ===================== */
-(1,  'Add Admin Activity Log', 1, 'system', GETDATE(), NULL, NULL, 2, 0),
-(9,  'Display User and Login Activity Logs', 1, 'system', GETDATE(), NULL, NULL, 2, 1),
-
-/* ===================== ERROR & EXCEPTION ===================== */
-(2,  'Insert/Update Error Log', 1, 'system', GETDATE(), NULL, NULL, 6, 1),
-(10, 'Display Error Log', 1, 'system', GETDATE(), NULL, NULL, 4, 0),
-
-/* ===================== API & PERFORMANCE ===================== */
-(8,  'Display Performance Logs and API Request Logs', 1, 'system', GETDATE(), NULL, NULL, 7, 1),
-
-/* ===================== USER MANAGEMENT ===================== */
-(3,  'Insert/Update User Role Mapping', 1, 'system', GETDATE(), NULL, NULL, 8, 0),
-(4,  'Get User', 1, 'system', GETDATE(), NULL, NULL, 8, 1),
-(5,  'Activate/Deactivate User', 1, 'system', GETDATE(), NULL, NULL, 8, 0),
-(6,  'Get Menus', 1, 'system', GETDATE(), NULL, NULL, 5, 1),
-
-/* ===================== AUTHENTICATION ===================== */
-(12, 'Login / Token Management', 1, 'system', GETDATE(), NULL, NULL, 0, 0),
-(13, 'Logout', 1, 'system', GETDATE(), NULL, NULL, 0, 0),
-
-/* ===================== DASHBOARD – FINISHED GOODS ===================== */
-(14, 'View Finished Goods Dashboard', 1, 'system', GETDATE(), NULL, NULL, 1, 1),
-
-/* ===================== DASHBOARD – RAW MATERIALS ===================== */
-(15, 'View Raw Materials Dashboard', 1, 'system', GETDATE(), NULL, NULL, 1, 1),
-
-/* ===================== DASHBOARD – INSIGHTS ===================== */
-(16, 'View Inventory Insights', 1, 'system', GETDATE(), NULL, NULL, 1, 1);
-
-/////////
-
-
-UPDATE API_Master
-SET FunctionalityID =
-CASE
-    /* ---------- Activity & Login Logs ---------- */
-    WHEN APIEndPointURL IN (
-        '/api/ActivityMonitoring/getLoginUserActivity',
-        '/api/ActivityMonitoring/getLoginActivity',
-        '/api/ActivityMonitoring/InsertUserActivity'
-    ) THEN 9   -- Display user & login activity logs
-
-    /* ---------- API Request & Performance Logs ---------- */
-    WHEN APIEndPointURL IN (
-        '/api/APIRequestLog/getAPIRequestLog',
-        '/api/APIRequestLog/insertAPIRequestLogsAndPerformanceLogs',
-        '/api/APIPerformance/getPerformanceLogs'
-    ) THEN 8   -- Performance & API request logs
-
-    /* ---------- Error Log Insert / Update ---------- */
-    WHEN APIEndPointURL IN (
-        '/api/exceptionHandler/LogException',
-        '/api/exceptionHandler/updateErrorLoggingAssigneeWithStatus'
-    ) THEN 2   -- Insert/Update Error Log
-
-    /* ---------- Error Log Display ---------- */
-    WHEN APIEndPointURL IN (
-        '/api/exceptionHandler/getErrorLogs',
-        '/api/exceptionHandler/getAllErrorLogs',
-        '/api/exceptionHandler/getErrorLogAssignDetailsAsync',
-        '/api/exceptionHandler/getExceptionUserActivityDetailsBySessionID'
-    ) THEN 10  -- Display Error Log
-
-    /* ---------- User Management ---------- */
-    WHEN APIEndPointURL IN (
-        '/api/userManagement/getUserList',
-        '/api/userManagement/getSearchUserListFromAD/{searchText}'
-    ) THEN 4   -- Get User
-
-    WHEN APIEndPointURL = '/api/userManagement/insertupdateUserDetails'
-    THEN 3     -- Insert/Update User Role Mapping
-
-    WHEN APIEndPointURL = '/api/userManagement/deactivateUser'
-    THEN 5     -- Activate/Deactivate User
-
-    WHEN APIEndPointURL IN (
-        '/api/userManagement/getUserMenuList',
-        '/api/userManagement/isAuthorizedUserMenu'
-    ) THEN 6   -- Get Menus
-
-    /* ---------- Account ---------- */
-    WHEN APIEndPointURL = '/api/Account/GetUserDetails'
-    THEN 4     -- Get User
-
-    /* ---------- Dashboard (screen level – keep 0) ---------- */
-    WHEN APIEndPointURL LIKE '/api/dashboard/%'
-    THEN 0
-
-    /* ---------- Default ---------- */
-    ELSE FunctionalityID
-END;
-
-
-
-FunctionalityID	FunctionalityName	IsActive	CreatedBy	CreatedOn	UpdatedBy	UpdatedOn	ScreenID	IsDisplay
-1	Add Admin Activity Log	1	sabicorp/30790095	2025-09-10 11:42:27.320	NULL	NULL	2	0
-2	Insert/Update Error Log	1	sabicorp/30790095	2025-09-10 11:42:27.320	NULL	NULL	6	1
-3	Insert/Update User Role Mapping	1	sabicorp/30790095	2025-09-10 11:42:27.320	NULL	NULL	8	0
-4	Get User	1	sabicorp/30790095	2025-09-10 11:42:27.320	NULL	NULL	8	1
-5	Activate/Deactivate User	1	sabicorp/30790095	2025-09-10 11:42:27.320	NULL	NULL	8	0
-6	Get Menus	1	sabicorp/30790095	2025-09-10 11:42:27.320	NULL	NULL	5	1
-8	Display the performance logs and API request logs for the application	1	sabiccorp/30790095	2025-05-21 14:10:50.053	NULL	NULL	7	1
-9	Display the user activity  and login activity  logs for the application	1	sabiccorp/30790095	2025-05-21 14:10:50.053	NULL	NULL	2	1
-10	Display Error Log	1	sabiccorp/30790095	2025-05-21 14:21:03.127	NULL	NULL	4	0
+ProcedureName	ParameterName	ResponseColumns
+SP_AddActivityLogForAdmin	@ActivityType, @CreatedBy, @IdentityColID, @NewValue, @OldValue, @TableName	
+SP_CheckUserMenuAccess	@MenuID, @UserName	HasAccess
+SP_GetAffiliate	@CountryID	AffiliateCode, AffiliateName
+SP_GetAffiliateForUserManagement	NULL	AffiliateID, AffiliateName
+SP_GetAIForecastValue	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID	ID, InventoryValue, PlantValue, AIForecastValue
+SP_GetAllErrorLogging	@FromDate, @ToDate	ErrorLogID, ErrorMessage, ErrorNumber, Environment, ErrorSeverity, ErrorState, Status, StackTrace, HostName, CreatedBy, CreatedOn, SessionID, RequestBody, ResponseBody, ScreenName, ApplicationName, ModuleName, FunctionalityName, LayerName, APIName, StoredProcedureName, ErrorStatusID, AssignTo
+SP_GetAPIRequestLog	@FromDate, @ToDate	RequestLogID, EmployeeName, RoleName, SessionID, ApiEndPoint, HttpMethod, StatusCode, Duration, LayerName, CreatedOn
+SP_GetAuthenticatedUserDetails	@Username	UserID, EmployeeID, UserName, FirstName, LastName, Email, RoleID, LoginTime, RoleName
+SP_GetBaseFilters	@CountryID, @RegionID, @RoleID	RegionID, RegionName, CountryID, CountryName, AffiliateCode, AffiliateName
+SP_GetClosingInventoryBalanceChartDetailData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	CalYear, CalMonth, InventoryType, CompanyCode, OpeningInventory_Value_In_Million, OpeningInventory_Volume_In_MT, forecast_value_Production_Output_In_Million, forecast_volume_Production_Output_In_MT, forecast_value_STO_IN_In_Million, forecast_volume_STO_IN_In_MT, forecast_value_STO_OUT_In_Million, forecast_volume_STO_OUT_In_MT, forecast_value_Transfers_IN_In_Million, forecast_volume_Transfers_IN_In_MT, forecast_value_Transfers_OUT_In_Million, forecast_volume_Transfers_OUT_In_MT, forecast_value_Sale_In_Million, forecast_volume_Sale_In_MT, forecast_value_Consumed_in_production_In_Million, forecast_volume_Consumed_in_production_In_MT, forecast_value_Adjustments_In_Million, forecast_volume_Adjustments_In_MT, forecast_value_Purchase_In_Million, forecast_volume_Purchase_In_MT, ClosingInventory_Value_In_Million, ClosingInventory_Volume_In_MT
+SP_GetCountry	@RegionID	CountryID, CountryName
+SP_GetDataForAuthenticationByUserId	@UserID	UserID, EmployeeID, UserName, RoleID, RoleName, SessionID, IsOnline, LogoutTime, IpAddress, BrowserName, BrowserVersion
+SP_GetDiffrencesValues	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID	RecID, OpeningInventoryValueInMillionSAR, OpeningInventoryValueInMillionUSD, AIForecastVolumeInMillionSAR, AIForecastVolumeInMillionUSD
+SP_GetDiffrencesVolumes	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID	RecID, OpeningInventoryVolumeInMT, AIForecastVolumeInMT
+SP_GetErrorLog_AssignToUser	NULL	UserID, Username, Email
+SP_GetErrorLogging	@ErrorMessage	NULL
+SP_GetErrorLogStatus	NULL	ErrorStatusID, StatusName
+SP_GetExceptionUserActivityDetailsBySessionID	@SessionID	SessionID, EmployeeName, RoleName, UserAgent, Browser, BrowserVersion, SessionStartTimeStamp, IpAddress, ApplicationName
+SP_GetFGClosingInventoryBalanceChartData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	RecID, CurrencyType, Metrics, DataType, FG_DataValue, RM_DataValue, CalMonth, CalYear
+SP_GetFGClosingInventoryBalanceChartData_New	@BU, @CompanyCode, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @SBU, @ToDate	RecID, FG_ForecastedValue, RawMaterials_ForecastedValue, MeasureMonth, MeasureYear
+SP_GetFGInterCompanyTransferAIFCChartData	@BU, @CompanyCode, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @SBU, @ToDate	CurrencyType, Metrics, Category, ForecastValue
+SP_GetFGInterCompanyTransferAIFCChartDataForGIT	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetFGInterCompanyTransferAIFCChartDataForSTO	@BU, @CompanyCode, @CountryID, @CurrencyType, @ToDate, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetFGInterCompanyTransferAIFCChartDataForWIP	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetFGInterCompanyTransferComparisonChartData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate	NULL
+SP_GetFGInterCompanyTransferComparisonChartDataForGIT	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate	NULL
+SP_GetFGPurchasesAIFCChartData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetFGPurchasesComparisonChartData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate	NULL
+SP_GetFinishedGoodsDemandChartAIEnhancedForecastData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetFinishedGoodsDemandGraphComparisonData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate	NULL
+SP_GetFinishedGoodsProductionChartAIEnhancedForecastData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetFinishedGoodsProductionGraphComparisonData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate	NULL
+SP_GetGoodsReceiptGraphComparisonData	@BU, @ClassificationLevel1, @CompanyCode, @FromDate, @MaterialType, @PlantID, @ProfitCenterID, @SBU, @ToDate	NULL
+SP_GetInventoryDIO	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	RecID, DIO_Days
+SP_GetInventoryGlobalMap	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @TypeID	RegionID, RegionName, CountryID, CountryName, LatGPSValue, LonGPSValue, RecommendationMessage
+SP_GetInventoryInsightsGridData	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	RecID, InventoryType, CompanyCode, CompanyName, OpeningInventory_Volume_In_MT, ClosingInventory_Volume_In_MT, OpeningInventory_Value_In_MillionSAR, ClosingInventory_Value_In_MillionSAR, DIO_OpeningInventory, DIO_ClosingInventory, CostOfWC_OpeningInventory, CostOfWC_ClosingInventory
+SP_GetLoginActivity	@FromDate, @ToDate	EmployeeName, RoleName, IpAddress, ApplicationName, LoginTime, BrowserName, IsOnline, SessionID, CreatedOn, UserAgent, Browser, BrowserVersion, SessionStartTimeStamp
+SP_GetLoginUserActivity	@FromDate, @ToDate	EmployeeName, RoleName, IpAddress, ApplicationName, ScreenName, FunctionalityName, UserAction, SessionID, CreatedOn, UserAgent, Browser, BrowserVersion, SessionStartTimeStamp
+SP_GetMoreFiltersPlant	@affiliateCode, @profitCenterID	PlantID, PlantName
+SP_GetMoreFiltersProfitCenter	@affiliateCode, @buName, @sbuName	ProfitCenterID, ProfitCenterName
+SP_GetMoreFiltersSBUandBU	@affiliateCode, @buName, @sbuName	SbuName, BuName
+SP_GetPerformanceLog	@FromDate, @ToDate	PerformanceLogID, EmployeeName, RoleName, ActionName, ComponentName, SessionID, Duration, CreatedOn, StartTime, EndTime
+SP_GetRawMaterialsConsumedGraphComparisonData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate	NULL
+SP_GetRawMaterialsCPChartData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @UnitofMeasure	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @UnitofMeasure	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetRegion	NULL	RegionID, RegionName
+SP_GetRMConsumptionTrendComparisonData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate	NULL
+SP_GetRMConsumptionTrendData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetRMInterCompanyTransferChartData	@BU, @CompanyCode, @CountryID, @CurrencyType, @FromDate, @Metrics, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate, @UnitofMeasure	RecID, DataType, CurrencyType, Metrics, DataValue, CalMonth, CalYear
+SP_GetRMInterCompanyTransferComparisonChartData	@BU, @CompanyCode, @FromDate, @PlantID, @ProfitCenterID, @SBU, @ToDate	NULL
+SP_GetRole	NULL	RoleID, RoleName
+SP_GetSessionDetails	@SessionID	EmployeeName, RoleName, IpAddress, ApplicationName, LoginTime, BrowserName, IsOnline, SessionID, CreatedOn, UserAgent, Browser, BrowserVersion, SessionStartTimeStamp
+SP_GetTotalInventoryValueDifference	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	RecID, ValueDifference_MillionDollar
+SP_GetTotalInventoryVolumeDifference	@BU, @CompanyCode, @CountryID, @FromDate, @PlantID, @ProfitCenterID, @RegionID, @SBU, @ToDate	RecID, VolumeDifference_MillionTonnes
+SP_GetUnitofMeasure	NULL	Id, Name
+SP_GetUserDetails	@Username	UserID, EmployeeID, UserName, FirstName, LastName, Email, RoleID, RoleName, LoginTime
+SP_GetUserMenus	@RoleID, @UserID	MenuID, MenuName, ActionLink, ActionName, ControllerName, Title, Svg, NavPosition, IsActive, ScreenID, FunctionalityID
+SP_GetUsers	NULL	UserID, EmployeeID, UserName, Email, RoleIDs, Roles, AffiliateID, AffiliateName, Status
+SP_GetXMLValueForLog	@ID, @IdentityColumn, @Tablename, @XMLValue	NULL
+SP_Insert_Update_ActivityTracker	@ActivityTrackerID, @CreatedBy, @FunctionID, @ScreenID, @UserActionID	
+SP_Insert_Update_APIRequestLog	@ApiEndPoint, @AppModuleMappingID, @CreatedBy, @Duration, @HttpMethod, @LayerID, @SessionID, @StatusCode, @UserID, @RequestBody, @RequestLogID, @RequestTimeStamp, @ResponseBody, @ResponseTimeStamp, @RoleID	NULL
+SP_Insert_Update_AssignedUser	@AffiliateID, @CreatedBy, @Email, @EmployeeID, @FirstName, @IsInsert, @LastName, @StatusID, @UserID, @UserName, @UserRoleIDs	NULL
+SP_Insert_Update_ErrorLogging	@APIID, @ApplicationID, @CreatedBy, @Environment, @ErrorLogID, @ErrorMessage, @SessionID, @StackTrace, @Status, @StoredProcedureID, @UpdatedBy, @UserID, @LayerID, @ModuleID, @RequestBody, @ResponseBody, @RoleID, @ScreenID, @ErrorNumber, @ErrorSeverity, @ErrorState, @FunctionID, @HostName, @IpAddress	NULL
+SP_Insert_Update_LoginActivity	@Browser, @BrowserName, @BrowserVersion, @IpAddress, @IsOnline, @LoginID, @UserID, @LoginTime, @LogoutTime, @RoleID, @SessionID, @SessionStartTimeStamp, @UserAgent	NULL
+SP_Insert_Update_PerformanceLog	@ActionName, @ComponentName, @CreatedBy, @CreatedOn, @Duration, @EndTime, @PerformanceLogID, @RoleID, @SessionID, @StartTime, @UserID	NULL
+SP_Insert_Update_UserLoginSession	@IsActive, @SessionID, @UserID, @UserLoginSessionID	NULL
+SP_Insert_Update_UserRoleMapping	@CreatedBy, @DomainUserID, @IsActive, @IsSelectedRole, @RoleIDs, @UserRoleMappingID	NULL
+SP_Insert_Update_UserToken	@ID, @IsActive, @SessionID, @Token, @UserID	
+SP_InsertMaterialMovements_Actuals_FG	NULL	
+SP_InsertMaterialMovements_Actuals_RM	NULL	
+SP_InsertOpeningAndClosingInventoryDetails_FG	NULL	
+SP_InsertOpeningAndClosingInventoryDetails_RM	NULL	
+SP_InsertOpeningInventory_Actuals_FG	NULL	
+SP_InsertOpeningInventory_Actuals_RM	NULL	
+SP_IsInternal_AuthenticatedUser	@Username	UserID, EmployeeID, UserName, FirstName, LastName, Email, RoleID, RoleName
+SP_LogoutAndEndSessionByUserId	@UserID	
+SP_Update_ErrorLogging_AssigneeWith_Status	@AssigneeUserID, @ErrorLogID, @ErrorStatusID, @UpdatedBy	NULL
+SP_Update_User_IsActivated	@IsActivated, @UpdatedBy, @UserID	
+usp_AddandUpdateUserAndRoleMapping	@Email, @EmployeeId, @FirstName, @LastName, @RoleID, @Username	
