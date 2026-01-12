@@ -1,86 +1,47 @@
-public async Task<List<APIRequestResults>> GetAPIRequestLog(DateFilter model)
-{
-    return await _dbContext.APIRequestResults
-        .FromSqlRaw(
-            @"EXEC [dbo].[SP_GetAPIRequestLog]
-                @FromDate = @FromDate,
-                @ToDate = @ToDate",
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate)
-        )
-        .AsNoTracking()
-        .ToListAsync();
-}
 
-public async Task<string> InsertAPIRequestLogsAndPerformanceLogs(
-    ApiRequestAndPerformanceLogRequest apiRequestAndPerformanceLogRequest,
-    ApiRequestAndPerformanceLogModel apiRequestAndPerformanceLogModel)
-{
-    var apiRequestLog = await _dbContext.Database.ExecuteSqlRawAsync(
-        @"EXEC [dbo].[SP_Insert_Update_APIRequestLog]
-            @ApiEndPoint = @ApiEndPoint,
-            @AppModuleMappingID = @AppModuleMappingID,
-            @CreatedBy = @CreatedBy,
-            @Duration = @Duration,
-            @HttpMethod = @HttpMethod,
-            @LayerID = @LayerID,
-            @SessionID = @SessionID,
-            @StatusCode = @StatusCode,
-            @UserID = @UserID,
-            @RequestBody = @RequestBody,
-            @RequestLogID = @RequestLogID,
-            @RequestTimeStamp = @RequestTimeStamp,
-            @ResponseBody = @ResponseBody,
-            @ResponseTimeStamp = @ResponseTimeStamp,
-            @RoleID = @RoleID",
-        new SqlParameter("@ApiEndPoint", apiRequestAndPerformanceLogRequest.ApiEndPoint),
-        new SqlParameter("@AppModuleMappingID", apiRequestAndPerformanceLogRequest.AppModuleMappingID),
-        new SqlParameter("@CreatedBy", apiRequestAndPerformanceLogModel.CreatedBy),
-        new SqlParameter("@Duration", apiRequestAndPerformanceLogModel.Duration),
-        new SqlParameter("@HttpMethod", apiRequestAndPerformanceLogRequest.HttpMethod),
-        new SqlParameter("@LayerID", apiRequestAndPerformanceLogRequest.LayerID),
-        new SqlParameter("@SessionID", apiRequestAndPerformanceLogModel.SessionID),
-        new SqlParameter("@StatusCode", apiRequestAndPerformanceLogRequest.StatusCode),
-        new SqlParameter("@UserID", apiRequestAndPerformanceLogModel.UserID),
-        new SqlParameter("@RequestBody", apiRequestAndPerformanceLogRequest.RequestBody ?? (object)DBNull.Value),
-        new SqlParameter("@RequestLogID", 0),
-        new SqlParameter("@RequestTimeStamp", apiRequestAndPerformanceLogRequest.RequestTimeStamp),
-        new SqlParameter("@ResponseBody", apiRequestAndPerformanceLogRequest.ResponseBody ?? (object)DBNull.Value),
-        new SqlParameter("@ResponseTimeStamp", apiRequestAndPerformanceLogRequest.ResponseTimeStamp),
-        new SqlParameter("@RoleID", apiRequestAndPerformanceLogModel.RoleID)
-    );
+        public async Task<List<UserAuth>> GetUserbyLoginIdAsync(string userName)
+        {
+            return await _dbContext.UserAuth.FromSqlRaw("EXEC [dbo].[SP_IsInternal_AuthenticatedUser] {0}", userName).ToListAsync();
+        }
 
-    if (apiRequestLog == 0)
-        return SabicConstants.BadRequestMessage;
+        public async Task<UserDetails?> GetUserDetails(string userName)
+        {
+            var response = await _dbContext.UserDetails.FromSqlRaw("EXEC [dbo].[SP_GetUserDetails] {0}", userName).ToListAsync();
+            return response?.FirstOrDefault();
+        }
 
-    var performanceLog = await _dbContext.Database.ExecuteSqlRawAsync(
-        @"EXEC [dbo].[SP_Insert_Update_PerformanceLog]
-            @ActionName = @ActionName,
-            @ComponentName = @ComponentName,
-            @CreatedBy = @CreatedBy,
-            @CreatedOn = @CreatedOn,
-            @Duration = @Duration,
-            @EndTime = @EndTime,
-            @PerformanceLogID = @PerformanceLogID,
-            @RoleID = @RoleID,
-            @SessionID = @SessionID,
-            @StartTime = @StartTime,
-            @UserID = @UserID",
-        new SqlParameter("@ActionName", apiRequestAndPerformanceLogRequest.ActionName),
-        new SqlParameter("@ComponentName", apiRequestAndPerformanceLogRequest.ComponentName),
-        new SqlParameter("@CreatedBy", apiRequestAndPerformanceLogModel.CreatedBy),
-        new SqlParameter("@CreatedOn", apiRequestAndPerformanceLogModel.CreatedOn),
-        new SqlParameter("@Duration", apiRequestAndPerformanceLogModel.Duration),
-        new SqlParameter("@EndTime", apiRequestAndPerformanceLogRequest.ResponseTimeStamp),
-        new SqlParameter("@PerformanceLogID", 0),
-        new SqlParameter("@RoleID", apiRequestAndPerformanceLogModel.RoleID),
-        new SqlParameter("@SessionID", apiRequestAndPerformanceLogModel.SessionID),
-        new SqlParameter("@StartTime", apiRequestAndPerformanceLogRequest.RequestTimeStamp),
-        new SqlParameter("@UserID", apiRequestAndPerformanceLogModel.UserID)
-    );
+        public async Task<List<UserDetails>> GetAuthenticatedUserDetails(string userName)
+        {
+            return await _dbContext.UserDetails.FromSqlRaw("EXEC [dbo].[SP_GetAuthenticatedUserDetails] {0}", userName).ToListAsync();
+        }
 
-    if (performanceLog == 0)
-        return SabicConstants.BadRequestMessage;
+        /// <summary>
+        /// To logout and end sessions of a user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task LogoutAndEndSessionByUserIdAsync(int userId)
+        {
+            await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_LogoutAndEndSessionByUserId] {0}", userId);
+        }
 
-    return SabicConstants.SuccessMessage;
-}
+        /// <summary>
+        /// To fetch valid claims
+        /// </summary>
+        /// <returns></returns>
+        public async Task<GetDataForAuthenticationByUserId> GetDataForAuthenticationByUserIdAsync(int userID)
+        {
+            var res = await _dbContext.GetDataForAuthenticationByUserId.FromSqlRaw("EXEC [dbo].[SP_GetDataForAuthenticationByUserId] {0}", userID).ToListAsync();
+            return res.FirstOrDefault();
+        }
+        public async Task<MST_UserDetails_Infopoint?> GetUserFromCommonDb(string userName)
+        {
+            return await _commonDbContext.MST_UserDetails_Infopoint.Where(x => x.DomainLoginID == userName).FirstOrDefaultAsync();
+        }
+
+        public async Task<UserMenuAccessModel> IsAuthorizedRoleApi(int roleId, string url)
+        {
+            var res = await _dbContext.UserMenuAccessModel.FromSqlRaw("dbo.[SP_CheckRolePageAccess] {0},{1}", roleId, url).ToListAsync();
+
+            return res.FirstOrDefault()!;
+        }
