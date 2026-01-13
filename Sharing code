@@ -1,3 +1,12 @@
+Option 1: Formal & Professional (Recommended)
+Subject: Attachment: ISRT Documents for Web and SQL (WCI & SF)
+Hi [Name],
+Please find the attached ISRT (Installation and System Readiness Test) documents covering the Web and SQL components for both WCI and SF.
+These documents have been updated to reflect the current deployment requirements. Could you please review them and let me know if any further modifications are needed before we proceed?
+Best regards,
+[Your Name]
+
+
 [Fact]
 public async Task InvokeAsync_WhenUserIdGreaterThanZero_Should_Insert_Log()
 {
