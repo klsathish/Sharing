@@ -1,3 +1,47 @@
+[Fact]
+public async Task InvokeAsync_WithValidSession_Should_Insert_Log()
+{
+    // ---------- ARRANGE ----------
+    var logServiceMock = new Mock<IAPIRequestLogService>();
+
+    logServiceMock
+        .Setup(x => x.InsertAPIRequestLogsAndPerformanceLog(
+            It.IsAny<ApiRequestAndPerformanceLogRequest>(),
+            It.IsAny<ApiRequestAndPerformanceLogModels>()))
+        .ReturnsAsync(new CommonRes { StatusCode = StatusCodes.Status200OK });
+
+    var context = new DefaultHttpContext();
+    context.Request.Path = "/api/test";
+    context.Request.Method = "GET";
+
+    // 🔴 VERY IMPORTANT
+    context.Response.StatusCode = StatusCodes.Status200OK;
+
+    RequestDelegate next = ctx =>
+    {
+        ctx.Response.StatusCode = StatusCodes.Status200OK;
+        return Task.CompletedTask;
+    };
+
+    var middleware = new ApiRequestLoggingMiddleware(
+        next,
+        logServiceMock.Object);
+
+    // ---------- ACT ----------
+    await middleware.InvokeAsync(context);
+
+    // ---------- ASSERT ----------
+    logServiceMock.Verify(x =>
+        x.InsertAPIRequestLogsAndPerformanceLog(
+            It.IsAny<ApiRequestAndPerformanceLogRequest>(),
+            It.Is<ApiRequestAndPerformanceLogModels>(m =>
+                m.UserID == 1 &&
+                m.RoleID == 2 &&
+                m.EmployeeName == "John")),
+        Times.Once);
+}
+
+
 using Xunit;
 using Moq;
 using Microsoft.AspNetCore.Http;
