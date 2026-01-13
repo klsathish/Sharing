@@ -1,4 +1,67 @@
 [Fact]
+public async Task InvokeAsync_WhenUserIdGreaterThanZero_Should_Insert_Log()
+{
+    // ---------------- ARRANGE ----------------
+
+    // Mock log service
+    var logServiceMock = new Mock<IAPIRequestLogService>();
+
+    logServiceMock
+        .Setup(x => x.InsertAPIRequestLogsAndPerformanceLogs(
+            It.IsAny<ApiRequestAndPerformanceLogRequest>(),
+            It.IsAny<ApiRequestAndPerformanceLogModels>()))
+        .ReturnsAsync(new CommonRes { StatusCode = StatusCodes.Status200OK });
+
+    // Mock ServiceProvider
+    var serviceProviderMock = new Mock<IServiceProvider>();
+    serviceProviderMock
+        .Setup(x => x.GetService(typeof(IAPIRequestLogService)))
+        .Returns(logServiceMock.Object);
+
+    // Mock ServiceScope
+    var serviceScopeMock = new Mock<IServiceScope>();
+    serviceScopeMock
+        .Setup(x => x.ServiceProvider)
+        .Returns(serviceProviderMock.Object);
+
+    // Mock ServiceScopeFactory
+    var scopeFactoryMock = new Mock<IServiceScopeFactory>();
+    scopeFactoryMock
+        .Setup(x => x.CreateScope())
+        .Returns(serviceScopeMock.Object);
+
+    // HttpContext
+    var context = new DefaultHttpContext();
+    context.Request.Path = "/api/test";
+    context.Request.Method = "GET";
+    context.Response.StatusCode = StatusCodes.Status200OK;
+
+    // next delegate
+    RequestDelegate next = ctx =>
+    {
+        ctx.Response.StatusCode = StatusCodes.Status200OK;
+        return Task.CompletedTask;
+    };
+
+    // Middleware
+    var middleware = new ApiLoggingMiddleware(
+        next,
+        scopeFactoryMock.Object);
+
+    // ---------------- ACT ----------------
+    await middleware.InvokeAsync(context);
+
+    // ---------------- ASSERT ----------------
+    logServiceMock.Verify(x =>
+        x.InsertAPIRequestLogsAndPerformanceLogs(
+            It.IsAny<ApiRequestAndPerformanceLogRequest>(),
+            It.Is<ApiRequestAndPerformanceLogModels>(m =>
+                m.UserID > 0)),
+        Times.Once);
+}
+
+
+[Fact]
 public async Task InvokeAsync_WithValidSession_Should_Insert_Log()
 {
     // ---------- ARRANGE ----------
