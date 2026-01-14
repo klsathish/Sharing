@@ -1,107 +1,23 @@
-public class APIRequestLogRepository : IAPIRequestLogRepository
-{
-    private readonly SFDbContext _dbContext;
+ public class DashboardRepository : IDashboardRepository
+ {
+     private readonly SFDbContext _dbContext;
+     public DashboardRepository(SFDbContext dbContext)
+     {
+         _dbContext = dbContext;
+     }
+     public async Task<List<BaseFilterResult>> GetBaseFilter(FilterModel model)
+     {
+         return await _dbContext.BaseFilterResult.FromSqlRaw("EXEC [dbo].[SP_GetBaseFilters] {0},{1},{2},{3}",model.RoleID, model.TypeID, model.RegionID, model.CountryID).ToListAsync();
+     }
 
-    public APIRequestLogRepository(SFDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+     public async Task<List<MoreFiltersSBUandBUResult>> GetMoreFiltersSBUandBU(FilterModel model)
+     {
+         return await _dbContext.MoreFiltersSBUandBUResult.FromSqlRaw("EXEC [dbo].[SP_GetMoreFiltersSBUandBU]  {0}", model.SbuID).ToListAsync();
+     }
 
-    #region Helpers
-
-    private static object DbString(string? value) =>
-        string.IsNullOrWhiteSpace(value) ? DBNull.Value : value;
-
-    private static object DbValue<T>(T? value) where T : struct =>
-        value ?? (object)DBNull.Value;
-
-    #endregion
-
-    public async Task<List<APIRequestResults>> GetAPIRequestLog(DateFilter model)
-    {
-        return await _dbContext.APIRequestResults
-            .FromSqlRaw(
-                "EXEC dbo.SP_GetAPIRequestLog @FromDate, @ToDate",
-                new SqlParameter("@FromDate", DbValue(model.FromDate)),
-                new SqlParameter("@ToDate", DbValue(model.ToDate))
-            )
-            .ToListAsync();
-    }
-
-    public async Task InsertAPIRequestLog(APIRequestModel model)
-    {
-        await _dbContext.Database.ExecuteSqlRawAsync(
-            "EXEC dbo.SP_Insert_Update_APIRequestLog " +
-            "@RequestLogID, @UserID, @RoleID, @SessionID, @AppModuleMappingID, " +
-            "@ApiEndPoint, @HttpMethod, @StatusCode, @RequestBody, @RequestTimeStamp, " +
-            "@ResponseBody, @ResponseTimeStamp, @Duration, @CreatedBy, @LayerID",
-            new SqlParameter("@RequestLogID", 0),
-            new SqlParameter("@UserID", DbValue(model.UserID)),
-            new SqlParameter("@RoleID", DbValue(model.RoleID)),
-            new SqlParameter("@SessionID", DbValue(model.SessionID)),
-            new SqlParameter("@AppModuleMappingID", DbValue(model.AppModuleMappingID)),
-            new SqlParameter("@ApiEndPoint", DbString(model.ApiEndPoint)),
-            new SqlParameter("@HttpMethod", DbString(model.HttpMethod)),
-            new SqlParameter("@StatusCode", DbValue(model.StatusCode)),
-            new SqlParameter("@RequestBody", DbString(model.RequestBody)),
-            new SqlParameter("@RequestTimeStamp", DbValue(model.RequestTimeStamp)),
-            new SqlParameter("@ResponseBody", DbString(model.ResponseBody)),
-            new SqlParameter("@ResponseTimeStamp", DbValue(model.ResponseTimeStamp)),
-            new SqlParameter("@Duration", DbValue(model.Duration)),
-            new SqlParameter("@CreatedBy", DbString(model.CreatedBy)),
-            new SqlParameter("@LayerID", DbValue(model.LayerID))
-        );
-    }
-
-    public async Task<string> InsertAPIRequestLogsAndPerformanceLogs(
-        ApiRequestAndPerformanceLogRequest request,
-        ApiRequestAndPerformanceLogModel model)
-    {
-        var apiRequestLog = await _dbContext.Database.ExecuteSqlRawAsync(
-            "EXEC dbo.SP_Insert_Update_APIRequestLog " +
-            "@RequestLogID, @UserID, @RoleID, @SessionID, @AppModuleMappingID, " +
-            "@ApiEndPoint, @HttpMethod, @StatusCode, @RequestBody, @RequestTimeStamp, " +
-            "@ResponseBody, @ResponseTimeStamp, @Duration, @CreatedBy, @LayerID",
-            new SqlParameter("@RequestLogID", 0),
-            new SqlParameter("@UserID", DbValue(model.UserID)),
-            new SqlParameter("@RoleID", DbValue(model.RoleID)),
-            new SqlParameter("@SessionID", DbValue(model.SessionID)),
-            new SqlParameter("@AppModuleMappingID", DbValue(request.AppModuleMappingID)),
-            new SqlParameter("@ApiEndPoint", DbString(request.ApiEndPoint)),
-            new SqlParameter("@HttpMethod", DbString(request.HttpMethod)),
-            new SqlParameter("@StatusCode", DbValue(request.StatusCode)),
-            new SqlParameter("@RequestBody", DbString(request.RequestBody)),
-            new SqlParameter("@RequestTimeStamp", DbValue(request.RequestTimeStamp)),
-            new SqlParameter("@ResponseBody", DbString(request.ResponseBody)),
-            new SqlParameter("@ResponseTimeStamp", DbValue(request.ResponseTimeStamp)),
-            new SqlParameter("@Duration", DbValue(model.Duration)),
-            new SqlParameter("@CreatedBy", DbString(model.CreatedBy)),
-            new SqlParameter("@LayerID", DbValue(request.LayerID))
-        );
-
-        if (apiRequestLog == 0)
-            return SabicConstants.BadRequestMessage;
-
-        var performanceLog = await _dbContext.Database.ExecuteSqlRawAsync(
-            "EXEC dbo.SP_Insert_Update_PerformanceLog " +
-            "@PerformanceLogID, @UserID, @RoleID, @SessionID, @ComponentName, " +
-            "@ActionName, @StartTime, @EndTime, @Duration, @CreatedBy, @CreatedOn",
-            new SqlParameter("@PerformanceLogID", 0),
-            new SqlParameter("@UserID", DbValue(model.UserID)),
-            new SqlParameter("@RoleID", DbValue(model.RoleID)),
-            new SqlParameter("@SessionID", DbValue(model.SessionID)),
-            new SqlParameter("@ComponentName", DbString(request.ComponentName)),
-            new SqlParameter("@ActionName", DbString(request.ActionName)),
-            new SqlParameter("@StartTime", DbValue(request.RequestTimeStamp)),
-            new SqlParameter("@EndTime", DbValue(request.ResponseTimeStamp)),
-            new SqlParameter("@Duration", DbValue(model.Duration)),
-            new SqlParameter("@CreatedBy", DbString(model.CreatedBy)),
-            new SqlParameter("@CreatedOn", DbValue(model.CreatedOn))
-        );
-
-        if (performanceLog == 0)
-            return SabicConstants.BadRequestMessage;
-
-        return SabicConstants.SuccessMessage;
-    }
-}
+     public async Task<List<MoreFiltersProfitCenterResult>> GetMoreFiltersProfitCenter(FilterModel model)
+     {
+         return await _dbContext.MoreFiltersProfitCenterWarehouseResult.FromSqlRaw("EXEC [dbo].[SP_GetMoreFiltersProfitCenter] {0},{1}",
+             model.CompanyID, model.ProfitCenterID).ToListAsync();
+     }
+ }
