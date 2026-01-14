@@ -1,53 +1,94 @@
-public class DashboardRepository : IDashboardRepository
-{
-    private readonly SFDbContext _dbContext;
+ public class ExceptionHandlerRepository : IExceptionHandlerRepository
+ {
+     private readonly SFDbContext _dbContext;
+     public ExceptionHandlerRepository(SFDbContext dbContext)
+     {
+         _dbContext = dbContext;
+     }
 
-    public DashboardRepository(SFDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+     public async Task LogExceptionAsync(ExceptionDetails obj) => await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_ErrorLogging] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9}" +
+             ",{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21},{22},{23}",
+             obj.ErrorLogID, obj.UserID, obj.RoleID, obj.SessionID, obj.ApplicationID, obj.ScreenID, obj.ModuleID, obj.FunctionID, obj.LayerID, obj.APIID,
+             obj.StoredProcedureID, obj.ErrorNumber, obj.ErrorState, obj.ErrorSeverity, obj.StackTrace, obj.ErrorMessage, obj.RequestBody, obj.ResponseBody,
+             obj.Status, obj.HostName, obj.Environment, obj.CreatedBy, obj.UpdatedBy, obj.IPAddress);
 
-    #region Helpers
+     public async Task<List<ExceptionResults>> GetExceptionLogs(string ErrorMessage)
+     {
+         return await _dbContext.ExceptionResults.FromSqlRaw("EXEC [dbo].[SP_GetErrorLogging]  {0}", ErrorMessage).ToListAsync();
+     }
 
-    private static object DbString(string? value) =>
-        string.IsNullOrWhiteSpace(value) ? DBNull.Value : value;
+     public async Task<List<ExceptionResults>> GetAllExceptionLogs(DateFilter model) => await _dbContext.ExceptionResults.FromSqlRaw("EXEC [dbo].[SP_GetAllErrorLogging] {0},{1}",
+             model.FromDate,
+             model.ToDate).ToListAsync();
 
-    private static object DbValue<T>(T? value) where T : struct =>
-        value ?? (object)DBNull.Value;
+     public async Task<ExceptionUserActivityModel> GetExceptionUserActivityDetailsBySessionID(string sessionID)
+     {
+         var result = new ExceptionUserActivityModel();
 
-    #endregion
+         // Create a command to execute the stored procedure
+         using (var command = _dbContext.Database.GetDbConnection().CreateCommand())
+         {
+             command.CommandText = "EXEC SP_GetExceptionUserActivityDetailsBySessionID @sessionID";
+             command.CommandType = CommandType.Text;
+             command.Parameters.Add(new SqlParameter("@sessionID", sessionID));
 
-    public async Task<List<BaseFilterResult>> GetBaseFilter(FilterModel model)
-    {
-        return await _dbContext.BaseFilterResult
-            .FromSqlRaw(
-                "EXEC dbo.SP_GetBaseFilters @RoleID, @TypeID, @RegionID, @CountryID",
-                new SqlParameter("@RoleID", DbValue(model.RoleID)),
-                new SqlParameter("@TypeID", DbValue(model.TypeID)),
-                new SqlParameter("@RegionID", DbValue(model.RegionID)),
-                new SqlParameter("@CountryID", DbValue(model.CountryID))
-            )
-            .ToListAsync();
-    }
+             _dbContext.Database.OpenConnection();
 
-    public async Task<List<MoreFiltersSBUandBUResult>> GetMoreFiltersSBUandBU(FilterModel model)
-    {
-        return await _dbContext.MoreFiltersSBUandBUResult
-            .FromSqlRaw(
-                "EXEC dbo.SP_GetMoreFiltersSBUandBU @SbuID",
-                new SqlParameter("@SbuID", DbValue(model.SbuID))
-            )
-            .ToListAsync();
-    }
+             using (var reader = command.ExecuteReader())
+             {
+                 // Read first result set (single properties)
+                 if (reader.HasRows && reader.Read())
+                 {
+                     result.SessionID = reader.IsDBNull(0) ? null : reader.GetString(0);
+                     result.EmployeeName = reader.IsDBNull(1) ? null : reader.GetString(1);
+                     result.RoleName = reader.IsDBNull(2) ? null : reader.GetString(2);
+                     result.UserAgent = reader.IsDBNull(3) ? null : reader.GetString(3);
+                     result.Browser = reader.IsDBNull(4) ? null : reader.GetString(4);
+                     result.BrowserVersion = reader.IsDBNull(5) ? null : reader.GetString(5);
+                     result.SessionStartTimeStamp = reader.IsDBNull(6) ? null : reader.GetDateTime(6);
+                     result.IpAddress = reader.IsDBNull(7) ? null : reader.GetString(7);
+                     result.ApplicationName = reader.IsDBNull(8) ? null : reader.GetString(8);
+                 }
 
-    public async Task<List<MoreFiltersProfitCenterResult>> GetMoreFiltersProfitCenter(FilterModel model)
-    {
-        return await _dbContext.MoreFiltersProfitCenterWarehouseResult
-            .FromSqlRaw(
-                "EXEC dbo.SP_GetMoreFiltersProfitCenter @AffiliateID, @ProfitCenterID",
-                new SqlParameter("@AffiliateID", DbValue(model.CompanyID)),
-                new SqlParameter("@ProfitCenterID", DbValue(model.ProfitCenterID))
-            )
-            .ToListAsync();
-    }
-}
+                 // Move to next result set (list properties)
+                 reader.NextResult();
+
+                 // Read second result set (list properties)
+                 result.ExceptionUserActivityResults = new List<ExceptionUserActivityResults>();
+                 while (reader.Read())
+                 {
+                     result.ExceptionUserActivityResults.Add(new ExceptionUserActivityResults
+                     {
+                         EmployeeName = reader.IsDBNull(0) ? null : reader.GetString(0),
+                         RoleName = reader.IsDBNull(1) ? null : reader.GetString(1),
+                         ApplicationName = reader.IsDBNull(2) ? null : reader.GetString(2),
+                         FunctionalityName = reader.IsDBNull(3) ? null : reader.IsDBNull(3) ? null : reader.GetString(3),
+                         UserAction = reader.IsDBNull(4) ? null : reader.GetInt32(4),
+                         SessionID = reader.IsDBNull(5) ? null : reader.GetString(5),
+                         CreatedOn = reader.IsDBNull(6) ? null : reader.GetDateTime(6),
+                     });
+                 }
+             }
+         }
+
+         return result;
+     }
+
+     public async Task UpdateErrorLoggingAssigneeWithStatus(ExceptionDetails obj)
+     {
+         await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Update_ErrorLogging_AssigneeWith_Status] {0},{1},{2},{3}",
+             obj.ErrorLogID, obj.AssignTo, obj.ErrorStatusID, obj.UpdatedBy);
+     }
+
+
+
+     public async Task<ExceptionHandlerModel> GetErrorLogAssignDetailsAsync()
+     {
+         var result = new ExceptionHandlerModel();
+         var errorLogStstus = await _dbContext.ErrorLogStatus.FromSqlRaw("EXEC [dbo].[SP_GetErrorLogStatus]").ToListAsync();
+         var assignToUsers = await _dbContext.ErrorLogAssignToUser.FromSqlRaw("EXEC [dbo].[SP_GetErrorLog_AssignToUser]").ToListAsync();
+         result.LstErrorLogStatus = errorLogStstus;
+         result.LstErrorLogAssignToUser = assignToUsers;
+         return result;
+     }
+ }
