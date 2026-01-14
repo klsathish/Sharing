@@ -81,3 +81,74 @@ SP_Update_RecommendationStatus	@ActionTaken, @ActionTakenBy, @Comments, @Recomme
 SP_Update_User_IsActivated	@IsActivated, @UpdatedBy, @UserID
 sp_upgraddiagrams	NULL
 usp_AddandUpdateUserAndRoleMapping	@Email, @EmployeeId, @FirstName, @LastName, @RoleID, @Username
+
+
+  public class AccountRepository : IAccountRepository
+  {
+      private readonly SFDbContext _dbContext;
+      private readonly CommonDbContext _commonDbContext;
+
+      public AccountRepository(SFDbContext dbContext, CommonDbContext commonDbContext)
+      {
+          _dbContext = dbContext;
+          _commonDbContext = commonDbContext;
+      }
+
+      public async Task<List<UserAuth>> GetUserbyLoginIdAsync(string userName)
+      {
+          return await _dbContext.UserAuth.FromSqlRaw("EXEC [dbo].[SP_IsInternal_AuthenticatedUser] {0}", userName).ToListAsync();
+      }
+
+      public async Task<List<UserDetails>> GetAuthenticatedUserDetails(string userName)
+      {
+          return await _dbContext.UserDetails.FromSqlRaw("EXEC [dbo].[SP_GetAuthenticatedUserDetails] {0}", userName).ToListAsync();
+      }
+
+      /// <summary>
+      /// To logout and end sessions of a user
+      /// </summary>
+      /// <param name="userId"></param>
+      /// <returns></returns>
+      public async Task LogoutAndEndSessionByUserIdAsync(int userId)
+      {
+           await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_LogoutAndEndSessionByUserId] {0}", userId);
+      }
+
+      /// <summary>
+      /// To fetch valid claims
+      /// </summary>
+      /// <returns></returns>
+      public async Task<GetDataForAuthenticationByUserId> GetDataForAuthenticationByUserIdAsync(int userID)
+      {
+          var res =  await _dbContext.GetDataForAuthenticationByUserId.FromSqlRaw("EXEC [dbo].[SP_GetDataForAuthenticationByUserId] {0}", userID).ToListAsync();
+          return res.FirstOrDefault();
+      }
+
+      public async Task<MST_UserDetails_Infopoint?> GetUserFromCommonDb(string userName)
+      {
+          return await _commonDbContext.MST_UserDetails_Infopoint.Where(x => x.DomainLoginID == userName).FirstOrDefaultAsync();
+      }
+
+      public async Task<UserDetails?> GetUserDetails(string userName)
+      {
+          var response = await _dbContext.UserDetails.FromSqlRaw("EXEC [dbo].[SP_GetUserDetails] {0}", userName).ToListAsync();
+          return response?.FirstOrDefault();
+      }
+
+      public async Task<UserMenuAccessModel> IsAuthorizedRoleApi(int roleId, string url)
+      {
+          var res = await _dbContext.UserMenuAccessModel
+              .FromSqlRaw(
+                  @"EXEC [dbo].[SP_CheckRolePageAccess]
+                          @RoleID = @RoleID,
+                          @PageUrl = @PageUrl",
+                  new SqlParameter("@RoleID", roleId),
+                  new SqlParameter("@PageUrl", url)
+              )
+              .AsNoTracking()
+              .ToListAsync();
+
+          return res.FirstOrDefault()!;
+      }
+
+  }
