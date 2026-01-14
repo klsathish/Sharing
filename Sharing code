@@ -1,121 +1,103 @@
-public class UserManagementRepository : IUserManagementRepository
-{
-    private readonly SFDbContext _dbContext;
-    private readonly CommonDbContext _commonDbContext;
-
-    public UserManagementRepository(SFDbContext dbContext, CommonDbContext commonDbContext)
+    public class WorkflowRepository : IWorkflowRepository
     {
-        _dbContext = dbContext;
-        _commonDbContext = commonDbContext;
-    }
-
-    #region Helpers
-
-    private static object DbString(string? value) =>
-        string.IsNullOrWhiteSpace(value) ? DBNull.Value : value;
-
-    private static object DbValue<T>(T? value) where T : struct =>
-        value ?? (object)DBNull.Value;
-
-    #endregion
-
-    public async Task<List<UserMenu>> GetUserMenuList(int userId, int roleId)
-        => await _dbContext.UserMenu.FromSqlRaw(
-            "EXEC dbo.SP_GetUserMenus @UserId, @RoleId",
-            new SqlParameter("@UserId", userId),
-            new SqlParameter("@RoleId", roleId)
-        ).ToListAsync();
-
-    public async Task<List<User>> GetUserList()
-        => await _dbContext.User.FromSqlRaw(
-            "EXEC dbo.SP_GetUsers"
-        ).ToListAsync();
-
-    public async Task<InsertUpdateUserRes> InsertUpdateUserReq(InsertUpdateUserReq model)
-    {
-        var parameters = new[]
+        private readonly SFDbContext _db;
+        private readonly WorkFlowDbContext _workFlowDb;
+        public WorkflowRepository(SFDbContext dbContext, WorkFlowDbContext workFlowDbContext)
         {
-            new SqlParameter("@UserID", DbValue(model.UserID)),
-            new SqlParameter("@UserRoleIDs", DbString(model.UserRoleIDs)),
-            new SqlParameter("@UserName", DbString(model.UserName)),
-            new SqlParameter("@Email", DbString(model.Email)),
-            new SqlParameter("@FirstName", DbString(model.FirstName)),
-            new SqlParameter("@LastName", DbString(model.LastName)),
-            new SqlParameter("@EmployeeID", DbString(model.EmployeeID)),
-            new SqlParameter("@AffiliateID", DbValue(model.AffiliateID)),
-            new SqlParameter("@StatusID", DbValue(model.StatusID)),
-            new SqlParameter("@CreatedBy", DbString(model.CreatedBy)),
-            new SqlParameter("@IsInsert", model.IsInsert)
-        };
-
-        var result = _dbContext.Database
-            .SqlQueryRaw<string>(
-                "EXEC dbo.SP_Insert_Update_AssignedUser " +
-                "@UserID, @UserRoleIDs, @UserName, @Email, @FirstName, @LastName, " +
-                "@EmployeeID, @AffiliateID, @StatusID, @CreatedBy, @IsInsert",
-                parameters)
-            .AsEnumerable()
-            .FirstOrDefault();
-
-        return new InsertUpdateUserRes
-        {
-            Message = result
-        };
-    }
-
-    public async Task<string> DeactivateUserReq(DeactivateUserReq model)
-    {
-        var response = await _dbContext.Database.ExecuteSqlRawAsync(
-            "EXEC dbo.SP_Update_User_IsActivated @UserID, @IsActivated, @UpdatedBy",
-            new SqlParameter("@UserID", model.UserID),
-            new SqlParameter("@IsActivated", model.IsActivated),
-            new SqlParameter("@UpdatedBy", DbString(model.UpdatedBy))
-        );
-
-        return response == 0
-            ? SabicConstants.RecordNotFoundMessage
-            : SabicConstants.SuccessMessage;
-    }
-
-    public async Task<List<SearchUser>> GetSearchUserListFromAD(string searchText)
-    {
-        var searchUsers = new List<SearchUser>();
-
-        if (string.IsNullOrWhiteSpace(searchText) || searchText.Trim().Length <= 3)
-            return searchUsers;
-
-        var text = searchText.Trim().ToLower();
-
-        var users = await _commonDbContext.WS_TB_Employees_Info
-            .Where(x =>
-                (x.DomainLoginID ?? "").Replace("SABICCORP\\", "").ToLower().Contains(text) ||
-                (x.Email ?? "").ToLower().Contains(text) ||
-                (x.EmpName ?? "").ToLower().Contains(text))
-            .ToListAsync();
-
-        foreach (var item in users)
-        {
-            searchUsers.Add(new SearchUser
-            {
-                EmployeeID = Convert.ToString(item.EmpID),
-                LoginName = item.DomainLoginID?.Replace("SABIC\\", "SABICCORP\\"),
-                FirstName = item.FirstName,
-                LastName = item.LastName,
-                UserName = item.EmpName,
-                Email = item.Email
-            });
+            _db = dbContext;
+            _workFlowDb = workFlowDbContext;
         }
 
-        return searchUsers;
+
+        public async Task<WorkListWithSummaryModel> GetAllAsync(WorkFlowAction obj)
+        {
+            var WorkflowDetail = new WorkListWithSummaryModel();
+
+            var _RecommendationsStatistics = _db.RecommendationsStatistics.FromSqlRaw("EXEC [dbo].[SP_GetRecommendationsStatistics]").ToListAsync();
+            var RecommendationsStatistics = _RecommendationsStatistics.Result.FirstOrDefault();
+
+            var WorkRecommendation = _workFlowDb.WorkList.FromSqlRaw("EXEC [dbo].[SP_GetWorklistByDomainLoginID] {0}", obj.LoginId!).ToListAsync();
+
+            await Task.WhenAll(_RecommendationsStatistics, WorkRecommendation);
+
+            WorkflowDetail.RecommendationsStatistics = RecommendationsStatistics;
+            WorkflowDetail.WorkList = await WorkRecommendation;
+
+            return WorkflowDetail;
+        }
+
+
+        public async Task<WorkList> GetWorkListDataByDetailsAsync(WorkFlowAction obj)
+        {
+            var res = await _workFlowDb.WorkList.FromSqlRaw("EXEC [dbo].[SP_GetWorklistByDomainLoginID] {0},{1}", obj.LoginId!, obj.RecommendationId!).ToListAsync();
+            return res.FirstOrDefault() ?? new WorkList();
+        }
+
+
+        public async Task<WorkListChangeActionsModel> GetDetailsAsync(int requestNumber, string taskName)
+        {
+            var WorkflowDetail = new WorkListChangeActionsModel();
+
+            var changeVolume = await _workFlowDb.WorkListtRecommendationDetails.FromSqlRaw("EXEC [dbo].[SP_GetWorkListChangeSellingVolumeDetails] {0}", requestNumber).AsNoTracking().ToListAsync().ConfigureAwait(false);
+
+            var actionHistory = await _workFlowDb.WorkListActionHistory.FromSqlRaw("EXEC [dbo].[SP_GetWorklistActionHistoryByRecommendationID] {0}", requestNumber).AsNoTracking().ToListAsync().ConfigureAwait(false);
+
+            var takeActions = await _workFlowDb.WorkListRequestAction.FromSqlRaw("EXEC [dbo].[SP_GetWorkflowTaskActionsByTaskName] {0}", taskName).AsNoTracking().ToListAsync().ConfigureAwait(false);
+
+            WorkflowDetail.WorkListtRecommendationDetails = changeVolume.FirstOrDefault();
+            WorkflowDetail.WorkListActionHistory = actionHistory;
+            WorkflowDetail.WorkListRequestAction = takeActions;
+
+            return WorkflowDetail;
+        }
+        public async Task<List<WorkListRegionContributor>> GetRegionContributorAsync(int requestNumber)
+        {
+            return await _db.WorkListRegionContributor.FromSqlRaw("EXEC [dbo].[SP_GetWorkListRegionDetails] {0}", requestNumber).ToListAsync();
+        }
+
+
+        public async Task AddorUpdateActionAsync(WorkFlowAction obj) =>
+            await _workFlowDb.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_SF_WorkflowDetails] {0},{1},{2},{3}",
+               obj.RecommendationId!,
+               obj.Action!,
+               obj.LoginId!,
+               obj.Comments!);
+
+        #region WorkFlow Redirect
+
+        public async Task<IEnumerable<WorkflowRedirect>> GetAllRedirectsAsync() =>
+            await _workFlowDb.WorkflowRedirect.FromSqlRaw("EXEC [dbo].[SP_GetRedirectionWorklist]").ToListAsync();
+
+        public async Task AddorUpdateRedirectAsync(WorkflowRedirect redirect)
+        {
+            await _workFlowDb.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_WorklistRedirection] {0},{1},{2},{3},{4}",
+               redirect.RecommendationRequestID!,
+               redirect.FromUserDomainLoginID!,
+               redirect.ToUserDomainLoginID!,
+               redirect.Reason!,
+               redirect.CreatedBy!);
+        }
+
+        #endregion
+
+        #region Delegation
+
+        public async Task<IEnumerable<WorkflowDelegation>> GetDelegationListAsync(WorkflowDelegation model) =>
+            await _workFlowDb.WorkflowDelegation.FromSqlRaw("EXEC [dbo].[SP_GetDelegationDetailsByID] {0}", model.DelegationID == 0 ? null : model.DelegationID).ToListAsync();
+
+        public async Task AddorUpdateDelegationAsync(WorkflowDelegation obj) =>
+            await _workFlowDb.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_Delegation] {0},{1},{2},{3},{4},{5},{6},{7}",
+                obj.DelegationID!,
+                obj.FromUserDomainLoginID!,
+                obj.ToUserDomainLoginID!,
+                obj.StartDate!,
+                obj.EndDate!,
+                obj.Reason!,
+                obj.IsActive == true ? 1 : 0,
+                obj.CreatedBy!);
+
+        #endregion
+
+        public async Task UpdateRecommendationStatus(int recommendationRequestId, string actionTaken, string actionTakenBy, string comments, string workFlowStageName) =>
+            await _db.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Update_RecommendationStatus] {0},{1},{2},{3},{4}", recommendationRequestId, actionTaken, actionTakenBy, comments, workFlowStageName);
     }
-
-    public async Task<List<Role>> GetRoleList()
-        => await _dbContext.Roles.FromSqlRaw(
-            "EXEC dbo.SP_GetRole"
-        ).ToListAsync();
-
-    public async Task<List<Affiliate>> GetAffiliateList()
-        => await _dbContext.Affiliates.FromSqlRaw(
-            "EXEC dbo.SP_GetAffiliateForUserManagement"
-        ).ToListAsync();
-}
