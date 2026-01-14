@@ -1,79 +1,132 @@
- public class LoggingRepository : ILoggingRepository
- {
-     private readonly SFDbContext _dbContext;
-     public LoggingRepository(SFDbContext dbContext)
-     {
-         _dbContext = dbContext;
-     }
+public class LoggingRepository : ILoggingRepository
+{
+    private readonly SFDbContext _dbContext;
 
-     /// <summary>
-     /// To insert login activity data in ADM_UserLogin table
-     /// </summary>
-     /// <param name="loginActivity"></param>
-     /// <returns></returns>
-     public async Task AddLoginLogAsync(UserAuth user, AdmUserLoginInsert loginActivity,string sessionid)
-     {
-        await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_LoginActivity] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12}", loginActivity.LoginID,user.RoleID, loginActivity.IpAddress, loginActivity.BrowserName,
-            DateTime.Now,null, sessionid,loginActivity.Isonline,user.UserID,loginActivity.UserAgent,loginActivity.BrowserName,loginActivity.BrowserVersion,DateTime.Now);
-     }
+    public LoggingRepository(SFDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
 
-     /// <summary>
-     /// To insert session data in ADM_UserSession table
-     /// </summary>
-     /// <param name="sessionActivtity"></param>
-     /// <returns></returns>
-     public async Task AddSessionLogAsync(AdmUserSessionInsert sessionActivtity)
-     {
-         await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_UserLoginSession] {0},{1},{2},{3}", sessionActivtity.UserLoginSessionID, sessionActivtity.CreatedBy, sessionActivtity.SessionGUID, sessionActivtity.IsOnline);
-             
-     }
+    #region Helpers
 
-     /// <summary>
-     /// To insert token data in ADM_UserToken table
-     /// </summary>
-     /// <param name="sessionActivtity"></param>
-     /// <returns></returns>
-     public async Task AddTokenLogAsync(AdmUserTokenInsert tokenActivity)
-     {
-         await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_UserToken] {0},{1},{2},{3},{4}", tokenActivity.ID, tokenActivity.SessionGuid.ToString(), tokenActivity.TokenGuid.ToString(), tokenActivity.IsActive,tokenActivity.CreatedBy);
-     }
- }
+    private static object DbString(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? DBNull.Value : value;
+
+    private static object DbValue<T>(T? value) where T : struct =>
+        value ?? (object)DBNull.Value;
+
+    #endregion
+
+    /// <summary>
+    /// To insert login activity data in ADM_UserLogin table
+    /// </summary>
+    public async Task AddLoginLogAsync(UserAuth user, AdmUserLoginInsert loginActivity, string sessionId)
+    {
+        await _dbContext.Database.ExecuteSqlRawAsync(
+            "EXEC dbo.SP_Insert_Update_LoginActivity " +
+            "@Browser, @BrowserName, @BrowserVersion, @IpAddress, @IsOnline, " +
+            "@LoginID, @UserID, @LoginTime, @LogoutTime, @RoleID, @SessionID, " +
+            "@SessionStartTimeStamp, @UserAgent",
+            new SqlParameter("@Browser", DbString(loginActivity.BrowserName)),
+            new SqlParameter("@BrowserName", DbString(loginActivity.BrowserName)),
+            new SqlParameter("@BrowserVersion", DbString(loginActivity.BrowserVersion)),
+            new SqlParameter("@IpAddress", DbString(loginActivity.IpAddress)),
+            new SqlParameter("@IsOnline", DbValue(loginActivity.Isonline)),
+            new SqlParameter("@LoginID", DbValue(loginActivity.LoginID)),
+            new SqlParameter("@UserID", DbValue(user.UserID)),
+            new SqlParameter("@LoginTime", DbValue(DateTime.Now)),
+            new SqlParameter("@LogoutTime", DbValue<DateTime?>(null)),
+            new SqlParameter("@RoleID", DbValue(user.RoleID)),
+            new SqlParameter("@SessionID", DbString(sessionId)),
+            new SqlParameter("@SessionStartTimeStamp", DbValue(DateTime.Now)),
+            new SqlParameter("@UserAgent", DbString(loginActivity.UserAgent))
+        );
+    }
+
+    /// <summary>
+    /// To insert session data in ADM_UserSession table
+    /// </summary>
+    public async Task AddSessionLogAsync(AdmUserSessionInsert sessionActivity)
+    {
+        await _dbContext.Database.ExecuteSqlRawAsync(
+            "EXEC dbo.SP_Insert_Update_UserLoginSession " +
+            "@IsActive, @SessionID, @UserID, @UserLoginSessionID",
+            new SqlParameter("@IsActive", DbValue(sessionActivity.IsOnline)),
+            new SqlParameter("@SessionID", DbString(sessionActivity.SessionGUID)),
+            new SqlParameter("@UserID", DbValue(sessionActivity.UserID)),
+            new SqlParameter("@UserLoginSessionID", DbValue(sessionActivity.UserLoginSessionID))
+        );
+    }
+
+    /// <summary>
+    /// To insert token data in ADM_UserToken table
+    /// </summary>
+    public async Task AddTokenLogAsync(AdmUserTokenInsert tokenActivity)
+    {
+        await _dbContext.Database.ExecuteSqlRawAsync(
+            "EXEC dbo.SP_Insert_Update_UserToken " +
+            "@ID, @IsActive, @SessionID, @Token, @UserID",
+            new SqlParameter("@ID", DbValue(tokenActivity.ID)),
+            new SqlParameter("@IsActive", DbValue(tokenActivity.IsActive)),
+            new SqlParameter("@SessionID", DbString(tokenActivity.SessionGuid.ToString())),
+            new SqlParameter("@Token", DbString(tokenActivity.TokenGuid.ToString())),
+            new SqlParameter("@UserID", DbValue(tokenActivity.UserID))
+        );
+    }
+}
 
 
- public class PerormanceAPIRepository:IPerformanceAPIRepository
- {
-     private readonly SFDbContext _dbContext;
-     public PerormanceAPIRepository(SFDbContext dbContext)
-     {
-         _dbContext = dbContext;
-     }
+public class PerormanceAPIRepository : IPerformanceAPIRepository
+{
+    private readonly SFDbContext _dbContext;
 
-     public async Task<List<PerformanceAPIResults>> GetPerformanceLogs(DateFilter model) => await _dbContext.PerformanceAPIResults.FromSqlRaw("EXEC [dbo].[SP_GetPerformanceLog] {0},{1}",
-             model.FromDate,
-             model.ToDate
-             ).ToListAsync();
+    public PerormanceAPIRepository(SFDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
 
+    #region Helpers
 
-     public async Task<string> InsertPerformanceLog(PerformanceLog performanceLog)
-     {
-         var response = await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_PerformanceLog] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}"
-               , 0
-               , performanceLog.UserID
-               , performanceLog.RoleID
-               , performanceLog.SessionID
-               , performanceLog.ComponentName
-               , performanceLog.ActionName
-               , performanceLog.StartTime
-               , performanceLog.EndTime
-               , performanceLog.Duration
-               , performanceLog.CreatedBy
-               , performanceLog.CreatedOn
-               );
-         if (response == 0)
-         {
-             return SabicConstants.BadRequestMessage;
-         }
-         return SabicConstants.SuccessMessage;
-     }
+    private static object DbString(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? DBNull.Value : value;
 
- }
+    private static object DbValue<T>(T? value) where T : struct =>
+        value ?? (object)DBNull.Value;
+
+    #endregion
+
+    public async Task<List<PerformanceAPIResults>> GetPerformanceLogs(DateFilter model)
+    {
+        return await _dbContext.PerformanceAPIResults
+            .FromSqlRaw(
+                "EXEC dbo.SP_GetPerformanceLog @FromDate, @ToDate",
+                new SqlParameter("@FromDate", DbValue(model.FromDate)),
+                new SqlParameter("@ToDate", DbValue(model.ToDate))
+            )
+            .ToListAsync();
+    }
+
+    public async Task<string> InsertPerformanceLog(PerformanceLog performanceLog)
+    {
+        var response = await _dbContext.Database.ExecuteSqlRawAsync(
+            "EXEC dbo.SP_Insert_Update_PerformanceLog " +
+            "@PerformanceLogID, @UserID, @RoleID, @SessionID, @ComponentName, " +
+            "@ActionName, @StartTime, @EndTime, @Duration, @CreatedBy, @CreatedOn",
+            new SqlParameter("@PerformanceLogID", 0),
+            new SqlParameter("@UserID", DbValue(performanceLog.UserID)),
+            new SqlParameter("@RoleID", DbValue(performanceLog.RoleID)),
+            new SqlParameter("@SessionID", DbString(performanceLog.SessionID)),
+            new SqlParameter("@ComponentName", DbString(performanceLog.ComponentName)),
+            new SqlParameter("@ActionName", DbString(performanceLog.ActionName)),
+            new SqlParameter("@StartTime", DbValue(performanceLog.StartTime)),
+            new SqlParameter("@EndTime", DbValue(performanceLog.EndTime)),
+            new SqlParameter("@Duration", DbValue(performanceLog.Duration)),
+            new SqlParameter("@CreatedBy", DbString(performanceLog.CreatedBy)),
+            new SqlParameter("@CreatedOn", DbValue(performanceLog.CreatedOn))
+        );
+
+        return response == 0
+            ? SabicConstants.BadRequestMessage
+            : SabicConstants.SuccessMessage;
+    }
+}
