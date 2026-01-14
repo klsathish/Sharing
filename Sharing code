@@ -1,23 +1,53 @@
- public class DashboardRepository : IDashboardRepository
- {
-     private readonly SFDbContext _dbContext;
-     public DashboardRepository(SFDbContext dbContext)
-     {
-         _dbContext = dbContext;
-     }
-     public async Task<List<BaseFilterResult>> GetBaseFilter(FilterModel model)
-     {
-         return await _dbContext.BaseFilterResult.FromSqlRaw("EXEC [dbo].[SP_GetBaseFilters] {0},{1},{2},{3}",model.RoleID, model.TypeID, model.RegionID, model.CountryID).ToListAsync();
-     }
+public class DashboardRepository : IDashboardRepository
+{
+    private readonly SFDbContext _dbContext;
 
-     public async Task<List<MoreFiltersSBUandBUResult>> GetMoreFiltersSBUandBU(FilterModel model)
-     {
-         return await _dbContext.MoreFiltersSBUandBUResult.FromSqlRaw("EXEC [dbo].[SP_GetMoreFiltersSBUandBU]  {0}", model.SbuID).ToListAsync();
-     }
+    public DashboardRepository(SFDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
 
-     public async Task<List<MoreFiltersProfitCenterResult>> GetMoreFiltersProfitCenter(FilterModel model)
-     {
-         return await _dbContext.MoreFiltersProfitCenterWarehouseResult.FromSqlRaw("EXEC [dbo].[SP_GetMoreFiltersProfitCenter] {0},{1}",
-             model.CompanyID, model.ProfitCenterID).ToListAsync();
-     }
- }
+    #region Helpers
+
+    private static object DbString(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? DBNull.Value : value;
+
+    private static object DbValue<T>(T? value) where T : struct =>
+        value ?? (object)DBNull.Value;
+
+    #endregion
+
+    public async Task<List<BaseFilterResult>> GetBaseFilter(FilterModel model)
+    {
+        return await _dbContext.BaseFilterResult
+            .FromSqlRaw(
+                "EXEC dbo.SP_GetBaseFilters @RoleID, @TypeID, @RegionID, @CountryID",
+                new SqlParameter("@RoleID", DbValue(model.RoleID)),
+                new SqlParameter("@TypeID", DbValue(model.TypeID)),
+                new SqlParameter("@RegionID", DbValue(model.RegionID)),
+                new SqlParameter("@CountryID", DbValue(model.CountryID))
+            )
+            .ToListAsync();
+    }
+
+    public async Task<List<MoreFiltersSBUandBUResult>> GetMoreFiltersSBUandBU(FilterModel model)
+    {
+        return await _dbContext.MoreFiltersSBUandBUResult
+            .FromSqlRaw(
+                "EXEC dbo.SP_GetMoreFiltersSBUandBU @SbuID",
+                new SqlParameter("@SbuID", DbValue(model.SbuID))
+            )
+            .ToListAsync();
+    }
+
+    public async Task<List<MoreFiltersProfitCenterResult>> GetMoreFiltersProfitCenter(FilterModel model)
+    {
+        return await _dbContext.MoreFiltersProfitCenterWarehouseResult
+            .FromSqlRaw(
+                "EXEC dbo.SP_GetMoreFiltersProfitCenter @AffiliateID, @ProfitCenterID",
+                new SqlParameter("@AffiliateID", DbValue(model.CompanyID)),
+                new SqlParameter("@ProfitCenterID", DbValue(model.ProfitCenterID))
+            )
+            .ToListAsync();
+    }
+}
