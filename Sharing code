@@ -1,255 +1,83 @@
-Option 1: Formal & Professional (Recommended)
-Subject: Attachment: ISRT Documents for Web and SQL (WCI & SF)
-Hi [Name],
-Please find the attached ISRT (Installation and System Readiness Test) documents covering the Web and SQL components for both WCI and SF.
-These documents have been updated to reflect the current deployment requirements. Could you please review them and let me know if any further modifications are needed before we proceed?
-Best regards,
-[Your Name]
-
-
-[Fact]
-public async Task InvokeAsync_WhenUserIdGreaterThanZero_Should_Insert_Log()
-{
-    // ---------------- ARRANGE ----------------
-
-    // Mock log service
-    var logServiceMock = new Mock<IAPIRequestLogService>();
-
-    logServiceMock
-        .Setup(x => x.InsertAPIRequestLogsAndPerformanceLogs(
-            It.IsAny<ApiRequestAndPerformanceLogRequest>(),
-            It.IsAny<ApiRequestAndPerformanceLogModels>()))
-        .ReturnsAsync(new CommonRes { StatusCode = StatusCodes.Status200OK });
-
-    // Mock ServiceProvider
-    var serviceProviderMock = new Mock<IServiceProvider>();
-    serviceProviderMock
-        .Setup(x => x.GetService(typeof(IAPIRequestLogService)))
-        .Returns(logServiceMock.Object);
-
-    // Mock ServiceScope
-    var serviceScopeMock = new Mock<IServiceScope>();
-    serviceScopeMock
-        .Setup(x => x.ServiceProvider)
-        .Returns(serviceProviderMock.Object);
-
-    // Mock ServiceScopeFactory
-    var scopeFactoryMock = new Mock<IServiceScopeFactory>();
-    scopeFactoryMock
-        .Setup(x => x.CreateScope())
-        .Returns(serviceScopeMock.Object);
-
-    // HttpContext
-    var context = new DefaultHttpContext();
-    context.Request.Path = "/api/test";
-    context.Request.Method = "GET";
-    context.Response.StatusCode = StatusCodes.Status200OK;
-
-    // next delegate
-    RequestDelegate next = ctx =>
-    {
-        ctx.Response.StatusCode = StatusCodes.Status200OK;
-        return Task.CompletedTask;
-    };
-
-    // Middleware
-    var middleware = new ApiLoggingMiddleware(
-        next,
-        scopeFactoryMock.Object);
-
-    // ---------------- ACT ----------------
-    await middleware.InvokeAsync(context);
-
-    // ---------------- ASSERT ----------------
-    logServiceMock.Verify(x =>
-        x.InsertAPIRequestLogsAndPerformanceLogs(
-            It.IsAny<ApiRequestAndPerformanceLogRequest>(),
-            It.Is<ApiRequestAndPerformanceLogModels>(m =>
-                m.UserID > 0)),
-        Times.Once);
-}
-
-
-[Fact]
-public async Task InvokeAsync_WithValidSession_Should_Insert_Log()
-{
-    // ---------- ARRANGE ----------
-    var logServiceMock = new Mock<IAPIRequestLogService>();
-
-    logServiceMock
-        .Setup(x => x.InsertAPIRequestLogsAndPerformanceLog(
-            It.IsAny<ApiRequestAndPerformanceLogRequest>(),
-            It.IsAny<ApiRequestAndPerformanceLogModels>()))
-        .ReturnsAsync(new CommonRes { StatusCode = StatusCodes.Status200OK });
-
-    var context = new DefaultHttpContext();
-    context.Request.Path = "/api/test";
-    context.Request.Method = "GET";
-
-    // 🔴 VERY IMPORTANT
-    context.Response.StatusCode = StatusCodes.Status200OK;
-
-    RequestDelegate next = ctx =>
-    {
-        ctx.Response.StatusCode = StatusCodes.Status200OK;
-        return Task.CompletedTask;
-    };
-
-    var middleware = new ApiRequestLoggingMiddleware(
-        next,
-        logServiceMock.Object);
-
-    // ---------- ACT ----------
-    await middleware.InvokeAsync(context);
-
-    // ---------- ASSERT ----------
-    logServiceMock.Verify(x =>
-        x.InsertAPIRequestLogsAndPerformanceLog(
-            It.IsAny<ApiRequestAndPerformanceLogRequest>(),
-            It.Is<ApiRequestAndPerformanceLogModels>(m =>
-                m.UserID == 1 &&
-                m.RoleID == 2 &&
-                m.EmployeeName == "John")),
-        Times.Once);
-}
-
-
-using Xunit;
-using Moq;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using WCI_APIs.Middlewares;
-using WCICore.Contract;
-using WCICore.Model;
-
-public class ApiLoggingMiddlewareTests
-{
-    private DefaultHttpContext CreateContext(string session)
-    {
-        var context = new DefaultHttpContext();
-
-        context.Request.Body = new MemoryStream(
-            Encoding.UTF8.GetBytes("{\"name\":\"test\"}")
-        );
-
-        context.Response.Body = new MemoryStream();
-        context.Request.Method = "POST";
-        context.Request.Scheme = "https";
-        context.Request.Host = new HostString("localhost");
-        context.Request.Path = "/api/orders/create";
-        context.Request.RouteValues["action"] = "create";
-
-        context.Items["Session"] = session; // used by CommonUtils
-
-        return context;
-    }
-
-    private ApiLoggingMiddleware CreateMiddleware(
-        IAPIRequestLogService logService,
-        out bool nextCalled)
-    {
-        nextCalled = false;
-
-        RequestDelegate next = ctx =>
-        {
-            nextCalled = true;
-            ctx.Response.StatusCode = StatusCodes.Status200OK;
-            return ctx.Response.WriteAsync("OK");
-        };
-
-        var serviceProvider = new Mock<IServiceProvider>();
-        serviceProvider
-            .Setup(s => s.GetService(typeof(IAPIRequestLogService)))
-            .Returns(logService);
-
-        var scope = new Mock<IServiceScope>();
-        scope.Setup(s => s.ServiceProvider)
-             .Returns(serviceProvider.Object);
-
-        var scopeFactory = new Mock<IServiceScopeFactory>();
-        scopeFactory.Setup(s => s.CreateScope())
-                    .Returns(scope.Object);
-
-        return new ApiLoggingMiddleware(next, scopeFactory.Object);
-    }
-
-    [Fact]
-    public async Task InvokeAsync_WithValidSession_Should_Insert_Log()
-    {
-        // Arrange
-        var context = CreateContext("1:session123:2:John");
-
-        var logServiceMock = new Mock<IAPIRequestLogService>();
-        logServiceMock
-            .Setup(x => x.InsertAPIRequestLogsAndPerformanceLogs(
-                It.IsAny<ApiRequestAndPerformanceLogRequest>(),
-                It.IsAny<ApiRequestAndPerformanceLogModel>()))
-            .Returns(Task.CompletedTask);
-
-        var middleware = CreateMiddleware(logServiceMock.Object, out bool nextCalled);
-
-        // Act
-        await middleware.InvokeAsync(context);
-
-        // Assert
-        Assert.True(nextCalled);
-
-        logServiceMock.Verify(
-            x => x.InsertAPIRequestLogsAndPerformanceLogs(
-                It.IsAny<ApiRequestAndPerformanceLogRequest>(),
-                It.Is<ApiRequestAndPerformanceLogModel>(m =>
-                    m.UserID == 1 &&
-                    m.RoleID == 2 &&
-                    m.EmployeeName == "John")),
-            Times.Once);
-    }
-
-    [Fact]
-    public async Task InvokeAsync_WithInvalidSession_Should_Not_Insert_Log()
-    {
-        // Arrange
-        var context = CreateContext(""); // no session
-
-        var logServiceMock = new Mock<IAPIRequestLogService>();
-
-        var middleware = CreateMiddleware(logServiceMock.Object, out bool nextCalled);
-
-        // Act
-        await middleware.InvokeAsync(context);
-
-        // Assert
-        Assert.True(nextCalled);
-
-        logServiceMock.Verify(
-            x => x.InsertAPIRequestLogsAndPerformanceLogs(
-                It.IsAny<ApiRequestAndPerformanceLogRequest>(),
-                It.IsAny<ApiRequestAndPerformanceLogModel>()),
-            Times.Never);
-    }
-
-    [Fact]
-    public async Task InvokeAsync_WithUserIdZero_Should_Not_Insert_Log()
-    {
-        // Arrange
-        var context = CreateContext("abc:session:xyz:name");
-
-        var logServiceMock = new Mock<IAPIRequestLogService>();
-
-        var middleware = CreateMiddleware(logServiceMock.Object, out bool nextCalled);
-
-        // Act
-        await middleware.InvokeAsync(context);
-
-        // Assert
-        Assert.True(nextCalled);
-
-        logServiceMock.Verify(
-            x => x.InsertAPIRequestLogsAndPerformanceLogs(
-                It.IsAny<ApiRequestAndPerformanceLogRequest>(),
-                It.IsAny<ApiRequestAndPerformanceLogModel>()),
-            Times.Never);
-    }
-}
+SP_AddActivityLogForAdmin	@ActivityType, @CreatedBy, @IdentityColID, @NewValue, @OldValue, @TableName
+sp_AddWorkflowDelegation	@CreatedBy, @FromDate, @FromUserId, @IsEffective, @ProcessId, @ToDate, @ToUserId
+sp_AddWorkflowRedirect	@AssignedDate, @Department, @PendingWithDesignate, @PendingWithId, @PendingWithName, @Reason, @RedirectedFrom, @RedirectedFromEmail, @RedirectedOn, @RedirectedTo, @RedirectedToEmail, @WorkflowNumber
+SP_AddWorkRecommendationAction	@ActionBy, @ActionTaken, @Comments, @RequestNumber, @StageName
+sp_alterdiagram	@definition, @diagramname, @owner_id, @version
+SP_CreateCMLogicFORRecommendations	@BU, @CompanyCode, @FromDate, @ProfitCenterID, @SBU, @ToDate
+sp_creatediagram	@definition, @diagramname, @owner_id, @version
+sp_dropdiagram	@diagramname, @owner_id
+SP_GetAffiliate	@CountryID
+SP_GetAffiliateForUserManagement	NULL
+SP_GetAllErrorLogging	@FromDate, @ToDate
+SP_GetAllWorkRecommendations	@BU, @CompanyCode, @FromDate, @ProfitCenterID, @SBU, @ToDate
+SP_GetAPIRequestLog	@FromDate, @ToDate
+SP_GetAuthenticatedUserDetails	@Username
+SP_GetAverageSellingPrice	@BU, @CompanyCode, @FromDate, @ProfitCenterID, @SBU, @ToDate, @TypeID
+SP_GetBaseFilters	@CountryID, @RegionID, @RoleID, @TypeID
+SP_GetCMRecommendations	@BU, @CompanyCode, @FromDate, @ProfitCenterID, @SBU, @ToDate
+SP_GetCMRecommendationsDetailsByID	@RecommendationID
+SP_GetCMRecommendationViewRegionData	@RecommendationID
+SP_GetContributionMargin	@BU, @CompanyCode, @DateRange, @ProfitCenterID, @SBU, @TypeID
+SP_GetContributionMarginCard	@BU, @CompanyCode, @FromDate, @ProfitCenterID, @SBU, @ToDate, @TypeID
+SP_GetContributionMarginTrend	@BU, @CompanyCode, @FromDate, @ProfitCenterID, @SBU, @ToDate, @TypeID
+SP_GetCountry	@RegionID
+SP_GetDataForAuthenticationByUserId	@UserID
+SP_GetErrorLog_AssignToUser	NULL
+SP_GetErrorLogging	@ErrorMessage
+SP_GetErrorLogStatus	NULL
+SP_GetExceptionUserActivityDetailsBySessionID	@SessionID
+SP_GetForecastRanges	NULL
+SP_GetHistoricalSavings	@BU, @CompanyCode, @FromDate, @ProfitCenterID, @SBU, @ToDate, @TypeID
+SP_GetLoginActivity	@FromDate, @ToDate
+SP_GetLoginUserActivity	@FromDate, @ToDate
+SP_GetMoreFiltersProfitCenter	@affiliateID, @profitCenterID
+SP_GetMoreFiltersSBUandBU	@sbuID
+SP_GetPerformanceLog	@FromDate, @ToDate
+SP_GetProductionMapDetails	@BU, @CompanyCode, @FromDate, @ProfitCenterID, @SBU, @ToDate, @TypeID
+SP_GetRecommendationDetails	@BU, @CompanyCode, @FromDate, @ProfitCenterID, @SBU, @ToDate, @TypeID
+SP_GetRecommendationForGlobalMap	@BU, @CompanyCode, @FromDate, @ProfitCenterID, @SBU, @ToDate, @TypeID
+SP_GetRecommendationsCard	@BU, @CompanyCode, @FromDate, @ProfitCenterID, @SBU, @ToDate, @TypeID
+SP_GetRecommendationsStatistics	NULL
+SP_GetRegion	NULL
+SP_GetRevenueRecommendations	@RecommendationID
+SP_GetRevenueTrend	@BU, @CompanyCode, @FromDate, @ProfitCenterID, @SBU, @ToDate, @TypeID
+SP_GetRole	NULL
+SP_GetSalesVolumeTrend	@BU, @CompanyCode, @FromDate, @ProfitCenterID, @SBU, @ToDate, @TypeID
+SP_GetSessionDetails	@SessionID
+SP_GetUserMenus	@RoleID, @UserID
+SP_GetUsers	NULL
+SP_GetVariableCostRecommendations	@RecommendationID
+SP_GetViewDataForRecommendations_tobeDelete	@RecommendationID, @TypeID
+sp_GetWorkflowDelegationList	@CompanyCode, @FromDate, @ProfitCenter, @ToDate
+SP_GetWorkFlowRecommendationDetails	@BU, @CompanyCode, @FromDate, @ProfitCenterID, @SBU, @ToDate
+sp_GetWorkflowRedirects	@RecommendationRequestID
+SP_GetWorkListActionHistoryDetails	@RequestNumber
+SP_GetWorkListChangeSellingVolumeDetails	@RequestNumber
+SP_GetWorkListRegionDetails	@RequestNumber
+SP_GetWorkListRequestActions	@RequestNumber
+SP_GetWorkSummaryCounts	@BU, @CompanyCode, @FromDate, @ProfitCenterID, @SBU, @ToDate
+SP_GetXMLValueForLog	@ID, @IdentityColumn, @Tablename, @XMLValue
+sp_helpdiagramdefinition	@diagramname, @owner_id
+sp_helpdiagrams	@diagramname, @owner_id
+SP_Insert_SF_CM_From_SourceView	NULL
+SP_Insert_SF_Historic_Cogs_CM_From_SourceView	NULL
+SP_Insert_SF_Historic_SalesRevenue_From_SourceView	NULL
+SP_Insert_Update_ActivityTracker	@ActivityTrackerID, @CreatedBy, @FunctionID, @ScreenID, @UserActionID
+SP_Insert_Update_APIRequestLog	@ApiEndPoint, @AppModuleMappingID, @CreatedBy, @Duration, @HttpMethod, @LayerID, @SessionID, @StatusCode, @UserID, @RequestBody, @RequestLogID, @RequestTimeStamp, @ResponseBody, @ResponseTimeStamp, @RoleID
+SP_Insert_Update_AssignedUser	@AffiliateID, @CreatedBy, @Email, @EmployeeID, @FirstName, @IsInsert, @LastName, @StatusID, @UserID, @UserName, @UserRoleIDs
+SP_Insert_Update_ErrorLogging	@APIID, @ApplicationID, @CreatedBy, @Environment, @ErrorLogID, @ErrorMessage, @SessionID, @StackTrace, @Status, @StoredProcedureID, @UpdatedBy, @UserID, @LayerID, @ModuleID, @RequestBody, @ResponseBody, @RoleID, @ScreenID, @ErrorNumber, @ErrorSeverity, @ErrorState, @FunctionID, @HostName, @IpAddress
+SP_Insert_Update_LoginActivity	@Browser, @BrowserName, @BrowserVersion, @IpAddress, @IsOnline, @LoginID, @UserID, @LoginTime, @LogoutTime, @RoleID, @SessionID, @SessionStartTimeStamp, @UserAgent
+SP_Insert_Update_PerformanceLog	@ActionName, @ComponentName, @CreatedBy, @CreatedOn, @Duration, @EndTime, @PerformanceLogID, @RoleID, @SessionID, @StartTime, @UserID
+SP_Insert_Update_UserLoginSession	@IsActive, @SessionID, @UserID, @UserLoginSessionID
+SP_Insert_Update_UserRoleMapping	@CreatedBy, @DomainUserID, @IsActive, @IsSelectedRole, @RoleIDs, @UserRoleMappingID
+SP_Insert_Update_UserToken	@ID, @IsActive, @SessionID, @Token, @UserID
+SP_InsertActualsDataFromMasterViews	NULL
+SP_InsertDSOutput	NULL
+SP_IsInternal_AuthenticatedUser	@Username
+SP_LogoutAndEndSessionByUserId	@UserID
+sp_renamediagram	@diagramname, @new_diagramname, @owner_id
+SP_Update_ErrorLogging_AssigneeWith_Status	@AssigneeUserID, @ErrorLogID, @ErrorStatusID, @UpdatedBy
+SP_Update_RecommendationStatus	@ActionTaken, @ActionTakenBy, @Comments, @RecommendationID, @WorkFlowStageName
+SP_Update_User_IsActivated	@IsActivated, @UpdatedBy, @UserID
+sp_upgraddiagrams	NULL
+usp_AddandUpdateUserAndRoleMapping	@Email, @EmployeeId, @FirstName, @LastName, @RoleID, @Username
