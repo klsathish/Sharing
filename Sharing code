@@ -1,153 +1,79 @@
-public class ExceptionHandlerRepository : IExceptionHandlerRepository
-{
-    private readonly SFDbContext _dbContext;
+ public class LoggingRepository : ILoggingRepository
+ {
+     private readonly SFDbContext _dbContext;
+     public LoggingRepository(SFDbContext dbContext)
+     {
+         _dbContext = dbContext;
+     }
 
-    public ExceptionHandlerRepository(SFDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+     /// <summary>
+     /// To insert login activity data in ADM_UserLogin table
+     /// </summary>
+     /// <param name="loginActivity"></param>
+     /// <returns></returns>
+     public async Task AddLoginLogAsync(UserAuth user, AdmUserLoginInsert loginActivity,string sessionid)
+     {
+        await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_LoginActivity] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12}", loginActivity.LoginID,user.RoleID, loginActivity.IpAddress, loginActivity.BrowserName,
+            DateTime.Now,null, sessionid,loginActivity.Isonline,user.UserID,loginActivity.UserAgent,loginActivity.BrowserName,loginActivity.BrowserVersion,DateTime.Now);
+     }
 
-    #region Helpers
+     /// <summary>
+     /// To insert session data in ADM_UserSession table
+     /// </summary>
+     /// <param name="sessionActivtity"></param>
+     /// <returns></returns>
+     public async Task AddSessionLogAsync(AdmUserSessionInsert sessionActivtity)
+     {
+         await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_UserLoginSession] {0},{1},{2},{3}", sessionActivtity.UserLoginSessionID, sessionActivtity.CreatedBy, sessionActivtity.SessionGUID, sessionActivtity.IsOnline);
+             
+     }
 
-    private static object DbString(string? value) =>
-        string.IsNullOrWhiteSpace(value) ? DBNull.Value : value;
+     /// <summary>
+     /// To insert token data in ADM_UserToken table
+     /// </summary>
+     /// <param name="sessionActivtity"></param>
+     /// <returns></returns>
+     public async Task AddTokenLogAsync(AdmUserTokenInsert tokenActivity)
+     {
+         await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_UserToken] {0},{1},{2},{3},{4}", tokenActivity.ID, tokenActivity.SessionGuid.ToString(), tokenActivity.TokenGuid.ToString(), tokenActivity.IsActive,tokenActivity.CreatedBy);
+     }
+ }
 
-    private static object DbValue<T>(T? value) where T : struct =>
-        value ?? (object)DBNull.Value;
 
-    #endregion
+ public class PerormanceAPIRepository:IPerformanceAPIRepository
+ {
+     private readonly SFDbContext _dbContext;
+     public PerormanceAPIRepository(SFDbContext dbContext)
+     {
+         _dbContext = dbContext;
+     }
 
-    public async Task LogExceptionAsync(ExceptionDetails obj)
-    {
-        await _dbContext.Database.ExecuteSqlRawAsync(
-            "EXEC dbo.SP_Insert_Update_ErrorLogging " +
-            "@ErrorLogID, @UserID, @RoleID, @SessionID, @ApplicationID, @ScreenID, " +
-            "@ModuleID, @FunctionID, @LayerID, @APIID, @StoredProcedureID, " +
-            "@ErrorNumber, @ErrorState, @ErrorSeverity, @StackTrace, @ErrorMessage, " +
-            "@RequestBody, @ResponseBody, @Status, @HostName, @Environment, " +
-            "@CreatedBy, @UpdatedBy, @IpAddress",
-            new SqlParameter("@ErrorLogID", DbValue(obj.ErrorLogID)),
-            new SqlParameter("@UserID", DbValue(obj.UserID)),
-            new SqlParameter("@RoleID", DbValue(obj.RoleID)),
-            new SqlParameter("@SessionID", DbString(obj.SessionID)),
-            new SqlParameter("@ApplicationID", DbValue(obj.ApplicationID)),
-            new SqlParameter("@ScreenID", DbValue(obj.ScreenID)),
-            new SqlParameter("@ModuleID", DbValue(obj.ModuleID)),
-            new SqlParameter("@FunctionID", DbValue(obj.FunctionID)),
-            new SqlParameter("@LayerID", DbValue(obj.LayerID)),
-            new SqlParameter("@APIID", DbValue(obj.APIID)),
-            new SqlParameter("@StoredProcedureID", DbValue(obj.StoredProcedureID)),
-            new SqlParameter("@ErrorNumber", DbValue(obj.ErrorNumber)),
-            new SqlParameter("@ErrorState", DbValue(obj.ErrorState)),
-            new SqlParameter("@ErrorSeverity", DbValue(obj.ErrorSeverity)),
-            new SqlParameter("@StackTrace", DbString(obj.StackTrace)),
-            new SqlParameter("@ErrorMessage", DbString(obj.ErrorMessage)),
-            new SqlParameter("@RequestBody", DbString(obj.RequestBody)),
-            new SqlParameter("@ResponseBody", DbString(obj.ResponseBody)),
-            new SqlParameter("@Status", DbValue(obj.Status)),
-            new SqlParameter("@HostName", DbString(obj.HostName)),
-            new SqlParameter("@Environment", DbString(obj.Environment)),
-            new SqlParameter("@CreatedBy", DbString(obj.CreatedBy)),
-            new SqlParameter("@UpdatedBy", DbString(obj.UpdatedBy)),
-            new SqlParameter("@IpAddress", DbString(obj.IPAddress))
-        );
-    }
+     public async Task<List<PerformanceAPIResults>> GetPerformanceLogs(DateFilter model) => await _dbContext.PerformanceAPIResults.FromSqlRaw("EXEC [dbo].[SP_GetPerformanceLog] {0},{1}",
+             model.FromDate,
+             model.ToDate
+             ).ToListAsync();
 
-    public async Task<List<ExceptionResults>> GetExceptionLogs(string errorMessage)
-    {
-        return await _dbContext.ExceptionResults
-            .FromSqlRaw(
-                "EXEC dbo.SP_GetErrorLogging @ErrorMessage",
-                new SqlParameter("@ErrorMessage", DbString(errorMessage))
-            )
-            .ToListAsync();
-    }
 
-    public async Task<List<ExceptionResults>> GetAllExceptionLogs(DateFilter model)
-    {
-        return await _dbContext.ExceptionResults
-            .FromSqlRaw(
-                "EXEC dbo.SP_GetAllErrorLogging @FromDate, @ToDate",
-                new SqlParameter("@FromDate", DbValue(model.FromDate)),
-                new SqlParameter("@ToDate", DbValue(model.ToDate))
-            )
-            .ToListAsync();
-    }
+     public async Task<string> InsertPerformanceLog(PerformanceLog performanceLog)
+     {
+         var response = await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_PerformanceLog] {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}"
+               , 0
+               , performanceLog.UserID
+               , performanceLog.RoleID
+               , performanceLog.SessionID
+               , performanceLog.ComponentName
+               , performanceLog.ActionName
+               , performanceLog.StartTime
+               , performanceLog.EndTime
+               , performanceLog.Duration
+               , performanceLog.CreatedBy
+               , performanceLog.CreatedOn
+               );
+         if (response == 0)
+         {
+             return SabicConstants.BadRequestMessage;
+         }
+         return SabicConstants.SuccessMessage;
+     }
 
-    public async Task<ExceptionUserActivityModel?> GetExceptionUserActivityDetailsBySessionID(string sessionID)
-    {
-        var result = new ExceptionUserActivityModel();
-
-        using var command = _dbContext.Database.GetDbConnection().CreateCommand();
-        command.CommandText = "EXEC dbo.SP_GetExceptionUserActivityDetailsBySessionID @SessionID";
-        command.CommandType = CommandType.Text;
-        command.Parameters.Add(new SqlParameter("@SessionID", DbString(sessionID)));
-
-        await _dbContext.Database.OpenConnectionAsync();
-
-        using var reader = await command.ExecuteReaderAsync();
-
-        // First result set (header)
-        if (reader.HasRows && await reader.ReadAsync())
-        {
-            result.SessionID = reader.IsDBNull(0) ? null : reader.GetString(0);
-            result.EmployeeName = reader.IsDBNull(1) ? null : reader.GetString(1);
-            result.RoleName = reader.IsDBNull(2) ? null : reader.GetString(2);
-            result.UserAgent = reader.IsDBNull(3) ? null : reader.GetString(3);
-            result.Browser = reader.IsDBNull(4) ? null : reader.GetString(4);
-            result.BrowserVersion = reader.IsDBNull(5) ? null : reader.GetString(5);
-            result.SessionStartTimeStamp = reader.IsDBNull(6) ? null : reader.GetDateTime(6);
-            result.IpAddress = reader.IsDBNull(7) ? null : reader.GetString(7);
-            result.ApplicationName = reader.IsDBNull(8) ? null : reader.GetString(8);
-        }
-
-        // Second result set (list)
-        await reader.NextResultAsync();
-
-        result.ExceptionUserActivityResults = new List<ExceptionUserActivityResults>();
-
-        while (await reader.ReadAsync())
-        {
-            result.ExceptionUserActivityResults.Add(new ExceptionUserActivityResults
-            {
-                EmployeeName = reader.IsDBNull(0) ? null : reader.GetString(0),
-                RoleName = reader.IsDBNull(1) ? null : reader.GetString(1),
-                ApplicationName = reader.IsDBNull(2) ? null : reader.GetString(2),
-                FunctionalityName = reader.IsDBNull(3) ? null : reader.GetString(3),
-                UserAction = reader.IsDBNull(4) ? null : reader.GetInt32(4),
-                SessionID = reader.IsDBNull(5) ? null : reader.GetString(5),
-                CreatedOn = reader.IsDBNull(6) ? null : reader.GetDateTime(6)
-            });
-        }
-
-        return result;
-    }
-
-    public async Task UpdateErrorLoggingAssigneeWithStatus(ExceptionDetails obj)
-    {
-        await _dbContext.Database.ExecuteSqlRawAsync(
-            "EXEC dbo.SP_Update_ErrorLogging_AssigneeWith_Status " +
-            "@ErrorLogID, @AssigneeUserID, @ErrorStatusID, @UpdatedBy",
-            new SqlParameter("@ErrorLogID", DbValue(obj.ErrorLogID)),
-            new SqlParameter("@AssigneeUserID", DbValue(obj.AssignTo)),
-            new SqlParameter("@ErrorStatusID", DbValue(obj.ErrorStatusID)),
-            new SqlParameter("@UpdatedBy", DbString(obj.UpdatedBy))
-        );
-    }
-
-    public async Task<ExceptionHandlerModel> GetErrorLogAssignDetailsAsync()
-    {
-        var result = new ExceptionHandlerModel
-        {
-            LstErrorLogStatus = await _dbContext.ErrorLogStatus
-                .FromSqlRaw("EXEC dbo.SP_GetErrorLogStatus")
-                .ToListAsync(),
-
-            LstErrorLogAssignToUser = await _dbContext.ErrorLogAssignToUser
-                .FromSqlRaw("EXEC dbo.SP_GetErrorLog_AssignToUser")
-                .ToListAsync()
-        };
-
-        return result;
-    }
-}
+ }
