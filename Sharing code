@@ -1,97 +1,121 @@
- public class UserManagementRepository : IUserManagementRepository
- {
-     private readonly SFDbContext _dbContext;
-     private readonly CommonDbContext _commonDbContext;
-     public UserManagementRepository(SFDbContext dbContext, CommonDbContext commonDbContext)
-     {
-         _dbContext = dbContext;
-         _commonDbContext = commonDbContext;
-     }
-     public async Task<List<UserMenu>> GetUserMenuList(int userId, int roleId) => await _dbContext.UserMenu.FromSqlRaw("EXEC [dbo].[SP_GetUserMenus] {0},{1}", userId, roleId).ToListAsync();
-     public async Task<List<User>> GetUserList() => await _dbContext.User.FromSqlRaw("EXEC [dbo].[SP_GetUsers]").ToListAsync();
-     public async Task<InsertUpdateUserRes> InsertUpdateUserReq(InsertUpdateUserReq insertUpdateUserReq)
-     {
-         var parameters = new[]
-                           {
-                            new SqlParameter("@UserID", insertUpdateUserReq.UserID),
-                            new SqlParameter("@UserRoleIDs", insertUpdateUserReq.UserRoleIDs),
-                            new SqlParameter("@UserName", insertUpdateUserReq.UserName),
-                            new SqlParameter("@Email", insertUpdateUserReq.Email),
-                            new SqlParameter("@FirstName", insertUpdateUserReq.FirstName),
-                            new SqlParameter("@LastName", insertUpdateUserReq.LastName),
-                            new SqlParameter("@EmployeeID", insertUpdateUserReq.EmployeeID),
-                            new SqlParameter("@AffiliateID", insertUpdateUserReq.AffiliateID),
-                            new SqlParameter("@StatusID", insertUpdateUserReq.StatusID),
-                            new SqlParameter("@CreatedBy", insertUpdateUserReq.CreatedBy),
-                            new SqlParameter("@IsInsert", insertUpdateUserReq.IsInsert),
-                           };
+public class UserManagementRepository : IUserManagementRepository
+{
+    private readonly SFDbContext _dbContext;
+    private readonly CommonDbContext _commonDbContext;
 
-         var result = _dbContext.Database.SqlQueryRaw<string>("dbo.SP_Insert_Update_AssignedUser @UserID, @UserRoleIDs,@UserName,@Email,@FirstName,@LastName,@EmployeeID,@AffiliateID,@StatusID,@CreatedBy,@IsInsert", parameters)
-             .AsEnumerable().FirstOrDefault();
-         //var res = await _dbContext.Database.ExecuteSqlRawAsync("dbo.SP_Insert_Update_AssignedUser" +
-         //           " {0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}",
-         //           insertUpdateUserReq.UserID,
-         //           insertUpdateUserReq.UserRoleIDs,
-         //           insertUpdateUserReq.UserName,
-         //           insertUpdateUserReq.Email,
-         //           insertUpdateUserReq.FirstName,
-         //           insertUpdateUserReq.LastName,
-         //           insertUpdateUserReq.EmployeeID,
-         //           insertUpdateUserReq.AffiliateID,
-         //           insertUpdateUserReq.StatusID,
-         //           insertUpdateUserReq.CreatedBy,
-         //           insertUpdateUserReq.IsInsert
-         //           );
-         var insertUpdateUserRes = new InsertUpdateUserRes();
-         insertUpdateUserRes.Message = result;
-         return insertUpdateUserRes;
-     }
-     public async Task<string> DeactivateUserReq(DeactivateUserReq deactivateUserReq)
-     {
-         var response = await _dbContext.Database.ExecuteSqlRawAsync("dbo.SP_Update_User_IsActivated {0},{1},{2}",
-                deactivateUserReq.UserID,
-                deactivateUserReq.IsActivated,
-                deactivateUserReq.UpdatedBy
-                );
-         if (response == 0)
-         {
-             return SabicConstants.RecordNotFoundMessage;
-         }
-         return SabicConstants.SuccessMessage;
-     }
+    public UserManagementRepository(SFDbContext dbContext, CommonDbContext commonDbContext)
+    {
+        _dbContext = dbContext;
+        _commonDbContext = commonDbContext;
+    }
 
-     public async Task<List<SearchUser>> GetSearchUserListFromAD(string searchText)
-     {
-         List<SearchUser> searchUsers = new List<SearchUser>();
-         if (!string.IsNullOrWhiteSpace(searchText) && searchText.Count() > 3)
-         {
-             //bool isNumber = Regex.IsMatch(searchText, @"^\d+$");
-             var lstSearchUserFromCommonDb = await _commonDbContext.WS_TB_Employees_Info
-                 .Where(x =>
-                     (x.DomainLoginID ?? "").Replace("SABICCORP\\", "").ToLower().Contains(searchText.ToLower().Trim()) ||
-                     (x.Email ?? "").ToLower().Contains(searchText.ToLower().Trim()) ||
-                     (x.EmpName ?? "").ToLower().Contains(searchText.ToLower().Trim())).ToListAsync();
+    #region Helpers
 
-             if (lstSearchUserFromCommonDb != null && lstSearchUserFromCommonDb.Count > 0)
-             {
-                 foreach (var item in lstSearchUserFromCommonDb)
-                 {
-                     searchUsers.Add(new SearchUser()
-                     {
-                         EmployeeID = Convert.ToString(item.EmpID),
-                         LoginName = item.DomainLoginID.Replace("SABIC\\", "SABICCORP\\"),
-                         FirstName = item.FirstName,
-                         LastName = item.LastName,
-                         UserName = item.EmpName,
-                         Email = item.Email
-                     });
-                 }
+    private static object DbString(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? DBNull.Value : value;
 
-             }
-         }
-         return searchUsers;
-     }
+    private static object DbValue<T>(T? value) where T : struct =>
+        value ?? (object)DBNull.Value;
 
-     public async Task<List<Role>> GetRoleList() => await _dbContext.Roles.FromSqlRaw("EXEC [dbo].[SP_GetRole]").ToListAsync();
-     public async Task<List<Affiliate>> GetAffiliateList() => await _dbContext.Affiliates.FromSqlRaw("EXEC [dbo].[SP_GetAffiliateForUserManagement]").ToListAsync();
- }
+    #endregion
+
+    public async Task<List<UserMenu>> GetUserMenuList(int userId, int roleId)
+        => await _dbContext.UserMenu.FromSqlRaw(
+            "EXEC dbo.SP_GetUserMenus @UserId, @RoleId",
+            new SqlParameter("@UserId", userId),
+            new SqlParameter("@RoleId", roleId)
+        ).ToListAsync();
+
+    public async Task<List<User>> GetUserList()
+        => await _dbContext.User.FromSqlRaw(
+            "EXEC dbo.SP_GetUsers"
+        ).ToListAsync();
+
+    public async Task<InsertUpdateUserRes> InsertUpdateUserReq(InsertUpdateUserReq model)
+    {
+        var parameters = new[]
+        {
+            new SqlParameter("@UserID", DbValue(model.UserID)),
+            new SqlParameter("@UserRoleIDs", DbString(model.UserRoleIDs)),
+            new SqlParameter("@UserName", DbString(model.UserName)),
+            new SqlParameter("@Email", DbString(model.Email)),
+            new SqlParameter("@FirstName", DbString(model.FirstName)),
+            new SqlParameter("@LastName", DbString(model.LastName)),
+            new SqlParameter("@EmployeeID", DbString(model.EmployeeID)),
+            new SqlParameter("@AffiliateID", DbValue(model.AffiliateID)),
+            new SqlParameter("@StatusID", DbValue(model.StatusID)),
+            new SqlParameter("@CreatedBy", DbString(model.CreatedBy)),
+            new SqlParameter("@IsInsert", model.IsInsert)
+        };
+
+        var result = _dbContext.Database
+            .SqlQueryRaw<string>(
+                "EXEC dbo.SP_Insert_Update_AssignedUser " +
+                "@UserID, @UserRoleIDs, @UserName, @Email, @FirstName, @LastName, " +
+                "@EmployeeID, @AffiliateID, @StatusID, @CreatedBy, @IsInsert",
+                parameters)
+            .AsEnumerable()
+            .FirstOrDefault();
+
+        return new InsertUpdateUserRes
+        {
+            Message = result
+        };
+    }
+
+    public async Task<string> DeactivateUserReq(DeactivateUserReq model)
+    {
+        var response = await _dbContext.Database.ExecuteSqlRawAsync(
+            "EXEC dbo.SP_Update_User_IsActivated @UserID, @IsActivated, @UpdatedBy",
+            new SqlParameter("@UserID", model.UserID),
+            new SqlParameter("@IsActivated", model.IsActivated),
+            new SqlParameter("@UpdatedBy", DbString(model.UpdatedBy))
+        );
+
+        return response == 0
+            ? SabicConstants.RecordNotFoundMessage
+            : SabicConstants.SuccessMessage;
+    }
+
+    public async Task<List<SearchUser>> GetSearchUserListFromAD(string searchText)
+    {
+        var searchUsers = new List<SearchUser>();
+
+        if (string.IsNullOrWhiteSpace(searchText) || searchText.Trim().Length <= 3)
+            return searchUsers;
+
+        var text = searchText.Trim().ToLower();
+
+        var users = await _commonDbContext.WS_TB_Employees_Info
+            .Where(x =>
+                (x.DomainLoginID ?? "").Replace("SABICCORP\\", "").ToLower().Contains(text) ||
+                (x.Email ?? "").ToLower().Contains(text) ||
+                (x.EmpName ?? "").ToLower().Contains(text))
+            .ToListAsync();
+
+        foreach (var item in users)
+        {
+            searchUsers.Add(new SearchUser
+            {
+                EmployeeID = Convert.ToString(item.EmpID),
+                LoginName = item.DomainLoginID?.Replace("SABIC\\", "SABICCORP\\"),
+                FirstName = item.FirstName,
+                LastName = item.LastName,
+                UserName = item.EmpName,
+                Email = item.Email
+            });
+        }
+
+        return searchUsers;
+    }
+
+    public async Task<List<Role>> GetRoleList()
+        => await _dbContext.Roles.FromSqlRaw(
+            "EXEC dbo.SP_GetRole"
+        ).ToListAsync();
+
+    public async Task<List<Affiliate>> GetAffiliateList()
+        => await _dbContext.Affiliates.FromSqlRaw(
+            "EXEC dbo.SP_GetAffiliateForUserManagement"
+        ).ToListAsync();
+}
