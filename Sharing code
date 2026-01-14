@@ -1,23 +1,54 @@
-  public class ActivityMonitoringRepository : IActivityMonitoringRepository
-  {
-      private readonly SFDbContext _dbContext;
-      public ActivityMonitoringRepository(SFDbContext dbContext)
-      {
-          _dbContext = dbContext;
-      }
+public class ActivityMonitoringRepository : IActivityMonitoringRepository
+{
+    private readonly SFDbContext _dbContext;
 
-      public async Task<List<LoginActivityResults>> GetLoginActivity(DateFilter model) => await _dbContext.LoginActivityResults.FromSqlRaw("EXEC [dbo].[SP_GetLoginActivity] {0},{1}",
-          model.FromDate,
-          model.ToDate).ToListAsync();
-      public async Task<List<UserActivityResults>> GetLoginUserActivity(DateFilter model) => await _dbContext.UserActivityResults.FromSqlRaw("EXEC [dbo].[SP_GetLoginUserActivity] {0},{1}",
-          model.FromDate,
-          model.ToDate
-          ).ToListAsync();
+    public ActivityMonitoringRepository(SFDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
 
-      public async Task InsertUserActivity(InsertUserActivity insertUserActivity) => await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_ActivityTracker] {0},{1},{2},{3},{4}",
-          insertUserActivity.ActivityTrackerID ?? 0,
-          insertUserActivity.ScreenID ?? 0,
-          insertUserActivity.FunctionID ?? 0,
-          insertUserActivity.UserActionID ?? 0,
-          insertUserActivity.CreatedBy ?? "System");//  return new InsertUpdateUserRes();
-  }
+    #region Helpers
+
+    private static object DbString(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? DBNull.Value : value;
+
+    private static object DbValue<T>(T? value) where T : struct =>
+        value ?? (object)DBNull.Value;
+
+    #endregion
+
+    public async Task<List<LoginActivityResults>> GetLoginActivity(DateFilter model)
+    {
+        return await _dbContext.LoginActivityResults
+            .FromSqlRaw(
+                "EXEC dbo.SP_GetLoginActivity @FromDate, @ToDate",
+                new SqlParameter("@FromDate", DbValue(model.FromDate)),
+                new SqlParameter("@ToDate", DbValue(model.ToDate))
+            )
+            .ToListAsync();
+    }
+
+    public async Task<List<UserActivityResults>> GetLoginUserActivity(DateFilter model)
+    {
+        return await _dbContext.UserActivityResults
+            .FromSqlRaw(
+                "EXEC dbo.SP_GetLoginUserActivity @FromDate, @ToDate",
+                new SqlParameter("@FromDate", DbValue(model.FromDate)),
+                new SqlParameter("@ToDate", DbValue(model.ToDate))
+            )
+            .ToListAsync();
+    }
+
+    public async Task InsertUserActivity(InsertUserActivity insertUserActivity)
+    {
+        await _dbContext.Database.ExecuteSqlRawAsync(
+            "EXEC dbo.SP_Insert_Update_ActivityTracker " +
+            "@ActivityTrackerID, @CreatedBy, @FunctionID, @ScreenID, @UserActionID",
+            new SqlParameter("@ActivityTrackerID", DbValue(insertUserActivity.ActivityTrackerID)),
+            new SqlParameter("@CreatedBy", DbString(insertUserActivity.CreatedBy)),
+            new SqlParameter("@FunctionID", DbValue(insertUserActivity.FunctionID)),
+            new SqlParameter("@ScreenID", DbValue(insertUserActivity.ScreenID)),
+            new SqlParameter("@UserActionID", DbValue(insertUserActivity.UserActionID))
+        );
+    }
+}
