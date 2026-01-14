@@ -1,103 +1,23 @@
-public class AccountRepository : IAccountRepository
-{
-    private readonly SFDbContext _dbContext;
-    private readonly CommonDbContext _commonDbContext;
+  public class ActivityMonitoringRepository : IActivityMonitoringRepository
+  {
+      private readonly SFDbContext _dbContext;
+      public ActivityMonitoringRepository(SFDbContext dbContext)
+      {
+          _dbContext = dbContext;
+      }
 
-    public AccountRepository(SFDbContext dbContext, CommonDbContext commonDbContext)
-    {
-        _dbContext = dbContext;
-        _commonDbContext = commonDbContext;
-    }
+      public async Task<List<LoginActivityResults>> GetLoginActivity(DateFilter model) => await _dbContext.LoginActivityResults.FromSqlRaw("EXEC [dbo].[SP_GetLoginActivity] {0},{1}",
+          model.FromDate,
+          model.ToDate).ToListAsync();
+      public async Task<List<UserActivityResults>> GetLoginUserActivity(DateFilter model) => await _dbContext.UserActivityResults.FromSqlRaw("EXEC [dbo].[SP_GetLoginUserActivity] {0},{1}",
+          model.FromDate,
+          model.ToDate
+          ).ToListAsync();
 
-    #region Helpers
-
-    private static object DbString(string? value) =>
-        string.IsNullOrWhiteSpace(value) ? DBNull.Value : value;
-
-    private static object DbValue<T>(T value) where T : struct =>
-        value;
-
-    private static object DbNullableValue<T>(T? value) where T : struct =>
-        value ?? (object)DBNull.Value;
-
-    #endregion
-
-    public async Task<List<UserAuth>> GetUserbyLoginIdAsync(string userName)
-    {
-        return await _dbContext.UserAuth
-            .FromSqlRaw(
-                "EXEC dbo.SP_IsInternal_AuthenticatedUser @Username",
-                new SqlParameter("@Username", DbString(userName))
-            )
-            .ToListAsync();
-    }
-
-    public async Task<List<UserDetails>> GetAuthenticatedUserDetails(string userName)
-    {
-        return await _dbContext.UserDetails
-            .FromSqlRaw(
-                "EXEC dbo.SP_GetAuthenticatedUserDetails @Username",
-                new SqlParameter("@Username", DbString(userName))
-            )
-            .ToListAsync();
-    }
-
-    /// <summary>
-    /// To logout and end sessions of a user
-    /// </summary>
-    public async Task LogoutAndEndSessionByUserIdAsync(int userId)
-    {
-        await _dbContext.Database.ExecuteSqlRawAsync(
-            "EXEC dbo.SP_LogoutAndEndSessionByUserId @UserID",
-            new SqlParameter("@UserID", userId)
-        );
-    }
-
-    /// <summary>
-    /// To fetch valid claims
-    /// </summary>
-    public async Task<GetDataForAuthenticationByUserId?> GetDataForAuthenticationByUserIdAsync(int userID)
-    {
-        var result = await _dbContext.GetDataForAuthenticationByUserId
-            .FromSqlRaw(
-                "EXEC dbo.SP_GetDataForAuthenticationByUserId @UserID",
-                new SqlParameter("@UserID", userID)
-            )
-            .ToListAsync();
-
-        return result.FirstOrDefault();
-    }
-
-    public async Task<MST_UserDetails_Infopoint?> GetUserFromCommonDb(string userName)
-    {
-        return await _commonDbContext.MST_UserDetails_Infopoint
-            .Where(x => x.DomainLoginID == userName)
-            .FirstOrDefaultAsync();
-    }
-
-    public async Task<UserDetails?> GetUserDetails(string userName)
-    {
-        var response = await _dbContext.UserDetails
-            .FromSqlRaw(
-                "EXEC dbo.SP_GetUserDetails @Username",
-                new SqlParameter("@Username", DbString(userName))
-            )
-            .ToListAsync();
-
-        return response.FirstOrDefault();
-    }
-
-    public async Task<UserMenuAccessModel?> IsAuthorizedRoleApi(int roleId, string url)
-    {
-        var res = await _dbContext.UserMenuAccessModel
-            .FromSqlRaw(
-                "EXEC dbo.SP_CheckRolePageAccess @RoleID, @PageUrl",
-                new SqlParameter("@RoleID", roleId),
-                new SqlParameter("@PageUrl", DbString(url))
-            )
-            .AsNoTracking()
-            .ToListAsync();
-
-        return res.FirstOrDefault();
-    }
-}
+      public async Task InsertUserActivity(InsertUserActivity insertUserActivity) => await _dbContext.Database.ExecuteSqlRawAsync("EXEC [dbo].[SP_Insert_Update_ActivityTracker] {0},{1},{2},{3},{4}",
+          insertUserActivity.ActivityTrackerID ?? 0,
+          insertUserActivity.ScreenID ?? 0,
+          insertUserActivity.FunctionID ?? 0,
+          insertUserActivity.UserActionID ?? 0,
+          insertUserActivity.CreatedBy ?? "System");//  return new InsertUpdateUserRes();
+  }
