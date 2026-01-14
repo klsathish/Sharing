@@ -1,53 +1,151 @@
-public class ProductionRepository : IProductionRepository
+public class RevenueRepository : IRevenueRepository
 {
     private readonly SFDbContext _dbContext;
-
-    public ProductionRepository(SFDbContext dbContext)
+    public RevenueRepository(SFDbContext dbContext)
     {
         _dbContext = dbContext;
     }
-
-    #region Helpers
-
-    private static object DbString(string? value) =>
-        string.IsNullOrWhiteSpace(value) ? DBNull.Value : value;
-
-    private static object DbValue<T>(T? value) where T : struct =>
-        value ?? (object)DBNull.Value;
-
-    #endregion
-
-    public async Task<List<ProductionMap>> GetProductionMapDetails(RevenueFilterReq revenueFilter)
+    public async Task<List<RevenueMap>> GetRevenueMapDetails(RevenueFilterReq revenueFilterReq)
     {
-        return await _dbContext.ProductionMap
-            .FromSqlRaw(
-                "EXEC dbo.SP_GetProductionMapDetails " +
-                "@TypeID, @CompanyCode, @ProfitCenterID, @FromDate, @ToDate, @SBU, @BU",
-                new SqlParameter("@TypeID", DbValue(revenueFilter.TypeID)),
-                new SqlParameter("@CompanyCode", DbString(revenueFilter.CompanyCode)),
-                new SqlParameter("@ProfitCenterID", DbValue(revenueFilter.ProfitCenterID)),
-                new SqlParameter("@FromDate", DbValue(revenueFilter.FromDate)),
-                new SqlParameter("@ToDate", DbValue(revenueFilter.ToDate)),
-                new SqlParameter("@SBU", DbString(revenueFilter.SBU)),
-                new SqlParameter("@BU", DbString(revenueFilter.BU))
-            )
-            .ToListAsync();
+        return await _dbContext.RevenueMap.FromSqlRaw("EXEC [dbo].[SP_GetRecommendationForGlobalMap] {0},{1},{2},{3},{4},{5},{6}",
+            revenueFilterReq.TypeID,
+            revenueFilterReq.CompanyCode,
+            revenueFilterReq.ProfitCenterID,
+            revenueFilterReq.FromDate,
+            revenueFilterReq.ToDate,
+            revenueFilterReq.SBU,
+            revenueFilterReq.BU).ToListAsync();
+    }
+    public async Task<List<ContributionMarginTrend>> GetContributionMariginTrend(RevenueFilterReq revenueFilterReq)
+    {
+        return await _dbContext.ContributionMarginTrend.FromSqlRaw("EXEC [dbo].[SP_GetContributionMarginTrend] {0},{1},{2},{3},{4},{5},{6}",
+            revenueFilterReq.TypeID,
+            revenueFilterReq.CompanyCode,
+            revenueFilterReq.ProfitCenterID,
+            revenueFilterReq.FromDate,
+            revenueFilterReq.ToDate,
+            revenueFilterReq.SBU,
+            revenueFilterReq.BU).ToListAsync();
+    }
+    public async Task<List<RevenueTrend>> GetRevenueTrend(RevenueFilterReq revenueFilterReq)
+    {
+        return await _dbContext.RevenueTrend.FromSqlRaw("EXEC [dbo].[SP_GetRevenueTrend] {0},{1},{2},{3},{4},{5},{6}",
+            revenueFilterReq.TypeID,
+            revenueFilterReq.CompanyCode,
+            revenueFilterReq.ProfitCenterID,
+            revenueFilterReq.FromDate,
+            revenueFilterReq.ToDate,
+              revenueFilterReq.SBU,
+            revenueFilterReq.BU).ToListAsync();
+    }
+    public async Task<List<SalesVolumeTrend>> GetSalesVolumeTrend(RevenueFilterReq revenueFilterReq)
+    {
+        return await _dbContext.SalesVolumeTrend.FromSqlRaw("EXEC [dbo].[SP_GetSalesVolumeTrend] {0},{1},{2},{3},{4},{5},{6}",
+            revenueFilterReq.TypeID,
+            revenueFilterReq.CompanyCode,
+            revenueFilterReq.ProfitCenterID,
+            revenueFilterReq.FromDate,
+            revenueFilterReq.ToDate,
+            revenueFilterReq.SBU,
+            revenueFilterReq.BU).ToListAsync();
     }
 
-    public async Task<List<HistoricalSaving>> GetHistoricalSavings(RevenueFilterReq revenueFilter)
+    public async Task<List<AverageSellingPriceForcastTrend>> GetAverageSellingPrice(RevenueFilterReq revenueFilterReq)
     {
-        return await _dbContext.HistoricalSaving
-            .FromSqlRaw(
-                "EXEC dbo.SP_GetHistoricalSavings " +
-                "@TypeID, @CompanyCode, @ProfitCenterID, @FromDate, @ToDate, @SBU, @BU",
-                new SqlParameter("@TypeID", DbValue(revenueFilter.TypeID)),
-                new SqlParameter("@CompanyCode", DbString(revenueFilter.CompanyCode)),
-                new SqlParameter("@ProfitCenterID", DbValue(revenueFilter.ProfitCenterID)),
-                new SqlParameter("@FromDate", DbValue(revenueFilter.FromDate)),
-                new SqlParameter("@ToDate", DbValue(revenueFilter.ToDate)),
-                new SqlParameter("@SBU", DbString(revenueFilter.SBU)),
-                new SqlParameter("@BU", DbString(revenueFilter.BU))
-            )
-            .ToListAsync();
+        return await _dbContext.AverageSellingPriceForcastTrend.FromSqlRaw("EXEC [dbo].[SP_GetAverageSellingPrice] {0},{1},{2},{3},{4},{5},{6}",
+            revenueFilterReq.TypeID,
+            revenueFilterReq.CompanyCode,
+            revenueFilterReq.ProfitCenterID,
+            revenueFilterReq.FromDate,
+            revenueFilterReq.ToDate,
+            revenueFilterReq.SBU,
+            revenueFilterReq.BU).ToListAsync();
+    }
+
+    public async Task<List<RecommendationDetails>> GetRecommendationDetails(RevenueFilterReq revenueFilterReq)
+    {
+        return await _dbContext.RecommendationDetails.FromSqlRaw("EXEC [dbo].[SP_GetRecommendationDetails] {0},{1},{2},{3},{4},{5},{6}",
+            revenueFilterReq.TypeID,
+            revenueFilterReq.CompanyCode,
+            revenueFilterReq.ProfitCenterID,
+            revenueFilterReq.FromDate,
+            revenueFilterReq.ToDate,
+            revenueFilterReq.SBU,
+            revenueFilterReq.BU).ToListAsync();
+    }
+
+    public async Task<List<RevenueRecommendations>> GetRevenueRecommendations(int RecommendationID)
+    {
+        return await _dbContext.RevenueRecommendations.FromSqlRaw("EXEC [dbo].[SP_GetRevenueRecommendations] {0}",
+            RecommendationID).ToListAsync();
+    }
+
+    public async Task<List<VariableCostRecommendations>> GetVariableCostRecommendations(int RecommendationID)
+    {
+        return await _dbContext.VariableCostRecommendations.FromSqlRaw("EXEC [dbo].[SP_GetVariableCostRecommendations] {0}",
+            RecommendationID).ToListAsync();
+    }
+    public async Task<List<CostofGoodsSold>> GetCostofGoodsSoldGraphComparisonData(RevenueFilterReq revenueFilterReq)
+    {
+        return await _dbContext.CostofGoodsSold.FromSqlRaw("EXEC [dbo].[SP_GetCostofGoodsSoldGraphComparisonData] {0},{1},{2},{3},{4},{5},{6}",
+            revenueFilterReq.TypeID,
+            revenueFilterReq.CompanyCode,
+            revenueFilterReq.ProfitCenterID,
+            revenueFilterReq.FromDate,
+            revenueFilterReq.ToDate,
+            revenueFilterReq.SBU,
+            revenueFilterReq.BU).ToListAsync();
+    }
+
+    public async Task<List<RecommendationsCardDetails>> GetRecommendationsCardDetails(RevenueFilterReq revenueFilterReq)
+    {
+        return await _dbContext.RecommendationsCardDetails.FromSqlRaw("EXEC [dbo].[SP_GetRecommendationsCard] {0},{1},{2},{3},{4},{5},{6}",
+            revenueFilterReq.TypeID,
+            revenueFilterReq.CompanyCode,
+            revenueFilterReq.ProfitCenterID,
+            revenueFilterReq.FromDate,
+            revenueFilterReq.ToDate,
+            revenueFilterReq.SBU,
+            revenueFilterReq.BU).ToListAsync();
+    }
+    public async Task<List<ContributionMarginCardDetails>> GetContributionMarginCardDetails(RevenueFilterReq revenueFilterReq)
+    {
+        return await _dbContext.ContributionMarginCardDetails.FromSqlRaw("EXEC [dbo].[SP_GetContributionMarginCard] {0},{1},{2},{3},{4},{5},{6}",
+            revenueFilterReq.TypeID,
+            revenueFilterReq.CompanyCode,
+            revenueFilterReq.ProfitCenterID,
+            revenueFilterReq.FromDate,
+            revenueFilterReq.ToDate,
+            revenueFilterReq.SBU,
+            revenueFilterReq.BU).ToListAsync();
+    }
+
+    public async Task<List<ProductionRegion>> GetViewDataRecommendationsForProductionRegion(int RecommendationID, int TypeID)
+    {
+        return await _dbContext.ProductionRegionRecommendations.FromSqlRaw("EXEC [dbo].[SP_GetViewDataForRecommendations] {0}, {1}",
+            RecommendationID, TypeID).ToListAsync();
+    }
+
+    public async Task<List<SellingRegion>> GetViewDataRecommendationsForSellingRegion(int RecommendationID, int TypeID)
+    {
+        return await _dbContext.SellingRegionRecommendations.FromSqlRaw("EXEC [dbo].[SP_GetViewDataForRecommendations] {0}, {1}",
+            RecommendationID, TypeID).ToListAsync();
+    }
+
+    public async Task<List<ContributionMarginRecommendation>> GetContributionMarginRecommendations(RevenueFilterReq revenueFilterReq)
+    {
+        return await _dbContext.ContributionMarginRecommendation.FromSqlRaw("EXEC [dbo].[SP_GetCMRecommendations] {0},{1},{2},{3},{4},{5}",
+            revenueFilterReq.CompanyCode,
+            revenueFilterReq.ProfitCenterID,
+            revenueFilterReq.FromDate,
+            revenueFilterReq.ToDate,
+            revenueFilterReq.SBU,
+            revenueFilterReq.BU).ToListAsync();
+    }
+
+    public async Task<List<ContributionMarginRecommendationRegion>> GetContributionMarginRecommendationRegionData(int recommendationID)
+    {
+        return await _dbContext.ContributionMarginRecommendationRegion.FromSqlRaw("EXEC [dbo].[SP_GetCMRecommendationsDetailsByID] {0}",
+             recommendationID).ToListAsync();
     }
 }
