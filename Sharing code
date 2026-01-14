@@ -1,30 +1,53 @@
- public class ProductionRepository :IProductionRepository
- {
-     private readonly SFDbContext _dbContext;
-     public ProductionRepository(SFDbContext dbContext)
-     {
-         _dbContext = dbContext;
-     }
-     public async Task<List<ProductionMap>> GetProductionMapDetails(RevenueFilterReq revenueFilterRe)
-     {
-         return await _dbContext.ProductionMap.FromSqlRaw("EXEC [dbo].[SP_GetProductionMapDetails] {0},{1},{2},{3},{4},{5},{6}",
-             revenueFilterRe.TypeID, 
-             revenueFilterRe.CompanyCode, 
-             revenueFilterRe.ProfitCenterID, 
-             revenueFilterRe.FromDate, 
-             revenueFilterRe.ToDate,
-             revenueFilterRe.SBU,
-             revenueFilterRe.BU).ToListAsync();
-     }
-     public async Task<List<HistoricalSaving>> GetHistoricalSavings(RevenueFilterReq revenueFilterRe)
-     {
-         return await _dbContext.HistoricalSaving.FromSqlRaw("EXEC [dbo].[SP_GetHistoricalSavings] {0},{1},{2},{3},{4},{5},{6}",
-             revenueFilterRe.TypeID,
-             revenueFilterRe.CompanyCode,
-             revenueFilterRe.ProfitCenterID,
-             revenueFilterRe.FromDate,
-             revenueFilterRe.ToDate,
-             revenueFilterRe.SBU,
-             revenueFilterRe.BU).ToListAsync();
-     }
- }
+public class ProductionRepository : IProductionRepository
+{
+    private readonly SFDbContext _dbContext;
+
+    public ProductionRepository(SFDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    #region Helpers
+
+    private static object DbString(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? DBNull.Value : value;
+
+    private static object DbValue<T>(T? value) where T : struct =>
+        value ?? (object)DBNull.Value;
+
+    #endregion
+
+    public async Task<List<ProductionMap>> GetProductionMapDetails(RevenueFilterReq revenueFilter)
+    {
+        return await _dbContext.ProductionMap
+            .FromSqlRaw(
+                "EXEC dbo.SP_GetProductionMapDetails " +
+                "@TypeID, @CompanyCode, @ProfitCenterID, @FromDate, @ToDate, @SBU, @BU",
+                new SqlParameter("@TypeID", DbValue(revenueFilter.TypeID)),
+                new SqlParameter("@CompanyCode", DbString(revenueFilter.CompanyCode)),
+                new SqlParameter("@ProfitCenterID", DbValue(revenueFilter.ProfitCenterID)),
+                new SqlParameter("@FromDate", DbValue(revenueFilter.FromDate)),
+                new SqlParameter("@ToDate", DbValue(revenueFilter.ToDate)),
+                new SqlParameter("@SBU", DbString(revenueFilter.SBU)),
+                new SqlParameter("@BU", DbString(revenueFilter.BU))
+            )
+            .ToListAsync();
+    }
+
+    public async Task<List<HistoricalSaving>> GetHistoricalSavings(RevenueFilterReq revenueFilter)
+    {
+        return await _dbContext.HistoricalSaving
+            .FromSqlRaw(
+                "EXEC dbo.SP_GetHistoricalSavings " +
+                "@TypeID, @CompanyCode, @ProfitCenterID, @FromDate, @ToDate, @SBU, @BU",
+                new SqlParameter("@TypeID", DbValue(revenueFilter.TypeID)),
+                new SqlParameter("@CompanyCode", DbString(revenueFilter.CompanyCode)),
+                new SqlParameter("@ProfitCenterID", DbValue(revenueFilter.ProfitCenterID)),
+                new SqlParameter("@FromDate", DbValue(revenueFilter.FromDate)),
+                new SqlParameter("@ToDate", DbValue(revenueFilter.ToDate)),
+                new SqlParameter("@SBU", DbString(revenueFilter.SBU)),
+                new SqlParameter("@BU", DbString(revenueFilter.BU))
+            )
+            .ToListAsync();
+    }
+}
