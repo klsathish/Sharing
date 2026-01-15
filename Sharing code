@@ -1,79 +1,62 @@
-[Fact]
-public async Task AuthenticateAsync_WhenValidUser_ReturnsToken()
-{
-    // Arrange
-    var users = new List<UserAuth>
-    {
-        new UserAuth
+
+        public async Task<CommonRes> AddorUpdateActionAsync(WorkFlowAction obj)
         {
-            UserID = 1,
-            RoleID = 2
+            var loginId = obj.LoginId!.RemovePrefix();
+            var response = await _bpmWorkflowService.SubmitWorkflowAsync(obj.RecommendationId!.Value, obj.Action!, loginId!, obj.Comments!, obj.NewRequest);
+            var code = CommonMethod.GetStatusCodefromResponse(response);
+
+            if(obj.NewRequest && obj.Action == "Reject")
+            {
+                var worklist = await _workflowRepository.GetWorkListDataByDetailsAsync(obj);
+                await _workflowRepository.UpdateRecommendationStatus(obj.RecommendationId.Value, obj.Action!, obj.LoginId!, obj.Comments!, worklist.processActivityName!);
+            }
+
+            if (code == SabicConstants.SuccessStatusCode)
+            {
+                await _workflowRepository.AddorUpdateActionAsync(obj);
+
+                if (!obj.NewRequest)
+                {
+                    var worklist = await _workflowRepository.GetWorkListDataByDetailsAsync(obj);
+                    if (code == SabicConstants.SuccessStatusCode && (obj.Action == "Reject" || worklist.processActivityName == "SNOP Planner Review"))
+                        await _workflowRepository.UpdateRecommendationStatus(obj.RecommendationId.Value, obj.Action!, obj.LoginId!, obj.Comments!,worklist.processActivityName!);
+                }
+            }
+
+            return new CommonRes
+            {
+                StatusMessage = response,
+                StatusCode = code,
+            };
         }
-    };
-
-    var accountRepoMock = new Mock<IAccountRepository>();
-    var loggingRepoMock = new Mock<ILoggingRepository>();
-
-    accountRepoMock
-        .Setup(x => x.GetUserbyLoginIdAsync(It.IsAny<string>()))
-        .ReturnsAsync(users);
-
-    accountRepoMock
-        .Setup(x => x.GetDataForAuthenticationByUserIdAsync(1))
-        .ReturnsAsync(new GetDataForAuthenticationByUserId());
-
-    var jwtSettings = Options.Create(new JwtSettings
-    {
-        Key = "15433DGB66934ECC86D547C5CF4F2EFC345123tsadt",
-        Issuer = "TestIssuer",
-        Audience = "TestAudience",
-        DurationInMinutes = 20,
-        AesKey = "r25db5898a4e4133bbce2ea2315a1927"
-    });
-
-    var service = new AuthenticationService(
-        jwtSettings,
-        accountRepoMock.Object,
-        loggingRepoMock.Object
-    );
-
-    // Act
-    var result = await service.AuthenticateAsync(
-        "sabiccorp\\30790093",
-        "1.1.1.1",
-        "Chrome"
-    );
-
-    // Assert
-    Assert.NotNull(result);
-    Assert.Equal(SabicConstants.SuccessStatusCode, result.StatusCode);
-    Assert.False(string.IsNullOrEmpty(result.Token));
-}
 
 
 
-[Fact]
-public async Task AuthenticateAsync_WhenRoleIsZero_ReturnsUnauthorized()
-{
-    var users = new List<UserAuth>
-    {
-        new UserAuth { UserID = 1, RoleID = 0 }
-    };
+---------------
 
-    var accountRepoMock = new Mock<IAccountRepository>();
-    var loggingRepoMock = new Mock<ILoggingRepository>();
+ // 6. AddorUpdateActionAsync - Success
+ [Fact]
+ public async Task AddorUpdateActionAsync_Success()
+ {
+     var obj = new WorkFlowAction
+     {
+         RecommendationId = 10,
+         Action = "Approve",
+         LoginId = "DOMAIN\\User",
+         Comments = "OK",
+         NewRequest = false
+     };
 
-    accountRepoMock
-        .Setup(x => x.GetUserbyLoginIdAsync(It.IsAny<string>()))
-        .ReturnsAsync(users);
 
-    var service = new AuthenticationService(
-        Options.Create(new JwtSettings()),
-        accountRepoMock.Object,
-        loggingRepoMock.Object
-    );
+     var wl = new WorkList { processActivityName = "SNOP Planner Review" };
 
-    var result = await service.AuthenticateAsync("user", "1.1.1.1", "Chrome");
+     _repo.Setup(x => x.GetWorkListDataByDetailsAsync(obj)).ReturnsAsync(wl);
+     _repo.Setup(x => x.AddorUpdateActionAsync(obj)).Returns(Task.CompletedTask);
+     _repo.Setup(x => x.GetWorkListDataByDetailsAsync(obj)).ReturnsAsync(new WorkList());
+     _repo.Setup(x => x.UpdateRecommendationStatus(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
+     _bpm.Setup(x => x.SubmitWorkflowAsync(10, "Approve", "User", "OK", false)).ReturnsAsync("Success");
 
-    Assert.Equal(SabicConstants.UnAuthorizedStatusCode, result.StatusCode);
-}
+     var res = await _service.AddorUpdateActionAsync(obj);
+
+     Assert.Equal(SabicConstants.InternalError, res.StatusCode);
+ }
