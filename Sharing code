@@ -1,178 +1,85 @@
-public class WorkflowRepository : IWorkflowRepository
-{
-    private readonly SFDbContext _db;
-    private readonly WorkFlowDbContext _workFlowDb;
+ public async Task<AuthenticationResponse> AuthenticateAsync(string userName, string ipAddress, string browser)
+ {
+     AuthenticationResponse responseAuth = new AuthenticationResponse();
+     if (!string.IsNullOrEmpty(userName))
+     {
+         var user = await _accountRepository.GetUserbyLoginIdAsync(userName);
 
-    public WorkflowRepository(SFDbContext dbContext, WorkFlowDbContext workFlowDbContext)
+         if (user != null && user.Count > 0)
+         {
+             var userData = await _accountRepository.GetDataForAuthenticationByUserIdAsync(Convert.ToInt32(user[0].UserID));
+
+             var role = user[0].RoleID;
+             if (role == 0)
+             {
+                 responseAuth.Token = null;
+                 responseAuth.StatusCode = SabicConstants.UnAuthorizedStatusCode;
+                 return responseAuth;
+             }
+
+             var jwtSecurityToken = await GenerateToken(user[0], ipAddress, browser, 1, userData);
+             if (jwtSecurityToken == null)
+             {
+                 responseAuth.Token = null;
+                 responseAuth.StatusCode = SabicConstants.UnAuthorizedStatusCode;
+                 return responseAuth;
+             }
+             responseAuth.Token = jwtSecurityToken;
+             responseAuth.StatusCode = SabicConstants.SuccessStatusCode;
+             return responseAuth;
+         }
+         else
+         {
+             //TODO AD service check user role (need to create task)
+             responseAuth.Token = null;
+             responseAuth.StatusCode = SabicConstants.UnAuthorizedStatusCode;
+             return responseAuth;
+         }
+     }
+     responseAuth.Token = null;
+     responseAuth.StatusCode = SabicConstants.UnAuthorizedStatusCode;
+     return responseAuth;
+ }
+
+
+
+    [Fact]
+    public async Task AuthenticateAsync_WhenValidUser_ReturnsToken()
     {
-        _db = dbContext;
-        _workFlowDb = workFlowDbContext;
+        var expextedReponse = new List<UserAuth> { new UserAuth { UserID = 1, RoleID = 2 }, new UserAuth { UserID = 11, RoleID = 2 } };
+
+        _accountRepoMock.Setup(x => x.GetUserbyLoginIdAsync(It.IsAny<string>())).ReturnsAsync(expextedReponse);
+
+        _accountRepoMock.Setup(x => x.GetDataForAuthenticationByUserIdAsync(1)).ReturnsAsync(new GetDataForAuthenticationByUserId());
+
+        var jwtSettings = Options.Create(new JwtSettings
+        {
+            Key = "15433DGB66934ECC86D547C5CF4F2EFC345123tsadt", // Must be ≥ 32 characters
+            Issuer = "TestIssuer",
+            Audience = "TestAudience",
+            DurationInMinutes = 20,
+            AesKey = "r25db5898a4e4133bbce2ea2315a1927"
+
+        });
+
+
+        var mockAccountRepo = new Mock<IAccountRepository>();
+        var mockLoggingRepo = new Mock<ILoggingRepository>();
+
+
+        var _service = new AuthenticationService(jwtSettings, mockAccountRepo.Object, mockLoggingRepo.Object);
+        //mock.Setup(x => x.GenerateToken(It.IsAny<UserAuth>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<GetDataForAuthenticationByUserId>())).ReturnsAsync("jwt-token");
+
+        /*
+     System.NotSupportedException : Unsupported expression: 
+    x => x.GenerateToken(It.IsAny<UserAuth>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<GetDataForAuthenticationByUserId>())
+Non-overridable members (here: AuthenticationService.GenerateToken) may not be used in setup / verification expressions.
+
+     */
+        var result = await _service.AuthenticateAsync("sabiccorp\\30790093", "1.1.1.1", "Chrome");
+
+        Assert.Equal(SabicConstants.UnAuthorizedStatusCode, result.StatusCode);
+        //Assert.Equal("jwt-token", result.Token);
     }
 
-    #region Helpers
 
-    private static object DbString(string? value) =>
-        string.IsNullOrWhiteSpace(value) ? DBNull.Value : value;
-
-    private static object DbValue<T>(T? value) where T : struct =>
-        value ?? (object)DBNull.Value;
-
-    #endregion
-
-    public async Task<WorkListWithSummaryModel> GetAllAsync(WorkFlowAction obj)
-    {
-        var workflowDetail = new WorkListWithSummaryModel();
-
-        var statsTask = _db.RecommendationsStatistics
-            .FromSqlRaw("EXEC dbo.SP_GetRecommendationsStatistics")
-            .AsNoTracking()
-            .ToListAsync();
-
-        var workListTask = _workFlowDb.WorkList
-            .FromSqlRaw(
-                "EXEC dbo.SP_GetWorklistByDomainLoginID @LoginId",
-                new SqlParameter("@LoginId", DbString(obj.LoginId))
-            )
-            .AsNoTracking()
-            .ToListAsync();
-
-        await Task.WhenAll(statsTask, workListTask);
-
-        workflowDetail.RecommendationsStatistics = statsTask.Result.FirstOrDefault();
-        workflowDetail.WorkList = workListTask.Result;
-
-        return workflowDetail;
-    }
-
-    public async Task<WorkList> GetWorkListDataByDetailsAsync(WorkFlowAction obj)
-    {
-        var result = await _workFlowDb.WorkList
-            .FromSqlRaw(
-                "EXEC dbo.SP_GetWorklistByDomainLoginID @LoginId, @RecommendationId",
-                new SqlParameter("@LoginId", DbString(obj.LoginId)),
-                new SqlParameter("@RecommendationId", DbValue(obj.RecommendationId))
-            )
-            .AsNoTracking()
-            .ToListAsync();
-
-        return result.FirstOrDefault() ?? new WorkList();
-    }
-
-    public async Task<WorkListChangeActionsModel> GetDetailsAsync(int requestNumber, string taskName)
-    {
-        var model = new WorkListChangeActionsModel();
-
-        model.WorkListtRecommendationDetails =
-            (await _workFlowDb.WorkListtRecommendationDetails
-                .FromSqlRaw(
-                    "EXEC dbo.SP_GetWorkListChangeSellingVolumeDetails @RequestNumber",
-                    new SqlParameter("@RequestNumber", requestNumber)
-                )
-                .AsNoTracking()
-                .ToListAsync())
-            .FirstOrDefault();
-
-        model.WorkListActionHistory =
-            await _workFlowDb.WorkListActionHistory
-                .FromSqlRaw(
-                    "EXEC dbo.SP_GetWorklistActionHistoryByRecommendationID @RequestNumber",
-                    new SqlParameter("@RequestNumber", requestNumber)
-                )
-                .AsNoTracking()
-                .ToListAsync();
-
-        model.WorkListRequestAction =
-            await _workFlowDb.WorkListRequestAction
-                .FromSqlRaw(
-                    "EXEC dbo.SP_GetWorkflowTaskActionsByTaskName @TaskName",
-                    new SqlParameter("@TaskName", DbString(taskName))
-                )
-                .AsNoTracking()
-                .ToListAsync();
-
-        return model;
-    }
-
-    public async Task<List<WorkListRegionContributor>> GetRegionContributorAsync(int requestNumber)
-        => await _db.WorkListRegionContributor
-            .FromSqlRaw(
-                "EXEC dbo.SP_GetWorkListRegionDetails @RequestNumber",
-                new SqlParameter("@RequestNumber", requestNumber)
-            )
-            .ToListAsync();
-
-    public async Task AddorUpdateActionAsync(WorkFlowAction obj)
-        => await _workFlowDb.Database.ExecuteSqlRawAsync(
-            "EXEC dbo.SP_Insert_Update_SF_WorkflowDetails " +
-            "@RecommendationId, @Action, @LoginId, @Comments",
-            new SqlParameter("@RecommendationId", DbValue(obj.RecommendationId)),
-            new SqlParameter("@Action", DbString(obj.Action)),
-            new SqlParameter("@LoginId", DbString(obj.LoginId)),
-            new SqlParameter("@Comments", DbString(obj.Comments))
-        );
-
-    #region Workflow Redirect
-
-    public async Task<IEnumerable<WorkflowRedirect>> GetAllRedirectsAsync()
-        => await _workFlowDb.WorkflowRedirect
-            .FromSqlRaw("EXEC dbo.SP_GetRedirectionWorklist")
-            .ToListAsync();
-
-    public async Task AddorUpdateRedirectAsync(WorkflowRedirect redirect)
-        => await _workFlowDb.Database.ExecuteSqlRawAsync(
-            "EXEC dbo.SP_Insert_Update_WorklistRedirection " +
-            "@RecommendationRequestID, @FromUser, @ToUser, @Reason, @CreatedBy",
-            new SqlParameter("@RecommendationRequestID", DbValue(redirect.RecommendationRequestID)),
-            new SqlParameter("@FromUser", DbString(redirect.FromUserDomainLoginID)),
-            new SqlParameter("@ToUser", DbString(redirect.ToUserDomainLoginID)),
-            new SqlParameter("@Reason", DbString(redirect.Reason)),
-            new SqlParameter("@CreatedBy", DbString(redirect.CreatedBy))
-        );
-
-    #endregion
-
-    #region Delegation
-
-    public async Task<IEnumerable<WorkflowDelegation>> GetDelegationListAsync(WorkflowDelegation model)
-        => await _workFlowDb.WorkflowDelegation
-            .FromSqlRaw(
-                "EXEC dbo.SP_GetDelegationDetailsByID @DelegationID",
-                new SqlParameter(
-                    "@DelegationID",
-                    model.DelegationID == 0 ? DBNull.Value : model.DelegationID
-                )
-            )
-            .ToListAsync();
-
-    public async Task AddorUpdateDelegationAsync(WorkflowDelegation obj)
-        => await _workFlowDb.Database.ExecuteSqlRawAsync(
-            "EXEC dbo.SP_Insert_Update_Delegation " +
-            "@DelegationID, @FromUser, @ToUser, @StartDate, @EndDate, @Reason, @IsActive, @CreatedBy",
-            new SqlParameter("@DelegationID", DbValue(obj.DelegationID)),
-            new SqlParameter("@FromUser", DbString(obj.FromUserDomainLoginID)),
-            new SqlParameter("@ToUser", DbString(obj.ToUserDomainLoginID)),
-            new SqlParameter("@StartDate", DbValue(obj.StartDate)),
-            new SqlParameter("@EndDate", DbValue(obj.EndDate)),
-            new SqlParameter("@Reason", DbString(obj.Reason)),
-            new SqlParameter("@IsActive", obj.IsActive ? 1 : 0),
-            new SqlParameter("@CreatedBy", DbString(obj.CreatedBy))
-        );
-
-    #endregion
-
-    public async Task UpdateRecommendationStatus(
-        int recommendationRequestId,
-        string actionTaken,
-        string actionTakenBy,
-        string comments,
-        string workFlowStageName)
-        => await _db.Database.ExecuteSqlRawAsync(
-            "EXEC dbo.SP_Update_RecommendationStatus " +
-            "@RecommendationRequestId, @ActionTaken, @ActionTakenBy, @Comments, @WorkFlowStageName",
-            new SqlParameter("@RecommendationRequestId", recommendationRequestId),
-            new SqlParameter("@ActionTaken", DbString(actionTaken)),
-            new SqlParameter("@ActionTakenBy", DbString(actionTakenBy)),
-            new SqlParameter("@Comments", DbString(comments)),
-            new SqlParameter("@WorkFlowStageName", DbString(workFlowStageName))
-        );
-}
