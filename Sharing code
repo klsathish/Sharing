@@ -1,85 +1,79 @@
- public async Task<AuthenticationResponse> AuthenticateAsync(string userName, string ipAddress, string browser)
- {
-     AuthenticationResponse responseAuth = new AuthenticationResponse();
-     if (!string.IsNullOrEmpty(userName))
-     {
-         var user = await _accountRepository.GetUserbyLoginIdAsync(userName);
-
-         if (user != null && user.Count > 0)
-         {
-             var userData = await _accountRepository.GetDataForAuthenticationByUserIdAsync(Convert.ToInt32(user[0].UserID));
-
-             var role = user[0].RoleID;
-             if (role == 0)
-             {
-                 responseAuth.Token = null;
-                 responseAuth.StatusCode = SabicConstants.UnAuthorizedStatusCode;
-                 return responseAuth;
-             }
-
-             var jwtSecurityToken = await GenerateToken(user[0], ipAddress, browser, 1, userData);
-             if (jwtSecurityToken == null)
-             {
-                 responseAuth.Token = null;
-                 responseAuth.StatusCode = SabicConstants.UnAuthorizedStatusCode;
-                 return responseAuth;
-             }
-             responseAuth.Token = jwtSecurityToken;
-             responseAuth.StatusCode = SabicConstants.SuccessStatusCode;
-             return responseAuth;
-         }
-         else
-         {
-             //TODO AD service check user role (need to create task)
-             responseAuth.Token = null;
-             responseAuth.StatusCode = SabicConstants.UnAuthorizedStatusCode;
-             return responseAuth;
-         }
-     }
-     responseAuth.Token = null;
-     responseAuth.StatusCode = SabicConstants.UnAuthorizedStatusCode;
-     return responseAuth;
- }
-
-
-
-    [Fact]
-    public async Task AuthenticateAsync_WhenValidUser_ReturnsToken()
+[Fact]
+public async Task AuthenticateAsync_WhenValidUser_ReturnsToken()
+{
+    // Arrange
+    var users = new List<UserAuth>
     {
-        var expextedReponse = new List<UserAuth> { new UserAuth { UserID = 1, RoleID = 2 }, new UserAuth { UserID = 11, RoleID = 2 } };
-
-        _accountRepoMock.Setup(x => x.GetUserbyLoginIdAsync(It.IsAny<string>())).ReturnsAsync(expextedReponse);
-
-        _accountRepoMock.Setup(x => x.GetDataForAuthenticationByUserIdAsync(1)).ReturnsAsync(new GetDataForAuthenticationByUserId());
-
-        var jwtSettings = Options.Create(new JwtSettings
+        new UserAuth
         {
-            Key = "15433DGB66934ECC86D547C5CF4F2EFC345123tsadt", // Must be ≥ 32 characters
-            Issuer = "TestIssuer",
-            Audience = "TestAudience",
-            DurationInMinutes = 20,
-            AesKey = "r25db5898a4e4133bbce2ea2315a1927"
+            UserID = 1,
+            RoleID = 2
+        }
+    };
 
-        });
+    var accountRepoMock = new Mock<IAccountRepository>();
+    var loggingRepoMock = new Mock<ILoggingRepository>();
+
+    accountRepoMock
+        .Setup(x => x.GetUserbyLoginIdAsync(It.IsAny<string>()))
+        .ReturnsAsync(users);
+
+    accountRepoMock
+        .Setup(x => x.GetDataForAuthenticationByUserIdAsync(1))
+        .ReturnsAsync(new GetDataForAuthenticationByUserId());
+
+    var jwtSettings = Options.Create(new JwtSettings
+    {
+        Key = "15433DGB66934ECC86D547C5CF4F2EFC345123tsadt",
+        Issuer = "TestIssuer",
+        Audience = "TestAudience",
+        DurationInMinutes = 20,
+        AesKey = "r25db5898a4e4133bbce2ea2315a1927"
+    });
+
+    var service = new AuthenticationService(
+        jwtSettings,
+        accountRepoMock.Object,
+        loggingRepoMock.Object
+    );
+
+    // Act
+    var result = await service.AuthenticateAsync(
+        "sabiccorp\\30790093",
+        "1.1.1.1",
+        "Chrome"
+    );
+
+    // Assert
+    Assert.NotNull(result);
+    Assert.Equal(SabicConstants.SuccessStatusCode, result.StatusCode);
+    Assert.False(string.IsNullOrEmpty(result.Token));
+}
 
 
-        var mockAccountRepo = new Mock<IAccountRepository>();
-        var mockLoggingRepo = new Mock<ILoggingRepository>();
 
+[Fact]
+public async Task AuthenticateAsync_WhenRoleIsZero_ReturnsUnauthorized()
+{
+    var users = new List<UserAuth>
+    {
+        new UserAuth { UserID = 1, RoleID = 0 }
+    };
 
-        var _service = new AuthenticationService(jwtSettings, mockAccountRepo.Object, mockLoggingRepo.Object);
-        //mock.Setup(x => x.GenerateToken(It.IsAny<UserAuth>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<GetDataForAuthenticationByUserId>())).ReturnsAsync("jwt-token");
+    var accountRepoMock = new Mock<IAccountRepository>();
+    var loggingRepoMock = new Mock<ILoggingRepository>();
 
-        /*
-     System.NotSupportedException : Unsupported expression: 
-    x => x.GenerateToken(It.IsAny<UserAuth>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<GetDataForAuthenticationByUserId>())
-Non-overridable members (here: AuthenticationService.GenerateToken) may not be used in setup / verification expressions.
+    accountRepoMock
+        .Setup(x => x.GetUserbyLoginIdAsync(It.IsAny<string>()))
+        .ReturnsAsync(users);
 
-     */
-        var result = await _service.AuthenticateAsync("sabiccorp\\30790093", "1.1.1.1", "Chrome");
+    var service = new AuthenticationService(
+        Options.Create(new JwtSettings()),
+        accountRepoMock.Object,
+        loggingRepoMock.Object
+    );
 
-        Assert.Equal(SabicConstants.UnAuthorizedStatusCode, result.StatusCode);
-        //Assert.Equal("jwt-token", result.Token);
-    }
+    var result = await service.AuthenticateAsync("user", "1.1.1.1", "Chrome");
 
-
+    Assert.Equal(SabicConstants.UnAuthorizedStatusCode, result.StatusCode);
+}
