@@ -1,157 +1,194 @@
-public class LoggingRepository : ILoggingRepository
+public class RevenueRepository : IRevenueRepository
 {
     private readonly SFDbContext _dbContext;
 
-    public LoggingRepository(SFDbContext dbContext)
+    public RevenueRepository(SFDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
-    /// <summary>
-    /// To insert login activity data in ADM_UserLogin table
-    /// </summary>
-    public async Task AddLoginLogAsync(
-        UserAuth user,
-        AdmUserLoginInsert loginActivity,
-        string sessionId)
-    {
-        await _dbContext.Database.ExecuteSqlRawAsync(
-            @"EXEC dbo.SP_Insert_Update_LoginActivity
-                @Browser = @Browser,
-                @BrowserName = @BrowserName,
-                @BrowserVersion = @BrowserVersion,
-                @IpAddress = @IpAddress,
-                @IsOnline = @IsOnline,
-                @LoginID = @LoginID,
-                @UserID = @UserID,
-                @LoginTime = @LoginTime,
-                @LogoutTime = @LogoutTime,
-                @RoleID = @RoleID,
-                @SessionID = @SessionID,
-                @SessionStartTimeStamp = @SessionStartTimeStamp,
-                @UserAgent = @UserAgent",
-            new SqlParameter("@Browser", loginActivity.BrowserName),
-            new SqlParameter("@BrowserName", loginActivity.BrowserName),
-            new SqlParameter("@BrowserVersion", loginActivity.BrowserVersion),
-            new SqlParameter("@IpAddress", loginActivity.IpAddress),
-            new SqlParameter("@IsOnline", loginActivity.Isonline),
-            new SqlParameter("@LoginID", loginActivity.LoginID),
-            new SqlParameter("@UserID", user.UserID),
-            new SqlParameter("@LoginTime", DateTime.Now),
-            new SqlParameter("@LogoutTime", DBNull.Value),
-            new SqlParameter("@RoleID", user.RoleID),
-            new SqlParameter("@SessionID", sessionId),
-            new SqlParameter("@SessionStartTimeStamp", DateTime.Now),
-            new SqlParameter("@UserAgent", loginActivity.UserAgent)
-        );
-    }
+    public async Task<List<RevenueMap>> GetRevenueMapDetails(RevenueFilterReq model)
+        => await _dbContext.RevenueMap.FromSqlRaw(
+            "EXEC dbo.SP_GetRecommendationForGlobalMap " +
+            "@TypeID = @TypeID, " +
+            "@CompanyCode = @CompanyCode, " +
+            "@ProfitCenterID = @ProfitCenterID, " +
+            "@FromDate = @FromDate, " +
+            "@ToDate = @ToDate, " +
+            "@SBU = @SBU, " +
+            "@BU = @BU",
+            new SqlParameter("@TypeID", model.TypeID),
+            new SqlParameter("@CompanyCode", model.CompanyCode),
+            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
+            new SqlParameter("@FromDate", model.FromDate),
+            new SqlParameter("@ToDate", model.ToDate),
+            new SqlParameter("@SBU", model.SBU),
+            new SqlParameter("@BU", model.BU)
+        ).ToListAsync();
 
-    /// <summary>
-    /// To insert session data in ADM_UserSession table
-    /// </summary>
-    public async Task AddSessionLogAsync(AdmUserSessionInsert sessionActivity)
-    {
-        await _dbContext.Database.ExecuteSqlRawAsync(
-            @"EXEC dbo.SP_Insert_Update_UserLoginSession
-                @UserLoginSessionID = @UserLoginSessionID,
-                @UserID = @UserID,
-                @SessionID = @SessionID,
-                @IsActive = @IsActive",
-            new SqlParameter("@UserLoginSessionID", sessionActivity.UserLoginSessionID),
-            new SqlParameter("@UserID", sessionActivity.CreatedBy),
-            new SqlParameter("@SessionID", sessionActivity.SessionGUID.ToString()),
-            new SqlParameter("@IsActive", sessionActivity.IsOnline)
-        );
-    }
+    public async Task<List<ContributionMarginTrend>> GetContributionMariginTrend(RevenueFilterReq model)
+        => await _dbContext.ContributionMarginTrend.FromSqlRaw(
+            "EXEC dbo.SP_GetContributionMarginTrend " +
+            "@TypeID = @TypeID, " +
+            "@CompanyCode = @CompanyCode, " +
+            "@ProfitCenterID = @ProfitCenterID, " +
+            "@FromDate = @FromDate, " +
+            "@ToDate = @ToDate, " +
+            "@SBU = @SBU, " +
+            "@BU = @BU",
+            new SqlParameter("@TypeID", model.TypeID),
+            new SqlParameter("@CompanyCode", model.CompanyCode),
+            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
+            new SqlParameter("@FromDate", model.FromDate),
+            new SqlParameter("@ToDate", model.ToDate),
+            new SqlParameter("@SBU", model.SBU),
+            new SqlParameter("@BU", model.BU)
+        ).ToListAsync();
 
-    /// <summary>
-    /// To insert token data in ADM_UserToken table
-    /// </summary>
-    public async Task AddTokenLogAsync(AdmUserTokenInsert tokenActivity)
-    {
-        await _dbContext.Database.ExecuteSqlRawAsync(
-            @"EXEC dbo.SP_Insert_Update_UserToken
-                @ID = @ID,
-                @IsActive = @IsActive,
-                @SessionID = @SessionID,
-                @Token = @Token,
-                @UserID = @UserID",
-            new SqlParameter("@ID", tokenActivity.ID),
-            new SqlParameter("@IsActive", tokenActivity.IsActive),
-            new SqlParameter("@SessionID", tokenActivity.SessionGuid.ToString()),
-            new SqlParameter("@Token", tokenActivity.TokenGuid.ToString()),
-            new SqlParameter("@UserID", tokenActivity.CreatedBy)
-        );
-    }
-}
+    public async Task<List<RevenueTrend>> GetRevenueTrend(RevenueFilterReq model)
+        => await _dbContext.RevenueTrend.FromSqlRaw(
+            "EXEC dbo.SP_GetRevenueTrend " +
+            "@TypeID = @TypeID, " +
+            "@CompanyCode = @CompanyCode, " +
+            "@ProfitCenterID = @ProfitCenterID, " +
+            "@FromDate = @FromDate, " +
+            "@ToDate = @ToDate, " +
+            "@SBU = @SBU, " +
+            "@BU = @BU",
+            new SqlParameter("@TypeID", model.TypeID),
+            new SqlParameter("@CompanyCode", model.CompanyCode),
+            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
+            new SqlParameter("@FromDate", model.FromDate),
+            new SqlParameter("@ToDate", model.ToDate),
+            new SqlParameter("@SBU", model.SBU),
+            new SqlParameter("@BU", model.BU)
+        ).ToListAsync();
 
+    public async Task<List<SalesVolumeTrend>> GetSalesVolumeTrend(RevenueFilterReq model)
+        => await _dbContext.SalesVolumeTrend.FromSqlRaw(
+            "EXEC dbo.SP_GetSalesVolumeTrend " +
+            "@TypeID = @TypeID, " +
+            "@CompanyCode = @CompanyCode, " +
+            "@ProfitCenterID = @ProfitCenterID, " +
+            "@FromDate = @FromDate, " +
+            "@ToDate = @ToDate, " +
+            "@SBU = @SBU, " +
+            "@BU = @BU",
+            new SqlParameter("@TypeID", model.TypeID),
+            new SqlParameter("@CompanyCode", model.CompanyCode),
+            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
+            new SqlParameter("@FromDate", model.FromDate),
+            new SqlParameter("@ToDate", model.ToDate),
+            new SqlParameter("@SBU", model.SBU),
+            new SqlParameter("@BU", model.BU)
+        ).ToListAsync();
 
+    public async Task<List<AverageSellingPriceForcastTrend>> GetAverageSellingPrice(RevenueFilterReq model)
+        => await _dbContext.AverageSellingPriceForcastTrend.FromSqlRaw(
+            "EXEC dbo.SP_GetAverageSellingPrice " +
+            "@TypeID, @CompanyCode, @ProfitCenterID, @FromDate, @ToDate, @SBU, @BU",
+            new SqlParameter("@TypeID", model.TypeID),
+            new SqlParameter("@CompanyCode", model.CompanyCode),
+            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
+            new SqlParameter("@FromDate", model.FromDate),
+            new SqlParameter("@ToDate", model.ToDate),
+            new SqlParameter("@SBU", model.SBU),
+            new SqlParameter("@BU", model.BU)
+        ).ToListAsync();
 
+    public async Task<List<RecommendationDetails>> GetRecommendationDetails(RevenueFilterReq model)
+        => await _dbContext.RecommendationDetails.FromSqlRaw(
+            "EXEC dbo.SP_GetRecommendationDetails " +
+            "@TypeID, @CompanyCode, @ProfitCenterID, @FromDate, @ToDate, @SBU, @BU",
+            new SqlParameter("@TypeID", model.TypeID),
+            new SqlParameter("@CompanyCode", model.CompanyCode),
+            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
+            new SqlParameter("@FromDate", model.FromDate),
+            new SqlParameter("@ToDate", model.ToDate),
+            new SqlParameter("@SBU", model.SBU),
+            new SqlParameter("@BU", model.BU)
+        ).ToListAsync();
 
-public class LoggingRepository : ILoggingRepository
-{
-    private readonly SFDbContext _dbContext;
+    public async Task<List<RevenueRecommendations>> GetRevenueRecommendations(int recommendationID)
+        => await _dbContext.RevenueRecommendations.FromSqlRaw(
+            "EXEC dbo.SP_GetRevenueRecommendations @RecommendationID",
+            new SqlParameter("@RecommendationID", recommendationID)
+        ).ToListAsync();
 
-    public LoggingRepository(SFDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+    public async Task<List<VariableCostRecommendations>> GetVariableCostRecommendations(int recommendationID)
+        => await _dbContext.VariableCostRecommendations.FromSqlRaw(
+            "EXEC dbo.SP_GetVariableCostRecommendations @RecommendationID",
+            new SqlParameter("@RecommendationID", recommendationID)
+        ).ToListAsync();
 
+    public async Task<List<CostofGoodsSold>> GetCostofGoodsSoldGraphComparisonData(RevenueFilterReq model)
+        => await _dbContext.CostofGoodsSold.FromSqlRaw(
+            "EXEC dbo.SP_GetCostofGoodsSoldGraphComparisonData " +
+            "@TypeID, @CompanyCode, @ProfitCenterID, @FromDate, @ToDate, @SBU, @BU",
+            new SqlParameter("@TypeID", model.TypeID),
+            new SqlParameter("@CompanyCode", model.CompanyCode),
+            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
+            new SqlParameter("@FromDate", model.FromDate),
+            new SqlParameter("@ToDate", model.ToDate),
+            new SqlParameter("@SBU", model.SBU),
+            new SqlParameter("@BU", model.BU)
+        ).ToListAsync();
 
-    /// <summary>
-    /// To insert login activity data in ADM_UserLogin table
-    /// </summary>
-    public async Task AddLoginLogAsync(UserAuth user, AdmUserLoginInsert loginActivity, string sessionId)
-    {
-        await _dbContext.Database.ExecuteSqlRawAsync(
-            "EXEC dbo.SP_Insert_Update_LoginActivity " +
-            "@Browser, @BrowserName, @BrowserVersion, @IpAddress, @IsOnline, " +
-            "@LoginID, @UserID, @LoginTime, @LogoutTime, @RoleID, @SessionID, " +
-            "@SessionStartTimeStamp, @UserAgent",
-            new SqlParameter("@Browser", loginActivity.BrowserName),
-            new SqlParameter("@BrowserName", loginActivity.BrowserName),
-            new SqlParameter("@BrowserVersion", loginActivity.BrowserVersion),
-            new SqlParameter("@IpAddress", loginActivity.IpAddress),
-            new SqlParameter("@IsOnline", loginActivity.Isonline),
-            new SqlParameter("@LoginID", loginActivity.LoginID),
-            new SqlParameter("@UserID", user.UserID),
-            new SqlParameter("@LoginTime", DateTime.Now),
-            new SqlParameter("@LogoutTime", DBNull.Value),
-            new SqlParameter("@RoleID", user.RoleID),
-            new SqlParameter("@SessionID", sessionId),
-            new SqlParameter("@SessionStartTimeStamp", DateTime.Now),
-            new SqlParameter("@UserAgent", loginActivity.UserAgent)
-        );
-    }
+    public async Task<List<RecommendationsCardDetails>> GetRecommendationsCardDetails(RevenueFilterReq model)
+        => await _dbContext.RecommendationsCardDetails.FromSqlRaw(
+            "EXEC dbo.SP_GetRecommendationsCard " +
+            "@TypeID, @CompanyCode, @ProfitCenterID, @FromDate, @ToDate, @SBU, @BU",
+            new SqlParameter("@TypeID", model.TypeID),
+            new SqlParameter("@CompanyCode", model.CompanyCode),
+            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
+            new SqlParameter("@FromDate", model.FromDate),
+            new SqlParameter("@ToDate", model.ToDate),
+            new SqlParameter("@SBU", model.SBU),
+            new SqlParameter("@BU", model.BU)
+        ).ToListAsync();
 
-    /// <summary>
-    /// To insert session data in ADM_UserSession table
-    /// </summary>
-    public async Task AddSessionLogAsync(AdmUserSessionInsert sessionActivity)
-    {
-        await _dbContext.Database.ExecuteSqlRawAsync(
-            "EXEC dbo.SP_Insert_Update_UserLoginSession " +
-            "@IsActive, @SessionID, @UserID, @UserLoginSessionID",
-            new SqlParameter("@IsActive", sessionActivity.IsOnline),
-            new SqlParameter("@SessionID", sessionActivity.SessionGUID.ToString()),
-            new SqlParameter("@UserID", sessionActivity.CreatedBy),
-            new SqlParameter("@UserLoginSessionID", sessionActivity.UserLoginSessionID)
-        );
-    }
+    public async Task<List<ContributionMarginCardDetails>> GetContributionMarginCardDetails(RevenueFilterReq model)
+        => await _dbContext.ContributionMarginCardDetails.FromSqlRaw(
+            "EXEC dbo.SP_GetContributionMarginCard " +
+            "@TypeID, @CompanyCode, @ProfitCenterID, @FromDate, @ToDate, @SBU, @BU",
+            new SqlParameter("@TypeID", model.TypeID),
+            new SqlParameter("@CompanyCode", model.CompanyCode),
+            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
+            new SqlParameter("@FromDate", model.FromDate),
+            new SqlParameter("@ToDate", model.ToDate),
+            new SqlParameter("@SBU", model.SBU),
+            new SqlParameter("@BU", model.BU)
+        ).ToListAsync();
 
-    /// <summary>
-    /// To insert token data in ADM_UserToken table
-    /// </summary>
-    public async Task AddTokenLogAsync(AdmUserTokenInsert tokenActivity)
-    {
-        await _dbContext.Database.ExecuteSqlRawAsync(
-            "EXEC dbo.SP_Insert_Update_UserToken " +
-            "@ID, @IsActive, @SessionID, @Token, @UserID",
-            new SqlParameter("@ID",tokenActivity.ID),
-            new SqlParameter("@IsActive",tokenActivity.IsActive),
-            new SqlParameter("@SessionID", tokenActivity.SessionGuid.ToString()),
-            new SqlParameter("@Token", tokenActivity.TokenGuid.ToString()),
-            new SqlParameter("@UserID",tokenActivity.CreatedBy)
-        );
-    }
+    public async Task<List<ProductionRegion>> GetViewDataRecommendationsForProductionRegion(int recommendationID, int typeID)
+        => await _dbContext.ProductionRegionRecommendations.FromSqlRaw(
+            "EXEC dbo.SP_GetViewDataForRecommendations @RecommendationID, @TypeID",
+            new SqlParameter("@RecommendationID", recommendationID),
+            new SqlParameter("@TypeID", typeID)
+        ).ToListAsync();
+
+    public async Task<List<SellingRegion>> GetViewDataRecommendationsForSellingRegion(int recommendationID, int typeID)
+        => await _dbContext.SellingRegionRecommendations.FromSqlRaw(
+            "EXEC dbo.SP_GetViewDataForRecommendations @RecommendationID, @TypeID",
+            new SqlParameter("@RecommendationID", recommendationID),
+            new SqlParameter("@TypeID", typeID)
+        ).ToListAsync();
+
+    public async Task<List<ContributionMarginRecommendation>> GetContributionMarginRecommendations(RevenueFilterReq model)
+        => await _dbContext.ContributionMarginRecommendation.FromSqlRaw(
+            "EXEC dbo.SP_GetCMRecommendations " +
+            "@CompanyCode, @ProfitCenterID, @FromDate, @ToDate, @SBU, @BU",
+            new SqlParameter("@CompanyCode", model.CompanyCode),
+            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
+            new SqlParameter("@FromDate", model.FromDate),
+            new SqlParameter("@ToDate", model.ToDate),
+            new SqlParameter("@SBU", model.SBU),
+            new SqlParameter("@BU", model.BU)
+        ).ToListAsync();
+
+    public async Task<List<ContributionMarginRecommendationRegion>> GetContributionMarginRecommendationRegionData(int recommendationID)
+        => await _dbContext.ContributionMarginRecommendationRegion.FromSqlRaw(
+            "EXEC dbo.SP_GetCMRecommendationsDetailsByID @RecommendationID",
+            new SqlParameter("@RecommendationID", recommendationID)
+        ).ToListAsync();
 }
