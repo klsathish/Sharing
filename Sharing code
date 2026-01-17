@@ -7,6 +7,96 @@ public class LoggingRepository : ILoggingRepository
         _dbContext = dbContext;
     }
 
+    /// <summary>
+    /// To insert login activity data in ADM_UserLogin table
+    /// </summary>
+    public async Task AddLoginLogAsync(
+        UserAuth user,
+        AdmUserLoginInsert loginActivity,
+        string sessionId)
+    {
+        await _dbContext.Database.ExecuteSqlRawAsync(
+            @"EXEC dbo.SP_Insert_Update_LoginActivity
+                @Browser = @Browser,
+                @BrowserName = @BrowserName,
+                @BrowserVersion = @BrowserVersion,
+                @IpAddress = @IpAddress,
+                @IsOnline = @IsOnline,
+                @LoginID = @LoginID,
+                @UserID = @UserID,
+                @LoginTime = @LoginTime,
+                @LogoutTime = @LogoutTime,
+                @RoleID = @RoleID,
+                @SessionID = @SessionID,
+                @SessionStartTimeStamp = @SessionStartTimeStamp,
+                @UserAgent = @UserAgent",
+            new SqlParameter("@Browser", loginActivity.BrowserName),
+            new SqlParameter("@BrowserName", loginActivity.BrowserName),
+            new SqlParameter("@BrowserVersion", loginActivity.BrowserVersion),
+            new SqlParameter("@IpAddress", loginActivity.IpAddress),
+            new SqlParameter("@IsOnline", loginActivity.Isonline),
+            new SqlParameter("@LoginID", loginActivity.LoginID),
+            new SqlParameter("@UserID", user.UserID),
+            new SqlParameter("@LoginTime", DateTime.Now),
+            new SqlParameter("@LogoutTime", DBNull.Value),
+            new SqlParameter("@RoleID", user.RoleID),
+            new SqlParameter("@SessionID", sessionId),
+            new SqlParameter("@SessionStartTimeStamp", DateTime.Now),
+            new SqlParameter("@UserAgent", loginActivity.UserAgent)
+        );
+    }
+
+    /// <summary>
+    /// To insert session data in ADM_UserSession table
+    /// </summary>
+    public async Task AddSessionLogAsync(AdmUserSessionInsert sessionActivity)
+    {
+        await _dbContext.Database.ExecuteSqlRawAsync(
+            @"EXEC dbo.SP_Insert_Update_UserLoginSession
+                @UserLoginSessionID = @UserLoginSessionID,
+                @UserID = @UserID,
+                @SessionID = @SessionID,
+                @IsActive = @IsActive",
+            new SqlParameter("@UserLoginSessionID", sessionActivity.UserLoginSessionID),
+            new SqlParameter("@UserID", sessionActivity.CreatedBy),
+            new SqlParameter("@SessionID", sessionActivity.SessionGUID.ToString()),
+            new SqlParameter("@IsActive", sessionActivity.IsOnline)
+        );
+    }
+
+    /// <summary>
+    /// To insert token data in ADM_UserToken table
+    /// </summary>
+    public async Task AddTokenLogAsync(AdmUserTokenInsert tokenActivity)
+    {
+        await _dbContext.Database.ExecuteSqlRawAsync(
+            @"EXEC dbo.SP_Insert_Update_UserToken
+                @ID = @ID,
+                @IsActive = @IsActive,
+                @SessionID = @SessionID,
+                @Token = @Token,
+                @UserID = @UserID",
+            new SqlParameter("@ID", tokenActivity.ID),
+            new SqlParameter("@IsActive", tokenActivity.IsActive),
+            new SqlParameter("@SessionID", tokenActivity.SessionGuid.ToString()),
+            new SqlParameter("@Token", tokenActivity.TokenGuid.ToString()),
+            new SqlParameter("@UserID", tokenActivity.CreatedBy)
+        );
+    }
+}
+
+
+
+
+public class LoggingRepository : ILoggingRepository
+{
+    private readonly SFDbContext _dbContext;
+
+    public LoggingRepository(SFDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
 
     /// <summary>
     /// To insert login activity data in ADM_UserLogin table
