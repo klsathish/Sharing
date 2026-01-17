@@ -1,3 +1,26 @@
+public static class SqlParameterExtensions
+{
+    // INT
+    public static object DbValue(this int? value) =>
+        value.HasValue ? value.Value : DBNull.Value;
+
+    // BOOL / BIT
+    public static object DbValue(this bool? value) =>
+        value.HasValue ? value.Value : DBNull.Value;
+
+    // GUID → VARCHAR (because DB column is VARCHAR)
+    public static object DbGuidString(this Guid? value) =>
+        value.HasValue ? value.Value.ToString() : DBNull.Value;
+
+    // STRING
+    public static object DbValue(this string value) =>
+        string.IsNullOrWhiteSpace(value) ? DBNull.Value : value;
+
+    // DATETIME
+    public static object DbValue(this DateTime? value) =>
+        value.HasValue ? value.Value : DBNull.Value;
+}
+
 
         public async Task<CommonRes> AddorUpdateActionAsync(WorkFlowAction obj)
         {
