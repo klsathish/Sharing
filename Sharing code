@@ -1,4 +1,175 @@
- public class ExceptionHandlerRepository : IExceptionHandlerRepository
+
+public class ExceptionHandlerRepository : IExceptionHandlerRepository
+{
+    private readonly SFDbContext _dbContext;
+
+    public ExceptionHandlerRepository(SFDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    public async Task LogExceptionAsync(ExceptionDetails obj)
+    {
+        await _dbContext.Database.ExecuteSqlRawAsync(
+            @"EXEC dbo.SP_Insert_Update_ErrorLogging
+                @ErrorLogID = @ErrorLogID,
+                @UserID = @UserID,
+                @RoleID = @RoleID,
+                @SessionID = @SessionID,
+                @ApplicationID = @ApplicationID,
+                @ScreenID = @ScreenID,
+                @ModuleID = @ModuleID,
+                @FunctionID = @FunctionID,
+                @LayerID = @LayerID,
+                @APIID = @APIID,
+                @StoredProcedureID = @StoredProcedureID,
+                @ErrorNumber = @ErrorNumber,
+                @ErrorState = @ErrorState,
+                @ErrorSeverity = @ErrorSeverity,
+                @StackTrace = @StackTrace,
+                @ErrorMessage = @ErrorMessage,
+                @RequestBody = @RequestBody,
+                @ResponseBody = @ResponseBody,
+                @Status = @Status,
+                @HostName = @HostName,
+                @Environment = @Environment,
+                @CreatedBy = @CreatedBy,
+                @UpdatedBy = @UpdatedBy,
+                @IpAddress = @IpAddress",
+            new SqlParameter("@ErrorLogID", obj.ErrorLogID),
+            new SqlParameter("@UserID", obj.UserID),
+            new SqlParameter("@RoleID", obj.RoleID),
+            new SqlParameter("@SessionID", obj.SessionID),
+            new SqlParameter("@ApplicationID", obj.ApplicationID),
+            new SqlParameter("@ScreenID", obj.ScreenID),
+            new SqlParameter("@ModuleID", obj.ModuleID),
+            new SqlParameter("@FunctionID", obj.FunctionID),
+            new SqlParameter("@LayerID", obj.LayerID),
+            new SqlParameter("@APIID", obj.APIID),
+            new SqlParameter("@StoredProcedureID", obj.StoredProcedureID),
+            new SqlParameter("@ErrorNumber", obj.ErrorNumber),
+            new SqlParameter("@ErrorState", obj.ErrorState),
+            new SqlParameter("@ErrorSeverity", obj.ErrorSeverity),
+            new SqlParameter("@StackTrace", obj.StackTrace),
+            new SqlParameter("@ErrorMessage", obj.ErrorMessage),
+            new SqlParameter("@RequestBody", obj.RequestBody),
+            new SqlParameter("@ResponseBody", obj.ResponseBody),
+            new SqlParameter("@Status", obj.Status),
+            new SqlParameter("@HostName", obj.HostName),
+            new SqlParameter("@Environment", obj.Environment),
+            new SqlParameter("@CreatedBy", obj.CreatedBy),
+            new SqlParameter("@UpdatedBy", obj.UpdatedBy),
+            new SqlParameter("@IpAddress", obj.IPAddress)
+        );
+    }
+
+    public async Task<List<ExceptionResults>> GetExceptionLogs(string errorMessage)
+    {
+        return await _dbContext.ExceptionResults
+            .FromSqlRaw(
+                @"EXEC dbo.SP_GetErrorLogging
+                    @ErrorMessage = @ErrorMessage",
+                new SqlParameter("@ErrorMessage", errorMessage)
+            )
+            .ToListAsync();
+    }
+
+    public async Task<List<ExceptionResults>> GetAllExceptionLogs(DateFilter model)
+    {
+        return await _dbContext.ExceptionResults
+            .FromSqlRaw(
+                @"EXEC dbo.SP_GetAllErrorLogging
+                    @FromDate = @FromDate,
+                    @ToDate = @ToDate",
+                new SqlParameter("@FromDate", model.FromDate),
+                new SqlParameter("@ToDate", model.ToDate)
+            )
+            .ToListAsync();
+    }
+
+    public async Task<ExceptionUserActivityModel?> GetExceptionUserActivityDetailsBySessionID(string sessionID)
+    {
+        var result = new ExceptionUserActivityModel();
+
+        using var command = _dbContext.Database.GetDbConnection().CreateCommand();
+        command.CommandText =
+            @"EXEC dbo.SP_GetExceptionUserActivityDetailsBySessionID
+                @SessionID = @SessionID";
+        command.CommandType = CommandType.Text;
+        command.Parameters.Add(new SqlParameter("@SessionID", sessionID));
+
+        await _dbContext.Database.OpenConnectionAsync();
+
+        using var reader = await command.ExecuteReaderAsync();
+
+        // Header
+        if (reader.HasRows && await reader.ReadAsync())
+        {
+            result.SessionID = reader.IsDBNull(0) ? null : reader.GetString(0);
+            result.EmployeeName = reader.IsDBNull(1) ? null : reader.GetString(1);
+            result.RoleName = reader.IsDBNull(2) ? null : reader.GetString(2);
+            result.UserAgent = reader.IsDBNull(3) ? null : reader.GetString(3);
+            result.Browser = reader.IsDBNull(4) ? null : reader.GetString(4);
+            result.BrowserVersion = reader.IsDBNull(5) ? null : reader.GetString(5);
+            result.SessionStartTimeStamp = reader.IsDBNull(6) ? null : reader.GetDateTime(6);
+            result.IpAddress = reader.IsDBNull(7) ? null : reader.GetString(7);
+            result.ApplicationName = reader.IsDBNull(8) ? null : reader.GetString(8);
+        }
+
+        // Details
+        await reader.NextResultAsync();
+
+        result.ExceptionUserActivityResults = new List<ExceptionUserActivityResults>();
+
+        while (await reader.ReadAsync())
+        {
+            result.ExceptionUserActivityResults.Add(new ExceptionUserActivityResults
+            {
+                EmployeeName = reader.IsDBNull(0) ? null : reader.GetString(0),
+                RoleName = reader.IsDBNull(1) ? null : reader.GetString(1),
+                ApplicationName = reader.IsDBNull(2) ? null : reader.GetString(2),
+                FunctionalityName = reader.IsDBNull(3) ? null : reader.GetString(3),
+                UserAction = reader.IsDBNull(4) ? null : reader.GetInt32(4),
+                SessionID = reader.IsDBNull(5) ? null : reader.GetString(5),
+                CreatedOn = reader.IsDBNull(6) ? null : reader.GetDateTime(6)
+            });
+        }
+
+        return result;
+    }
+
+    public async Task UpdateErrorLoggingAssigneeWithStatus(ExceptionDetails obj)
+    {
+        await _dbContext.Database.ExecuteSqlRawAsync(
+            @"EXEC dbo.SP_Update_ErrorLogging_AssigneeWith_Status
+                @ErrorLogID = @ErrorLogID,
+                @AssigneeUserID = @AssigneeUserID,
+                @ErrorStatusID = @ErrorStatusID,
+                @UpdatedBy = @UpdatedBy",
+            new SqlParameter("@ErrorLogID", obj.ErrorLogID),
+            new SqlParameter("@AssigneeUserID", obj.AssignTo),
+            new SqlParameter("@ErrorStatusID", obj.ErrorStatusID),
+            new SqlParameter("@UpdatedBy", obj.UpdatedBy)
+        );
+    }
+
+    public async Task<ExceptionHandlerModel> GetErrorLogAssignDetailsAsync()
+    {
+        return new ExceptionHandlerModel
+        {
+            LstErrorLogStatus = await _dbContext.ErrorLogStatus
+                .FromSqlRaw("EXEC dbo.SP_GetErrorLogStatus")
+                .ToListAsync(),
+
+            LstErrorLogAssignToUser = await _dbContext.ErrorLogAssignToUser
+                .FromSqlRaw("EXEC dbo.SP_GetErrorLog_AssignToUser")
+                .ToListAsync()
+        };
+    }
+}
+
+
+public class ExceptionHandlerRepository : IExceptionHandlerRepository
  {
      private readonly SFDbContext _dbContext;
 
