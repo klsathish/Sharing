@@ -1,85 +1,90 @@
-public static class SqlParameterExtensions
-{
-    // INT
-    public static object DbValue(this int? value) =>
-        value.HasValue ? value.Value : DBNull.Value;
-
-    // BOOL / BIT
-    public static object DbValue(this bool? value) =>
-        value.HasValue ? value.Value : DBNull.Value;
-
-    // GUID → VARCHAR (because DB column is VARCHAR)
-    public static object DbGuidString(this Guid? value) =>
-        value.HasValue ? value.Value.ToString() : DBNull.Value;
-
-    // STRING
-    public static object DbValue(this string value) =>
-        string.IsNullOrWhiteSpace(value) ? DBNull.Value : value;
-
-    // DATETIME
-    public static object DbValue(this DateTime? value) =>
-        value.HasValue ? value.Value : DBNull.Value;
-}
-
-
-        public async Task<CommonRes> AddorUpdateActionAsync(WorkFlowAction obj)
-        {
-            var loginId = obj.LoginId!.RemovePrefix();
-            var response = await _bpmWorkflowService.SubmitWorkflowAsync(obj.RecommendationId!.Value, obj.Action!, loginId!, obj.Comments!, obj.NewRequest);
-            var code = CommonMethod.GetStatusCodefromResponse(response);
-
-            if(obj.NewRequest && obj.Action == "Reject")
-            {
-                var worklist = await _workflowRepository.GetWorkListDataByDetailsAsync(obj);
-                await _workflowRepository.UpdateRecommendationStatus(obj.RecommendationId.Value, obj.Action!, obj.LoginId!, obj.Comments!, worklist.processActivityName!);
-            }
-
-            if (code == SabicConstants.SuccessStatusCode)
-            {
-                await _workflowRepository.AddorUpdateActionAsync(obj);
-
-                if (!obj.NewRequest)
-                {
-                    var worklist = await _workflowRepository.GetWorkListDataByDetailsAsync(obj);
-                    if (code == SabicConstants.SuccessStatusCode && (obj.Action == "Reject" || worklist.processActivityName == "SNOP Planner Review"))
-                        await _workflowRepository.UpdateRecommendationStatus(obj.RecommendationId.Value, obj.Action!, obj.LoginId!, obj.Comments!,worklist.processActivityName!);
-                }
-            }
-
-            return new CommonRes
-            {
-                StatusMessage = response,
-                StatusCode = code,
-            };
-        }
-
-
-
----------------
-
- // 6. AddorUpdateActionAsync - Success
- [Fact]
- public async Task AddorUpdateActionAsync_Success()
+ public class AccountRepository : IAccountRepository
  {
-     var obj = new WorkFlowAction
+     private readonly SFDbContext _dbContext;
+     private readonly CommonDbContext _commonDbContext;
+
+     public AccountRepository(SFDbContext dbContext, CommonDbContext commonDbContext)
      {
-         RecommendationId = 10,
-         Action = "Approve",
-         LoginId = "DOMAIN\\User",
-         Comments = "OK",
-         NewRequest = false
-     };
+         _dbContext = dbContext;
+         _commonDbContext = commonDbContext;
+     }
 
+     public async Task<List<UserAuth>> GetUserbyLoginIdAsync(string userName)
+     {
+         return await _dbContext.UserAuth
+             .FromSqlRaw(
+                 "EXEC dbo.SP_IsInternal_AuthenticatedUser @Username",
+                 new SqlParameter("@Username", userName)
+             )
+             .ToListAsync();
+     }
 
-     var wl = new WorkList { processActivityName = "SNOP Planner Review" };
+     public async Task<List<UserDetails>> GetAuthenticatedUserDetails(string userName)
+     {
+         return await _dbContext.UserDetails
+             .FromSqlRaw(
+                 "EXEC dbo.SP_GetAuthenticatedUserDetails @Username",
+                 new SqlParameter("@Username", userName)
+             )
+             .ToListAsync();
+     }
 
-     _repo.Setup(x => x.GetWorkListDataByDetailsAsync(obj)).ReturnsAsync(wl);
-     _repo.Setup(x => x.AddorUpdateActionAsync(obj)).Returns(Task.CompletedTask);
-     _repo.Setup(x => x.GetWorkListDataByDetailsAsync(obj)).ReturnsAsync(new WorkList());
-     _repo.Setup(x => x.UpdateRecommendationStatus(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
-     _bpm.Setup(x => x.SubmitWorkflowAsync(10, "Approve", "User", "OK", false)).ReturnsAsync("Success");
+     /// <summary>
+     /// To logout and end sessions of a user
+     /// </summary>
+     public async Task LogoutAndEndSessionByUserIdAsync(int userId)
+     {
+         await _dbContext.Database.ExecuteSqlRawAsync(
+             "EXEC dbo.SP_LogoutAndEndSessionByUserId @UserID",
+             new SqlParameter("@UserID", userId)
+         );
+     }
 
-     var res = await _service.AddorUpdateActionAsync(obj);
+     /// <summary>
+     /// To fetch valid claims
+     /// </summary>
+     public async Task<GetDataForAuthenticationByUserId?> GetDataForAuthenticationByUserIdAsync(int userID)
+     {
+         var result = await _dbContext.GetDataForAuthenticationByUserId
+             .FromSqlRaw(
+                 "EXEC dbo.SP_GetDataForAuthenticationByUserId @UserID",
+                 new SqlParameter("@UserID", userID)
+             )
+             .ToListAsync();
 
-     Assert.Equal(SabicConstants.InternalError, res.StatusCode);
+         return result.FirstOrDefault();
+     }
+
+     public async Task<MST_UserDetails_Infopoint?> GetUserFromCommonDb(string userName)
+     {
+         return await _commonDbContext.MST_UserDetails_Infopoint
+             .Where(x => x.DomainLoginID == userName)
+             .FirstOrDefaultAsync();
+     }
+
+     public async Task<UserDetails?> GetUserDetails(string userName)
+     {
+         var response = await _dbContext.UserDetails
+             .FromSqlRaw(
+                 "EXEC dbo.SP_GetUserDetails @Username",
+                 new SqlParameter("@Username", userName)
+             )
+             .ToListAsync();
+
+         return response.FirstOrDefault();
+     }
+
+     public async Task<UserMenuAccessModel?> IsAuthorizedRoleApi(int roleId, string url)
+     {
+         var res = await _dbContext.UserMenuAccessModel
+             .FromSqlRaw(
+                 "EXEC dbo.SP_CheckRolePageAccess @RoleID, @PageUrl",
+                 new SqlParameter("@RoleID", roleId),
+                 new SqlParameter("@PageUrl", url)
+             )
+             .AsNoTracking()
+             .ToListAsync();
+
+         return res.FirstOrDefault();
+     }
  }
