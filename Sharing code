@@ -11,6 +11,59 @@ public class ActivityMonitoringRepository : IActivityMonitoringRepository
     {
         return await _dbContext.LoginActivityResults
             .FromSqlRaw(
+                @"EXEC dbo.SP_GetLoginActivity
+                    @FromDate = @FromDate,
+                    @ToDate = @ToDate",
+                new SqlParameter("@FromDate", model.FromDate),
+                new SqlParameter("@ToDate", model.ToDate)
+            )
+            .ToListAsync();
+    }
+
+    public async Task<List<UserActivityResults>> GetLoginUserActivity(DateFilter model)
+    {
+        return await _dbContext.UserActivityResults
+            .FromSqlRaw(
+                @"EXEC dbo.SP_GetLoginUserActivity
+                    @FromDate = @FromDate,
+                    @ToDate = @ToDate",
+                new SqlParameter("@FromDate", model.FromDate),
+                new SqlParameter("@ToDate", model.ToDate)
+            )
+            .ToListAsync();
+    }
+
+    public async Task InsertUserActivity(InsertUserActivity insertUserActivity)
+    {
+        await _dbContext.Database.ExecuteSqlRawAsync(
+            @"EXEC dbo.SP_Insert_Update_ActivityTracker
+                @ActivityTrackerID = @ActivityTrackerID,
+                @CreatedBy = @CreatedBy,
+                @FunctionID = @FunctionID,
+                @ScreenID = @ScreenID,
+                @UserActionID = @UserActionID",
+            new SqlParameter("@ActivityTrackerID", insertUserActivity.ActivityTrackerID),
+            new SqlParameter("@CreatedBy", insertUserActivity.CreatedBy),
+            new SqlParameter("@FunctionID", insertUserActivity.FunctionID),
+            new SqlParameter("@ScreenID", insertUserActivity.ScreenID),
+            new SqlParameter("@UserActionID", insertUserActivity.UserActionID)
+        );
+    }
+}
+
+public class ActivityMonitoringRepository : IActivityMonitoringRepository
+{
+    private readonly SFDbContext _dbContext;
+
+    public ActivityMonitoringRepository(SFDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    public async Task<List<LoginActivityResults>> GetLoginActivity(DateFilter model)
+    {
+        return await _dbContext.LoginActivityResults
+            .FromSqlRaw(
                 "EXEC dbo.SP_GetLoginActivity @FromDate, @ToDate",
                 new SqlParameter("@FromDate", model.FromDate),
                 new SqlParameter("@ToDate", model.ToDate)
