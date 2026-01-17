@@ -1,434 +1,168 @@
-public class RevenueRepository : IRevenueRepository
-{
-    private readonly SFDbContext _dbContext;
+ public class WorkflowRepository : IWorkflowRepository
+ {
+     private readonly SFDbContext _db;
+     private readonly WorkFlowDbContext _workFlowDb;
 
-    public RevenueRepository(SFDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+     public WorkflowRepository(SFDbContext dbContext, WorkFlowDbContext workFlowDbContext)
+     {
+         _db = dbContext;
+         _workFlowDb = workFlowDbContext;
+     }
 
-    public async Task<List<RevenueMap>> GetRevenueMapDetails(RevenueFilterReq model)
-        => await _dbContext.RevenueMap.FromSqlRaw(
-            @"EXEC dbo.SP_GetRecommendationForGlobalMap
-                @TypeID = @TypeID,
-                @CompanyCode = @CompanyCode,
-                @ProfitCenterID = @ProfitCenterID,
-                @FromDate = @FromDate,
-                @ToDate = @ToDate,
-                @SBU = @SBU,
-                @BU = @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
+     public async Task<WorkListWithSummaryModel> GetAllAsync(WorkFlowAction obj)
+     {
+         var workflowDetail = new WorkListWithSummaryModel();
 
-    public async Task<List<ContributionMarginTrend>> GetContributionMariginTrend(RevenueFilterReq model)
-        => await _dbContext.ContributionMarginTrend.FromSqlRaw(
-            @"EXEC dbo.SP_GetContributionMarginTrend
-                @TypeID = @TypeID,
-                @CompanyCode = @CompanyCode,
-                @ProfitCenterID = @ProfitCenterID,
-                @FromDate = @FromDate,
-                @ToDate = @ToDate,
-                @SBU = @SBU,
-                @BU = @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
+         var statsTask = _db.RecommendationsStatistics
+             .FromSqlRaw("EXEC dbo.SP_GetRecommendationsStatistics")
+             .AsNoTracking()
+             .ToListAsync();
 
-    public async Task<List<RevenueTrend>> GetRevenueTrend(RevenueFilterReq model)
-        => await _dbContext.RevenueTrend.FromSqlRaw(
-            @"EXEC dbo.SP_GetRevenueTrend
-                @TypeID = @TypeID,
-                @CompanyCode = @CompanyCode,
-                @ProfitCenterID = @ProfitCenterID,
-                @FromDate = @FromDate,
-                @ToDate = @ToDate,
-                @SBU = @SBU,
-                @BU = @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
+         var workListTask = _workFlowDb.WorkList
+             .FromSqlRaw(
+                 "EXEC dbo.SP_GetWorklistByDomainLoginID @LoginId",
+                 new SqlParameter("@LoginId", obj.LoginId)
+             )
+             .AsNoTracking()
+             .ToListAsync();
 
-    public async Task<List<SalesVolumeTrend>> GetSalesVolumeTrend(RevenueFilterReq model)
-        => await _dbContext.SalesVolumeTrend.FromSqlRaw(
-            @"EXEC dbo.SP_GetSalesVolumeTrend
-                @TypeID = @TypeID,
-                @CompanyCode = @CompanyCode,
-                @ProfitCenterID = @ProfitCenterID,
-                @FromDate = @FromDate,
-                @ToDate = @ToDate,
-                @SBU = @SBU,
-                @BU = @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
+         await Task.WhenAll(statsTask, workListTask);
 
-    public async Task<List<AverageSellingPriceForcastTrend>> GetAverageSellingPrice(RevenueFilterReq model)
-        => await _dbContext.AverageSellingPriceForcastTrend.FromSqlRaw(
-            @"EXEC dbo.SP_GetAverageSellingPrice
-                @TypeID = @TypeID,
-                @CompanyCode = @CompanyCode,
-                @ProfitCenterID = @ProfitCenterID,
-                @FromDate = @FromDate,
-                @ToDate = @ToDate,
-                @SBU = @SBU,
-                @BU = @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
+         workflowDetail.RecommendationsStatistics = statsTask.Result.FirstOrDefault();
+         workflowDetail.WorkList = workListTask.Result;
 
-    public async Task<List<RecommendationDetails>> GetRecommendationDetails(RevenueFilterReq model)
-        => await _dbContext.RecommendationDetails.FromSqlRaw(
-            @"EXEC dbo.SP_GetRecommendationDetails
-                @TypeID = @TypeID,
-                @CompanyCode = @CompanyCode,
-                @ProfitCenterID = @ProfitCenterID,
-                @FromDate = @FromDate,
-                @ToDate = @ToDate,
-                @SBU = @SBU,
-                @BU = @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
+         return workflowDetail;
+     }
 
-    public async Task<List<RevenueRecommendations>> GetRevenueRecommendations(int recommendationID)
-        => await _dbContext.RevenueRecommendations.FromSqlRaw(
-            @"EXEC dbo.SP_GetRevenueRecommendations
-                @RecommendationID = @RecommendationID",
-            new SqlParameter("@RecommendationID", recommendationID)
-        ).ToListAsync();
+     public async Task<WorkList> GetWorkListDataByDetailsAsync(WorkFlowAction obj)
+     {
+         var result = await _workFlowDb.WorkList
+             .FromSqlRaw(
+                 "EXEC dbo.SP_GetWorklistByDomainLoginID @LoginId, @RecommendationId",
+                 new SqlParameter("@LoginId", obj.LoginId),
+                 new SqlParameter("@RecommendationId", obj.RecommendationId)
+             )
+             .AsNoTracking()
+             .ToListAsync();
 
-    public async Task<List<VariableCostRecommendations>> GetVariableCostRecommendations(int recommendationID)
-        => await _dbContext.VariableCostRecommendations.FromSqlRaw(
-            @"EXEC dbo.SP_GetVariableCostRecommendations
-                @RecommendationID = @RecommendationID",
-            new SqlParameter("@RecommendationID", recommendationID)
-        ).ToListAsync();
+         return result.FirstOrDefault() ?? new WorkList();
+     }
 
-    public async Task<List<CostofGoodsSold>> GetCostofGoodsSoldGraphComparisonData(RevenueFilterReq model)
-        => await _dbContext.CostofGoodsSold.FromSqlRaw(
-            @"EXEC dbo.SP_GetCostofGoodsSoldGraphComparisonData
-                @TypeID = @TypeID,
-                @CompanyCode = @CompanyCode,
-                @ProfitCenterID = @ProfitCenterID,
-                @FromDate = @FromDate,
-                @ToDate = @ToDate,
-                @SBU = @SBU,
-                @BU = @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
+     public async Task<WorkListChangeActionsModel> GetDetailsAsync(int requestNumber, string taskName)
+     {
+         var model = new WorkListChangeActionsModel();
 
-    public async Task<List<RecommendationsCardDetails>> GetRecommendationsCardDetails(RevenueFilterReq model)
-        => await _dbContext.RecommendationsCardDetails.FromSqlRaw(
-            @"EXEC dbo.SP_GetRecommendationsCard
-                @TypeID = @TypeID,
-                @CompanyCode = @CompanyCode,
-                @ProfitCenterID = @ProfitCenterID,
-                @FromDate = @FromDate,
-                @ToDate = @ToDate,
-                @SBU = @SBU,
-                @BU = @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
+         model.WorkListtRecommendationDetails =
+             (await _workFlowDb.WorkListtRecommendationDetails
+                 .FromSqlRaw(
+                     "EXEC dbo.SP_GetWorkListChangeSellingVolumeDetails @RequestNumber",
+                     new SqlParameter("@RequestNumber", requestNumber)
+                 )
+                 .AsNoTracking()
+                 .ToListAsync())
+             .FirstOrDefault();
 
-    public async Task<List<ContributionMarginCardDetails>> GetContributionMarginCardDetails(RevenueFilterReq model)
-        => await _dbContext.ContributionMarginCardDetails.FromSqlRaw(
-            @"EXEC dbo.SP_GetContributionMarginCard
-                @TypeID = @TypeID,
-                @CompanyCode = @CompanyCode,
-                @ProfitCenterID = @ProfitCenterID,
-                @FromDate = @FromDate,
-                @ToDate = @ToDate,
-                @SBU = @SBU,
-                @BU = @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
+         model.WorkListActionHistory =
+             await _workFlowDb.WorkListActionHistory
+                 .FromSqlRaw(
+                     "EXEC dbo.SP_GetWorklistActionHistoryByRecommendationID @RequestNumber",
+                     new SqlParameter("@RequestNumber", requestNumber)
+                 )
+                 .AsNoTracking()
+                 .ToListAsync();
 
-    public async Task<List<ProductionRegion>> GetViewDataRecommendationsForProductionRegion(int recommendationID, int typeID)
-        => await _dbContext.ProductionRegionRecommendations.FromSqlRaw(
-            @"EXEC dbo.SP_GetViewDataForRecommendations
-                @RecommendationID = @RecommendationID,
-                @TypeID = @TypeID",
-            new SqlParameter("@RecommendationID", recommendationID),
-            new SqlParameter("@TypeID", typeID)
-        ).ToListAsync();
+         model.WorkListRequestAction =
+             await _workFlowDb.WorkListRequestAction
+                 .FromSqlRaw(
+                     "EXEC dbo.SP_GetWorkflowTaskActionsByTaskName @TaskName",
+                     new SqlParameter("@TaskName", taskName)
+                 )
+                 .AsNoTracking()
+                 .ToListAsync();
 
-    public async Task<List<SellingRegion>> GetViewDataRecommendationsForSellingRegion(int recommendationID, int typeID)
-        => await _dbContext.SellingRegionRecommendations.FromSqlRaw(
-            @"EXEC dbo.SP_GetViewDataForRecommendations
-                @RecommendationID = @RecommendationID,
-                @TypeID = @TypeID",
-            new SqlParameter("@RecommendationID", recommendationID),
-            new SqlParameter("@TypeID", typeID)
-        ).ToListAsync();
+         return model;
+     }
 
-    public async Task<List<ContributionMarginRecommendation>> GetContributionMarginRecommendations(RevenueFilterReq model)
-        => await _dbContext.ContributionMarginRecommendation.FromSqlRaw(
-            @"EXEC dbo.SP_GetCMRecommendations
-                @CompanyCode = @CompanyCode,
-                @ProfitCenterID = @ProfitCenterID,
-                @FromDate = @FromDate,
-                @ToDate = @ToDate,
-                @SBU = @SBU,
-                @BU = @BU",
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
+     public async Task<List<WorkListRegionContributor>> GetRegionContributorAsync(int requestNumber)
+         => await _db.WorkListRegionContributor
+             .FromSqlRaw(
+                 "EXEC dbo.SP_GetWorkListRegionDetails @RequestNumber",
+                 new SqlParameter("@RequestNumber", requestNumber)
+             )
+             .ToListAsync();
 
-    public async Task<List<ContributionMarginRecommendationRegion>> GetContributionMarginRecommendationRegionData(int recommendationID)
-        => await _dbContext.ContributionMarginRecommendationRegion.FromSqlRaw(
-            @"EXEC dbo.SP_GetCMRecommendationsDetailsByID
-                @RecommendationID = @RecommendationID",
-            new SqlParameter("@RecommendationID", recommendationID)
-        ).ToListAsync();
-}
+     public async Task AddorUpdateActionAsync(WorkFlowAction obj)
+         => await _workFlowDb.Database.ExecuteSqlRawAsync(
+             "EXEC dbo.SP_Insert_Update_SF_WorkflowDetails " +
+             "@RecommendationId, @Action, @LoginId, @Comments",
+             new SqlParameter("@RecommendationId", obj.RecommendationId),
+             new SqlParameter("@Action", obj.Action),
+             new SqlParameter("@LoginId", obj.LoginId),
+             new SqlParameter("@Comments", obj.Comments)
+         );
 
+     #region Workflow Redirect
 
+     public async Task<IEnumerable<WorkflowRedirect>> GetAllRedirectsAsync()
+         => await _workFlowDb.WorkflowRedirect
+             .FromSqlRaw("EXEC dbo.SP_GetRedirectionWorklist")
+             .ToListAsync();
 
+     public async Task AddorUpdateRedirectAsync(WorkflowRedirect redirect)
+         => await _workFlowDb.Database.ExecuteSqlRawAsync(
+             "EXEC dbo.SP_Insert_Update_WorklistRedirection " +
+             "@RecommendationRequestID, @FromUser, @ToUser, @Reason, @CreatedBy",
+             new SqlParameter("@RecommendationRequestID", redirect.RecommendationRequestID),
+             new SqlParameter("@FromUser", redirect.FromUserDomainLoginID),
+             new SqlParameter("@ToUser", redirect.ToUserDomainLoginID),
+             new SqlParameter("@Reason", redirect.Reason),
+             new SqlParameter("@CreatedBy", redirect.CreatedBy)
+         );
 
-public class RevenueRepository : IRevenueRepository
-{
-    private readonly SFDbContext _dbContext;
+     #endregion
 
-    public RevenueRepository(SFDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+     #region Delegation
 
-    public async Task<List<RevenueMap>> GetRevenueMapDetails(RevenueFilterReq model)
-        => await _dbContext.RevenueMap.FromSqlRaw(
-            "EXEC dbo.SP_GetRecommendationForGlobalMap " +
-            "@TypeID = @TypeID, " +
-            "@CompanyCode = @CompanyCode, " +
-            "@ProfitCenterID = @ProfitCenterID, " +
-            "@FromDate = @FromDate, " +
-            "@ToDate = @ToDate, " +
-            "@SBU = @SBU, " +
-            "@BU = @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
+     public async Task<IEnumerable<WorkflowDelegation>> GetDelegationListAsync(WorkflowDelegation model)
+         => await _workFlowDb.WorkflowDelegation
+             .FromSqlRaw(
+                 "EXEC dbo.SP_GetDelegationDetailsByID @DelegationID",
+                 new SqlParameter(
+                     "@DelegationID",
+                     model.DelegationID == 0 ? DBNull.Value : model.DelegationID
+                 )
+             )
+             .ToListAsync();
 
-    public async Task<List<ContributionMarginTrend>> GetContributionMariginTrend(RevenueFilterReq model)
-        => await _dbContext.ContributionMarginTrend.FromSqlRaw(
-            "EXEC dbo.SP_GetContributionMarginTrend " +
-            "@TypeID = @TypeID, " +
-            "@CompanyCode = @CompanyCode, " +
-            "@ProfitCenterID = @ProfitCenterID, " +
-            "@FromDate = @FromDate, " +
-            "@ToDate = @ToDate, " +
-            "@SBU = @SBU, " +
-            "@BU = @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
+     public async Task AddorUpdateDelegationAsync(WorkflowDelegation obj)
+         => await _workFlowDb.Database.ExecuteSqlRawAsync(
+             "EXEC dbo.SP_Insert_Update_Delegation " +
+             "@DelegationID, @FromUser, @ToUser, @StartDate, @EndDate, @Reason, @IsActive, @CreatedBy",
+             new SqlParameter("@DelegationID", obj.DelegationID),
+             new SqlParameter("@FromUser", obj.FromUserDomainLoginID),
+             new SqlParameter("@ToUser", obj.ToUserDomainLoginID),
+             new SqlParameter("@StartDate", obj.StartDate),
+             new SqlParameter("@EndDate", obj.EndDate),
+             new SqlParameter("@Reason", obj.Reason),
+             new SqlParameter("@IsActive", obj.IsActive ? 1 : 0),
+             new SqlParameter("@CreatedBy", obj.CreatedBy)
+         );
 
-    public async Task<List<RevenueTrend>> GetRevenueTrend(RevenueFilterReq model)
-        => await _dbContext.RevenueTrend.FromSqlRaw(
-            "EXEC dbo.SP_GetRevenueTrend " +
-            "@TypeID = @TypeID, " +
-            "@CompanyCode = @CompanyCode, " +
-            "@ProfitCenterID = @ProfitCenterID, " +
-            "@FromDate = @FromDate, " +
-            "@ToDate = @ToDate, " +
-            "@SBU = @SBU, " +
-            "@BU = @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
+     #endregion
 
-    public async Task<List<SalesVolumeTrend>> GetSalesVolumeTrend(RevenueFilterReq model)
-        => await _dbContext.SalesVolumeTrend.FromSqlRaw(
-            "EXEC dbo.SP_GetSalesVolumeTrend " +
-            "@TypeID = @TypeID, " +
-            "@CompanyCode = @CompanyCode, " +
-            "@ProfitCenterID = @ProfitCenterID, " +
-            "@FromDate = @FromDate, " +
-            "@ToDate = @ToDate, " +
-            "@SBU = @SBU, " +
-            "@BU = @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
-
-    public async Task<List<AverageSellingPriceForcastTrend>> GetAverageSellingPrice(RevenueFilterReq model)
-        => await _dbContext.AverageSellingPriceForcastTrend.FromSqlRaw(
-            "EXEC dbo.SP_GetAverageSellingPrice " +
-            "@TypeID, @CompanyCode, @ProfitCenterID, @FromDate, @ToDate, @SBU, @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
-
-    public async Task<List<RecommendationDetails>> GetRecommendationDetails(RevenueFilterReq model)
-        => await _dbContext.RecommendationDetails.FromSqlRaw(
-            "EXEC dbo.SP_GetRecommendationDetails " +
-            "@TypeID, @CompanyCode, @ProfitCenterID, @FromDate, @ToDate, @SBU, @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
-
-    public async Task<List<RevenueRecommendations>> GetRevenueRecommendations(int recommendationID)
-        => await _dbContext.RevenueRecommendations.FromSqlRaw(
-            "EXEC dbo.SP_GetRevenueRecommendations @RecommendationID",
-            new SqlParameter("@RecommendationID", recommendationID)
-        ).ToListAsync();
-
-    public async Task<List<VariableCostRecommendations>> GetVariableCostRecommendations(int recommendationID)
-        => await _dbContext.VariableCostRecommendations.FromSqlRaw(
-            "EXEC dbo.SP_GetVariableCostRecommendations @RecommendationID",
-            new SqlParameter("@RecommendationID", recommendationID)
-        ).ToListAsync();
-
-    public async Task<List<CostofGoodsSold>> GetCostofGoodsSoldGraphComparisonData(RevenueFilterReq model)
-        => await _dbContext.CostofGoodsSold.FromSqlRaw(
-            "EXEC dbo.SP_GetCostofGoodsSoldGraphComparisonData " +
-            "@TypeID, @CompanyCode, @ProfitCenterID, @FromDate, @ToDate, @SBU, @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
-
-    public async Task<List<RecommendationsCardDetails>> GetRecommendationsCardDetails(RevenueFilterReq model)
-        => await _dbContext.RecommendationsCardDetails.FromSqlRaw(
-            "EXEC dbo.SP_GetRecommendationsCard " +
-            "@TypeID, @CompanyCode, @ProfitCenterID, @FromDate, @ToDate, @SBU, @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
-
-    public async Task<List<ContributionMarginCardDetails>> GetContributionMarginCardDetails(RevenueFilterReq model)
-        => await _dbContext.ContributionMarginCardDetails.FromSqlRaw(
-            "EXEC dbo.SP_GetContributionMarginCard " +
-            "@TypeID, @CompanyCode, @ProfitCenterID, @FromDate, @ToDate, @SBU, @BU",
-            new SqlParameter("@TypeID", model.TypeID),
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
-
-    public async Task<List<ProductionRegion>> GetViewDataRecommendationsForProductionRegion(int recommendationID, int typeID)
-        => await _dbContext.ProductionRegionRecommendations.FromSqlRaw(
-            "EXEC dbo.SP_GetViewDataForRecommendations @RecommendationID, @TypeID",
-            new SqlParameter("@RecommendationID", recommendationID),
-            new SqlParameter("@TypeID", typeID)
-        ).ToListAsync();
-
-    public async Task<List<SellingRegion>> GetViewDataRecommendationsForSellingRegion(int recommendationID, int typeID)
-        => await _dbContext.SellingRegionRecommendations.FromSqlRaw(
-            "EXEC dbo.SP_GetViewDataForRecommendations @RecommendationID, @TypeID",
-            new SqlParameter("@RecommendationID", recommendationID),
-            new SqlParameter("@TypeID", typeID)
-        ).ToListAsync();
-
-    public async Task<List<ContributionMarginRecommendation>> GetContributionMarginRecommendations(RevenueFilterReq model)
-        => await _dbContext.ContributionMarginRecommendation.FromSqlRaw(
-            "EXEC dbo.SP_GetCMRecommendations " +
-            "@CompanyCode, @ProfitCenterID, @FromDate, @ToDate, @SBU, @BU",
-            new SqlParameter("@CompanyCode", model.CompanyCode),
-            new SqlParameter("@ProfitCenterID", model.ProfitCenterID),
-            new SqlParameter("@FromDate", model.FromDate),
-            new SqlParameter("@ToDate", model.ToDate),
-            new SqlParameter("@SBU", model.SBU),
-            new SqlParameter("@BU", model.BU)
-        ).ToListAsync();
-
-    public async Task<List<ContributionMarginRecommendationRegion>> GetContributionMarginRecommendationRegionData(int recommendationID)
-        => await _dbContext.ContributionMarginRecommendationRegion.FromSqlRaw(
-            "EXEC dbo.SP_GetCMRecommendationsDetailsByID @RecommendationID",
-            new SqlParameter("@RecommendationID", recommendationID)
-        ).ToListAsync();
-}
+     public async Task UpdateRecommendationStatus(
+         int recommendationRequestId,
+         string actionTaken,
+         string actionTakenBy,
+         string comments,
+         string workFlowStageName)
+         => await _db.Database.ExecuteSqlRawAsync(
+             "EXEC dbo.SP_Update_RecommendationStatus " +
+             "@RecommendationRequestId, @ActionTaken, @ActionTakenBy, @Comments, @WorkFlowStageName",
+             new SqlParameter("@RecommendationID", recommendationRequestId),
+             new SqlParameter("@ActionTaken", actionTaken),
+             new SqlParameter("@ActionTakenBy", actionTakenBy),
+             new SqlParameter("@Comments", comments),
+             new SqlParameter("@WorkFlowStageName", workFlowStageName)
+         );
+ }
