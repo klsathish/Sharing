@@ -1,97 +1,99 @@
-public class ActivityMonitoringRepository : IActivityMonitoringRepository
-{
-    private readonly SFDbContext _dbContext;
+ public class APIRequestLogRepository : IAPIRequestLogRepository
+ {
+     private readonly SFDbContext _dbContext;
 
-    public ActivityMonitoringRepository(SFDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+     public APIRequestLogRepository(SFDbContext dbContext)
+     {
+         _dbContext = dbContext;
+     }
 
-    public async Task<List<LoginActivityResults>> GetLoginActivity(DateFilter model)
-    {
-        return await _dbContext.LoginActivityResults
-            .FromSqlRaw(
-                @"EXEC dbo.SP_GetLoginActivity
-                    @FromDate = @FromDate,
-                    @ToDate = @ToDate",
-                new SqlParameter("@FromDate", model.FromDate),
-                new SqlParameter("@ToDate", model.ToDate)
-            )
-            .ToListAsync();
-    }
 
-    public async Task<List<UserActivityResults>> GetLoginUserActivity(DateFilter model)
-    {
-        return await _dbContext.UserActivityResults
-            .FromSqlRaw(
-                @"EXEC dbo.SP_GetLoginUserActivity
-                    @FromDate = @FromDate,
-                    @ToDate = @ToDate",
-                new SqlParameter("@FromDate", model.FromDate),
-                new SqlParameter("@ToDate", model.ToDate)
-            )
-            .ToListAsync();
-    }
 
-    public async Task InsertUserActivity(InsertUserActivity insertUserActivity)
-    {
-        await _dbContext.Database.ExecuteSqlRawAsync(
-            @"EXEC dbo.SP_Insert_Update_ActivityTracker
-                @ActivityTrackerID = @ActivityTrackerID,
-                @CreatedBy = @CreatedBy,
-                @FunctionID = @FunctionID,
-                @ScreenID = @ScreenID,
-                @UserActionID = @UserActionID",
-            new SqlParameter("@ActivityTrackerID", insertUserActivity.ActivityTrackerID),
-            new SqlParameter("@CreatedBy", insertUserActivity.CreatedBy),
-            new SqlParameter("@FunctionID", insertUserActivity.FunctionID),
-            new SqlParameter("@ScreenID", insertUserActivity.ScreenID),
-            new SqlParameter("@UserActionID", insertUserActivity.UserActionID)
-        );
-    }
-}
+     public async Task<List<APIRequestResults>> GetAPIRequestLog(DateFilter model)
+     {
+         return await _dbContext.APIRequestResults
+             .FromSqlRaw(
+                 "EXEC dbo.SP_GetAPIRequestLog @FromDate, @ToDate",
+                 new SqlParameter("@FromDate", model.FromDate),
+                 new SqlParameter("@ToDate", model.ToDate)
+             )
+             .ToListAsync();
+     }
 
-public class ActivityMonitoringRepository : IActivityMonitoringRepository
-{
-    private readonly SFDbContext _dbContext;
+     public async Task InsertAPIRequestLog(APIRequestModel model)
+     {
+         await _dbContext.Database.ExecuteSqlRawAsync(
+             "EXEC dbo.SP_Insert_Update_APIRequestLog " +
+             "@RequestLogID, @UserID, @RoleID, @SessionID, @AppModuleMappingID, " +
+             "@ApiEndPoint, @HttpMethod, @StatusCode, @RequestBody, @RequestTimeStamp, " +
+             "@ResponseBody, @ResponseTimeStamp, @Duration, @CreatedBy, @LayerID",
+             new SqlParameter("@RequestLogID", 0),
+             new SqlParameter("@UserID", model.UserID),
+             new SqlParameter("@RoleID", model.RoleID),
+             new SqlParameter("@SessionID", model.SessionID),
+             new SqlParameter("@AppModuleMappingID", model.AppModuleMappingID),
+             new SqlParameter("@ApiEndPoint", model.ApiEndPoint),
+             new SqlParameter("@HttpMethod", model.HttpMethod),
+             new SqlParameter("@StatusCode", model.StatusCode),
+             new SqlParameter("@RequestBody", model.RequestBody),
+             new SqlParameter("@RequestTimeStamp", model.RequestTimeStamp),
+             new SqlParameter("@ResponseBody", model.ResponseBody),
+             new SqlParameter("@ResponseTimeStamp", model.ResponseTimeStamp),
+             new SqlParameter("@Duration", model.Duration),
+             new SqlParameter("@CreatedBy", model.CreatedBy),
+             new SqlParameter("@LayerID", model.LayerID)
+         );
+     }
 
-    public ActivityMonitoringRepository(SFDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+     public async Task<string> InsertAPIRequestLogsAndPerformanceLogs(
+         ApiRequestAndPerformanceLogRequest request,
+         ApiRequestAndPerformanceLogModel model)
+     {
+         var apiRequestLog = await _dbContext.Database.ExecuteSqlRawAsync(
+             "EXEC dbo.SP_Insert_Update_APIRequestLog " +
+             "@RequestLogID, @UserID, @RoleID, @SessionID, @AppModuleMappingID, " +
+             "@ApiEndPoint, @HttpMethod, @StatusCode, @RequestBody, @RequestTimeStamp, " +
+             "@ResponseBody, @ResponseTimeStamp, @Duration, @CreatedBy, @LayerID",
+             new SqlParameter("@RequestLogID", 0),
+             new SqlParameter("@UserID", model.UserID),
+             new SqlParameter("@RoleID", model.RoleID),
+             new SqlParameter("@SessionID", model.SessionID),
+             new SqlParameter("@AppModuleMappingID", request.AppModuleMappingID),
+             new SqlParameter("@ApiEndPoint", request.ApiEndPoint),
+             new SqlParameter("@HttpMethod", request.HttpMethod),
+             new SqlParameter("@StatusCode", request.StatusCode),
+             new SqlParameter("@RequestBody", request.RequestBody),
+             new SqlParameter("@RequestTimeStamp", request.RequestTimeStamp),
+             new SqlParameter("@ResponseBody", request.ResponseBody),
+             new SqlParameter("@ResponseTimeStamp", request.ResponseTimeStamp),
+             new SqlParameter("@Duration", model.Duration),
+             new SqlParameter("@CreatedBy", model.CreatedBy),
+             new SqlParameter("@LayerID", request.LayerID)
+         );
 
-    public async Task<List<LoginActivityResults>> GetLoginActivity(DateFilter model)
-    {
-        return await _dbContext.LoginActivityResults
-            .FromSqlRaw(
-                "EXEC dbo.SP_GetLoginActivity @FromDate, @ToDate",
-                new SqlParameter("@FromDate", model.FromDate),
-                new SqlParameter("@ToDate", model.ToDate)
-            )
-            .ToListAsync();
-    }
+         if (apiRequestLog == 0)
+             return SabicConstants.BadRequestMessage;
 
-    public async Task<List<UserActivityResults>> GetLoginUserActivity(DateFilter model)
-    {
-        return await _dbContext.UserActivityResults
-            .FromSqlRaw(
-                "EXEC dbo.SP_GetLoginUserActivity @FromDate, @ToDate",
-                new SqlParameter("@FromDate", model.FromDate),
-                new SqlParameter("@ToDate", model.ToDate)
-            )
-            .ToListAsync();
-    }
+         var performanceLog = await _dbContext.Database.ExecuteSqlRawAsync(
+             "EXEC dbo.SP_Insert_Update_PerformanceLog " +
+             "@PerformanceLogID, @UserID, @RoleID, @SessionID, @ComponentName, " +
+             "@ActionName, @StartTime, @EndTime, @Duration, @CreatedBy, @CreatedOn",
+             new SqlParameter("@PerformanceLogID", 0),
+             new SqlParameter("@UserID", model.UserID),
+             new SqlParameter("@RoleID", model.RoleID),
+             new SqlParameter("@SessionID", model.SessionID),
+             new SqlParameter("@ComponentName", request.ComponentName),
+             new SqlParameter("@ActionName", request.ActionName),
+             new SqlParameter("@StartTime", request.RequestTimeStamp),
+             new SqlParameter("@EndTime", request.ResponseTimeStamp),
+             new SqlParameter("@Duration", model.Duration),
+             new SqlParameter("@CreatedBy", model.CreatedBy),
+             new SqlParameter("@CreatedOn", model.CreatedOn)
+         );
 
-    public async Task InsertUserActivity(InsertUserActivity insertUserActivity)
-    {
-        await _dbContext.Database.ExecuteSqlRawAsync(
-            "EXEC dbo.SP_Insert_Update_ActivityTracker " +
-            "@ActivityTrackerID, @CreatedBy, @FunctionID, @ScreenID, @UserActionID",
-            new SqlParameter("@ActivityTrackerID", insertUserActivity.ActivityTrackerID),
-            new SqlParameter("@CreatedBy", insertUserActivity.CreatedBy),
-            new SqlParameter("@FunctionID", insertUserActivity.FunctionID),
-            new SqlParameter("@ScreenID", insertUserActivity.ScreenID),
-            new SqlParameter("@UserActionID", insertUserActivity.UserActionID)
-        );
-    }
-}
+         if (performanceLog == 0)
+             return SabicConstants.BadRequestMessage;
+
+         return SabicConstants.SuccessMessage;
+     }
+ }
