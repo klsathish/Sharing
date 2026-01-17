@@ -1,232 +1,143 @@
-public class APIRequestLogRepository : IAPIRequestLogRepository
-{
-    private readonly SFDbContext _dbContext;
-
-    public APIRequestLogRepository(SFDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
-    public async Task<List<APIRequestResults>> GetAPIRequestLog(DateFilter model)
-    {
-        return await _dbContext.APIRequestResults
-            .FromSqlRaw(
-                @"EXEC dbo.SP_GetAPIRequestLog
-                    @FromDate = @FromDate,
-                    @ToDate = @ToDate",
-                new SqlParameter("@FromDate", model.FromDate),
-                new SqlParameter("@ToDate", model.ToDate)
-            )
-            .ToListAsync();
-    }
-
-    public async Task InsertAPIRequestLog(APIRequestModel model)
-    {
-        await _dbContext.Database.ExecuteSqlRawAsync(
-            @"EXEC dbo.SP_Insert_Update_APIRequestLog
-                @RequestLogID = @RequestLogID,
-                @UserID = @UserID,
-                @RoleID = @RoleID,
-                @SessionID = @SessionID,
-                @AppModuleMappingID = @AppModuleMappingID,
-                @ApiEndPoint = @ApiEndPoint,
-                @HttpMethod = @HttpMethod,
-                @StatusCode = @StatusCode,
-                @RequestBody = @RequestBody,
-                @RequestTimeStamp = @RequestTimeStamp,
-                @ResponseBody = @ResponseBody,
-                @ResponseTimeStamp = @ResponseTimeStamp,
-                @Duration = @Duration,
-                @CreatedBy = @CreatedBy,
-                @LayerID = @LayerID",
-            new SqlParameter("@RequestLogID", 0),
-            new SqlParameter("@UserID", model.UserID),
-            new SqlParameter("@RoleID", model.RoleID),
-            new SqlParameter("@SessionID", model.SessionID),
-            new SqlParameter("@AppModuleMappingID", model.AppModuleMappingID),
-            new SqlParameter("@ApiEndPoint", model.ApiEndPoint),
-            new SqlParameter("@HttpMethod", model.HttpMethod),
-            new SqlParameter("@StatusCode", model.StatusCode),
-            new SqlParameter("@RequestBody", model.RequestBody),
-            new SqlParameter("@RequestTimeStamp", model.RequestTimeStamp),
-            new SqlParameter("@ResponseBody", model.ResponseBody),
-            new SqlParameter("@ResponseTimeStamp", model.ResponseTimeStamp),
-            new SqlParameter("@Duration", model.Duration),
-            new SqlParameter("@CreatedBy", model.CreatedBy),
-            new SqlParameter("@LayerID", model.LayerID)
-        );
-    }
-
-    public async Task<string> InsertAPIRequestLogsAndPerformanceLogs(
-        ApiRequestAndPerformanceLogRequest request,
-        ApiRequestAndPerformanceLogModel model)
-    {
-        var apiRequestLog = await _dbContext.Database.ExecuteSqlRawAsync(
-            @"EXEC dbo.SP_Insert_Update_APIRequestLog
-                @RequestLogID = @RequestLogID,
-                @UserID = @UserID,
-                @RoleID = @RoleID,
-                @SessionID = @SessionID,
-                @AppModuleMappingID = @AppModuleMappingID,
-                @ApiEndPoint = @ApiEndPoint,
-                @HttpMethod = @HttpMethod,
-                @StatusCode = @StatusCode,
-                @RequestBody = @RequestBody,
-                @RequestTimeStamp = @RequestTimeStamp,
-                @ResponseBody = @ResponseBody,
-                @ResponseTimeStamp = @ResponseTimeStamp,
-                @Duration = @Duration,
-                @CreatedBy = @CreatedBy,
-                @LayerID = @LayerID",
-            new SqlParameter("@RequestLogID", 0),
-            new SqlParameter("@UserID", model.UserID),
-            new SqlParameter("@RoleID", model.RoleID),
-            new SqlParameter("@SessionID", model.SessionID),
-            new SqlParameter("@AppModuleMappingID", request.AppModuleMappingID),
-            new SqlParameter("@ApiEndPoint", request.ApiEndPoint),
-            new SqlParameter("@HttpMethod", request.HttpMethod),
-            new SqlParameter("@StatusCode", request.StatusCode),
-            new SqlParameter("@RequestBody", request.RequestBody),
-            new SqlParameter("@RequestTimeStamp", request.RequestTimeStamp),
-            new SqlParameter("@ResponseBody", request.ResponseBody),
-            new SqlParameter("@ResponseTimeStamp", request.ResponseTimeStamp),
-            new SqlParameter("@Duration", model.Duration),
-            new SqlParameter("@CreatedBy", model.CreatedBy),
-            new SqlParameter("@LayerID", request.LayerID)
-        );
-
-        if (apiRequestLog == 0)
-            return SabicConstants.BadRequestMessage;
-
-        var performanceLog = await _dbContext.Database.ExecuteSqlRawAsync(
-            @"EXEC dbo.SP_Insert_Update_PerformanceLog
-                @PerformanceLogID = @PerformanceLogID,
-                @UserID = @UserID,
-                @RoleID = @RoleID,
-                @SessionID = @SessionID,
-                @ComponentName = @ComponentName,
-                @ActionName = @ActionName,
-                @StartTime = @StartTime,
-                @EndTime = @EndTime,
-                @Duration = @Duration,
-                @CreatedBy = @CreatedBy,
-                @CreatedOn = @CreatedOn",
-            new SqlParameter("@PerformanceLogID", 0),
-            new SqlParameter("@UserID", model.UserID),
-            new SqlParameter("@RoleID", model.RoleID),
-            new SqlParameter("@SessionID", model.SessionID),
-            new SqlParameter("@ComponentName", request.ComponentName),
-            new SqlParameter("@ActionName", request.ActionName),
-            new SqlParameter("@StartTime", request.RequestTimeStamp),
-            new SqlParameter("@EndTime", request.ResponseTimeStamp),
-            new SqlParameter("@Duration", model.Duration),
-            new SqlParameter("@CreatedBy", model.CreatedBy),
-            new SqlParameter("@CreatedOn", model.CreatedOn)
-        );
-
-        if (performanceLog == 0)
-            return SabicConstants.BadRequestMessage;
-
-        return SabicConstants.SuccessMessage;
-    }
-}
-
-public class APIRequestLogRepository : IAPIRequestLogRepository
+ public class ExceptionHandlerRepository : IExceptionHandlerRepository
  {
      private readonly SFDbContext _dbContext;
 
-     public APIRequestLogRepository(SFDbContext dbContext)
+     public ExceptionHandlerRepository(SFDbContext dbContext)
      {
          _dbContext = dbContext;
      }
 
-
-
-     public async Task<List<APIRequestResults>> GetAPIRequestLog(DateFilter model)
+     public async Task LogExceptionAsync(ExceptionDetails obj)
      {
-         return await _dbContext.APIRequestResults
+         await _dbContext.Database.ExecuteSqlRawAsync(
+             "EXEC dbo.SP_Insert_Update_ErrorLogging " +
+             "@ErrorLogID, @UserID, @RoleID, @SessionID, @ApplicationID, @ScreenID, " +
+             "@ModuleID, @FunctionID, @LayerID, @APIID, @StoredProcedureID, " +
+             "@ErrorNumber, @ErrorState, @ErrorSeverity, @StackTrace, @ErrorMessage, " +
+             "@RequestBody, @ResponseBody, @Status, @HostName, @Environment, " +
+             "@CreatedBy, @UpdatedBy, @IpAddress",
+             new SqlParameter("@ErrorLogID", obj.ErrorLogID),
+             new SqlParameter("@UserID", obj.UserID),
+             new SqlParameter("@RoleID", obj.RoleID),
+             new SqlParameter("@SessionID", obj.SessionID),
+             new SqlParameter("@ApplicationID", obj.ApplicationID),
+             new SqlParameter("@ScreenID", obj.ScreenID),
+             new SqlParameter("@ModuleID", obj.ModuleID),
+             new SqlParameter("@FunctionID", obj.FunctionID),
+             new SqlParameter("@LayerID", obj.LayerID),
+             new SqlParameter("@APIID", obj.APIID),
+             new SqlParameter("@StoredProcedureID", obj.StoredProcedureID),
+             new SqlParameter("@ErrorNumber", obj.ErrorNumber),
+             new SqlParameter("@ErrorState", obj.ErrorState),
+             new SqlParameter("@ErrorSeverity", obj.ErrorSeverity),
+             new SqlParameter("@StackTrace", obj.StackTrace),
+             new SqlParameter("@ErrorMessage", obj.ErrorMessage),
+             new SqlParameter("@RequestBody", obj.RequestBody),
+             new SqlParameter("@ResponseBody", obj.ResponseBody),
+             new SqlParameter("@Status", obj.Status),
+             new SqlParameter("@HostName", obj.HostName),
+             new SqlParameter("@Environment", obj.Environment),
+             new SqlParameter("@CreatedBy", obj.CreatedBy),
+             new SqlParameter("@UpdatedBy", obj.UpdatedBy),
+             new SqlParameter("@IpAddress", obj.IPAddress)
+         );
+     }
+
+     public async Task<List<ExceptionResults>> GetExceptionLogs(string errorMessage)
+     {
+         return await _dbContext.ExceptionResults
              .FromSqlRaw(
-                 "EXEC dbo.SP_GetAPIRequestLog @FromDate, @ToDate",
+                 "EXEC dbo.SP_GetErrorLogging @ErrorMessage",
+                 new SqlParameter("@ErrorMessage", errorMessage)
+             )
+             .ToListAsync();
+     }
+
+     public async Task<List<ExceptionResults>> GetAllExceptionLogs(DateFilter model)
+     {
+         return await _dbContext.ExceptionResults
+             .FromSqlRaw(
+                 "EXEC dbo.SP_GetAllErrorLogging @FromDate, @ToDate",
                  new SqlParameter("@FromDate", model.FromDate),
                  new SqlParameter("@ToDate", model.ToDate)
              )
              .ToListAsync();
      }
 
-     public async Task InsertAPIRequestLog(APIRequestModel model)
+     public async Task<ExceptionUserActivityModel?> GetExceptionUserActivityDetailsBySessionID(string sessionID)
+     {
+         var result = new ExceptionUserActivityModel();
+
+         using var command = _dbContext.Database.GetDbConnection().CreateCommand();
+         command.CommandText = "EXEC dbo.SP_GetExceptionUserActivityDetailsBySessionID @SessionID";
+         command.CommandType = CommandType.Text;
+         command.Parameters.Add(new SqlParameter("@SessionID", sessionID));
+
+         await _dbContext.Database.OpenConnectionAsync();
+
+         using var reader = await command.ExecuteReaderAsync();
+
+         // First result set (header)
+         if (reader.HasRows && await reader.ReadAsync())
+         {
+             result.SessionID = reader.IsDBNull(0) ? null : reader.GetString(0);
+             result.EmployeeName = reader.IsDBNull(1) ? null : reader.GetString(1);
+             result.RoleName = reader.IsDBNull(2) ? null : reader.GetString(2);
+             result.UserAgent = reader.IsDBNull(3) ? null : reader.GetString(3);
+             result.Browser = reader.IsDBNull(4) ? null : reader.GetString(4);
+             result.BrowserVersion = reader.IsDBNull(5) ? null : reader.GetString(5);
+             result.SessionStartTimeStamp = reader.IsDBNull(6) ? null : reader.GetDateTime(6);
+             result.IpAddress = reader.IsDBNull(7) ? null : reader.GetString(7);
+             result.ApplicationName = reader.IsDBNull(8) ? null : reader.GetString(8);
+         }
+
+         // Second result set (list)
+         await reader.NextResultAsync();
+
+         result.ExceptionUserActivityResults = new List<ExceptionUserActivityResults>();
+
+         while (await reader.ReadAsync())
+         {
+             result.ExceptionUserActivityResults.Add(new ExceptionUserActivityResults
+             {
+                 EmployeeName = reader.IsDBNull(0) ? null : reader.GetString(0),
+                 RoleName = reader.IsDBNull(1) ? null : reader.GetString(1),
+                 ApplicationName = reader.IsDBNull(2) ? null : reader.GetString(2),
+                 FunctionalityName = reader.IsDBNull(3) ? null : reader.GetString(3),
+                 UserAction = reader.IsDBNull(4) ? null : reader.GetInt32(4),
+                 SessionID = reader.IsDBNull(5) ? null : reader.GetString(5),
+                 CreatedOn = reader.IsDBNull(6) ? null : reader.GetDateTime(6)
+             });
+         }
+
+         return result;
+     }
+
+     public async Task UpdateErrorLoggingAssigneeWithStatus(ExceptionDetails obj)
      {
          await _dbContext.Database.ExecuteSqlRawAsync(
-             "EXEC dbo.SP_Insert_Update_APIRequestLog " +
-             "@RequestLogID, @UserID, @RoleID, @SessionID, @AppModuleMappingID, " +
-             "@ApiEndPoint, @HttpMethod, @StatusCode, @RequestBody, @RequestTimeStamp, " +
-             "@ResponseBody, @ResponseTimeStamp, @Duration, @CreatedBy, @LayerID",
-             new SqlParameter("@RequestLogID", 0),
-             new SqlParameter("@UserID", model.UserID),
-             new SqlParameter("@RoleID", model.RoleID),
-             new SqlParameter("@SessionID", model.SessionID),
-             new SqlParameter("@AppModuleMappingID", model.AppModuleMappingID),
-             new SqlParameter("@ApiEndPoint", model.ApiEndPoint),
-             new SqlParameter("@HttpMethod", model.HttpMethod),
-             new SqlParameter("@StatusCode", model.StatusCode),
-             new SqlParameter("@RequestBody", model.RequestBody),
-             new SqlParameter("@RequestTimeStamp", model.RequestTimeStamp),
-             new SqlParameter("@ResponseBody", model.ResponseBody),
-             new SqlParameter("@ResponseTimeStamp", model.ResponseTimeStamp),
-             new SqlParameter("@Duration", model.Duration),
-             new SqlParameter("@CreatedBy", model.CreatedBy),
-             new SqlParameter("@LayerID", model.LayerID)
+             "EXEC dbo.SP_Update_ErrorLogging_AssigneeWith_Status " +
+             "@ErrorLogID, @AssigneeUserID, @ErrorStatusID, @UpdatedBy",
+             new SqlParameter("@ErrorLogID", obj.ErrorLogID),
+             new SqlParameter("@AssigneeUserID", obj.AssignTo),
+             new SqlParameter("@ErrorStatusID", obj.ErrorStatusID),
+             new SqlParameter("@UpdatedBy", obj.UpdatedBy)
          );
      }
 
-     public async Task<string> InsertAPIRequestLogsAndPerformanceLogs(
-         ApiRequestAndPerformanceLogRequest request,
-         ApiRequestAndPerformanceLogModel model)
+     public async Task<ExceptionHandlerModel> GetErrorLogAssignDetailsAsync()
      {
-         var apiRequestLog = await _dbContext.Database.ExecuteSqlRawAsync(
-             "EXEC dbo.SP_Insert_Update_APIRequestLog " +
-             "@RequestLogID, @UserID, @RoleID, @SessionID, @AppModuleMappingID, " +
-             "@ApiEndPoint, @HttpMethod, @StatusCode, @RequestBody, @RequestTimeStamp, " +
-             "@ResponseBody, @ResponseTimeStamp, @Duration, @CreatedBy, @LayerID",
-             new SqlParameter("@RequestLogID", 0),
-             new SqlParameter("@UserID", model.UserID),
-             new SqlParameter("@RoleID", model.RoleID),
-             new SqlParameter("@SessionID", model.SessionID),
-             new SqlParameter("@AppModuleMappingID", request.AppModuleMappingID),
-             new SqlParameter("@ApiEndPoint", request.ApiEndPoint),
-             new SqlParameter("@HttpMethod", request.HttpMethod),
-             new SqlParameter("@StatusCode", request.StatusCode),
-             new SqlParameter("@RequestBody", request.RequestBody),
-             new SqlParameter("@RequestTimeStamp", request.RequestTimeStamp),
-             new SqlParameter("@ResponseBody", request.ResponseBody),
-             new SqlParameter("@ResponseTimeStamp", request.ResponseTimeStamp),
-             new SqlParameter("@Duration", model.Duration),
-             new SqlParameter("@CreatedBy", model.CreatedBy),
-             new SqlParameter("@LayerID", request.LayerID)
-         );
+         var result = new ExceptionHandlerModel
+         {
+             LstErrorLogStatus = await _dbContext.ErrorLogStatus
+                 .FromSqlRaw("EXEC dbo.SP_GetErrorLogStatus")
+                 .ToListAsync(),
 
-         if (apiRequestLog == 0)
-             return SabicConstants.BadRequestMessage;
+             LstErrorLogAssignToUser = await _dbContext.ErrorLogAssignToUser
+                 .FromSqlRaw("EXEC dbo.SP_GetErrorLog_AssignToUser")
+                 .ToListAsync()
+         };
 
-         var performanceLog = await _dbContext.Database.ExecuteSqlRawAsync(
-             "EXEC dbo.SP_Insert_Update_PerformanceLog " +
-             "@PerformanceLogID, @UserID, @RoleID, @SessionID, @ComponentName, " +
-             "@ActionName, @StartTime, @EndTime, @Duration, @CreatedBy, @CreatedOn",
-             new SqlParameter("@PerformanceLogID", 0),
-             new SqlParameter("@UserID", model.UserID),
-             new SqlParameter("@RoleID", model.RoleID),
-             new SqlParameter("@SessionID", model.SessionID),
-             new SqlParameter("@ComponentName", request.ComponentName),
-             new SqlParameter("@ActionName", request.ActionName),
-             new SqlParameter("@StartTime", request.RequestTimeStamp),
-             new SqlParameter("@EndTime", request.ResponseTimeStamp),
-             new SqlParameter("@Duration", model.Duration),
-             new SqlParameter("@CreatedBy", model.CreatedBy),
-             new SqlParameter("@CreatedOn", model.CreatedOn)
-         );
-
-         if (performanceLog == 0)
-             return SabicConstants.BadRequestMessage;
-
-         return SabicConstants.SuccessMessage;
+         return result;
      }
  }
