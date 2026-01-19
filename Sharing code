@@ -1,3 +1,16 @@
+Hi [Manager Name],
+
+Initially, based on the UI change requirement shared, we started providing the necessary support and implementation.
+
+During a detailed review, we identified some additional changes related to this requirement. Since the implementation is already in progress, we are proceeding with these updates, and there is no need to discuss additional effort at this stage. However, due to these additional changes, there may be a slight delay.
+
+We have also checked these changes with the PAL team and have noted the details accordingly.
+
+Please let us know if you need any further clarification.
+
+Thanks and regards,
+Sathish
+
 
 public class WorkflowRepository : IWorkflowRepository
 {
