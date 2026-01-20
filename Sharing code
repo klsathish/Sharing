@@ -1,25 +1,37 @@
+Error
+{"The parameterized query '(@TypeID int,@CompanyCode nvarchar(1),@ProfitCenterID nvarchar(1' expects the parameter '@SBU', which was not supplied."}
 
 
-Hi [Manager Name],
-
-Initially, based on the UI change requirement shared, we started providing the necessary support and implementation for both the Middleware and React components.
-
-During a detailed review of the initial requirement, we identified some additional changes related to this request. Since the implementation is already in progress, we are proceeding with these updates, and there is no need to discuss additional effort at this stage. However, due to these additional changes, there may be a slight delay. If further changes are introduced, they may require additional time depending on their scope and complexity.
-
-We have also reviewed these changes with @Chan, Paul, and the team, and the details have been noted accordingly.
-
-Please let us know if you need any further clarification.
-
-Thanks and regards,
-Sathish
-
-Initially, based on the UI change requirement shared, we started providing the necessary support and implementation.
-
-During a detailed review (first point), we identified some additional changes related to this requirement. Since the implementation is already in progress, we are proceeding with these updates, and there is no need to discuss additional effort at this stage. However, due to these additional changes, there may be a slight delay. And coming further changes point may be getting more consuming time, based on any changes further more.
-
-We have also checked these changes with the @Chan, Paul & team and have noted the details accordingly.
-
-Please let us know if you need any further clarification.
-
-
-Note: First Point Clarifications
+return await _dbContext.HistoricalSaving
+    .FromSqlRaw(
+        "EXEC dbo.SP_GetHistoricalSavings " +
+        "@TypeID = @TypeID, " +
+        "@CompanyCode = @CompanyCode, " +
+        "@ProfitCenterID = @ProfitCenterID, " +
+        "@FromDate = @FromDate, " +
+        "@ToDate = @ToDate, " +
+        "@SBU= @SBU, " +
+        "@BU = @BU",
+        new SqlParameter("@TypeID", revenueFilter.TypeID),
+        new SqlParameter("@CompanyCode", revenueFilter.CompanyCode?.DbValue()),
+        new SqlParameter("@ProfitCenterID", revenueFilter.ProfitCenterID?.DbValue()),
+        new SqlParameter("@FromDate", revenueFilter.FromDate),
+        new SqlParameter("@ToDate", revenueFilter.ToDate),
+        new SqlParameter("@SBU", revenueFilter.SBU?.DbValue()),
+        new SqlParameter("@BU", revenueFilter.BU?.DbValue())
+    )
+    .ToListAsync();
+--
+PROC
+Exec [dbo].[SP_GetHistoricalSavings]  0,'1200',0,'01/01/2025','01/01/2025',null,null   
+---------------------------------------------------------------------------              
+*/              
+ALTER PROCEDURE [dbo].[SP_GetHistoricalSavings]  (          
+ @TypeID INT = 0          
+,@CompanyCode varchar(500)         
+,@ProfitCenterID varchar(500)
+,@FromDate DATETIME          
+,@ToDate DATETIME          
+,@SBU VARCHAR(MAX)=NULL  
+,@BU VARCHAR(MAX)=NULL        
+)  
