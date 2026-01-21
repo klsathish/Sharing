@@ -1,3 +1,25 @@
+var result = dbRecords
+    .GroupBy(x => new
+    {
+        x.CalYear,
+        x.CalMonth,
+        BaseType = x.DataType.Replace("_IN", "").Replace("_OUT", "")
+    })
+    .Select(g => new ReportResult
+    {
+        Year = g.Key.CalYear,
+        Month = g.Key.CalMonth,
+        DataType = g.Key.BaseType,
+        InValue = g
+            .Where(x => x.DataType.EndsWith("_IN"))
+            .Sum(x => x.DataValue),
+        OutValue = g
+            .Where(x => x.DataType.EndsWith("_OUT"))
+            .Sum(x => x.DataValue)
+    })
+    .OrderBy(x => x.Year)
+    .ThenBy(x => DateTime.ParseExact(x.Month, "MMM", null))
+    .ToList();
 
 
 Hi Team,
