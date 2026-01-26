@@ -1,24 +1,45 @@
-2026-01-26T16:50:09.0269002Z /usr/lib64/dotnet/sdk/10.0.101/Roslyn/Microsoft.CSharp.Core.targets(84,5): error MSB3883: Unexpected exception:  [/opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure/WCIInfrastructure.csproj]
-2026-01-26T16:50:09.0274631Z ##[error]/usr/lib64/dotnet/sdk/10.0.101/Roslyn/Microsoft.CSharp.Core.targets(84,5): Error : An error occurred trying to start process '/usr/lib64/dotnet/sdk/10.0.101/Roslyn/bincore/csc' with working directory '/opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure'. Operation not permitted
-2026-01-26T16:50:09.0277613Z ##[debug]Processed: ##vso[task.logissue type=Error;sourcepath=/usr/lib64/dotnet/sdk/10.0.101/Roslyn/Microsoft.CSharp.Core.targets;linenumber=84;columnnumber=5;code=;]An error occurred trying to start process '/usr/lib64/dotnet/sdk/10.0.101/Roslyn/bincore/csc' with working directory '/opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure'. Operation not permitted
-2026-01-26T16:50:09.0292445Z /usr/lib64/dotnet/sdk/10.0.101/Roslyn/Microsoft.CSharp.Core.targets(84,5): error : An error occurred trying to start process '/usr/lib64/dotnet/sdk/10.0.101/Roslyn/bincore/csc' with working directory '/opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure'. Operation not permitted [/opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure/WCIInfrastructure.csproj]
-2026-01-26T16:50:09.0518511Z 
-2026-01-26T16:50:09.0529675Z Build FAILED.
-2026-01-26T16:50:09.0530124Z 
-2026-01-26T16:50:09.0531471Z /usr/lib64/dotnet/sdk/10.0.101/Roslyn/Microsoft.CSharp.Core.targets(84,5): error MSB3883: Unexpected exception:  [/opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure/WCIInfrastructure.csproj]
-2026-01-26T16:50:09.0533368Z /usr/lib64/dotnet/sdk/10.0.101/Roslyn/Microsoft.CSharp.Core.targets(84,5): error : An error occurred trying to start process '/usr/lib64/dotnet/sdk/10.0.101/Roslyn/bincore/csc' with working directory '/opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure'. Operation not permitted [/opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure/WCIInfrastructure.csproj]
-2026-01-26T16:50:09.0534348Z     0 Warning(s)
-2026-01-26T16:50:09.0534950Z     2 Error(s)
-2026-01-26T16:50:09.0536379Z 
-2026-01-26T16:50:09.0537164Z Time Elapsed 00:00:02.45
-2026-01-26T16:50:09.0661421Z ##[debug]Exit code 1 received from tool '/bin/dotnet'
-2026-01-26T16:50:09.0662417Z ##[debug]STDIO streams have closed for tool '/bin/dotnet'
-2026-01-26T16:50:09.0663735Z ##[error]Error: The process '/bin/dotnet' failed with exit code 1
-2026-01-26T16:50:09.0665339Z ##[debug]Processed: ##vso[task.issue type=error;]Error: The process '/bin/dotnet' failed with exit code 1
-2026-01-26T16:50:09.0668008Z ##[warning].NET 5 has some compatibility issues with older Nuget versions(<=5.7), so if you are using an older Nuget version(and not dotnet cli) to restore, then the dotnet cli commands (e.g. dotnet build) which rely on such restored packages might fail. To mitigate such error, you can either: (1) - Use dotnet cli to restore, (2) - Use Nuget version 5.8 to restore, (3) - Use global.json using an older sdk version(<=3) to build
-2026-01-26T16:50:09.0671013Z ##[debug]Processed: ##vso[task.issue type=warning;].NET 5 has some compatibility issues with older Nuget versions(<=5.7), so if you are using an older Nuget version(and not dotnet cli) to restore, then the dotnet cli commands (e.g. dotnet build) which rely on such restored packages might fail. To mitigate such error, you can either: (1) - Use dotnet cli to restore, (2) - Use Nuget version 5.8 to restore, (3) - Use global.json using an older sdk version(<=3) to build
-2026-01-26T16:50:09.0674214Z Info: Azure Pipelines hosted agents have been updated and now contain .Net 5.x SDK/Runtime along with the older .Net Core version which are currently lts. Unless you have locked down a SDK version for your project(s), 5.x SDK might be picked up which might have breaking behavior as compared to previous versions. You can learn more about the breaking changes here: https://docs.microsoft.com/en-us/dotnet/core/tools/ and https://docs.microsoft.com/en-us/dotnet/core/compatibility/ . To learn about more such changes and troubleshoot, refer here: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core-cli?view=azure-devops#troubleshooting
-2026-01-26T16:50:09.0676063Z ##[debug]task result: Failed
-2026-01-26T16:50:09.0678392Z ##[error]Dotnet command failed with non-zero exit code on the following projects : /opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure/WCIInfrastructure.csproj,/opt/AzureDevOps/myagent-b/_work/58/s/WCI_APIs/WCI_APIs.csproj,/opt/AzureDevOps/myagent-b/_work/58/s/WCI_APIs_Test/WCI_APIs_Test.csproj
-2026-01-26T16:50:09.0680708Z ##[debug]Processed: ##vso[task.issue type=error;]Dotnet command failed with non-zero exit code on the following projects : /opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure/WCIInfrastructure.csproj,/opt/AzureDevOps/myagent-b/_work/58/s/WCI_APIs/WCI_APIs.csproj,/opt/AzureDevOps/myagent-b/_work/58/s/WCI_APIs_Test/WCI_APIs_Test.csproj
-2026-01-26T16:50:09.0684121Z ##[debug]Processed: ##vso[task.complete result=Failed;]Dotnet command failed with non-zero exit code on the following projects : /opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure/WCIInfrastructure.csproj,/opt/AzureDevOps/myagent-b/_work/58/s/WCI_APIs/WCI_APIs.csproj,/opt/AzureDevOps/myagent-b/_work/58/s/WCI_APIs_Test/WCI_APIs_Test.csproj
+
+
+TEST_CSPROJ=$(find . -name "WCI_APIs_Test.csproj" | head -n 1)
+echo "Using test project: $TEST_CSPROJ"
+dotnet test "$TEST_CSPROJ" \
+  --configuration Release \
+  --collect:"XPlat Code Coverage" \
+  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover,cobertura \
+  --logger trx \
+  --results-directory ./TestResults
+
+
+--dotnet test ./WorkingCapitalInsights_Middleware/WCI_APIs_Test/WCI_APIs_Test.csproj \
+--configuration Release \
+ --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format="opencover,Cobertura" --results-directory ./TestResults \
+--logger "trx"
+Generating script.
+##[debug]which 'bash'
+##[debug]found: '/bin/bash'
+##[debug]Agent.Version=2.213.2
+##[debug]agent.tempDirectory=/opt/AzureDevOps/devopsagent-a/_work/_temp
+##[debug]check path : /opt/AzureDevOps/devopsagent-a/_work/_temp
+========================== Starting Command Output ===========================
+##[debug]which '/bin/bash'
+##[debug]found: '/bin/bash'
+##[debug]/bin/bash arg: /opt/AzureDevOps/devopsagent-a/_work/_temp/2aa44436-57be-4dac-adc4-312501718caa.sh
+##[debug]exec tool: /bin/bash
+##[debug]arguments:
+##[debug]   /opt/AzureDevOps/devopsagent-a/_work/_temp/2aa44436-57be-4dac-adc4-312501718caa.sh
+/bin/bash /opt/AzureDevOps/devopsagent-a/_work/_temp/2aa44436-57be-4dac-adc4-312501718caa.sh
+/opt/AzureDevOps/devopsagent-a/_work/_temp/2aa44436-57be-4dac-adc4-312501718caa.sh: line 6: Build.SourceDirectory: command not found
+/opt/AzureDevOps/devopsagent-a/_work/148/a
+total 8
+drwxr-xr-x 2 root root 4096 Jan 26 20:05 .
+drwxr-xr-x 7 root root 4096 Jan 26 20:05 ..
+=== Find test csproj ===
+Using test project: 
+MSBUILD : error MSB1003: Specify a project or solution file. The current working directory does not contain a project or solution file.
+##[debug]Exit code 1 received from tool '/bin/bash'
+##[debug]STDIO streams have closed for tool '/bin/bash'
+##[error]Bash exited with code '1'.
+##[debug]Processed: ##vso[task.issue type=error;]Bash exited with code '1'.
+##[debug]task result: Failed
+##[debug]Processed: ##vso[task.complete result=Failed;done=true;]
+Finishing: Dotnet Test
