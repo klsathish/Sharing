@@ -1,45 +1,24 @@
+set -e
 
+echo "Switching to source directory"
+cd "$(Build.SourcesDirectory)"
 
+echo "Current directory:"
+pwd
+
+echo "=== Find test csproj ==="
 TEST_CSPROJ=$(find . -name "WCI_APIs_Test.csproj" | head -n 1)
+
 echo "Using test project: $TEST_CSPROJ"
+
+if [ -z "$TEST_CSPROJ" ]; then
+  echo "ERROR: Test project not found"
+  exit 1
+fi
+
 dotnet test "$TEST_CSPROJ" \
   --configuration Release \
   --collect:"XPlat Code Coverage" \
   -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover,cobertura \
   --logger trx \
-  --results-directory ./TestResults
-
-
---dotnet test ./WorkingCapitalInsights_Middleware/WCI_APIs_Test/WCI_APIs_Test.csproj \
---configuration Release \
- --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format="opencover,Cobertura" --results-directory ./TestResults \
---logger "trx"
-Generating script.
-##[debug]which 'bash'
-##[debug]found: '/bin/bash'
-##[debug]Agent.Version=2.213.2
-##[debug]agent.tempDirectory=/opt/AzureDevOps/devopsagent-a/_work/_temp
-##[debug]check path : /opt/AzureDevOps/devopsagent-a/_work/_temp
-========================== Starting Command Output ===========================
-##[debug]which '/bin/bash'
-##[debug]found: '/bin/bash'
-##[debug]/bin/bash arg: /opt/AzureDevOps/devopsagent-a/_work/_temp/2aa44436-57be-4dac-adc4-312501718caa.sh
-##[debug]exec tool: /bin/bash
-##[debug]arguments:
-##[debug]   /opt/AzureDevOps/devopsagent-a/_work/_temp/2aa44436-57be-4dac-adc4-312501718caa.sh
-/bin/bash /opt/AzureDevOps/devopsagent-a/_work/_temp/2aa44436-57be-4dac-adc4-312501718caa.sh
-/opt/AzureDevOps/devopsagent-a/_work/_temp/2aa44436-57be-4dac-adc4-312501718caa.sh: line 6: Build.SourceDirectory: command not found
-/opt/AzureDevOps/devopsagent-a/_work/148/a
-total 8
-drwxr-xr-x 2 root root 4096 Jan 26 20:05 .
-drwxr-xr-x 7 root root 4096 Jan 26 20:05 ..
-=== Find test csproj ===
-Using test project: 
-MSBUILD : error MSB1003: Specify a project or solution file. The current working directory does not contain a project or solution file.
-##[debug]Exit code 1 received from tool '/bin/bash'
-##[debug]STDIO streams have closed for tool '/bin/bash'
-##[error]Bash exited with code '1'.
-##[debug]Processed: ##vso[task.issue type=error;]Bash exited with code '1'.
-##[debug]task result: Failed
-##[debug]Processed: ##vso[task.complete result=Failed;done=true;]
-Finishing: Dotnet Test
+  --results-directory "$(Build.SourcesDirectory)/TestResults"
