@@ -1,4 +1,17 @@
 
+
+
+TEST_CSPROJ=$(find . -name "WCI_APIs_Test.csproj" | head -n 1)
+echo "Using test project: $TEST_CSPROJ"
+dotnet test "$TEST_CSPROJ" \
+  --configuration Release \
+  --collect:"XPlat Code Coverage" \
+  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover,cobertura \
+  --logger trx \
+  --results-directory ./TestResults
+
+
+
 SELECT
     MonthYear,
     CalYear,
