@@ -1,186 +1,24 @@
-
-
-
-TEST_CSPROJ=$(find . -name "WCI_APIs_Test.csproj" | head -n 1)
-echo "Using test project: $TEST_CSPROJ"
-dotnet test "$TEST_CSPROJ" \
-  --configuration Release \
-  --collect:"XPlat Code Coverage" \
-  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover,cobertura \
-  --logger trx \
-  --results-directory ./TestResults
-
-
-
-SELECT
-    MonthYear,
-    CalYear,
-    CalMonth,
-    SUM(FG_Actual)      AS FG_Actual,
-    SUM(FG_AiForecast)  AS FG_AiForecast,
-    SUM(RM_Actual)      AS RM_Actual,
-    SUM(RM_AiForecast)  AS RM_AiForecast
-FROM
-(
-    SELECT MonthYear, CalYear, CalMonth,
-           FG_Actual,
-           NULL AS FG_AiForecast,
-           NULL AS RM_Actual,
-           NULL AS RM_AiForecast
-    FROM @tblResult_fg_actual
-
-    UNION ALL
-
-    SELECT MonthYear, CalYear, CalMonth,
-           NULL,
-           FG_AiForecast,
-           NULL,
-           NULL
-    FROM @tblResult_fg_aiForecast
-
-    UNION ALL
-
-    SELECT MonthYear, CalYear, CalMonth,
-           NULL,
-           NULL,
-           RM_Actual,
-           NULL
-    FROM @tblResult_rm_actual
-
-    UNION ALL
-
-    SELECT MonthYear, CalYear, CalMonth,
-           NULL,
-           NULL,
-           NULL,
-           RM_AiForecast
-    FROM @tblResult_rm_aiForecast
-) X
-GROUP BY MonthYear, CalYear, CalMonth
-ORDER BY MonthYear;
-
-var result = dbRecords
-
-
-FG – ACTUAL (18 months)
-Copy code
-Sql
-INSERT INTO @tblResult_fg_actual
-(CurrencyType, Metrics, FG_Actual, CalMonth, CalYear, MonthYear)
-VALUES
-(1,1,100,'JAN',2024,202401),
-(1,1,102,'FEB',2024,202402),
-(1,1,104,'MAR',2024,202403),
-(1,1,106,'APR',2024,202404),
-(1,1,108,'MAY',2024,202405),
-(1,1,110,'JUN',2024,202406),
-(1,1,112,'JUL',2024,202407),
-(1,1,114,'AUG',2024,202408),
-(1,1,116,'SEP',2024,202409),
-(1,1,118,'OCT',2024,202410),
-(1,1,120,'NOV',2024,202411),
-(1,1,122,'DEC',2024,202412),
-(1,1,124,'JAN',2025,202501),
-(1,1,126,'FEB',2025,202502),
-(1,1,128,'MAR',2025,202503),
-(1,1,130,'APR',2025,202504),
-(1,1,132,'MAY',2025,202505),
-(1,1,134,'JUN',2025,202506);
-🔹 RM – ACTUAL (same 18 months)
-Copy code
-Sql
-INSERT INTO @tblResult_rm_actual
-(CurrencyType, Metrics, RM_Actual, CalMonth, CalYear, MonthYear)
-VALUES
-(1,2,60,'JAN',2024,202401),
-(1,2,62,'FEB',2024,202402),
-(1,2,64,'MAR',2024,202403),
-(1,2,66,'APR',2024,202404),
-(1,2,68,'MAY',2024,202405),
-(1,2,70,'JUN',2024,202406),
-(1,2,72,'JUL',2024,202407),
-(1,2,74,'AUG',2024,202408),
-(1,2,76,'SEP',2024,202409),
-(1,2,78,'OCT',2024,202410),
-(1,2,80,'NOV',2024,202411),
-(1,2,82,'DEC',2024,202412),
-(1,2,84,'JAN',2025,202501),
-(1,2,86,'FEB',2025,202502),
-(1,2,88,'MAR',2025,202503),
-(1,2,90,'APR',2025,202504),
-(1,2,92,'MAY',2025,202505),
-(1,2,94,'JUN',2025,202506);
-🔹 FG – AI FORECAST (next 12 months)
-Copy code
-Sql
-INSERT INTO @tblResult_fg_aiForecast
-(CurrencyType, Metrics, FG_AiForecast, CalMonth, CalYear, MonthYear)
-VALUES
-(1,1,136,'JUL',2025,202507),
-(1,1,138,'AUG',2025,202508),
-(1,1,140,'SEP',2025,202509),
-(1,1,142,'OCT',2025,202510),
-(1,1,144,'NOV',2025,202511),
-(1,1,146,'DEC',2025,202512),
-(1,1,148,'JAN',2026,202601),
-(1,1,150,'FEB',2026,202602),
-(1,1,152,'MAR',2026,202603),
-(1,1,154,'APR',2026,202604),
-(1,1,156,'MAY',2026,202605),
-(1,1,158,'JUN',2026,202606);
-🔹 RM – AI FORECAST (same 12 months)
-Copy code
-Sql
-INSERT INTO @tblResult_rm_aiForecast
-(CurrencyType, Metrics, RM_AiForecast, CalMonth, CalYear, MonthYear)
-VALUES
-(1,2,96,'JUL',2025,202507),
-(1,2,98,'AUG',2025,202508),
-(1,2,100,'SEP',2025,202509),
-(1,2,102,'OCT',2025,202510),
-(1,2,104,'NOV',2025,202511),
-(1,2,106,'DEC',2025,202512),
-(1,2,108,'JAN',2026,202601),
-(1,2,110,'FEB',2026,202602),
-(1,2,112,'MAR',2026,202603),
-(1,2,114,'APR',2026,202604),
-(1,2,116,'MAY',2026,202605),
-(1,2,118,'JUN',2026,202606);
-
-
-
-.GroupBy(x => new
-    {
-        x.CalYear,
-        x.CalMonth,
-        BaseType = x.DataType.Replace("_IN", "").Replace("_OUT", "")
-    })
-    .Select(g => new ReportResult
-    {
-        Year = g.Key.CalYear,
-        Month = g.Key.CalMonth,
-        DataType = g.Key.BaseType,
-        InValue = g
-            .Where(x => x.DataType.EndsWith("_IN"))
-            .Sum(x => x.DataValue),
-        OutValue = g
-            .Where(x => x.DataType.EndsWith("_OUT"))
-            .Sum(x => x.DataValue)
-    })
-    .OrderBy(x => x.Year)
-    .ThenBy(x => DateTime.ParseExact(x.Month, "MMM", null))
-    .ToList();
-
-
-Hi Team,
-
-Thanks for your comments.
-
-Based on the feedback shared, I have updated the individual files following the standard approach. Kindly review the changes and proceed with the updates in the same pull request.
-
-Please let me know if any further modifications are required from my side.
-
-Thanks & Regards,
-K. L. Sathish
-
-Thanks for your comments. As your comments based on I have updated undivutula files in standard way. Please look and do it in same pull request
+2026-01-26T16:50:09.0269002Z /usr/lib64/dotnet/sdk/10.0.101/Roslyn/Microsoft.CSharp.Core.targets(84,5): error MSB3883: Unexpected exception:  [/opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure/WCIInfrastructure.csproj]
+2026-01-26T16:50:09.0274631Z ##[error]/usr/lib64/dotnet/sdk/10.0.101/Roslyn/Microsoft.CSharp.Core.targets(84,5): Error : An error occurred trying to start process '/usr/lib64/dotnet/sdk/10.0.101/Roslyn/bincore/csc' with working directory '/opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure'. Operation not permitted
+2026-01-26T16:50:09.0277613Z ##[debug]Processed: ##vso[task.logissue type=Error;sourcepath=/usr/lib64/dotnet/sdk/10.0.101/Roslyn/Microsoft.CSharp.Core.targets;linenumber=84;columnnumber=5;code=;]An error occurred trying to start process '/usr/lib64/dotnet/sdk/10.0.101/Roslyn/bincore/csc' with working directory '/opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure'. Operation not permitted
+2026-01-26T16:50:09.0292445Z /usr/lib64/dotnet/sdk/10.0.101/Roslyn/Microsoft.CSharp.Core.targets(84,5): error : An error occurred trying to start process '/usr/lib64/dotnet/sdk/10.0.101/Roslyn/bincore/csc' with working directory '/opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure'. Operation not permitted [/opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure/WCIInfrastructure.csproj]
+2026-01-26T16:50:09.0518511Z 
+2026-01-26T16:50:09.0529675Z Build FAILED.
+2026-01-26T16:50:09.0530124Z 
+2026-01-26T16:50:09.0531471Z /usr/lib64/dotnet/sdk/10.0.101/Roslyn/Microsoft.CSharp.Core.targets(84,5): error MSB3883: Unexpected exception:  [/opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure/WCIInfrastructure.csproj]
+2026-01-26T16:50:09.0533368Z /usr/lib64/dotnet/sdk/10.0.101/Roslyn/Microsoft.CSharp.Core.targets(84,5): error : An error occurred trying to start process '/usr/lib64/dotnet/sdk/10.0.101/Roslyn/bincore/csc' with working directory '/opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure'. Operation not permitted [/opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure/WCIInfrastructure.csproj]
+2026-01-26T16:50:09.0534348Z     0 Warning(s)
+2026-01-26T16:50:09.0534950Z     2 Error(s)
+2026-01-26T16:50:09.0536379Z 
+2026-01-26T16:50:09.0537164Z Time Elapsed 00:00:02.45
+2026-01-26T16:50:09.0661421Z ##[debug]Exit code 1 received from tool '/bin/dotnet'
+2026-01-26T16:50:09.0662417Z ##[debug]STDIO streams have closed for tool '/bin/dotnet'
+2026-01-26T16:50:09.0663735Z ##[error]Error: The process '/bin/dotnet' failed with exit code 1
+2026-01-26T16:50:09.0665339Z ##[debug]Processed: ##vso[task.issue type=error;]Error: The process '/bin/dotnet' failed with exit code 1
+2026-01-26T16:50:09.0668008Z ##[warning].NET 5 has some compatibility issues with older Nuget versions(<=5.7), so if you are using an older Nuget version(and not dotnet cli) to restore, then the dotnet cli commands (e.g. dotnet build) which rely on such restored packages might fail. To mitigate such error, you can either: (1) - Use dotnet cli to restore, (2) - Use Nuget version 5.8 to restore, (3) - Use global.json using an older sdk version(<=3) to build
+2026-01-26T16:50:09.0671013Z ##[debug]Processed: ##vso[task.issue type=warning;].NET 5 has some compatibility issues with older Nuget versions(<=5.7), so if you are using an older Nuget version(and not dotnet cli) to restore, then the dotnet cli commands (e.g. dotnet build) which rely on such restored packages might fail. To mitigate such error, you can either: (1) - Use dotnet cli to restore, (2) - Use Nuget version 5.8 to restore, (3) - Use global.json using an older sdk version(<=3) to build
+2026-01-26T16:50:09.0674214Z Info: Azure Pipelines hosted agents have been updated and now contain .Net 5.x SDK/Runtime along with the older .Net Core version which are currently lts. Unless you have locked down a SDK version for your project(s), 5.x SDK might be picked up which might have breaking behavior as compared to previous versions. You can learn more about the breaking changes here: https://docs.microsoft.com/en-us/dotnet/core/tools/ and https://docs.microsoft.com/en-us/dotnet/core/compatibility/ . To learn about more such changes and troubleshoot, refer here: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/build/dotnet-core-cli?view=azure-devops#troubleshooting
+2026-01-26T16:50:09.0676063Z ##[debug]task result: Failed
+2026-01-26T16:50:09.0678392Z ##[error]Dotnet command failed with non-zero exit code on the following projects : /opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure/WCIInfrastructure.csproj,/opt/AzureDevOps/myagent-b/_work/58/s/WCI_APIs/WCI_APIs.csproj,/opt/AzureDevOps/myagent-b/_work/58/s/WCI_APIs_Test/WCI_APIs_Test.csproj
+2026-01-26T16:50:09.0680708Z ##[debug]Processed: ##vso[task.issue type=error;]Dotnet command failed with non-zero exit code on the following projects : /opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure/WCIInfrastructure.csproj,/opt/AzureDevOps/myagent-b/_work/58/s/WCI_APIs/WCI_APIs.csproj,/opt/AzureDevOps/myagent-b/_work/58/s/WCI_APIs_Test/WCI_APIs_Test.csproj
+2026-01-26T16:50:09.0684121Z ##[debug]Processed: ##vso[task.complete result=Failed;]Dotnet command failed with non-zero exit code on the following projects : /opt/AzureDevOps/myagent-b/_work/58/s/WCIInfrastructure/WCIInfrastructure.csproj,/opt/AzureDevOps/myagent-b/_work/58/s/WCI_APIs/WCI_APIs.csproj,/opt/AzureDevOps/myagent-b/_work/58/s/WCI_APIs_Test/WCI_APIs_Test.csproj
