@@ -1,3 +1,51 @@
+
+SELECT
+    MonthYear,
+    CalYear,
+    CalMonth,
+    SUM(FG_Actual)      AS FG_Actual,
+    SUM(FG_AiForecast)  AS FG_AiForecast,
+    SUM(RM_Actual)      AS RM_Actual,
+    SUM(RM_AiForecast)  AS RM_AiForecast
+FROM
+(
+    SELECT MonthYear, CalYear, CalMonth,
+           FG_Actual,
+           NULL AS FG_AiForecast,
+           NULL AS RM_Actual,
+           NULL AS RM_AiForecast
+    FROM @tblResult_fg_actual
+
+    UNION ALL
+
+    SELECT MonthYear, CalYear, CalMonth,
+           NULL,
+           FG_AiForecast,
+           NULL,
+           NULL
+    FROM @tblResult_fg_aiForecast
+
+    UNION ALL
+
+    SELECT MonthYear, CalYear, CalMonth,
+           NULL,
+           NULL,
+           RM_Actual,
+           NULL
+    FROM @tblResult_rm_actual
+
+    UNION ALL
+
+    SELECT MonthYear, CalYear, CalMonth,
+           NULL,
+           NULL,
+           NULL,
+           RM_AiForecast
+    FROM @tblResult_rm_aiForecast
+) X
+GROUP BY MonthYear, CalYear, CalMonth
+ORDER BY MonthYear;
+
 var result = dbRecords
 
 
