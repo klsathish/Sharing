@@ -1,24 +1,45 @@
-set -e
+export https_proxy=http://mea-proxy.sabic.com:8080
+export no_proxy=*.sabic.com,*.sabiccorp.sabic.com,.sabic.com,.sabiccorp.sabic.com 
 
-echo "Switching to source directory"
-cd "$(Build.SourcesDirectory)"
 
-echo "Current directory:"
-pwd
+dotnet test ./WCI_APIs_Test/WCI_APIs_Test.csproj --disable-parallelization
+#dotnet test **/WCI_APIs_Test.dll  --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format="opencover,Cobertura" --results-directory ./TestResults
+Generating script.
+##[debug]which 'bash'
+##[debug]found: '/bin/bash'
+##[debug]Agent.Version=2.213.2
+##[debug]agent.tempDirectory=/opt/AzureDevOps/myagent-b/_work/_temp
+##[debug]check path : /opt/AzureDevOps/myagent-b/_work/_temp
+========================== Starting Command Output ===========================
+##[debug]which '/bin/bash'
+##[debug]found: '/bin/bash'
+##[debug]/bin/bash arg: /opt/AzureDevOps/myagent-b/_work/_temp/0ee02706-db52-4100-b365-52fad76419de.sh
+##[debug]exec tool: /bin/bash
+##[debug]arguments:
+##[debug]   /opt/AzureDevOps/myagent-b/_work/_temp/0ee02706-db52-4100-b365-52fad76419de.sh
+/bin/bash /opt/AzureDevOps/myagent-b/_work/_temp/0ee02706-db52-4100-b365-52fad76419de.sh
+MSBUILD : error MSB1001: Unknown switch.
+    Full command line: '/usr/lib64/dotnet/sdk/10.0.101/MSBuild.dll -maxcpucount --verbosity:m -tlp:default=auto --property:NuGetInteractive=false --property:VSTestArtifactsProcessingMode=collect --property:VSTestSessionCorrelationId=1304205_e0069905-c393-4aba-87fd-2eff3a4ffde2 --restoreProperty:NuGetInteractive=false --restoreProperty:VSTestArtifactsProcessingMode=collect --restoreProperty:VSTestSessionCorrelationId=1304205_e0069905-c393-4aba-87fd-2eff3a4ffde2 --restoreProperty:EnableDefaultCompileItems=false --restoreProperty:EnableDefaultEmbeddedResourceItems=false --restoreProperty:EnableDefaultNoneItems=false --target:VSTest -nodereuse:false -nologo ./WCI_APIs_Test/WCI_APIs_Test.csproj --disable-parallelization -restore'
+  Switches appended by response files:
+Switch: --disable-parallelization
 
-echo "=== Find test csproj ==="
-TEST_CSPROJ=$(find . -name "WCI_APIs_Test.csproj" | head -n 1)
+For switch syntax, type "MSBuild -help"
+##[debug]Exit code 1 received from tool '/bin/bash'
+##[debug]STDIO streams have closed for tool '/bin/bash'
+##[error]Bash exited with code '1'.
+##[debug]Processed: ##vso[task.issue type=error;]Bash exited with code '1'.
+##[debug]task result: Failed
+##[debug]Processed: ##vso[task.complete result=Failed;done=true;]
+Finishing: Dotnet Test
 
-echo "Using test project: $TEST_CSPROJ"
 
-if [ -z "$TEST_CSPROJ" ]; then
-  echo "ERROR: Test project not found"
-  exit 1
-fi
 
-dotnet test "$TEST_CSPROJ" \
-  --configuration Release \
-  --collect:"XPlat Code Coverage" \
-  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover,cobertura \
-  --logger trx \
-  --results-directory "$(Build.SourcesDirectory)/TestResults"
+this is my pipeline script
+
+export http_proxy=http://mea-proxy.sabic.com:8080
+export https_proxy=http://mea-proxy.sabic.com:8080
+export no_proxy=*.sabic.com,*.sabiccorp.sabic.com,.sabic.com,.sabiccorp.sabic.com 
+
+
+dotnet test ./WCI_APIs_Test/WCI_APIs_Test.csproj --disable-parallelization
+#dotnet test **/WCI_APIs_Test.dll  --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format="opencover,Cobertura" --results-directory ./TestResults
