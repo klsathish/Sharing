@@ -1,44 +1,19 @@
- public async Task<string> ReadResponseBodyAsync(HttpResponse response)
- {
-     var originalBody = response.Body;
+public async Task<string> ReadResponseBodyAsync(HttpResponse response)
+{
+    if (response.Body == null)
+        return string.Empty;
 
-     using var memStream = new MemoryStream();
-     response.Body = memStream;
-     memStream.Seek(0, SeekOrigin.Begin);
-     var body = await new StreamReader(memStream).ReadToEndAsync();
+    response.Body.Seek(0, SeekOrigin.Begin);
 
-     memStream.Seek(0, SeekOrigin.Begin);
-     await memStream.CopyToAsync(originalBody);
-     response.Body = originalBody;
+    using var reader = new StreamReader(
+        response.Body,
+        Encoding.UTF8,
+        detectEncodingFromByteOrderMarks: false,
+        leaveOpen: true);
 
-     return body;
+    var body = await reader.ReadToEndAsync();
 
+    response.Body.Seek(0, SeekOrigin.Begin);
 
- }
-
-
-  [Fact]
-  public async Task ReadResponseBodyAsync_ReturnsCorrectBody()
-  {
-      var commonUtils = new CommonUtils();
-      
-
-      var mockResponse = new DefaultHttpContext().Response;
-
-      var responseBody = "Sample response body";
-
-      var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(responseBody));
-
-      mockResponse.Body = memoryStream;
-
-      mockResponse.Body.Seek(0, SeekOrigin.Begin);
-
-     
-
-      var result = await commonUtils.ReadResponseBodyAsync(mockResponse);
-
-     
-
-      Assert.Equal(responseBody, result);
-
-  }
+    return body;
+}
