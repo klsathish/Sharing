@@ -1,3 +1,24 @@
+
+
+Hi Khalid,
+
+Greetings.
+
+As discussed with Harish, he prefers that all planned changes are fully completed and finalized before proceeding with the code review. Once the development activities are completed and the code is officially frozen, we will inform him so that he can begin the review process.
+
+Currently, we are still working on the WCI enhancements, and the corresponding pull request remains open. Since the PR is active, the updates being pushed to the development branch will continue to include our daily incremental changes. Alongside this, we are also addressing and incorporating the existing code review comments to ensure alignment with the expected standards.
+
+Once the WCI enhancements are completed and no further changes are required, we will proceed with the development freeze and notify Harish accordingly.
+
+Please let me know if any further clarification is required.
+
+Thanks,
+Sathish
+
+
+
+
+
 Hi Khalid,
  
 Greetings.
