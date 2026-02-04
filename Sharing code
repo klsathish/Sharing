@@ -1,4 +1,25 @@
+SELECT DISTINCT
+    pl.PlantID,
+    pl.PlantCode,
+    pl.PlantName
+FROM SABIC_DT_Finance_Master.MST_Plant pl
 
+INNER JOIN SABIC_DT_Finance_Master.MST_Affiliate af
+    ON af.AffiliateCode = pl.AffiliateCode
+    AND af.IsActive = 1
+
+INNER JOIN SABIC_DT_Finance_Master.MST_Country c
+    ON c.CountryID = af.CountryID
+    AND c.IsActive = 1
+
+INNER JOIN SABIC_DT_Finance_Master.MST_Region r
+    ON r.RegionID = c.RegionID
+    AND r.IsActive = 1
+
+INNER JOIN SABIC_DT_Finance_Master.MST_ProfitCenter p
+    ON p.BU  = pl.BU
+    AND p.SBU = pl.SBU
+    AND p.ProfitCenterName = pl.ProfitCenterName
 
 
 
