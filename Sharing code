@@ -1,5 +1,112 @@
 
 
+
+
+CREATE FUNCTION dbo.fn_GetPlantIds
+(
+    @RegionID      VARCHAR(MAX) = NULL,
+    @CountryID     VARCHAR(MAX) = NULL,
+    @CompanyCode   VARCHAR(MAX) = NULL,
+    @ProfitCenter  VARCHAR(MAX) = NULL,
+    @SBU           VARCHAR(MAX) = NULL
+)
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT DISTINCT
+        pl.PlantID
+    FROM MST_Plant pl
+    INNER JOIN MST_Affiliate af
+        ON af.AffiliateCode = pl.AffiliateCode
+    INNER JOIN MST_Country c
+        ON c.CountryID = af.CountryID
+    INNER JOIN MST_Region r
+        ON r.RegionID = c.RegionID
+    WHERE
+        -- First attachment params
+        (
+            @RegionID IS NULL
+            OR r.RegionID IN (SELECT value FROM STRING_SPLIT(@RegionID, ','))
+        )
+        AND
+        (
+            @CountryID IS NULL
+            OR c.CountryID IN (SELECT value FROM STRING_SPLIT(@CountryID, ','))
+        )
+        AND
+        (
+            @CompanyCode IS NULL
+            OR af.CompanyCode IN (SELECT value FROM STRING_SPLIT(@CompanyCode, ','))
+        )
+
+        -- Second attachment conditions
+        AND
+        (
+            @ProfitCenter IS NULL
+            OR pl.ProfitCenterID IN (SELECT value FROM STRING_SPLIT(@ProfitCenter, ','))
+        )
+        AND
+        (
+            @SBU IS NULL
+            OR pl.SBU IN (SELECT value FROM STRING_SPLIT(@SBU, ','))
+        )
+);
+
+
+
+
+
+
+
+
+CREATE FUNCTION dbo.fn_GetPlantIds_JoinOnly
+(
+    @RegionID      VARCHAR(MAX) = NULL,
+    @CountryID     VARCHAR(MAX) = NULL,
+    @CompanyCode   VARCHAR(MAX) = NULL,
+    @ProfitCenter  VARCHAR(MAX) = NULL,
+    @SBU           VARCHAR(MAX) = NULL
+)
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT DISTINCT
+        pl.PlantID
+    FROM MST_Plant pl
+
+    INNER JOIN MST_Affiliate af
+        ON af.AffiliateCode = pl.AffiliateCode
+
+    INNER JOIN MST_Country c
+        ON c.CountryID = af.CountryID
+
+    INNER JOIN MST_Region r
+        ON r.RegionID = c.RegionID
+
+    -- 🔹 Attachment joins
+    LEFT JOIN STRING_SPLIT(@RegionID, ',')      sr ON r.RegionID = sr.value
+    LEFT JOIN STRING_SPLIT(@CountryID, ',')     sc ON c.CountryID = sc.value
+    LEFT JOIN STRING_SPLIT(@CompanyCode, ',')   scc ON af.CompanyCode = scc.value
+    LEFT JOIN STRING_SPLIT(@ProfitCenter, ',')  spc ON pl.ProfitCenterID = spc.value
+    LEFT JOIN STRING_SPLIT(@SBU, ',')            ss ON pl.SBU = ss.value
+
+    WHERE
+        -- 🔹 If param is NULL → ignore filter
+        (@RegionID     IS NULL OR sr.value IS NOT NULL)
+        AND (@CountryID    IS NULL OR sc.value IS NOT NULL)
+        AND (@CompanyCode  IS NULL OR scc.value IS NOT NULL)
+        AND (@ProfitCenter IS NULL OR spc.value IS NOT NULL)
+        AND (@SBU          IS NULL OR ss.value IS NOT NULL)
+);
+
+
+
+
+
+
+
 Hi Khalid,
 
 Greetings.
