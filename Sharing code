@@ -1,137 +1,91 @@
-Description	 : Table in Staging :	Coumns name in Staging
-Ship To Country	: demand_plan_polymers :	ship_to_country
-Planning Region	: demand_plan_polymers :	planning_region
-SKU - Material Number	: demand_plan_polymers :	material_number
-Grade	: demand_plan_polymers :	material_grade
-Date Period	: demand_plan_polymers :	calmonth
-SalesOrder Confirmed	: demand_plan_polymers :	salesorder_confirmed
-Demand Plan Agreed	: demand_plan_polymers :	demandplan_agreed
-Market Demand	: demand_plan_polymers :	market_demand
-SNOP_Adjustments	: demand_plan_polymers :	snop_adjustments
-Plant	: gpm_business_plan :	plant
-Date Period	: gpm_business_plan :	calmonth
-Profit Center	: gpm_business_plan :	profit_center
-Running Plant	: gpm_business_plan :	running_plant
-Business Plan	: gpm_business_plan :	business_plan
-Material Number	 : closing_inventory : 	material_number
-Plant	 : closing_inventory : 	plant
-Date Period	 : closing_inventory : 	calmonth
-Profit Center	 : closing_inventory : 	profit_center
-Material Type	 : closing_inventory : 	material_type
-Company Code	 : closing_inventory : 	company_code
-Closing Inventory Value in Local Currency	 : closing_inventory : 	closing_inventory_value_lc
-Closing Inventory Value in SAR	 : closing_inventory : 	closing_inventory_value_sar
-Inventory Value Price per Ton in Local Currency	 : closing_inventory : 	inventory_value_price_per_ton_lc
-Inventory Value Price per Ton in SAR	 : closing_inventory : 	inventory_value_price_per_ton_sar
-SBU	 : closing_inventory : 	sbu
-BU	 : closing_inventory : 	bu
-Sub BU	 : closing_inventory : 	sub_bu
-Date Period	 : materials_movement : 	calmonth
-SBU	 : materials_movement : 	sbu
-BU	 : materials_movement : 	bu
-Sub BU	 : materials_movement : 	sub_bu
-Master Category	 : materials_movement : 	master_category
-Material Document Number	 : materials_movement : 	material_document_number
-Material Document Item	 : materials_movement : 	material_document_item
-Material Movement Type ID	 : materials_movement : 	movement_type
-Material Type(FG or RM)	 : materials_movement : 	material_type
-Valuation Type	 : materials_movement : 	valuation_type
-Material Number	 : materials_movement : 	material_number
-Plant	 : materials_movement : 	plant
-	 : materials_movement : 	
-Material Receipt Number	 : materials_movement : 	receipt_indicator
-Special Stock Indicator	 : materials_movement : 	special_stock_indicator
-Material Movement Type Indicator	 : materials_movement : 	movement_indicator
-Date Period	 : materials_movement : 	consumption_posting
-Quantity in other UOM	 : materials_movement : 	quantity
-Quantity in MT	 : materials_movement : 	quantity_in_mt
-Movement Flow(Debit/Credit)	 : materials_movement : 	movement_flow
-UOM	 : materials_movement : 	unit_of_measure
-UOM to MT	 : materials_movement : 	unit_of_measure_converted
-Profit Center	 : materials_movement : 	profit_center
-Local Currency	 : materials_movement : 	currency
-Amount in Local Currency	 : materials_movement : 	amount_in_local_currency
-Amount in SAR	 : materials_movement : 	amount_in_sar
-Amount in USD	 : materials_movement : 	amount_in_usd
-Material Number	 : materials : 	material_number
-Material Description	 : materials : 	material_description
-UOM	 : materials : 	base_uom
-Material Type	 : materials : 	material_type
-Material Type Description	 : materials : 	material_type_desc
-Material Group	 : materials : 	material_group
-Material Group Description	 : materials : 	material_group_desc
-Material Grade	 : materials : 	material_grade
-Material Grade Group	 : materials : 	material_grade_group
-
-
-refer old table script USE [SABIC_DT_Finance_Master]
+staging.demand_plan_polymers
+CREATE TABLE staging.demand_plan_polymers (
+    id                     INT IDENTITY(1,1) PRIMARY KEY CLUSTERED,
+    ship_to_country        VARCHAR(50),
+    planning_region        VARCHAR(50),
+    material_number        VARCHAR(25),
+    material_grade         VARCHAR(20),
+    calmonth               VARCHAR(6),
+    salesorder_confirmed   DECIMAL(18,2),
+    demandplan_agreed      DECIMAL(18,2),
+    market_demand          DECIMAL(18,2),
+    snop_adjustments       DECIMAL(18,2)
+);
 GO
 
-/****** Object:  Table [staging].[v_materials_movement]    Script Date: 2/9/2026 12:21:57 PM ******/
-SET ANSI_NULLS ON
+2️⃣ staging.gpm_business_plan
+CREATE TABLE staging.gpm_business_plan (
+    id              INT IDENTITY(1,1) PRIMARY KEY CLUSTERED,
+    plant           VARCHAR(10),
+    calmonth        VARCHAR(6),
+    profit_center   VARCHAR(10),
+    running_plant   VARCHAR(10),
+    business_plan   DECIMAL(18,2)
+);
 GO
 
-SET QUOTED_IDENTIFIER ON
+3️⃣ staging.closing_inventory
+CREATE TABLE staging.closing_inventory (
+    id                                      INT IDENTITY(1,1) PRIMARY KEY CLUSTERED,
+    material_number                         VARCHAR(25),
+    plant                                   VARCHAR(10),
+    calmonth                                VARCHAR(6),
+    profit_center                           VARCHAR(10),
+    material_type                           VARCHAR(10),
+    company_code                            VARCHAR(10),
+    closing_inventory_value_lc              DECIMAL(18,2),
+    closing_inventory_value_sar             DECIMAL(18,2),
+    inventory_value_price_per_ton_lc        DECIMAL(18,2),
+    inventory_value_price_per_ton_sar       DECIMAL(18,2),
+    sbu                                     VARCHAR(10),
+    bu                                      VARCHAR(20),
+    sub_bu                                  VARCHAR(10)
+);
 GO
 
-CREATE TABLE [staging].[v_materials_movement](
-	[calmonth] [varchar](6) NOT NULL,
-	[month_last_date] [date] NOT NULL,
-	[sbu] [varchar](10) NOT NULL,
-	[bu] [varchar](20) NOT NULL,
-	[sub_bu] [varchar](10) NULL,
-	[master_data] [varchar](10) NOT NULL,
-	[material_document_number] [varchar](10) NOT NULL,
-	[material_document_item] [varchar](5) NOT NULL,
-	[movement_type] [varchar](5) NOT NULL,
-	[material_type] [varchar](5) NOT NULL,
-	[valuation_type] [varchar](10) NULL,
-	[material_number] [varchar](20) NOT NULL,
-	[plant] [varchar](5) NOT NULL,
-	[r_i_plant] [varchar](5) NULL,
-	[receipt_indicator] [varchar](1) NULL,
-	[special_stock_indicator] [varchar](1) NULL,
-	[movement_indicator] [varchar](1) NULL,
-	[consumption_posting] [varchar](1) NULL,
-	[quantity] [float] NULL,
-	[quantity_converted] [float] NULL,
-	[flow] [varchar](10) NULL,
-	[unit_of_measure] [varchar](5) NOT NULL,
-	[unit_of_measure_converted] [varchar](5) NOT NULL,
-	[profit_center] [varchar](10) NOT NULL,
-	[currency] [varchar](5) NOT NULL,
-	[amount_in_local_currency] [float] NOT NULL,
-	[amount_in_sar] [float] NOT NULL,
-	[amount_in_usd] [float] NOT NULL
-) ON [PRIMARY]
+4️⃣ staging.materials_movement
+CREATE TABLE staging.materials_movement (
+    id                          INT IDENTITY(1,1) PRIMARY KEY CLUSTERED,
+    calmonth                    VARCHAR(6),
+    sbu                         VARCHAR(10),
+    bu                          VARCHAR(20),
+    sub_bu                      VARCHAR(10),
+    master_category             VARCHAR(20),
+    material_document_number    VARCHAR(15),
+    material_document_item      VARCHAR(5),
+    movement_type               VARCHAR(5),
+    material_type               VARCHAR(5),
+    valuation_type              VARCHAR(10),
+    material_number             VARCHAR(25),
+    plant                       VARCHAR(10),
+    receipt_indicator           VARCHAR(2),
+    special_stock_indicator     VARCHAR(2),
+    movement_indicator          VARCHAR(2),
+    consumption_posting         VARCHAR(10),
+    quantity                    DECIMAL(18,2),
+    quantity_in_mt              DECIMAL(18,2),
+    movement_flow               VARCHAR(10),
+    unit_of_measure             VARCHAR(5),
+    unit_of_measure_converted   VARCHAR(5),
+    profit_center               VARCHAR(10),
+    currency                    VARCHAR(5),
+    amount_in_local_currency    DECIMAL(18,2),
+    amount_in_sar               DECIMAL(18,2),
+    amount_in_usd               DECIMAL(18,2)
+);
 GO
 
-
-USE [SABIC_DT_Finance_Master]
+5️⃣ staging.materials
+CREATE TABLE staging.materials (
+    id                      INT IDENTITY(1,1) PRIMARY KEY CLUSTERED,
+    material_number         VARCHAR(25),
+    material_description    VARCHAR(100),
+    base_uom                VARCHAR(5),
+    material_type           VARCHAR(10),
+    material_type_desc      VARCHAR(50),
+    material_group          VARCHAR(10),
+    material_group_desc     VARCHAR(50),
+    material_grade          VARCHAR(20),
+    material_grade_group    VARCHAR(20)
+);
 GO
-
-/****** Object:  Table [staging].[v_mst_material]    Script Date: 2/9/2026 12:23:42 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [staging].[v_mst_material](
-	[material_number] [varchar](25) NULL,
-	[material_desc] [varchar](50) NULL,
-	[base_uom] [char](3) NULL,
-	[material_type] [char](5) NULL,
-	[material_type_desc] [varchar](30) NULL,
-	[material_group] [varchar](10) NULL,
-	[material_group_desc] [varchar](25) NULL,
-	[zzgrade] [varchar](10) NULL,
-	[zzcolor] [varchar](10) NULL,
-	[zgrade_group] [varchar](10) NULL
-) ON [PRIMARY]
-GO
-
-
-
-
- i need to create table based on excel document.. 
