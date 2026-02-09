@@ -1,159 +1,137 @@
-SELECT DISTINCT
-    pl.PlantID,
-    pl.PlantCode,
-    pl.PlantName
-FROM SABIC_DT_Finance_Master.MST_Plant pl
-
-INNER JOIN SABIC_DT_Finance_Master.MST_Affiliate af
-    ON af.AffiliateCode = pl.AffiliateCode
-    AND af.IsActive = 1
-
-INNER JOIN SABIC_DT_Finance_Master.MST_Country c
-    ON c.CountryID = af.CountryID
-    AND c.IsActive = 1
-
-INNER JOIN SABIC_DT_Finance_Master.MST_Region r
-    ON r.RegionID = c.RegionID
-    AND r.IsActive = 1
-
-INNER JOIN SABIC_DT_Finance_Master.MST_ProfitCenter p
-    ON p.BU  = pl.BU
-    AND p.SBU = pl.SBU
-    AND p.ProfitCenterName = pl.ProfitCenterName
-
-
-
-CREATE FUNCTION dbo.fn_GetPlantIds
-(
-    @RegionID      VARCHAR(MAX) = NULL,
-    @CountryID     VARCHAR(MAX) = NULL,
-    @CompanyCode   VARCHAR(MAX) = NULL,
-    @ProfitCenter  VARCHAR(MAX) = NULL,
-    @SBU           VARCHAR(MAX) = NULL
-)
-RETURNS TABLE
-AS
-RETURN
-(
-    SELECT DISTINCT
-        pl.PlantID
-    FROM MST_Plant pl
-    INNER JOIN MST_Affiliate af
-        ON af.AffiliateCode = pl.AffiliateCode
-    INNER JOIN MST_Country c
-        ON c.CountryID = af.CountryID
-    INNER JOIN MST_Region r
-        ON r.RegionID = c.RegionID
-    WHERE
-        -- First attachment params
-        (
-            @RegionID IS NULL
-            OR r.RegionID IN (SELECT value FROM STRING_SPLIT(@RegionID, ','))
-        )
-        AND
-        (
-            @CountryID IS NULL
-            OR c.CountryID IN (SELECT value FROM STRING_SPLIT(@CountryID, ','))
-        )
-        AND
-        (
-            @CompanyCode IS NULL
-            OR af.CompanyCode IN (SELECT value FROM STRING_SPLIT(@CompanyCode, ','))
-        )
-
-        -- Second attachment conditions
-        AND
-        (
-            @ProfitCenter IS NULL
-            OR pl.ProfitCenterID IN (SELECT value FROM STRING_SPLIT(@ProfitCenter, ','))
-        )
-        AND
-        (
-            @SBU IS NULL
-            OR pl.SBU IN (SELECT value FROM STRING_SPLIT(@SBU, ','))
-        )
-);
+Description	 : Table in Staging :	Coumns name in Staging
+Ship To Country	: demand_plan_polymers :	ship_to_country
+Planning Region	: demand_plan_polymers :	planning_region
+SKU - Material Number	: demand_plan_polymers :	material_number
+Grade	: demand_plan_polymers :	material_grade
+Date Period	: demand_plan_polymers :	calmonth
+SalesOrder Confirmed	: demand_plan_polymers :	salesorder_confirmed
+Demand Plan Agreed	: demand_plan_polymers :	demandplan_agreed
+Market Demand	: demand_plan_polymers :	market_demand
+SNOP_Adjustments	: demand_plan_polymers :	snop_adjustments
+Plant	: gpm_business_plan :	plant
+Date Period	: gpm_business_plan :	calmonth
+Profit Center	: gpm_business_plan :	profit_center
+Running Plant	: gpm_business_plan :	running_plant
+Business Plan	: gpm_business_plan :	business_plan
+Material Number	 : closing_inventory : 	material_number
+Plant	 : closing_inventory : 	plant
+Date Period	 : closing_inventory : 	calmonth
+Profit Center	 : closing_inventory : 	profit_center
+Material Type	 : closing_inventory : 	material_type
+Company Code	 : closing_inventory : 	company_code
+Closing Inventory Value in Local Currency	 : closing_inventory : 	closing_inventory_value_lc
+Closing Inventory Value in SAR	 : closing_inventory : 	closing_inventory_value_sar
+Inventory Value Price per Ton in Local Currency	 : closing_inventory : 	inventory_value_price_per_ton_lc
+Inventory Value Price per Ton in SAR	 : closing_inventory : 	inventory_value_price_per_ton_sar
+SBU	 : closing_inventory : 	sbu
+BU	 : closing_inventory : 	bu
+Sub BU	 : closing_inventory : 	sub_bu
+Date Period	 : materials_movement : 	calmonth
+SBU	 : materials_movement : 	sbu
+BU	 : materials_movement : 	bu
+Sub BU	 : materials_movement : 	sub_bu
+Master Category	 : materials_movement : 	master_category
+Material Document Number	 : materials_movement : 	material_document_number
+Material Document Item	 : materials_movement : 	material_document_item
+Material Movement Type ID	 : materials_movement : 	movement_type
+Material Type(FG or RM)	 : materials_movement : 	material_type
+Valuation Type	 : materials_movement : 	valuation_type
+Material Number	 : materials_movement : 	material_number
+Plant	 : materials_movement : 	plant
+	 : materials_movement : 	
+Material Receipt Number	 : materials_movement : 	receipt_indicator
+Special Stock Indicator	 : materials_movement : 	special_stock_indicator
+Material Movement Type Indicator	 : materials_movement : 	movement_indicator
+Date Period	 : materials_movement : 	consumption_posting
+Quantity in other UOM	 : materials_movement : 	quantity
+Quantity in MT	 : materials_movement : 	quantity_in_mt
+Movement Flow(Debit/Credit)	 : materials_movement : 	movement_flow
+UOM	 : materials_movement : 	unit_of_measure
+UOM to MT	 : materials_movement : 	unit_of_measure_converted
+Profit Center	 : materials_movement : 	profit_center
+Local Currency	 : materials_movement : 	currency
+Amount in Local Currency	 : materials_movement : 	amount_in_local_currency
+Amount in SAR	 : materials_movement : 	amount_in_sar
+Amount in USD	 : materials_movement : 	amount_in_usd
+Material Number	 : materials : 	material_number
+Material Description	 : materials : 	material_description
+UOM	 : materials : 	base_uom
+Material Type	 : materials : 	material_type
+Material Type Description	 : materials : 	material_type_desc
+Material Group	 : materials : 	material_group
+Material Group Description	 : materials : 	material_group_desc
+Material Grade	 : materials : 	material_grade
+Material Grade Group	 : materials : 	material_grade_group
 
 
+refer old table script USE [SABIC_DT_Finance_Master]
+GO
+
+/****** Object:  Table [staging].[v_materials_movement]    Script Date: 2/9/2026 12:21:57 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [staging].[v_materials_movement](
+	[calmonth] [varchar](6) NOT NULL,
+	[month_last_date] [date] NOT NULL,
+	[sbu] [varchar](10) NOT NULL,
+	[bu] [varchar](20) NOT NULL,
+	[sub_bu] [varchar](10) NULL,
+	[master_data] [varchar](10) NOT NULL,
+	[material_document_number] [varchar](10) NOT NULL,
+	[material_document_item] [varchar](5) NOT NULL,
+	[movement_type] [varchar](5) NOT NULL,
+	[material_type] [varchar](5) NOT NULL,
+	[valuation_type] [varchar](10) NULL,
+	[material_number] [varchar](20) NOT NULL,
+	[plant] [varchar](5) NOT NULL,
+	[r_i_plant] [varchar](5) NULL,
+	[receipt_indicator] [varchar](1) NULL,
+	[special_stock_indicator] [varchar](1) NULL,
+	[movement_indicator] [varchar](1) NULL,
+	[consumption_posting] [varchar](1) NULL,
+	[quantity] [float] NULL,
+	[quantity_converted] [float] NULL,
+	[flow] [varchar](10) NULL,
+	[unit_of_measure] [varchar](5) NOT NULL,
+	[unit_of_measure_converted] [varchar](5) NOT NULL,
+	[profit_center] [varchar](10) NOT NULL,
+	[currency] [varchar](5) NOT NULL,
+	[amount_in_local_currency] [float] NOT NULL,
+	[amount_in_sar] [float] NOT NULL,
+	[amount_in_usd] [float] NOT NULL
+) ON [PRIMARY]
+GO
 
 
+USE [SABIC_DT_Finance_Master]
+GO
 
+/****** Object:  Table [staging].[v_mst_material]    Script Date: 2/9/2026 12:23:42 PM ******/
+SET ANSI_NULLS ON
+GO
 
+SET QUOTED_IDENTIFIER ON
+GO
 
-
-CREATE FUNCTION dbo.fn_GetPlantIds_JoinOnly
-(
-    @RegionID      VARCHAR(MAX) = NULL,
-    @CountryID     VARCHAR(MAX) = NULL,
-    @CompanyCode   VARCHAR(MAX) = NULL,
-    @ProfitCenter  VARCHAR(MAX) = NULL,
-    @SBU           VARCHAR(MAX) = NULL
-)
-RETURNS TABLE
-AS
-RETURN
-(
-    SELECT DISTINCT
-        pl.PlantID
-    FROM MST_Plant pl
-
-    INNER JOIN MST_Affiliate af
-        ON af.AffiliateCode = pl.AffiliateCode
-
-    INNER JOIN MST_Country c
-        ON c.CountryID = af.CountryID
-
-    INNER JOIN MST_Region r
-        ON r.RegionID = c.RegionID
-
-    -- 🔹 Attachment joins
-    LEFT JOIN STRING_SPLIT(@RegionID, ',')      sr ON r.RegionID = sr.value
-    LEFT JOIN STRING_SPLIT(@CountryID, ',')     sc ON c.CountryID = sc.value
-    LEFT JOIN STRING_SPLIT(@CompanyCode, ',')   scc ON af.CompanyCode = scc.value
-    LEFT JOIN STRING_SPLIT(@ProfitCenter, ',')  spc ON pl.ProfitCenterID = spc.value
-    LEFT JOIN STRING_SPLIT(@SBU, ',')            ss ON pl.SBU = ss.value
-
-    WHERE
-        -- 🔹 If param is NULL → ignore filter
-        (@RegionID     IS NULL OR sr.value IS NOT NULL)
-        AND (@CountryID    IS NULL OR sc.value IS NOT NULL)
-        AND (@CompanyCode  IS NULL OR scc.value IS NOT NULL)
-        AND (@ProfitCenter IS NULL OR spc.value IS NOT NULL)
-        AND (@SBU          IS NULL OR ss.value IS NOT NULL)
-);
-
-
-
-
-
-
-
-Hi Khalid,
-
-Greetings.
-
-As discussed with Harish, he prefers that all planned changes are fully completed and finalized before proceeding with the code review. Once the development activities are completed and the code is officially frozen, we will inform him so that he can begin the review process.
-
-Currently, we are still working on the WCI enhancements, and the corresponding pull request remains open. Since the PR is active, the updates being pushed to the development branch will continue to include our daily incremental changes. Alongside this, we are also addressing and incorporating the existing code review comments to ensure alignment with the expected standards.
-
-Once the WCI enhancements are completed and no further changes are required, we will proceed with the development freeze and notify Harish accordingly.
-
-Please let me know if any further clarification is required.
-
-Thanks,
-Sathish
+CREATE TABLE [staging].[v_mst_material](
+	[material_number] [varchar](25) NULL,
+	[material_desc] [varchar](50) NULL,
+	[base_uom] [char](3) NULL,
+	[material_type] [char](5) NULL,
+	[material_type_desc] [varchar](30) NULL,
+	[material_group] [varchar](10) NULL,
+	[material_group_desc] [varchar](25) NULL,
+	[zzgrade] [varchar](10) NULL,
+	[zzcolor] [varchar](10) NULL,
+	[zgrade_group] [varchar](10) NULL
+) ON [PRIMARY]
+GO
 
 
 
 
-
-Hi Khalid,
- 
-Greetings.
- 
-As discussed with Harish, he would like all changes to be fully in place before proceeding with the review. Once the code is frozen, we will inform him so that he can carry out the review.
- 
-Currently, we are still in progress with the WCI enhancements, and the pull request is active. Since the PR is open, the changes being pushed to the development branch will include our ongoing daily updates. In parallel, we are also addressing the code review comments.
- 
-Please let me know if any clarification is required.
- 
+ i need to create table based on excel document.. 
