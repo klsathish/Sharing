@@ -1,137 +1,97 @@
-
-USE [SABIC_DT_Finance_Master]
+USE SABIC_DT_Finance_Master;
 GO
 
-/****** Object:  Table [master].[MST_MovementTypes]    Script Date: 2/9/2026 1:01:49 PM ******/
-SET ANSI_NULLS ON
+/* =====================================================
+   1. Region (Parent)
+===================================================== */
+CREATE TABLE master.Region (
+    RegionID        INT PRIMARY KEY,
+    RegionName      VARCHAR(50),
+
+    IsActive        BIT         DEFAULT 1,
+    CreatedBy       VARCHAR(200),
+    CreatedDate     DATETIME    DEFAULT GETDATE(),
+    UpdatedBy       VARCHAR(200),
+    UpdatedDate     DATETIME
+);
 GO
 
-SET QUOTED_IDENTIFIER ON
+/* =====================================================
+   2. Country (Child of Region)
+===================================================== */
+CREATE TABLE master.Country (
+    CountryID       INT IDENTITY(1,1) PRIMARY KEY CLUSTERED,
+    CountryName     VARCHAR(50),
+    CountryKey      VARCHAR(10),
+    RegionID        INT NOT NULL,
+
+    IsActive        BIT         DEFAULT 1,
+    CreatedBy       VARCHAR(200),
+    CreatedDate     DATETIME    DEFAULT GETDATE(),
+    UpdatedBy       VARCHAR(200),
+    UpdatedDate     DATETIME,
+
+    CONSTRAINT FK_Country_Region
+        FOREIGN KEY (RegionID)
+        REFERENCES master.Region (RegionID)
+);
 GO
 
-CREATE TABLE [master].[MST_MovementTypes](
-	[RecID] [int] IDENTITY(1,1) NOT NULL,
-	[movement_type] [varchar](4) NOT NULL,
-	[movement_type_text] [varchar](25) NULL,
-	[special_stock] [char](1) NULL,
-	[special_stock_description] [varchar](25) NULL,
-	[movement_indicator] [char](1) NULL,
-	[movement_indicator_description] [varchar](100) NULL,
-	[receipt_indicator] [char](1) NULL,
-	[receipt_Indicator_description] [varchar](100) NULL,
-	[consumption] [char](1) NULL,
-	[consumption_description] [varchar](100) NULL,
-	[classification_level1] [varchar](50) NULL,
-	[classification_level2] [varchar](50) NULL,
-	[classification_level3] [varchar](50) NULL,
-	[master_data] [varchar](15) NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[RecID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+/* =====================================================
+   3. Plant (Child of Country)
+===================================================== */
+CREATE TABLE master.Plant (
+    PlantID         INT IDENTITY(1,1) PRIMARY KEY CLUSTERED,
+    Plant           VARCHAR(10) NOT NULL,
+    PlantName       VARCHAR(100),
+    PlantType       VARCHAR(50),
+
+    CountryID       INT NOT NULL,
+    AffiliateID     INT NULL,
+
+    IsActive        BIT         DEFAULT 1,
+    CreatedBy       VARCHAR(200),
+    CreatedDate     DATETIME    DEFAULT GETDATE(),
+    UpdatedBy       VARCHAR(200),
+    UpdatedDate     DATETIME,
+
+    CONSTRAINT FK_Plant_Country
+        FOREIGN KEY (CountryID)
+        REFERENCES master.Country (CountryID)
+);
 GO
 
+/* =====================================================
+   4. MovementType (Independent Master)
+===================================================== */
+CREATE TABLE master.MovementType (
+    MovementTypeID                     INT IDENTITY(1,1) PRIMARY KEY CLUSTERED,
 
-USE [SABIC_DT_Finance_Master]
+    movement_type                      VARCHAR(4)  NOT NULL,
+    movement_type_text                 VARCHAR(50),
+
+    special_stock                      CHAR(1),
+    special_stock_description          VARCHAR(50),
+
+    movement_indicator                 CHAR(1),
+    movement_indicator_description     VARCHAR(100),
+
+    receipt_indicator                  CHAR(1),
+    receipt_indicator_description      VARCHAR(100),
+
+    consumption                        CHAR(1),
+    consumption_description            VARCHAR(100),
+
+    classification_level1              VARCHAR(50),
+    classification_level2              VARCHAR(50),
+    classification_level3              VARCHAR(50),
+
+    master_data                        VARCHAR(20),
+
+    IsActive                            BIT         DEFAULT 1,
+    CreatedBy                           VARCHAR(200),
+    CreatedDate                         DATETIME    DEFAULT GETDATE(),
+    UpdatedBy                           VARCHAR(200),
+    UpdatedDate                         DATETIME
+);
 GO
-
-/****** Object:  Table [master].[MST_Region]    Script Date: 2/9/2026 1:08:33 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [master].[MST_Region](
-	[RegionID] [int] NOT NULL,
-	[RegionName] [nvarchar](50) NULL,
-	[IsActive] [bit] NULL,
-	[CreatedBy] [nvarchar](200) NULL,
-	[CreatedDate] [datetime] NULL,
-	[UpdatedBy] [nvarchar](200) NULL,
-	[UpdatedDate] [datetime] NULL,
-	[Cetegory] [varchar](50) NULL
-) ON [PRIMARY]
-GO
-
-USE [SABIC_DT_Finance_Master]
-GO
-
-/****** Object:  Table [master].[MST_Country]    Script Date: 2/9/2026 1:09:13 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [master].[MST_Country](
-	[CountryID] [int] IDENTITY(1,1) NOT NULL,
-	[CountryName] [nvarchar](50) NULL,
-	[CountryKey] [varchar](10) NULL,
-	[RegionID] [int] NULL,
-	[IsActive] [bit] NULL,
-	[CreatedBy] [nvarchar](200) NULL,
-	[CreatedDate] [datetime] NULL,
-	[UpdatedBy] [nvarchar](200) NULL,
-	[UpdatedDate] [datetime] NULL,
-	[SalesRegionID] [int] NULL,
-	[ProductionRegionID] [int] NULL,
-	[Latitude] [decimal](9, 6) NULL,
-	[Longitude] [decimal](9, 6) NULL,
- CONSTRAINT [PK_MST_Country] PRIMARY KEY CLUSTERED 
-(
-	[CountryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-ALTER TABLE [master].[MST_Country] ADD  CONSTRAINT [DF_MST_Country_IsActive]  DEFAULT ((1)) FOR [IsActive]
-GO
-
-
-
-
-MST_Movementtype : 	MovementTypeID	Primary Key
-MST_Movementtype : 	movement_type	movement type code
-MST_Movementtype : 	movement_type_text	movement type description
-MST_Movementtype : 	special_stock	special stock code
-MST_Movementtype : 	special_stock_description	special stock description
-MST_Movementtype : 	movement_indicator	movement indicator code
-MST_Movementtype : 	movement_indicator_description	movement indicator description
-MST_Movementtype : 	receipt_indicator	receipt indicator code
-MST_Movementtype : 	receipt_Indicator_description	receipt Indicator description
-MST_Movementtype : 	consumption	consumption consumption code
-MST_Movementtype : 	consumption_description	consumption description code
-MST_Movementtype : 	classification_level1	classification level1 code
-MST_Movementtype : 	classification_level2	classification level2 code
-MST_Movementtype : 	classification_level3	classification level3 code
-MST_Movementtype : 	master_data	master data code
-MST_Movementtype : 	IsActive	Audit Log
-MST_Movementtype : 	CreatedBy	Audit Log
-MST_Movementtype : 	CreatedDate	Audit Log
-MST_Movementtype : 	UpdatedBy	Audit Log
-MST_Movementtype : 	UpdatedDate	Audit Log
-MST_Region :	RegionID	Primary Key
-MST_Region :	RegionName	Region Name
-MST_Region :	IsActive	Audit Log
-MST_Region :	CreatedBy	Audit Log
-MST_Region :	CreatedDate	Audit Log
-MST_Region :	UpdatedBy	Audit Log
-MST_Region :	UpdatedDate	Audit Log
-		
-MST_Country : 	CountryID	Primary Key
-MST_Country : 	CountryName	Country Name
-MST_Country : 	CountryKey	Country Short Name
-MST_Country : 	RegionID	Region ID - FK
-MST_Country : 	IsActive	Audit Log
-MST_Country : 	CreatedBy	Audit Log
-MST_Country : 	CreatedDate	Audit Log
-MST_Country : 	UpdatedBy	Audit Log
-MST_Country : 	UpdatedDate	Audit Log
-MST_Country : 	PlantID	Primary Key
-MST_Country : 	Plant	Plant Code
-MST_Country : 	PlantName	Plant Name
-MST_Country : 	PlantType	Plant Type
-MST_Country : 	CountryID	CountryID - FK
-MST_Country : 	AffiliateID	AffiliateID - FK
