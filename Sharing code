@@ -1,60 +1,133 @@
-Object Name- SQL dbo	Object Type	Column Name	Description
- : sp_model_input_fg :	: Stored Procedure :	material_number	Material Number
- : sp_model_input_fg :	: Stored Procedure :	unit_of_measure	UOM
- : sp_model_input_fg :	: Stored Procedure :	calmonth	Date Period
- : sp_model_input_fg :	: Stored Procedure :	plant	Plant
- : sp_model_input_fg :	: Stored Procedure :	profit_center	Profit Center
- : sp_model_input_fg :	: Stored Procedure :	materialtype	Material Type
- : sp_model_input_fg :	: Stored Procedure :	Classification_level1	Classification level
- : sp_model_input_fg :	: Stored Procedure :	TotalQuant	Total Quantity Volume
- : sp_model_input_fg :	: Stored Procedure :	TotalValue_SAR	Total Value
- : sp_model_input_fg :	: Stored Procedure :	sbu	SBU
- : sp_model_input_fg :	: Stored Procedure :	bu	BU
- : sp_model_input_fg :	: Stored Procedure :	sub_bu	Sub BU
- : sp_model_input_rm : 	: Stored Procedure :	material_number	Material Number
- : sp_model_input_rm : 	: Stored Procedure :	unit_of_measure	UOM
- : sp_model_input_rm : 	: Stored Procedure :	calmonth	Date Period
- : sp_model_input_rm : 	: Stored Procedure :	plant	Plant
- : sp_model_input_rm : 	: Stored Procedure :	profit_center	Profit Center
- : sp_model_input_rm : 	: Stored Procedure :	materialtype	Material Type
- : sp_model_input_rm : 	: Stored Procedure :	Classification_level1	Classification level
- : sp_model_input_rm : 	: Stored Procedure :	TotalQuant	Total Quantity Volume
- : sp_model_input_rm : 	: Stored Procedure :	TotalValue_SAR	Total Value
- : sp_model_input_rm : 	: Stored Procedure :	sbu	SBU
- : sp_model_input_rm : 	: Stored Procedure :	bu	BU
- : sp_model_input_rm : 	: Stored Procedure :	sub_bu	Sub BU
- : view_profitcenter_master :	 : View :	ProfitCenterID	Profit Center ID
- : view_profitcenter_master :	 : View :	ProfitCenterName	Profit Center Name
- : view_profitcenter_master :	 : View :	SBUID	SBUID
- : view_profitcenter_master :	 : View :	SBU	SBU
- : view_profitcenter_master :	 : View :	BUID	BUID
- : view_profitcenter_master :	 : View :	BU	BU
- : view_profitcenter_master :	 : View :	Sub_BUID	Sub_BUID
- : view_profitcenter_master :	 : View :	Sub_BU	Sub_BU
- : view_profitcenter_master :	 : View :	AffiliateID	AffiliateID
- : view_profitcenter_master :	 : View :	AffiliateCode	AffiliateCode
- : view_profitcenter_master :	 : View :	AffiliateName	AffiliateName
-: view_model_input_demand_plan :	 : View :	calmonth	Date Period
-: view_model_input_demand_plan :	 : View :	ship_to_country	Ship To Country
-: view_model_input_demand_plan :	 : View :	planning_region	Planning Region
-: view_model_input_demand_plan :	 : View :	material_number	SKU - Material Number
-: view_model_input_demand_plan :	 : View :	demandplan_agreed	Demand Plan Agreed
-: view_model_input_demand_plan :	 : View :	market_demand	Market Demand
-: view_model_input_demand_plan :	 : View :	snop_adjustments	SNOP_Adjustments
-: view_model_input_demand_plan :	 : View :	plantID	Plant ID
- : view_model_input_production_plan :	 : View :	plant	Plant
- : view_model_input_production_plan :	 : View :	calmonth	Date Period
- : view_model_input_production_plan :	 : View :	profit_center	Profit Center
- : view_model_input_production_plan :	 : View :	running_plant	Running Plant
- : view_model_input_production_plan :	 : View :	business_plan	Business Plan
- : view_model_input_closing_inventory : 	 : View :	calmonth	Date Period
- : view_model_input_closing_inventory : 	 : View :	material_number	Material Number
- : view_model_input_closing_inventory : 	 : View :	plant	Plant
- : view_model_input_closing_inventory : 	 : View :	profit_center	Profit Center
- : view_model_input_closing_inventory : 	 : View :	material_type	Material Type
- : view_model_input_closing_inventory : 	 : View :	company_code	Company Code
- : view_model_input_closing_inventory : 	 : View :	closing_inventory_value_sar	Closing Inventory Value in SAR
- : view_model_input_closing_inventory : 	 : View :	inventory_value_price_per_ton_sar	Inventory Value Price per Ton in SAR
- : view_model_input_closing_inventory : 	 : View :	sbu	SBU
- : view_model_input_closing_inventory : 	 : View :	bu	BU
- : view_model_input_closing_inventory : 	 : View :	sub_bu	Sub BU
+dbo.sp_model_input_fg (Finished Goods)
+CREATE OR ALTER PROCEDURE dbo.sp_model_input_fg
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        mm.material_number                              AS material_number,
+        mm.unit_of_measure                              AS unit_of_measure,
+        mm.calmonth                                     AS calmonth,
+        mm.plant                                        AS plant,
+        mm.profit_center                                AS profit_center,
+        mm.material_type                                AS materialtype,
+        mm.master_category                              AS Classification_level1,
+        SUM(mm.quantity_in_mt)                          AS TotalQuant,
+        SUM(mm.amount_in_sar)                           AS TotalValue_SAR,
+        mm.sbu                                          AS sbu,
+        mm.bu                                           AS bu,
+        mm.sub_bu                                       AS sub_bu
+    FROM staging.materials_movement mm
+    WHERE mm.material_type = 'FG'
+    GROUP BY
+        mm.material_number,
+        mm.unit_of_measure,
+        mm.calmonth,
+        mm.plant,
+        mm.profit_center,
+        mm.material_type,
+        mm.master_category,
+        mm.sbu,
+        mm.bu,
+        mm.sub_bu;
+END;
+GO
+
+2️⃣ dbo.sp_model_input_rm (Raw Material)
+CREATE OR ALTER PROCEDURE dbo.sp_model_input_rm
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        mm.material_number                              AS material_number,
+        mm.unit_of_measure                              AS unit_of_measure,
+        mm.calmonth                                     AS calmonth,
+        mm.plant                                        AS plant,
+        mm.profit_center                                AS profit_center,
+        mm.material_type                                AS materialtype,
+        mm.master_category                              AS Classification_level1,
+        SUM(mm.quantity_in_mt)                          AS TotalQuant,
+        SUM(mm.amount_in_sar)                           AS TotalValue_SAR,
+        mm.sbu                                          AS sbu,
+        mm.bu                                           AS bu,
+        mm.sub_bu                                       AS sub_bu
+    FROM staging.materials_movement mm
+    WHERE mm.material_type = 'RM'
+    GROUP BY
+        mm.material_number,
+        mm.unit_of_measure,
+        mm.calmonth,
+        mm.plant,
+        mm.profit_center,
+        mm.material_type,
+        mm.master_category,
+        mm.sbu,
+        mm.bu,
+        mm.sub_bu;
+END;
+GO
+
+🔹 VIEWS
+3️⃣ dbo.view_profitcenter_master
+CREATE OR ALTER VIEW dbo.view_profitcenter_master
+AS
+SELECT DISTINCT
+    profit_center        AS ProfitCenterID,
+    profit_center        AS ProfitCenterName,
+    sbu                  AS SBUID,
+    sbu                  AS SBU,
+    bu                   AS BUID,
+    bu                   AS BU,
+    sub_bu               AS Sub_BUID,
+    sub_bu               AS Sub_BU,
+    NULL                 AS AffiliateID,
+    NULL                 AS AffiliateCode,
+    NULL                 AS AffiliateName
+FROM staging.materials_movement;
+GO
+
+4️⃣ dbo.view_model_input_demand_plan
+CREATE OR ALTER VIEW dbo.view_model_input_demand_plan
+AS
+SELECT
+    calmonth,
+    ship_to_country,
+    planning_region,
+    material_number,
+    demandplan_agreed,
+    market_demand,
+    snop_adjustments,
+    NULL AS plantID
+FROM staging.demand_plan_polymers;
+GO
+
+5️⃣ dbo.view_model_input_production_plan
+CREATE OR ALTER VIEW dbo.view_model_input_production_plan
+AS
+SELECT
+    plant,
+    calmonth,
+    profit_center,
+    running_plant,
+    business_plan
+FROM staging.gpm_business_plan;
+GO
+
+6️⃣ dbo.view_model_input_closing_inventory
+CREATE OR ALTER VIEW dbo.view_model_input_closing_inventory
+AS
+SELECT
+    calmonth,
+    material_number,
+    plant,
+    profit_center,
+    material_type,
+    company_code,
+    closing_inventory_value_sar,
+    inventory_value_price_per_ton_sar,
+    sbu,
+    bu,
+    sub_bu
+FROM staging.closing_inventory;
+GO
