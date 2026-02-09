@@ -1,91 +1,60 @@
-staging.demand_plan_polymers
-CREATE TABLE staging.demand_plan_polymers (
-    id                     INT IDENTITY(1,1) PRIMARY KEY CLUSTERED,
-    ship_to_country        VARCHAR(50),
-    planning_region        VARCHAR(50),
-    material_number        VARCHAR(25),
-    material_grade         VARCHAR(20),
-    calmonth               VARCHAR(6),
-    salesorder_confirmed   DECIMAL(18,2),
-    demandplan_agreed      DECIMAL(18,2),
-    market_demand          DECIMAL(18,2),
-    snop_adjustments       DECIMAL(18,2)
-);
-GO
-
-2️⃣ staging.gpm_business_plan
-CREATE TABLE staging.gpm_business_plan (
-    id              INT IDENTITY(1,1) PRIMARY KEY CLUSTERED,
-    plant           VARCHAR(10),
-    calmonth        VARCHAR(6),
-    profit_center   VARCHAR(10),
-    running_plant   VARCHAR(10),
-    business_plan   DECIMAL(18,2)
-);
-GO
-
-3️⃣ staging.closing_inventory
-CREATE TABLE staging.closing_inventory (
-    id                                      INT IDENTITY(1,1) PRIMARY KEY CLUSTERED,
-    material_number                         VARCHAR(25),
-    plant                                   VARCHAR(10),
-    calmonth                                VARCHAR(6),
-    profit_center                           VARCHAR(10),
-    material_type                           VARCHAR(10),
-    company_code                            VARCHAR(10),
-    closing_inventory_value_lc              DECIMAL(18,2),
-    closing_inventory_value_sar             DECIMAL(18,2),
-    inventory_value_price_per_ton_lc        DECIMAL(18,2),
-    inventory_value_price_per_ton_sar       DECIMAL(18,2),
-    sbu                                     VARCHAR(10),
-    bu                                      VARCHAR(20),
-    sub_bu                                  VARCHAR(10)
-);
-GO
-
-4️⃣ staging.materials_movement
-CREATE TABLE staging.materials_movement (
-    id                          INT IDENTITY(1,1) PRIMARY KEY CLUSTERED,
-    calmonth                    VARCHAR(6),
-    sbu                         VARCHAR(10),
-    bu                          VARCHAR(20),
-    sub_bu                      VARCHAR(10),
-    master_category             VARCHAR(20),
-    material_document_number    VARCHAR(15),
-    material_document_item      VARCHAR(5),
-    movement_type               VARCHAR(5),
-    material_type               VARCHAR(5),
-    valuation_type              VARCHAR(10),
-    material_number             VARCHAR(25),
-    plant                       VARCHAR(10),
-    receipt_indicator           VARCHAR(2),
-    special_stock_indicator     VARCHAR(2),
-    movement_indicator          VARCHAR(2),
-    consumption_posting         VARCHAR(10),
-    quantity                    DECIMAL(18,2),
-    quantity_in_mt              DECIMAL(18,2),
-    movement_flow               VARCHAR(10),
-    unit_of_measure             VARCHAR(5),
-    unit_of_measure_converted   VARCHAR(5),
-    profit_center               VARCHAR(10),
-    currency                    VARCHAR(5),
-    amount_in_local_currency    DECIMAL(18,2),
-    amount_in_sar               DECIMAL(18,2),
-    amount_in_usd               DECIMAL(18,2)
-);
-GO
-
-5️⃣ staging.materials
-CREATE TABLE staging.materials (
-    id                      INT IDENTITY(1,1) PRIMARY KEY CLUSTERED,
-    material_number         VARCHAR(25),
-    material_description    VARCHAR(100),
-    base_uom                VARCHAR(5),
-    material_type           VARCHAR(10),
-    material_type_desc      VARCHAR(50),
-    material_group          VARCHAR(10),
-    material_group_desc     VARCHAR(50),
-    material_grade          VARCHAR(20),
-    material_grade_group    VARCHAR(20)
-);
-GO
+Object Name- SQL dbo	Object Type	Column Name	Description
+ : sp_model_input_fg :	: Stored Procedure :	material_number	Material Number
+ : sp_model_input_fg :	: Stored Procedure :	unit_of_measure	UOM
+ : sp_model_input_fg :	: Stored Procedure :	calmonth	Date Period
+ : sp_model_input_fg :	: Stored Procedure :	plant	Plant
+ : sp_model_input_fg :	: Stored Procedure :	profit_center	Profit Center
+ : sp_model_input_fg :	: Stored Procedure :	materialtype	Material Type
+ : sp_model_input_fg :	: Stored Procedure :	Classification_level1	Classification level
+ : sp_model_input_fg :	: Stored Procedure :	TotalQuant	Total Quantity Volume
+ : sp_model_input_fg :	: Stored Procedure :	TotalValue_SAR	Total Value
+ : sp_model_input_fg :	: Stored Procedure :	sbu	SBU
+ : sp_model_input_fg :	: Stored Procedure :	bu	BU
+ : sp_model_input_fg :	: Stored Procedure :	sub_bu	Sub BU
+ : sp_model_input_rm : 	: Stored Procedure :	material_number	Material Number
+ : sp_model_input_rm : 	: Stored Procedure :	unit_of_measure	UOM
+ : sp_model_input_rm : 	: Stored Procedure :	calmonth	Date Period
+ : sp_model_input_rm : 	: Stored Procedure :	plant	Plant
+ : sp_model_input_rm : 	: Stored Procedure :	profit_center	Profit Center
+ : sp_model_input_rm : 	: Stored Procedure :	materialtype	Material Type
+ : sp_model_input_rm : 	: Stored Procedure :	Classification_level1	Classification level
+ : sp_model_input_rm : 	: Stored Procedure :	TotalQuant	Total Quantity Volume
+ : sp_model_input_rm : 	: Stored Procedure :	TotalValue_SAR	Total Value
+ : sp_model_input_rm : 	: Stored Procedure :	sbu	SBU
+ : sp_model_input_rm : 	: Stored Procedure :	bu	BU
+ : sp_model_input_rm : 	: Stored Procedure :	sub_bu	Sub BU
+ : view_profitcenter_master :	 : View :	ProfitCenterID	Profit Center ID
+ : view_profitcenter_master :	 : View :	ProfitCenterName	Profit Center Name
+ : view_profitcenter_master :	 : View :	SBUID	SBUID
+ : view_profitcenter_master :	 : View :	SBU	SBU
+ : view_profitcenter_master :	 : View :	BUID	BUID
+ : view_profitcenter_master :	 : View :	BU	BU
+ : view_profitcenter_master :	 : View :	Sub_BUID	Sub_BUID
+ : view_profitcenter_master :	 : View :	Sub_BU	Sub_BU
+ : view_profitcenter_master :	 : View :	AffiliateID	AffiliateID
+ : view_profitcenter_master :	 : View :	AffiliateCode	AffiliateCode
+ : view_profitcenter_master :	 : View :	AffiliateName	AffiliateName
+: view_model_input_demand_plan :	 : View :	calmonth	Date Period
+: view_model_input_demand_plan :	 : View :	ship_to_country	Ship To Country
+: view_model_input_demand_plan :	 : View :	planning_region	Planning Region
+: view_model_input_demand_plan :	 : View :	material_number	SKU - Material Number
+: view_model_input_demand_plan :	 : View :	demandplan_agreed	Demand Plan Agreed
+: view_model_input_demand_plan :	 : View :	market_demand	Market Demand
+: view_model_input_demand_plan :	 : View :	snop_adjustments	SNOP_Adjustments
+: view_model_input_demand_plan :	 : View :	plantID	Plant ID
+ : view_model_input_production_plan :	 : View :	plant	Plant
+ : view_model_input_production_plan :	 : View :	calmonth	Date Period
+ : view_model_input_production_plan :	 : View :	profit_center	Profit Center
+ : view_model_input_production_plan :	 : View :	running_plant	Running Plant
+ : view_model_input_production_plan :	 : View :	business_plan	Business Plan
+ : view_model_input_closing_inventory : 	 : View :	calmonth	Date Period
+ : view_model_input_closing_inventory : 	 : View :	material_number	Material Number
+ : view_model_input_closing_inventory : 	 : View :	plant	Plant
+ : view_model_input_closing_inventory : 	 : View :	profit_center	Profit Center
+ : view_model_input_closing_inventory : 	 : View :	material_type	Material Type
+ : view_model_input_closing_inventory : 	 : View :	company_code	Company Code
+ : view_model_input_closing_inventory : 	 : View :	closing_inventory_value_sar	Closing Inventory Value in SAR
+ : view_model_input_closing_inventory : 	 : View :	inventory_value_price_per_ton_sar	Inventory Value Price per Ton in SAR
+ : view_model_input_closing_inventory : 	 : View :	sbu	SBU
+ : view_model_input_closing_inventory : 	 : View :	bu	BU
+ : view_model_input_closing_inventory : 	 : View :	sub_bu	Sub BU
