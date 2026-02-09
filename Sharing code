@@ -1,133 +1,137 @@
-dbo.sp_model_input_fg (Finished Goods)
-CREATE OR ALTER PROCEDURE dbo.sp_model_input_fg
-AS
-BEGIN
-    SET NOCOUNT ON;
 
-    SELECT
-        mm.material_number                              AS material_number,
-        mm.unit_of_measure                              AS unit_of_measure,
-        mm.calmonth                                     AS calmonth,
-        mm.plant                                        AS plant,
-        mm.profit_center                                AS profit_center,
-        mm.material_type                                AS materialtype,
-        mm.master_category                              AS Classification_level1,
-        SUM(mm.quantity_in_mt)                          AS TotalQuant,
-        SUM(mm.amount_in_sar)                           AS TotalValue_SAR,
-        mm.sbu                                          AS sbu,
-        mm.bu                                           AS bu,
-        mm.sub_bu                                       AS sub_bu
-    FROM staging.materials_movement mm
-    WHERE mm.material_type = 'FG'
-    GROUP BY
-        mm.material_number,
-        mm.unit_of_measure,
-        mm.calmonth,
-        mm.plant,
-        mm.profit_center,
-        mm.material_type,
-        mm.master_category,
-        mm.sbu,
-        mm.bu,
-        mm.sub_bu;
-END;
+USE [SABIC_DT_Finance_Master]
 GO
 
-2️⃣ dbo.sp_model_input_rm (Raw Material)
-CREATE OR ALTER PROCEDURE dbo.sp_model_input_rm
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    SELECT
-        mm.material_number                              AS material_number,
-        mm.unit_of_measure                              AS unit_of_measure,
-        mm.calmonth                                     AS calmonth,
-        mm.plant                                        AS plant,
-        mm.profit_center                                AS profit_center,
-        mm.material_type                                AS materialtype,
-        mm.master_category                              AS Classification_level1,
-        SUM(mm.quantity_in_mt)                          AS TotalQuant,
-        SUM(mm.amount_in_sar)                           AS TotalValue_SAR,
-        mm.sbu                                          AS sbu,
-        mm.bu                                           AS bu,
-        mm.sub_bu                                       AS sub_bu
-    FROM staging.materials_movement mm
-    WHERE mm.material_type = 'RM'
-    GROUP BY
-        mm.material_number,
-        mm.unit_of_measure,
-        mm.calmonth,
-        mm.plant,
-        mm.profit_center,
-        mm.material_type,
-        mm.master_category,
-        mm.sbu,
-        mm.bu,
-        mm.sub_bu;
-END;
+/****** Object:  Table [master].[MST_MovementTypes]    Script Date: 2/9/2026 1:01:49 PM ******/
+SET ANSI_NULLS ON
 GO
 
-🔹 VIEWS
-3️⃣ dbo.view_profitcenter_master
-CREATE OR ALTER VIEW dbo.view_profitcenter_master
-AS
-SELECT DISTINCT
-    profit_center        AS ProfitCenterID,
-    profit_center        AS ProfitCenterName,
-    sbu                  AS SBUID,
-    sbu                  AS SBU,
-    bu                   AS BUID,
-    bu                   AS BU,
-    sub_bu               AS Sub_BUID,
-    sub_bu               AS Sub_BU,
-    NULL                 AS AffiliateID,
-    NULL                 AS AffiliateCode,
-    NULL                 AS AffiliateName
-FROM staging.materials_movement;
+SET QUOTED_IDENTIFIER ON
 GO
 
-4️⃣ dbo.view_model_input_demand_plan
-CREATE OR ALTER VIEW dbo.view_model_input_demand_plan
-AS
-SELECT
-    calmonth,
-    ship_to_country,
-    planning_region,
-    material_number,
-    demandplan_agreed,
-    market_demand,
-    snop_adjustments,
-    NULL AS plantID
-FROM staging.demand_plan_polymers;
+CREATE TABLE [master].[MST_MovementTypes](
+	[RecID] [int] IDENTITY(1,1) NOT NULL,
+	[movement_type] [varchar](4) NOT NULL,
+	[movement_type_text] [varchar](25) NULL,
+	[special_stock] [char](1) NULL,
+	[special_stock_description] [varchar](25) NULL,
+	[movement_indicator] [char](1) NULL,
+	[movement_indicator_description] [varchar](100) NULL,
+	[receipt_indicator] [char](1) NULL,
+	[receipt_Indicator_description] [varchar](100) NULL,
+	[consumption] [char](1) NULL,
+	[consumption_description] [varchar](100) NULL,
+	[classification_level1] [varchar](50) NULL,
+	[classification_level2] [varchar](50) NULL,
+	[classification_level3] [varchar](50) NULL,
+	[master_data] [varchar](15) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[RecID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 GO
 
-5️⃣ dbo.view_model_input_production_plan
-CREATE OR ALTER VIEW dbo.view_model_input_production_plan
-AS
-SELECT
-    plant,
-    calmonth,
-    profit_center,
-    running_plant,
-    business_plan
-FROM staging.gpm_business_plan;
+
+USE [SABIC_DT_Finance_Master]
 GO
 
-6️⃣ dbo.view_model_input_closing_inventory
-CREATE OR ALTER VIEW dbo.view_model_input_closing_inventory
-AS
-SELECT
-    calmonth,
-    material_number,
-    plant,
-    profit_center,
-    material_type,
-    company_code,
-    closing_inventory_value_sar,
-    inventory_value_price_per_ton_sar,
-    sbu,
-    bu,
-    sub_bu
-FROM staging.closing_inventory;
+/****** Object:  Table [master].[MST_Region]    Script Date: 2/9/2026 1:08:33 PM ******/
+SET ANSI_NULLS ON
 GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [master].[MST_Region](
+	[RegionID] [int] NOT NULL,
+	[RegionName] [nvarchar](50) NULL,
+	[IsActive] [bit] NULL,
+	[CreatedBy] [nvarchar](200) NULL,
+	[CreatedDate] [datetime] NULL,
+	[UpdatedBy] [nvarchar](200) NULL,
+	[UpdatedDate] [datetime] NULL,
+	[Cetegory] [varchar](50) NULL
+) ON [PRIMARY]
+GO
+
+USE [SABIC_DT_Finance_Master]
+GO
+
+/****** Object:  Table [master].[MST_Country]    Script Date: 2/9/2026 1:09:13 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [master].[MST_Country](
+	[CountryID] [int] IDENTITY(1,1) NOT NULL,
+	[CountryName] [nvarchar](50) NULL,
+	[CountryKey] [varchar](10) NULL,
+	[RegionID] [int] NULL,
+	[IsActive] [bit] NULL,
+	[CreatedBy] [nvarchar](200) NULL,
+	[CreatedDate] [datetime] NULL,
+	[UpdatedBy] [nvarchar](200) NULL,
+	[UpdatedDate] [datetime] NULL,
+	[SalesRegionID] [int] NULL,
+	[ProductionRegionID] [int] NULL,
+	[Latitude] [decimal](9, 6) NULL,
+	[Longitude] [decimal](9, 6) NULL,
+ CONSTRAINT [PK_MST_Country] PRIMARY KEY CLUSTERED 
+(
+	[CountryID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [master].[MST_Country] ADD  CONSTRAINT [DF_MST_Country_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
+
+
+
+
+MST_Movementtype : 	MovementTypeID	Primary Key
+MST_Movementtype : 	movement_type	movement type code
+MST_Movementtype : 	movement_type_text	movement type description
+MST_Movementtype : 	special_stock	special stock code
+MST_Movementtype : 	special_stock_description	special stock description
+MST_Movementtype : 	movement_indicator	movement indicator code
+MST_Movementtype : 	movement_indicator_description	movement indicator description
+MST_Movementtype : 	receipt_indicator	receipt indicator code
+MST_Movementtype : 	receipt_Indicator_description	receipt Indicator description
+MST_Movementtype : 	consumption	consumption consumption code
+MST_Movementtype : 	consumption_description	consumption description code
+MST_Movementtype : 	classification_level1	classification level1 code
+MST_Movementtype : 	classification_level2	classification level2 code
+MST_Movementtype : 	classification_level3	classification level3 code
+MST_Movementtype : 	master_data	master data code
+MST_Movementtype : 	IsActive	Audit Log
+MST_Movementtype : 	CreatedBy	Audit Log
+MST_Movementtype : 	CreatedDate	Audit Log
+MST_Movementtype : 	UpdatedBy	Audit Log
+MST_Movementtype : 	UpdatedDate	Audit Log
+MST_Region :	RegionID	Primary Key
+MST_Region :	RegionName	Region Name
+MST_Region :	IsActive	Audit Log
+MST_Region :	CreatedBy	Audit Log
+MST_Region :	CreatedDate	Audit Log
+MST_Region :	UpdatedBy	Audit Log
+MST_Region :	UpdatedDate	Audit Log
+		
+MST_Country : 	CountryID	Primary Key
+MST_Country : 	CountryName	Country Name
+MST_Country : 	CountryKey	Country Short Name
+MST_Country : 	RegionID	Region ID - FK
+MST_Country : 	IsActive	Audit Log
+MST_Country : 	CreatedBy	Audit Log
+MST_Country : 	CreatedDate	Audit Log
+MST_Country : 	UpdatedBy	Audit Log
+MST_Country : 	UpdatedDate	Audit Log
+MST_Country : 	PlantID	Primary Key
+MST_Country : 	Plant	Plant Code
+MST_Country : 	PlantName	Plant Name
+MST_Country : 	PlantType	Plant Type
+MST_Country : 	CountryID	CountryID - FK
+MST_Country : 	AffiliateID	AffiliateID - FK
