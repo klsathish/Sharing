@@ -1,156 +1,103 @@
-PROCs
-ProcedureName
-SP_GetUserDetails
-SP_GetExceptionUserActivityDetailsBySessionID
-SP_GetRawMaterialsOthersChartData
-SP_GetRawMaterialsUnallocatedChartData
-SP_GetDiffrencesValues
-SP_GetRawMaterialsProductionOutputChartData
-SP_GetDiffrencesVolumes
-SP_GetRawMaterialsPurchasesChartData
-SP_GetAIForecastValue
-SP_GetFinishedGoodsConsumedProductionChartData
-SP_GetMoreFiltersProfitCenter
-SP_GetFinishedGoodsUnallocatedChartData
-SP_GetInventoryInsightsGridData
-SP_GetFinishedGoodsOthersChartData
-SP_GetFGClosingInventoryBalanceChartData
-SP_GetFinishedGoodsTransferChartData
-SP_Update_ErrorLogging_AssigneeWith_Status
-SP_GetRawMaterialsTransferChartData
-SP_GetFinishedGoodsDemandGraphComparisonData
-SP_GetFinishedGoodsDemandChartAIEnhancedForecastData
-SP_GetRawMaterialsSTOChartData
-SP_GetFinishedGoodsProductionGraphComparisonData
-SP_GetFinishedGoodsSTOChartData
-SP_GetFGPurchasesComparisonChartData
-GetInventoryInsightDetailChart
-SP_AddActivityLogForAdmin
-SP_GetFGInterCompanyTransferComparisonChartData
-SP_GetFinishedGoodsProductionChartAIEnhancedForecastData
-SP_GetFGClosingInventoryBalanceChartData1
-SP_GetXMLValueForLog
-SP_GetFGInterCompanyTransferComparisonChartDataForGIT
-SP_GetGoodsReceiptGraphComparisonData
-SP_GetUsers
-SP_GetClosingInventoryBalanceChartDetailData
-SP_GetRMConsumptionTrendComparisonData
-SP_GetRMInterCompanyTransferComparisonChartData_New
-SP_IsInternal_AuthenticatedUser
-SP_GetUserMenus
-SP_GetInventoryGlobalMap
-SP_GetFGPurchasesAIFCChartData
-SP_GetFGInterCompanyTransferAIFCChartData
-SP_Insert_Update_UserRoleMapping
-SP_GetDiffrencesValuesAndVolumesForChartData
-SP_GetTotalInventoryValueDifference
-SP_GetTotalInventoryVolumeDifference
-SP_GetInventoryDIO
-SP_InsertMaterialMovements_Actuals_FG
-SP_InsertOpeningAndClosingInventoryDetails_FG
-SP_GetInventoryInsightsGridData_New
-SP_GetFGClosingInventoryBalanceChartData_New
-SP_GetFGInterCompanyTransferAIFCChartDataForSTO
-usp_AddandUpdateUserAndRoleMapping
-SP_GetFGInterCompanyTransferAIFCChartDataForGIT
-SP_GetFGInterCompanyTransferAIFCChartDataForWIP
-SP_GetInventoryInsightDetailChart
-SP_GetAPIRequestLog
-SP_GetLoginActivity
-SP_GetLoginUserActivity
-SP_GetPerformanceLog
-SP_GetAllErrorLogging
-SP_GetRawMaterialsConsumedGraphComparisonData
-SP_InsertMaterialMovements_Actuals_RM
-SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData
-SP_GetRawMaterialsCPChartData
-SP_GetRMInterCompanyTransferComparisonChartData
-SP_GetRMInterCompanyTransferChartData
-SP_InsertOpeningAndClosingInventoryDetails_ActualsForTesting
-SP_GetRMConsumptionTrendData
-SP_InsertInventoryDetails_Forecast_FG_New
-SP_InsertOpeningInventory_Actuals_FG
-SP_InsertInventoryDetails_Forecast_FG_New_ActualsForTesting
-SP_InsertOpeningInventory_Actuals_RM
-SP_InsertInventoryDetails_Forecast_RM_New
-SP_CheckUserMenuAccess
-SP_GetAffiliateForUserManagement
-SP_GetRole
-SP_GetErrorLogStatus
-SP_GetErrorLog_AssignToUser
-SP_GetRegion
-SP_GetCountry
-SP_GetAffiliate
-SP_GetBaseFilters
-SP_CheckRolePageAccess
-SP_GetMoreFiltersSBUandBU
-SP_InsertInventoryDetails_Actuals_FG
-SP_GetMoreFiltersPlant
-SP_GetErrorLogging
-SP_GetDataForAuthenticationByUserId
-SP_InsertInventoryDetails_Actuals_RM
-SP_Insert_Update_ActivityTracker
-SP_Insert_Update_APIRequestLog
-SP_Insert_Update_AssignedUser
-SP_Insert_Update_ErrorLogging
-SP_Insert_Update_LoginActivity
-SP_Insert_Update_PerformanceLog
-SP_Insert_Update_UserLoginSession
-SP_LogoutAndEndSessionByUserId
-SP_Update_User_IsActivated
-SP_InsertOpeningAndClosingInventoryDetails_RM
-SP_GetAuthenticatedUserDetails
-SP_GetSessionDetails
-SP_Insert_Update_UserToken
-SP_GetUnitofMeasure
+Menu	Section	ProcedureName
+Home	Filters	SP_GetRegion
+Home	Filters	SP_GetCountry
+Home	Filters	SP_GetAffiliate
+Home	Filters	SP_GetUnitofMeasure
+Home	Filters	SP_GetBaseFilters
+Home	Filters	SP_GetMoreFiltersProfitCenter
+Home	Filters	SP_GetMoreFiltersPlant
+Home	Filters	SP_GetMoreFiltersSBUandBU
 
+Home	Finished Goods – AI Forecast	SP_GetAIForecastValue
+Home	Finished Goods – AI Forecast	SP_GetFinishedGoodsDemandChartAIEnhancedForecastData
+Home	Finished Goods – AI Forecast	SP_GetFinishedGoodsProductionChartAIEnhancedForecastData
+Home	Finished Goods – AI Forecast	SP_GetFGPurchasesAIFCChartData
 
+Home	Finished Goods – Demand	SP_GetFinishedGoodsDemandGraphComparisonData
+Home	Finished Goods – Production Output	SP_GetFinishedGoodsProductionGraphComparisonData
+Home	Finished Goods – Purchases	SP_GetFGPurchasesComparisonChartData
+Home	Finished Goods – Consumed in Production	SP_GetFinishedGoodsConsumedProductionChartData
+Home	Finished Goods – STO	SP_GetFinishedGoodsSTOChartData
+Home	Finished Goods – Transfers	SP_GetFinishedGoodsTransferChartData
+Home	Finished Goods – Transfers	SP_GetFGInterCompanyTransferComparisonChartData
+Home	Finished Goods – Transfers	SP_GetFGInterCompanyTransferComparisonChartDataForGIT
+Home	Finished Goods – Unallocated	SP_GetFinishedGoodsUnallocatedChartData
+Home	Finished Goods – Others	SP_GetFinishedGoodsOthersChartData
 
-Menu
-Home
-User Management
-Activity Monitoring
-Error Logging
-Performance Monitoring
-Redirect Workflow
+Home	Finished Goods – Closing Inventory	SP_GetFGClosingInventoryBalanceChartData
+Home	Finished Goods – Closing Inventory	SP_GetFGClosingInventoryBalanceChartData1
+Home	Finished Goods – Closing Inventory	SP_GetFGClosingInventoryBalanceChartData_New
+Home	Finished Goods – Closing Inventory	SP_GetClosingInventoryBalanceChartDetailData
 
-Section
+Home	Raw Materials – Demand	SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData
+Home	Raw Materials – Production Output	SP_GetRawMaterialsProductionOutputChartData
+Home	Raw Materials – Purchases	SP_GetRawMaterialsPurchasesChartData
+Home	Raw Materials – Consumption	SP_GetRawMaterialsConsumedGraphComparisonData
+Home	Raw Materials – Consumption	SP_GetRMConsumptionTrendData
+Home	Raw Materials – Consumption	SP_GetRMConsumptionTrendComparisonData
+Home	Raw Materials – STO	SP_GetRawMaterialsSTOChartData
+Home	Raw Materials – Transfers	SP_GetRawMaterialsTransferChartData
+Home	Raw Materials – Transfers	SP_GetRMInterCompanyTransferChartData
+Home	Raw Materials – Transfers	SP_GetRMInterCompanyTransferComparisonChartData
+Home	Raw Materials – Transfers	SP_GetRMInterCompanyTransferComparisonChartData_New
+Home	Raw Materials – Unallocated	SP_GetRawMaterialsUnallocatedChartData
+Home	Raw Materials – Others	SP_GetRawMaterialsOthersChartData
+Home	Raw Materials – Others	SP_GetRawMaterialsCPChartData
 
---Home /Dashboard
+Home	Insights	Grid	SP_GetInventoryInsightsGridData
+Home	Insights	Grid	SP_GetInventoryInsightsGridData_New
+Home	Insights	Detail Chart	SP_GetInventoryInsightDetailChart
+Home	Insights	Detail Chart	GetInventoryInsightDetailChart
+Home	Insights	Differences	SP_GetDiffrencesValues
+Home	Insights	Differences	SP_GetDiffrencesVolumes
+Home	Insights	Differences	SP_GetDiffrencesValuesAndVolumesForChartData
+Home	Insights	Differences	SP_GetTotalInventoryValueDifference
+Home	Insights	Differences	SP_GetTotalInventoryVolumeDifference
+Home	Insights	DIO	SP_GetInventoryDIO
 
-1.Filters (Region,Country,Company,DateRange,MoreFilter)
-2.FinishedGoods(Inventory(map),AI ForecastValue,AI ForecastVolume,
-"should have the following charts in the following order:
-a. Demand
-b. Production output
-c. Purchases
-d. Consumed in production
-e. STO (Plot of STO In and STO Out on same chart)
-f. Transfers (Plot of Transfers In and Transfers Out on same chart)
-g. Unallocated
-h. Others"
-)
-3.RawMaterials
-"should have the following charts in the following order:
-a. Demand
-b. Production output
-c. Purchases
-d. Consumed in production
-e. STO (Plot of STO In and STO Out on same chart)
-f. Transfers (Plot of Transfers In and Transfers Out on same chart)
-g. Unallocated
-h. Others"
+Home	Rolling 18 Month	SP_InsertInventoryDetails_Forecast_FG_New
+Home	Rolling 18 Month	SP_InsertInventoryDetails_Forecast_RM_New
+Home	Rolling 18 Month	SP_InsertInventoryDetails_Actuals_FG
+Home	Rolling 18 Month	SP_InsertInventoryDetails_Actuals_RM
 
-4.Insignts(Grid)
-5.Rolling 18 Month
-6.Inventory(Map)
+Home	Inventory Map	SP_GetInventoryGlobalMap
 
---User Management
+User Management	User Management	SP_GetUsers
+User Management	User Management	SP_GetRole
+User Management	User Management	SP_GetAffiliateForUserManagement
+User Management	User Management	SP_Insert_Update_UserRoleMapping
+User Management	User Management	usp_AddandUpdateUserAndRoleMapping
+User Management	User Management	SP_Update_User_IsActivated
+User Management	User Management	SP_CheckUserMenuAccess
+User Management	User Management	SP_CheckRolePageAccess
 
---ActivbityMonitoring(UserActivity,LoginActivity)
+Activity Monitoring	User Activity	SP_GetLoginUserActivity
+Activity Monitoring	User Activity	SP_GetUserDetails
+Activity Monitoring	User Activity	SP_GetSessionDetails
+Activity Monitoring	User Activity	SP_GetAuthenticatedUserDetails
 
---ErrorLogging
+Activity Monitoring	Login Activity	SP_GetLoginActivity
+Activity Monitoring	Login Activity	SP_Insert_Update_LoginActivity
+Activity Monitoring	Login Activity	SP_LogoutAndEndSessionByUserId
 
---Performance Monitoring(Performance log, API request log)
+Error Logging	Error Logging	SP_GetErrorLogging
+Error Logging	Error Logging	SP_GetAllErrorLogging
+Error Logging	Error Logging	SP_GetErrorLogStatus
+Error Logging	Error Logging	SP_GetErrorLog_AssignToUser
+Error Logging	Error Logging	SP_Update_ErrorLogging_AssigneeWith_Status
+Error Logging	Error Logging	SP_Insert_Update_ErrorLogging
+Error Logging	Error Logging	SP_Insert_Update_AssignedUser
+Error Logging	Error Logging	SP_GetXMLValueForLog
 
+Performance Monitoring	Performance Log	SP_GetPerformanceLog
+Performance Monitoring	Performance Log	SP_Insert_Update_PerformanceLog
+Performance Monitoring	API Request Log	SP_GetAPIRequestLog
+Performance Monitoring	API Request Log	SP_Insert_Update_APIRequestLog
 
+Redirect Workflow	System	SP_IsInternal_AuthenticatedUser
+Redirect Workflow	System	SP_GetUserMenus
+Redirect Workflow	System	SP_GetDataForAuthenticationByUserId
+Redirect Workflow	System	SP_Insert_Update_UserLoginSession
+Redirect Workflow	System	SP_Insert_Update_UserToken
+Redirect Workflow	System	SP_Insert_Update_ActivityTracker
+Redirect Workflow	System	SP_AddActivityLogForAdmin
