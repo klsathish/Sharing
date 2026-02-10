@@ -1,97 +1,156 @@
-USE SABIC_DT_Finance_Master;
-GO
+PROCs
+ProcedureName
+SP_GetUserDetails
+SP_GetExceptionUserActivityDetailsBySessionID
+SP_GetRawMaterialsOthersChartData
+SP_GetRawMaterialsUnallocatedChartData
+SP_GetDiffrencesValues
+SP_GetRawMaterialsProductionOutputChartData
+SP_GetDiffrencesVolumes
+SP_GetRawMaterialsPurchasesChartData
+SP_GetAIForecastValue
+SP_GetFinishedGoodsConsumedProductionChartData
+SP_GetMoreFiltersProfitCenter
+SP_GetFinishedGoodsUnallocatedChartData
+SP_GetInventoryInsightsGridData
+SP_GetFinishedGoodsOthersChartData
+SP_GetFGClosingInventoryBalanceChartData
+SP_GetFinishedGoodsTransferChartData
+SP_Update_ErrorLogging_AssigneeWith_Status
+SP_GetRawMaterialsTransferChartData
+SP_GetFinishedGoodsDemandGraphComparisonData
+SP_GetFinishedGoodsDemandChartAIEnhancedForecastData
+SP_GetRawMaterialsSTOChartData
+SP_GetFinishedGoodsProductionGraphComparisonData
+SP_GetFinishedGoodsSTOChartData
+SP_GetFGPurchasesComparisonChartData
+GetInventoryInsightDetailChart
+SP_AddActivityLogForAdmin
+SP_GetFGInterCompanyTransferComparisonChartData
+SP_GetFinishedGoodsProductionChartAIEnhancedForecastData
+SP_GetFGClosingInventoryBalanceChartData1
+SP_GetXMLValueForLog
+SP_GetFGInterCompanyTransferComparisonChartDataForGIT
+SP_GetGoodsReceiptGraphComparisonData
+SP_GetUsers
+SP_GetClosingInventoryBalanceChartDetailData
+SP_GetRMConsumptionTrendComparisonData
+SP_GetRMInterCompanyTransferComparisonChartData_New
+SP_IsInternal_AuthenticatedUser
+SP_GetUserMenus
+SP_GetInventoryGlobalMap
+SP_GetFGPurchasesAIFCChartData
+SP_GetFGInterCompanyTransferAIFCChartData
+SP_Insert_Update_UserRoleMapping
+SP_GetDiffrencesValuesAndVolumesForChartData
+SP_GetTotalInventoryValueDifference
+SP_GetTotalInventoryVolumeDifference
+SP_GetInventoryDIO
+SP_InsertMaterialMovements_Actuals_FG
+SP_InsertOpeningAndClosingInventoryDetails_FG
+SP_GetInventoryInsightsGridData_New
+SP_GetFGClosingInventoryBalanceChartData_New
+SP_GetFGInterCompanyTransferAIFCChartDataForSTO
+usp_AddandUpdateUserAndRoleMapping
+SP_GetFGInterCompanyTransferAIFCChartDataForGIT
+SP_GetFGInterCompanyTransferAIFCChartDataForWIP
+SP_GetInventoryInsightDetailChart
+SP_GetAPIRequestLog
+SP_GetLoginActivity
+SP_GetLoginUserActivity
+SP_GetPerformanceLog
+SP_GetAllErrorLogging
+SP_GetRawMaterialsConsumedGraphComparisonData
+SP_InsertMaterialMovements_Actuals_RM
+SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData
+SP_GetRawMaterialsCPChartData
+SP_GetRMInterCompanyTransferComparisonChartData
+SP_GetRMInterCompanyTransferChartData
+SP_InsertOpeningAndClosingInventoryDetails_ActualsForTesting
+SP_GetRMConsumptionTrendData
+SP_InsertInventoryDetails_Forecast_FG_New
+SP_InsertOpeningInventory_Actuals_FG
+SP_InsertInventoryDetails_Forecast_FG_New_ActualsForTesting
+SP_InsertOpeningInventory_Actuals_RM
+SP_InsertInventoryDetails_Forecast_RM_New
+SP_CheckUserMenuAccess
+SP_GetAffiliateForUserManagement
+SP_GetRole
+SP_GetErrorLogStatus
+SP_GetErrorLog_AssignToUser
+SP_GetRegion
+SP_GetCountry
+SP_GetAffiliate
+SP_GetBaseFilters
+SP_CheckRolePageAccess
+SP_GetMoreFiltersSBUandBU
+SP_InsertInventoryDetails_Actuals_FG
+SP_GetMoreFiltersPlant
+SP_GetErrorLogging
+SP_GetDataForAuthenticationByUserId
+SP_InsertInventoryDetails_Actuals_RM
+SP_Insert_Update_ActivityTracker
+SP_Insert_Update_APIRequestLog
+SP_Insert_Update_AssignedUser
+SP_Insert_Update_ErrorLogging
+SP_Insert_Update_LoginActivity
+SP_Insert_Update_PerformanceLog
+SP_Insert_Update_UserLoginSession
+SP_LogoutAndEndSessionByUserId
+SP_Update_User_IsActivated
+SP_InsertOpeningAndClosingInventoryDetails_RM
+SP_GetAuthenticatedUserDetails
+SP_GetSessionDetails
+SP_Insert_Update_UserToken
+SP_GetUnitofMeasure
 
-/* =====================================================
-   1. Region (Parent)
-===================================================== */
-CREATE TABLE master.Region (
-    RegionID        INT PRIMARY KEY,
-    RegionName      VARCHAR(50),
 
-    IsActive        BIT         DEFAULT 1,
-    CreatedBy       VARCHAR(200),
-    CreatedDate     DATETIME    DEFAULT GETDATE(),
-    UpdatedBy       VARCHAR(200),
-    UpdatedDate     DATETIME
-);
-GO
 
-/* =====================================================
-   2. Country (Child of Region)
-===================================================== */
-CREATE TABLE master.Country (
-    CountryID       INT IDENTITY(1,1) PRIMARY KEY CLUSTERED,
-    CountryName     VARCHAR(50),
-    CountryKey      VARCHAR(10),
-    RegionID        INT NOT NULL,
+Menu
+Home
+User Management
+Activity Monitoring
+Error Logging
+Performance Monitoring
+Redirect Workflow
 
-    IsActive        BIT         DEFAULT 1,
-    CreatedBy       VARCHAR(200),
-    CreatedDate     DATETIME    DEFAULT GETDATE(),
-    UpdatedBy       VARCHAR(200),
-    UpdatedDate     DATETIME,
+Section
 
-    CONSTRAINT FK_Country_Region
-        FOREIGN KEY (RegionID)
-        REFERENCES master.Region (RegionID)
-);
-GO
+--Home /Dashboard
 
-/* =====================================================
-   3. Plant (Child of Country)
-===================================================== */
-CREATE TABLE master.Plant (
-    PlantID         INT IDENTITY(1,1) PRIMARY KEY CLUSTERED,
-    Plant           VARCHAR(10) NOT NULL,
-    PlantName       VARCHAR(100),
-    PlantType       VARCHAR(50),
+1.Filters (Region,Country,Company,DateRange,MoreFilter)
+2.FinishedGoods(Inventory(map),AI ForecastValue,AI ForecastVolume,
+"should have the following charts in the following order:
+a. Demand
+b. Production output
+c. Purchases
+d. Consumed in production
+e. STO (Plot of STO In and STO Out on same chart)
+f. Transfers (Plot of Transfers In and Transfers Out on same chart)
+g. Unallocated
+h. Others"
+)
+3.RawMaterials
+"should have the following charts in the following order:
+a. Demand
+b. Production output
+c. Purchases
+d. Consumed in production
+e. STO (Plot of STO In and STO Out on same chart)
+f. Transfers (Plot of Transfers In and Transfers Out on same chart)
+g. Unallocated
+h. Others"
 
-    CountryID       INT NOT NULL,
-    AffiliateID     INT NULL,
+4.Insignts(Grid)
+5.Rolling 18 Month
+6.Inventory(Map)
 
-    IsActive        BIT         DEFAULT 1,
-    CreatedBy       VARCHAR(200),
-    CreatedDate     DATETIME    DEFAULT GETDATE(),
-    UpdatedBy       VARCHAR(200),
-    UpdatedDate     DATETIME,
+--User Management
 
-    CONSTRAINT FK_Plant_Country
-        FOREIGN KEY (CountryID)
-        REFERENCES master.Country (CountryID)
-);
-GO
+--ActivbityMonitoring(UserActivity,LoginActivity)
 
-/* =====================================================
-   4. MovementType (Independent Master)
-===================================================== */
-CREATE TABLE master.MovementType (
-    MovementTypeID                     INT IDENTITY(1,1) PRIMARY KEY CLUSTERED,
+--ErrorLogging
 
-    movement_type                      VARCHAR(4)  NOT NULL,
-    movement_type_text                 VARCHAR(50),
+--Performance Monitoring(Performance log, API request log)
 
-    special_stock                      CHAR(1),
-    special_stock_description          VARCHAR(50),
 
-    movement_indicator                 CHAR(1),
-    movement_indicator_description     VARCHAR(100),
-
-    receipt_indicator                  CHAR(1),
-    receipt_indicator_description      VARCHAR(100),
-
-    consumption                        CHAR(1),
-    consumption_description            VARCHAR(100),
-
-    classification_level1              VARCHAR(50),
-    classification_level2              VARCHAR(50),
-    classification_level3              VARCHAR(50),
-
-    master_data                        VARCHAR(20),
-
-    IsActive                            BIT         DEFAULT 1,
-    CreatedBy                           VARCHAR(200),
-    CreatedDate                         DATETIME    DEFAULT GETDATE(),
-    UpdatedBy                           VARCHAR(200),
-    UpdatedDate                         DATETIME
-);
-GO
