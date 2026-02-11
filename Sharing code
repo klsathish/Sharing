@@ -1,7 +1,118 @@
+ALTER PROCEDURE [dbo].[SP_GetInventoryGlobalMap]
+(
+     @TypeID INT = 0,
+     @RegionID VARCHAR(50) = NULL,
+     @CountryID VARCHAR(50) = NULL,
+     @CompanyCode VARCHAR(50) = NULL,
+     @ProfitCenterID VARCHAR(500) = NULL,
+     @PlantID VARCHAR(50) = NULL,
+     @SBU VARCHAR(50) = NULL,
+     @BU VARCHAR(50) = NULL,
+     @FromDate DATE = NULL,
+     @ToDate DATE = NULL
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
 
+    ------------------------------------------------------------
+    -- Parameter Cleanup
+    ------------------------------------------------------------
+    SET @SBU = ISNULL(@SBU, '');
+    SET @BU = ISNULL(@BU, '');
+    SET @ProfitCenterID = ISNULL(@ProfitCenterID, '');
+    SET @RegionID = ISNULL(@RegionID, '');
+    SET @CountryID = ISNULL(@CountryID, '');
+    SET @CompanyCode = ISNULL(@CompanyCode, '');
 
+    IF(@CompanyCode IN ('0','1')) SET @CompanyCode = '';
+    IF(@ProfitCenterID IN ('0','1')) SET @ProfitCenterID = '';
 
+    IF @FromDate IS NULL OR @ToDate IS NULL
+    BEGIN
+        SELECT @FromDate = FromDate,
+               @ToDate   = ToDate
+        FROM ADM_DefaultDatesForFilter
+        WHERE IsActive = 1
+    END
 
+    DECLARE @FromDateCalMonth INT =
+        YEAR(@FromDate) * 100 + MONTH(@FromDate);
+
+    DECLARE @ToDateCalMonth INT =
+        YEAR(@ToDate) * 100 + MONTH(@ToDate);
+
+    ------------------------------------------------------------
+    -- Profit Center Table
+    ------------------------------------------------------------
+    DECLARE @ProfitCenterValues TABLE (ProfitCenterName NVARCHAR(100));
+
+    INSERT INTO @ProfitCenterValues
+    SELECT ProfitCenterName
+    FROM SABIC_DT_Finance_Master.master.MST_ProfitCenter
+    WHERE ProfitCenterID IN (SELECT value FROM STRING_SPLIT(@ProfitCenterID, ','));
+
+    ------------------------------------------------------------
+    -- Main Query (NO LOOP)
+    ------------------------------------------------------------
+
+    IF @TypeID = 2   -- Finished Goods Volume
+    BEGIN
+        SELECT
+            CAST(r.RegionID AS VARCHAR(10)) AS RegionID,
+            r.RegionName,
+            '0' AS CountryID,
+            ''  AS CountryName,
+            r.Latitude  AS LatGPSValue,
+            r.Longitude AS LonGPSValue,
+            'AI enhanced forecast inventory volume '
+            + CAST(ROUND(
+                SUM(a.value_Sale/1000.0 +
+                    a.value_Purchase/1000.0 +
+                    a.value_Consumed_in_production/1000.0), 2
+              ) AS VARCHAR(50))
+            + ' MT' AS RecommendationMessage
+        FROM SABIC_DT_Finance_WCI.dbo.view_fg_inventory_forecast a
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Affiliate af
+            ON af.AffiliateCode = a.AffiliateCode
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Country c
+            ON c.CountryID = af.CountryID
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Region r
+            ON r.RegionID = c.RegionID
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_ProfitCenter p
+            ON a.bu = p.BU
+           AND a.sbu = p.SBU
+           AND a.profit_center = p.ProfitCenterName
+        WHERE
+            r.IsActive = 1
+            AND c.IsActive = 1
+            AND af.IsActive = 1
+            AND CAST(REPLACE(a.[Month],'-','') AS INT)
+                BETWEEN @FromDateCalMonth AND @ToDateCalMonth
+            AND (@RegionID = '' OR r.RegionID IN (SELECT value FROM STRING_SPLIT(@RegionID, ',')))
+            AND (@CountryID = '' OR c.CountryID IN (SELECT value FROM STRING_SPLIT(@CountryID, ',')))
+            AND (@BU = '' OR a.bu IN (SELECT value FROM STRING_SPLIT(@BU, ',')))
+            AND (@SBU = '' OR a.sbu IN (SELECT value FROM STRING_SPLIT(@SBU, ',')))
+            AND (@ProfitCenterID = '' OR p.ProfitCenterName IN (SELECT ProfitCenterName FROM @ProfitCenterValues))
+        GROUP BY
+            r.RegionID,
+            r.RegionName,
+            r.Latitude,
+            r.Longitude;
+    END
+
+    IF @TypeID = 3   -- Rolling 18 Month Value
+    BEGIN
+        SELECT
+            CAST(r.RegionID AS VARCHAR(10)) AS RegionID,
+            r.RegionName,
+            '0' AS CountryID,
+            ''  AS CountryName,
+            r.Latitude  AS LatGPSValue,
+            r.Longitude AS LonGPSValue,
+            'AI enhanced forecast inventory value '
+            + CAST(ROUND(
+                SUM(a.forecast_value_Sale/1000000.0 +
                     a.forecast_value_Purchase/1000000.0 +
                     a.forecast_value_Production_Output/1000000.0), 2
               ) AS VARCHAR(50))
