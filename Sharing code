@@ -1,3 +1,34 @@
+ALTER TABLE Region
+ADD 
+    Latitude DECIMAL(9,6) NULL,
+    Longitude DECIMAL(9,6) NULL;
+
+
+UPDATE Region
+SET 
+    Latitude = CASE RegionID
+        WHEN 1 THEN 24.7136
+        WHEN 2 THEN 54.5260
+        WHEN 3 THEN 37.0902
+        WHEN 4 THEN 1.3521
+        WHEN 5 THEN -25.2744
+        WHEN 6 THEN NULL
+        WHEN 7 THEN 35.8617
+        WHEN 8 THEN 34.0479
+    END,
+    Longitude = CASE RegionID
+        WHEN 1 THEN 46.6753
+        WHEN 2 THEN 15.2551
+        WHEN 3 THEN -95.7129
+        WHEN 4 THEN 103.8198
+        WHEN 5 THEN 133.7751
+        WHEN 6 THEN NULL
+        WHEN 7 THEN 104.1954
+        WHEN 8 THEN 100.6197
+    END;
+
+
+
 Menu	Section	ProcedureName
 Home	Filters	SP_GetRegion
 Home	Filters	SP_GetCountry
