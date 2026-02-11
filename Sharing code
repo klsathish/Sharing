@@ -1,134 +1,670 @@
-ALTER TABLE Region
-ADD 
-    Latitude DECIMAL(9,6) NULL,
-    Longitude DECIMAL(9,6) NULL;
+USE [SABIC_DT_Finance_WCI_WebUI]
+GO
+/****** Object:  StoredProcedure [dbo].[SP_GetInventoryGlobalMap]    Script Date: 2/11/2026 2:54:07 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*            
+---------------------------------------------------------------------------            
+Author: Khaja Moinuddin      
+Create Date: 2025-05-26 10:00:00      
+Description:- Its used for Get total Inventory Volume and Inventory Value      
+           
+
+[dbo].[SP_GetInventoryGlobalMap] 2,'','','1','0','',null,null,null,null
+[dbo].[SP_GetInventoryGlobalMap] 3,'','','1','0','',null,null,null,null
+----------------------------------------------------------------------------            
+*/
+ALTER PROCEDURE [dbo].[SP_GetInventoryGlobalMap]
+(
+     @TypeID INT = 0
+	,@RegionID VARCHAR(50) = NULL    
+	,@CountryID VARCHAR(50) = NULL   
+	,@CompanyCode VARCHAR(50) = NULL   
+    ,@ProfitCenterID varchar(500)
+	,@PlantID  VARCHAR(50) = NULL  
+    ,@SBU VARCHAR(50) = NULL
+    ,@BU VARCHAR(50) = NULL
+    ,@FromDate DATE = NULL
+    ,@ToDate DATE = NULL
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+	--declare 
+	--	@TypeID INT = 3
+	--	,@RegionID VARCHAR(50) = '1,7'
+	--	,@CountryID VARCHAR(50) = ''
+	--	,@CompanyCode varchar(50) = ''
+	--	,@ProfitCenterID varchar(500) = '0'
+	--	,@PlantID VARCHAR(50) = ''
+	--	,@SBU VARCHAR(50) = NULL
+	--	,@BU VARCHAR(50) = NULL
+	--	,@FromDate DATETIME = null
+	--	,@ToDate DATETIME = null
+				
+    
+	IF(@CompanyCode ='1' or @CompanyCode ='0')      
+	BEGIN      
+		SET @CompanyCode = ''      
+	END 
+
+	IF(@ProfitCenterID ='1' or @ProfitCenterID ='0')      
+	BEGIN      
+		SET @ProfitCenterID = ''      
+	END        
+	
+	
+	SET @SBU = ISNULL(@SBU, '');
+	SET @BU = ISNULL(@BU, '');
+	SET @ProfitCenterID = ISNULL(@ProfitCenterID, '');
+	SET @RegionID = ISNULL(@RegionID, '');
+	SET @CountryID = ISNULL(@CountryID, '');
+	SET @CompanyCode = ISNULL(@CompanyCode, '');
+
+	SET @FromDate = NULLIF(@FromDate, '');
+	SET @ToDate = NULLIF(@ToDate, '');
+
+	IF @FromDate IS NULL OR @ToDate IS NULL
+	BEGIN
+		SELECT
+			@FromDate = COALESCE(@FromDate, FromDate),
+			@ToDate = COALESCE(@ToDate, ToDate)
+		FROM ADM_DefaultDatesForFilter
+		WHERE IsActive = 1
+	END
+	
+	
+	DECLARE 
+		@FromDateCalMonth INT
+		,@ToDateCalMonth INT
+	SELECT
+		@FromDateCalMonth = cast((cast(YEAR(@FromDate) as varchar) + case when MONTH(@FromDate) < 10 then '0' + cast(MONTH(@FromDate) as varchar) else cast(MONTH(@FromDate) as varchar) end) as int)
+		,@ToDateCalMonth = cast((cast(YEAR(@ToDate) as varchar) + case when MONTH(@ToDate) < 10 then '0' + cast(MONTH(@ToDate) as varchar) else cast(MONTH(@ToDate) as varchar) end) as int)
 
 
-UPDATE Region
-SET 
-    Latitude = CASE RegionID
-        WHEN 1 THEN 24.7136
-        WHEN 2 THEN 54.5260
-        WHEN 3 THEN 37.0902
-        WHEN 4 THEN 1.3521
-        WHEN 5 THEN -25.2744
-        WHEN 6 THEN NULL
-        WHEN 7 THEN 35.8617
-        WHEN 8 THEN 34.0479
-    END,
-    Longitude = CASE RegionID
-        WHEN 1 THEN 46.6753
-        WHEN 2 THEN 15.2551
-        WHEN 3 THEN -95.7129
-        WHEN 4 THEN 103.8198
-        WHEN 5 THEN 133.7751
-        WHEN 6 THEN NULL
-        WHEN 7 THEN 104.1954
-        WHEN 8 THEN 100.6197
-    END;
+	DECLARE @ProfitCenterValues TABLE (profitCenterName NVARCHAR(100)); 
+	INSERT INTO @ProfitCenterValues(profitCenterName)
+	SELECT ProfitCenterName FROM [SABIC_DT_Finance_Master].[master].[MST_ProfitCenter] WHERE ProfitCenterID  in (select * from string_split(@ProfitCenterID,','))
+
+
+    --WHERE (@CompanyCode is null or AffiliateCode = @CompanyCode))      
+    --declare @CompanyCode INT = 1200      
+    DECLARE @tblResult TABLE
+    (
+        RegionID INT,
+        RegionName VARCHAR(50),
+        CountryID INT,
+        CountryName VARCHAR(50),
+        LatGPSValue FLOAT,
+        LonGPSValue FLOAT,
+        RecommendationMessage VARCHAR(2000)
+    )
+
+	DECLARE @tblRegion TABLE
+    (
+		RecId int identity(1,1),
+        RegionID INT,
+		RegionName varchar(20),
+		LatGPSValue FLOAT,
+        LonGPSValue FLOAT
+    )
+
+
+    
+	Declare @MinId int,
+			@MaxId int,
+			@CurrentId int,
+			@TempRegionId int
+
+			insert into @tblRegion (r.RegionID,r.RegionName,r.LatGPSValue,r.LonGPSValue)
+			select distinct
+				r.RegionID,
+				r.RegionName,
+				r.Latitude,
+				r.Longitude
+			FROM
+			[SABIC_DT_Finance_Master].[master].[MST_Plant] P 
+			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Affiliate] a on a.AffiliateCode = p.AffiliateCode
+			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Country] c on c.CountryID = a.CountryID
+			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Region] r on r.RegionID=c.RegionID
+			
+		WHERE
+			r.IsActive=1
+			AND c.IsActive=1
+			AND a.IsActive=1 
+			--and rpc.IsActive=1
+			AND p.PlantType in ('Manufacturing Plant')
+			AND (@RegionID ='' OR @RegionID is null or r.RegionID in(select * from  [fnSplitString](@RegionID,',')))
+			AND (@CountryID ='' OR @CountryID is null or c.CountryID in(select * from  [fnSplitString](@CountryID,',')))
+		   -- AND rpc.RoleID = @RoleID 
+		   AND a.AffiliateCode in 
+			(
+				SELECT 
+					DISTINCT AffiliateCode 
+				FROM 
+					[SABIC_DT_Finance_Master].[master].[MST_ProfitCenter] 
+				WHERE 
+						SBU='POLYMERS' 
+					AND BU NOT IN ('MSS', 'ETP') 
+					AND isnull(Products,'zzzz') NOT IN ('PE-LL/LD-N','PE-HD-NJ','PP-PPC-NJ','PP-PPN-NJ')
+			) 
+			
+			select distinct
+				@MinId = Min(r.RecId),
+				@MaxId = Max(r.RecId)
+			From
+				@tblRegion r
+
+
+			Set @CurrentId = @MinId
+
+			DECLARE @ForecastInventoryVolume FLOAT
+			DECLARE @RecommendationMessage NVARCHAR(500)
+			DECLARE @ForecastInventoryValue FLOAT
+			
+
+    IF (@TypeID = 2) --Finished Goods      
+    BEGIN
+
+		WHILE @CurrentId <= @MaxId
+			BEGIN
 
 
 
-Menu	Section	ProcedureName
-Home	Filters	SP_GetRegion
-Home	Filters	SP_GetCountry
-Home	Filters	SP_GetAffiliate
-Home	Filters	SP_GetUnitofMeasure
-Home	Filters	SP_GetBaseFilters
-Home	Filters	SP_GetMoreFiltersProfitCenter
-Home	Filters	SP_GetMoreFiltersPlant
-Home	Filters	SP_GetMoreFiltersSBUandBU
+				SELECT
+					@TempRegionId = RegionID
+				FROM
+					@tblRegion
+				WHERE
+					RecId = @CurrentId
 
-Home	Finished Goods – AI Forecast	SP_GetAIForecastValue
-Home	Finished Goods – AI Forecast	SP_GetFinishedGoodsDemandChartAIEnhancedForecastData
-Home	Finished Goods – AI Forecast	SP_GetFinishedGoodsProductionChartAIEnhancedForecastData
-Home	Finished Goods – AI Forecast	SP_GetFGPurchasesAIFCChartData
+				INSERT @tblResult
+				(RegionID,RegionName ,CountryID,CountryName,LatGPSValue,LonGPSValue)
+				SELECT
+					RegionID,RegionName,0,'',LatGPSValue, LonGPSValue
+				FROM
+					@tblRegion
+				WHERE
+					RecId = @CurrentId
 
-Home	Finished Goods – Demand	SP_GetFinishedGoodsDemandGraphComparisonData
-Home	Finished Goods – Production Output	SP_GetFinishedGoodsProductionGraphComparisonData
-Home	Finished Goods – Purchases	SP_GetFGPurchasesComparisonChartData
-Home	Finished Goods – Consumed in Production	SP_GetFinishedGoodsConsumedProductionChartData
-Home	Finished Goods – STO	SP_GetFinishedGoodsSTOChartData
-Home	Finished Goods – Transfers	SP_GetFinishedGoodsTransferChartData
-Home	Finished Goods – Transfers	SP_GetFGInterCompanyTransferComparisonChartData
-Home	Finished Goods – Transfers	SP_GetFGInterCompanyTransferComparisonChartDataForGIT
-Home	Finished Goods – Unallocated	SP_GetFinishedGoodsUnallocatedChartData
-Home	Finished Goods – Others	SP_GetFinishedGoodsOthersChartData
+				--Get Total FG Volume      
+				SELECT
+					--   @ForecastInventoryVolume = round((sum(a.[Forecast sum(TotalQuant)_Sale]/1000) + sum(a.[Forecast sum(TotalQuant)_Purchase]/1000) + sum(a.[Forecast sum(TotalQuant)_Production]/1000)),2)      
+					@ForecastInventoryVolume
+					= round(
+						(sum(a.value_Sale / 1000) + sum(a.value_Purchase / 1000)
+						+ sum(a.value_Consumed_in_production / 1000)
+						),
+						2
+					)
+				FROM
+					[SABIC_DT_Finance_WCI].[dbo].[view_fg_inventory_forecast] a
+					--[Aggregate_Forecast_InventoryDetails_FG] a
+					JOIN  SABIC_DT_Finance_Master.[master].[MST_ProfitCenter] p ON a.bu=p.BU and a.sbu = p.SBU and a.profit_center = p.ProfitCenterName
+					JOIN [SABIC_DT_Finance_Master].[master].[MST_Plant] pl ON pl.AffiliateCode = a.AffiliateCode
+					INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Affiliate] af on af.AffiliateCode = a.AffiliateCode
+					INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Country] c on c.CountryID = af.CountryID
+					INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Region] r on r.RegionID=c.RegionID
 
-Home	Finished Goods – Closing Inventory	SP_GetFGClosingInventoryBalanceChartData
-Home	Finished Goods – Closing Inventory	SP_GetFGClosingInventoryBalanceChartData1
-Home	Finished Goods – Closing Inventory	SP_GetFGClosingInventoryBalanceChartData_New
-Home	Finished Goods – Closing Inventory	SP_GetClosingInventoryBalanceChartDetailData
+				WHERE
+					a.plant in (select plant from [SABIC_DT_Finance_Master].[master].[MST_Plant] where (@CompanyCode = '' or AffiliateCode in (select * from string_split(@CompanyCode,','))))
+					--(plant in (select plant from [SABIC_DT_Finance_Master].[master].[MST_Plant] where (@CompanyCode is null or AffiliateCode = @CompanyCode))
+					--OR	plant = (select plant from [SABIC_DT_Finance_Master].[master].[MST_Plant] where Id = @PlantID))
+					--AND (CAST(LEFT(a.[Month],4) AS INT) > year(DATEADD(month, -12, @FromDate)) OR (CAST(LEFT(a.[Month],4) AS INT) = YEAR(DATEADD(month, -12, @FromDate)) AND CAST(RIGHT(a.[Month],2) AS INT) >= MONTH(DATEADD(month, -12, @FromDate))))
+					--AND (CAST(LEFT(a.[Month],4) AS INT) < year(DATEADD(month, -12, @ToDate)) OR (CAST(LEFT(a.[Month],4) AS INT) = YEAR(DATEADD(month, -12, @ToDate)) AND CAST(RIGHT(a.[Month],2) AS INT) <= MONTH(DATEADD(month, -12, @ToDate))))
+			
+					AND (@BU = '' or a.bu in (select * from string_split(@BU,',')))
+					AND (@SBU = '' or a.sbu in (select * from string_split(@SBU,',')))
+					--AND (@RegionID = '' or r.RegionID in (select * from string_split(@RegionID,',')))  
+					AND (@CountryID = '' or c.CountryID in (select * from string_split(@CountryID,','))) 
+					AND (@profitCenterID ='' or p.ProfitCenterName in (select profitCenterName from @ProfitCenterValues)) 
+					AND r.IsActive=1  AND c.IsActive=1 AND af.IsActive=1 AND pl.PlantType in ('Manufacturing Plant')
+					AND (@PlantID = '' OR a.Plant IN (SELECT Plant FROM [SABIC_DT_Finance_Master].[master].[MST_Plant] WHERE id = (SELECT * FROM string_split(@PlantID,','))))
+					AND CAST(REPLACE([Month],'-','') AS INT) BETWEEN @FromDateCalMonth AND @ToDateCalMonth
+					AND r.RegionID =@TempRegionId
 
-Home	Raw Materials – Demand	SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData
-Home	Raw Materials – Production Output	SP_GetRawMaterialsProductionOutputChartData
-Home	Raw Materials – Purchases	SP_GetRawMaterialsPurchasesChartData
-Home	Raw Materials – Consumption	SP_GetRawMaterialsConsumedGraphComparisonData
-Home	Raw Materials – Consumption	SP_GetRMConsumptionTrendData
-Home	Raw Materials – Consumption	SP_GetRMConsumptionTrendComparisonData
-Home	Raw Materials – STO	SP_GetRawMaterialsSTOChartData
-Home	Raw Materials – Transfers	SP_GetRawMaterialsTransferChartData
-Home	Raw Materials – Transfers	SP_GetRMInterCompanyTransferChartData
-Home	Raw Materials – Transfers	SP_GetRMInterCompanyTransferComparisonChartData
-Home	Raw Materials – Transfers	SP_GetRMInterCompanyTransferComparisonChartData_New
-Home	Raw Materials – Unallocated	SP_GetRawMaterialsUnallocatedChartData
-Home	Raw Materials – Others	SP_GetRawMaterialsOthersChartData
-Home	Raw Materials – Others	SP_GetRawMaterialsCPChartData
+				SET @RecommendationMessage= 'AI enhanced forecast inventory volume '+ STR(@ForecastInventoryVolume, len(@ForecastInventoryVolume), 2) + ' MT'
 
-Home	Insights	Grid	SP_GetInventoryInsightsGridData
-Home	Insights	Grid	SP_GetInventoryInsightsGridData_New
-Home	Insights	Detail Chart	SP_GetInventoryInsightDetailChart
-Home	Insights	Detail Chart	GetInventoryInsightDetailChart
-Home	Insights	Differences	SP_GetDiffrencesValues
-Home	Insights	Differences	SP_GetDiffrencesVolumes
-Home	Insights	Differences	SP_GetDiffrencesValuesAndVolumesForChartData
-Home	Insights	Differences	SP_GetTotalInventoryValueDifference
-Home	Insights	Differences	SP_GetTotalInventoryVolumeDifference
-Home	Insights	DIO	SP_GetInventoryDIO
+				update
+					@tblResult
+				SET
+					RecommendationMessage = @RecommendationMessage
+				WHERE
+					RegionID = @TempRegionId
 
-Home	Rolling 18 Month	SP_InsertInventoryDetails_Forecast_FG_New
-Home	Rolling 18 Month	SP_InsertInventoryDetails_Forecast_RM_New
-Home	Rolling 18 Month	SP_InsertInventoryDetails_Actuals_FG
-Home	Rolling 18 Month	SP_InsertInventoryDetails_Actuals_RM
+				SET @CurrentId = @CurrentId +1
+			END
 
-Home	Inventory Map	SP_GetInventoryGlobalMap
 
-User Management	User Management	SP_GetUsers
-User Management	User Management	SP_GetRole
-User Management	User Management	SP_GetAffiliateForUserManagement
-User Management	User Management	SP_Insert_Update_UserRoleMapping
-User Management	User Management	usp_AddandUpdateUserAndRoleMapping
-User Management	User Management	SP_Update_User_IsActivated
-User Management	User Management	SP_CheckUserMenuAccess
-User Management	User Management	SP_CheckRolePageAccess
+       
+    END
 
-Activity Monitoring	User Activity	SP_GetLoginUserActivity
-Activity Monitoring	User Activity	SP_GetUserDetails
-Activity Monitoring	User Activity	SP_GetSessionDetails
-Activity Monitoring	User Activity	SP_GetAuthenticatedUserDetails
+    IF (@TypeID = 3) --rolling 18 months      
+    BEGIN
 
-Activity Monitoring	Login Activity	SP_GetLoginActivity
-Activity Monitoring	Login Activity	SP_Insert_Update_LoginActivity
-Activity Monitoring	Login Activity	SP_LogoutAndEndSessionByUserId
+		WHILE @CurrentId <= @MaxId
+			BEGIN
 
-Error Logging	Error Logging	SP_GetErrorLogging
-Error Logging	Error Logging	SP_GetAllErrorLogging
-Error Logging	Error Logging	SP_GetErrorLogStatus
-Error Logging	Error Logging	SP_GetErrorLog_AssignToUser
-Error Logging	Error Logging	SP_Update_ErrorLogging_AssigneeWith_Status
-Error Logging	Error Logging	SP_Insert_Update_ErrorLogging
-Error Logging	Error Logging	SP_Insert_Update_AssignedUser
-Error Logging	Error Logging	SP_GetXMLValueForLog
+				
 
-Performance Monitoring	Performance Log	SP_GetPerformanceLog
-Performance Monitoring	Performance Log	SP_Insert_Update_PerformanceLog
-Performance Monitoring	API Request Log	SP_GetAPIRequestLog
-Performance Monitoring	API Request Log	SP_Insert_Update_APIRequestLog
+				SELECT
+					@TempRegionId = RegionID
+				FROM
+					@tblRegion
+				WHERE
+					RecId = @CurrentId
 
-Redirect Workflow	System	SP_IsInternal_AuthenticatedUser
-Redirect Workflow	System	SP_GetUserMenus
-Redirect Workflow	System	SP_GetDataForAuthenticationByUserId
-Redirect Workflow	System	SP_Insert_Update_UserLoginSession
-Redirect Workflow	System	SP_Insert_Update_UserToken
-Redirect Workflow	System	SP_Insert_Update_ActivityTracker
-Redirect Workflow	System	SP_AddActivityLogForAdmin
+				INSERT @tblResult
+				(RegionID,RegionName ,CountryID,CountryName,LatGPSValue,LonGPSValue)
+				SELECT
+					RegionID,RegionName,0,'',LatGPSValue, LonGPSValue
+				FROM
+					@tblRegion
+				WHERE
+					RecId = @CurrentId
+
+				  --Get Total FG Value      
+        SELECT
+            --   @ForecastInventoryValue = round((sum(a.[Forecast sum(TotalValue)_Sale]/1000000) + sum(a.[Forecast sum(TotalValue)_Purchase]/1000000) + sum(a.[Forecast sum(TotalValue)_Production]/1000000)),2)      
+            @ForecastInventoryValue
+            = round(
+                       (sum(a.forecast_value_Sale / 1000000) + sum(a.forecast_value_Purchase / 1000000)
+                        + sum(a.forecast_value_Production_Output / 1000000)
+                       ),
+                       2
+                   )
+        FROM
+			[SABIC_DT_Finance_WCI].[dbo].[view_fg_inventory_forecast] a
+			JOIN  SABIC_DT_Finance_Master.[master].[MST_ProfitCenter] p ON a.bu=p.BU and a.sbu = p.SBU and a.profit_center = p.ProfitCenterName
+			JOIN [SABIC_DT_Finance_Master].[master].[MST_Plant] pl ON pl.AffiliateCode = p.AffiliateCode
+			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Affiliate] af on af.AffiliateCode = p.AffiliateCode
+			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Country] c on c.CountryID = af.CountryID
+			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Region] r on r.RegionID=c.RegionID
+
+		WHERE
+			a.plant in (select plant from [SABIC_DT_Finance_Master].[master].[MST_Plant] where (@CompanyCode = '' or AffiliateCode in (select * from string_split(@CompanyCode,','))))
+			--(plant in (select plant from [SABIC_DT_Finance_Master].[master].[MST_Plant] where (@CompanyCode is null or AffiliateCode = @CompanyCode))
+			--OR	plant = (select plant from [SABIC_DT_Finance_Master].[master].[MST_Plant] where Id = @PlantID))
+			AND (CAST(LEFT(a.[Month],4) AS INT) > year(DATEADD(month, -12, @FromDate)) OR (CAST(LEFT(a.[Month],4) AS INT) = YEAR(DATEADD(month, -12, @FromDate)) AND CAST(RIGHT(a.[Month],2) AS INT) >= MONTH(DATEADD(month, -12, @FromDate))))
+			AND (CAST(LEFT(a.[Month],4) AS INT) < year(DATEADD(month, -12, @ToDate)) OR (CAST(LEFT(a.[Month],4) AS INT) = YEAR(DATEADD(month, -12, @ToDate)) AND CAST(RIGHT(a.[Month],2) AS INT) <= MONTH(DATEADD(month, -12, @ToDate))))
+			
+			AND (@BU = '' or a.bu in (select * from string_split(@BU,',')))
+			AND (@SBU = '' or a.sbu in (select * from string_split(@SBU,',')))
+			AND (@RegionID = '' or r.RegionID in (select * from string_split(@RegionID,',')))  
+			ANUSE [SABIC_DT_Finance_WCI_WebUI]
+GO
+/****** Object:  StoredProcedure [dbo].[SP_GetInventoryGlobalMap]    Script Date: 2/11/2026 2:54:07 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*            
+---------------------------------------------------------------------------            
+Author: Khaja Moinuddin      
+Create Date: 2025-05-26 10:00:00      
+Description:- Its used for Get total Inventory Volume and Inventory Value      
+           
+
+[dbo].[SP_GetInventoryGlobalMap] 2,'','','1','0','',null,null,null,null
+[dbo].[SP_GetInventoryGlobalMap] 3,'','','1','0','',null,null,null,null
+----------------------------------------------------------------------------            
+*/
+ALTER PROCEDURE [dbo].[SP_GetInventoryGlobalMap]
+(
+     @TypeID INT = 0
+	,@RegionID VARCHAR(50) = NULL    
+	,@CountryID VARCHAR(50) = NULL   
+	,@CompanyCode VARCHAR(50) = NULL   
+    ,@ProfitCenterID varchar(500)
+	,@PlantID  VARCHAR(50) = NULL  
+    ,@SBU VARCHAR(50) = NULL
+    ,@BU VARCHAR(50) = NULL
+    ,@FromDate DATE = NULL
+    ,@ToDate DATE = NULL
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+	--declare 
+	--	@TypeID INT = 3
+	--	,@RegionID VARCHAR(50) = '1,7'
+	--	,@CountryID VARCHAR(50) = ''
+	--	,@CompanyCode varchar(50) = ''
+	--	,@ProfitCenterID varchar(500) = '0'
+	--	,@PlantID VARCHAR(50) = ''
+	--	,@SBU VARCHAR(50) = NULL
+	--	,@BU VARCHAR(50) = NULL
+	--	,@FromDate DATETIME = null
+	--	,@ToDate DATETIME = null
+				
+    
+	IF(@CompanyCode ='1' or @CompanyCode ='0')      
+	BEGIN      
+		SET @CompanyCode = ''      
+	END 
+
+	IF(@ProfitCenterID ='1' or @ProfitCenterID ='0')      
+	BEGIN      
+		SET @ProfitCenterID = ''      
+	END        
+	
+	
+	SET @SBU = ISNULL(@SBU, '');
+	SET @BU = ISNULL(@BU, '');
+	SET @ProfitCenterID = ISNULL(@ProfitCenterID, '');
+	SET @RegionID = ISNULL(@RegionID, '');
+	SET @CountryID = ISNULL(@CountryID, '');
+	SET @CompanyCode = ISNULL(@CompanyCode, '');
+
+	SET @FromDate = NULLIF(@FromDate, '');
+	SET @ToDate = NULLIF(@ToDate, '');
+
+	IF @FromDate IS NULL OR @ToDate IS NULL
+	BEGIN
+		SELECT
+			@FromDate = COALESCE(@FromDate, FromDate),
+			@ToDate = COALESCE(@ToDate, ToDate)
+		FROM ADM_DefaultDatesForFilter
+		WHERE IsActive = 1
+	END
+	
+	
+	DECLARE 
+		@FromDateCalMonth INT
+		,@ToDateCalMonth INT
+	SELECT
+		@FromDateCalMonth = cast((cast(YEAR(@FromDate) as varchar) + case when MONTH(@FromDate) < 10 then '0' + cast(MONTH(@FromDate) as varchar) else cast(MONTH(@FromDate) as varchar) end) as int)
+		,@ToDateCalMonth = cast((cast(YEAR(@ToDate) as varchar) + case when MONTH(@ToDate) < 10 then '0' + cast(MONTH(@ToDate) as varchar) else cast(MONTH(@ToDate) as varchar) end) as int)
+
+
+	DECLARE @ProfitCenterValues TABLE (profitCenterName NVARCHAR(100)); 
+	INSERT INTO @ProfitCenterValues(profitCenterName)
+	SELECT ProfitCenterName FROM [SABIC_DT_Finance_Master].[master].[MST_ProfitCenter] WHERE ProfitCenterID  in (select * from string_split(@ProfitCenterID,','))
+
+
+    --WHERE (@CompanyCode is null or AffiliateCode = @CompanyCode))      
+    --declare @CompanyCode INT = 1200      
+    DECLARE @tblResult TABLE
+    (
+        RegionID INT,
+        RegionName VARCHAR(50),
+        CountryID INT,
+        CountryName VARCHAR(50),
+        LatGPSValue FLOAT,
+        LonGPSValue FLOAT,
+        RecommendationMessage VARCHAR(2000)
+    )
+
+	DECLARE @tblRegion TABLE
+    (
+		RecId int identity(1,1),
+        RegionID INT,
+		RegionName varchar(20),
+		LatGPSValue FLOAT,
+        LonGPSValue FLOAT
+    )
+
+
+    
+	Declare @MinId int,
+			@MaxId int,
+			@CurrentId int,
+			@TempRegionId int
+
+			insert into @tblRegion (r.RegionID,r.RegionName,r.LatGPSValue,r.LonGPSValue)
+			select distinct
+				r.RegionID,
+				r.RegionName,
+				r.Latitude,
+				r.Longitude
+			FROM
+			[SABIC_DT_Finance_Master].[master].[MST_Plant] P 
+			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Affiliate] a on a.AffiliateCode = p.AffiliateCode
+			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Country] c on c.CountryID = a.CountryID
+			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Region] r on r.RegionID=c.RegionID
+			
+		WHERE
+			r.IsActive=1
+			AND c.IsActive=1
+			AND a.IsActive=1 
+			--and rpc.IsActive=1
+			AND p.PlantType in ('Manufacturing Plant')
+			AND (@RegionID ='' OR @RegionID is null or r.RegionID in(select * from  [fnSplitString](@RegionID,',')))
+			AND (@CountryID ='' OR @CountryID is null or c.CountryID in(select * from  [fnSplitString](@CountryID,',')))
+		   -- AND rpc.RoleID = @RoleID 
+		   AND a.AffiliateCode in 
+			(
+				SELECT 
+					DISTINCT AffiliateCode 
+				FROM 
+					[SABIC_DT_Finance_Master].[master].[MST_ProfitCenter] 
+				WHERE 
+						SBU='POLYMERS' 
+					AND BU NOT IN ('MSS', 'ETP') 
+					AND isnull(Products,'zzzz') NOT IN ('PE-LL/LD-N','PE-HD-NJ','PP-PPC-NJ','PP-PPN-NJ')
+			) 
+			
+			select distinct
+				@MinId = Min(r.RecId),
+				@MaxId = Max(r.RecId)
+			From
+				@tblRegion r
+
+
+			Set @CurrentId = @MinId
+
+			DECLARE @ForecastInventoryVolume FLOAT
+			DECLARE @RecommendationMessage NVARCHAR(500)
+			DECLARE @ForecastInventoryValue FLOAT
+			
+
+    IF (@TypeID = 2) --Finished Goods      
+    BEGIN
+
+		WHILE @CurrentId <= @MaxId
+			BEGIN
+
+
+
+				SELECT
+					@TempRegionId = RegionID
+				FROM
+					@tblRegion
+				WHERE
+					RecId = @CurrentId
+
+				INSERT @tblResult
+				(RegionID,RegionName ,CountryID,CountryName,LatGPSValue,LonGPSValue)
+				SELECT
+					RegionID,RegionName,0,'',LatGPSValue, LonGPSValue
+				FROM
+					@tblRegion
+				WHERE
+					RecId = @CurrentId
+
+				--Get Total FG Volume      
+				SELECT
+					--   @ForecastInventoryVolume = round((sum(a.[Forecast sum(TotalQuant)_Sale]/1000) + sum(a.[Forecast sum(TotalQuant)_Purchase]/1000) + sum(a.[Forecast sum(TotalQuant)_Production]/1000)),2)      
+					@ForecastInventoryVolume
+					= round(
+						(sum(a.value_Sale / 1000) + sum(a.value_Purchase / 1000)
+						+ sum(a.value_Consumed_in_production / 1000)
+						),
+						2
+					)
+				FROM
+					[SABIC_DT_Finance_WCI].[dbo].[view_fg_inventory_forecast] a
+					--[Aggregate_Forecast_InventoryDetails_FG] a
+					JOIN  SABIC_DT_Finance_Master.[master].[MST_ProfitCenter] p ON a.bu=p.BU and a.sbu = p.SBU and a.profit_center = p.ProfitCenterName
+					JOIN [SABIC_DT_Finance_Master].[master].[MST_Plant] pl ON pl.AffiliateCode = a.AffiliateCode
+					INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Affiliate] af on af.AffiliateCode = a.AffiliateCode
+					INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Country] c on c.CountryID = af.CountryID
+					INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Region] r on r.RegionID=c.RegionID
+
+				WHERE
+					a.plant in (select plant from [SABIC_DT_Finance_Master].[master].[MST_Plant] where (@CompanyCode = '' or AffiliateCode in (select * from string_split(@CompanyCode,','))))
+					--(plant in (select plant from [SABIC_DT_Finance_Master].[master].[MST_Plant] where (@CompanyCode is null or AffiliateCode = @CompanyCode))
+					--OR	plant = (select plant from [SABIC_DT_Finance_Master].[master].[MST_Plant] where Id = @PlantID))
+					--AND (CAST(LEFT(a.[Month],4) AS INT) > year(DATEADD(month, -12, @FromDate)) OR (CAST(LEFT(a.[Month],4) AS INT) = YEAR(DATEADD(month, -12, @FromDate)) AND CAST(RIGHT(a.[Month],2) AS INT) >= MONTH(DATEADD(month, -12, @FromDate))))
+					--AND (CAST(LEFT(a.[Month],4) AS INT) < year(DATEADD(month, -12, @ToDate)) OR (CAST(LEFT(a.[Month],4) AS INT) = YEAR(DATEADD(month, -12, @ToDate)) AND CAST(RIGHT(a.[Month],2) AS INT) <= MONTH(DATEADD(month, -12, @ToDate))))
+			
+					AND (@BU = '' or a.bu in (select * from string_split(@BU,',')))
+					AND (@SBU = '' or a.sbu in (select * from string_split(@SBU,',')))
+					--AND (@RegionID = '' or r.RegionID in (select * from string_split(@RegionID,',')))  
+					AND (@CountryID = '' or c.CountryID in (select * from string_split(@CountryID,','))) 
+					AND (@profitCenterID ='' or p.ProfitCenterName in (select profitCenterName from @ProfitCenterValues)) 
+					AND r.IsActive=1  AND c.IsActive=1 AND af.IsActive=1 AND pl.PlantType in ('Manufacturing Plant')
+					AND (@PlantID = '' OR a.Plant IN (SELECT Plant FROM [SABIC_DT_Finance_Master].[master].[MST_Plant] WHERE id = (SELECT * FROM string_split(@PlantID,','))))
+					AND CAST(REPLACE([Month],'-','') AS INT) BETWEEN @FromDateCalMonth AND @ToDateCalMonth
+					AND r.RegionID =@TempRegionId
+
+				SET @RecommendationMessage= 'AI enhanced forecast inventory volume '+ STR(@ForecastInventoryVolume, len(@ForecastInventoryVolume), 2) + ' MT'
+
+				update
+					@tblResult
+				SET
+					RecommendationMessage = @RecommendationMessage
+				WHERE
+					RegionID = @TempRegionId
+
+				SET @CurrentId = @CurrentId +1
+			END
+
+
+       
+    END
+
+    IF (@TypeID = 3) --rolling 18 months      
+    BEGIN
+
+		WHILE @CurrentId <= @MaxId
+			BEGIN
+
+				
+
+				SELECT
+					@TempRegionId = RegionID
+				FROM
+					@tblRegion
+				WHERE
+					RecId = @CurrentId
+
+				INSERT @tblResult
+				(RegionID,RegionName ,CountryID,CountryName,LatGPSValue,LonGPSValue)
+				SELECT
+					RegionID,RegionName,0,'',LatGPSValue, LonGPSValue
+				FROM
+					@tblRegion
+				WHERE
+					RecId = @CurrentId
+
+				  --Get Total FG Value      
+        SELECT
+            --   @ForecastInventoryValue = round((sum(a.[Forecast sum(TotalValue)_Sale]/1000000) + sum(a.[Forecast sum(TotalValue)_Purchase]/1000000) + sum(a.[Forecast sum(TotalValue)_Production]/1000000)),2)      
+            @ForecastInventoryValue
+            = round(
+                       (sum(a.forecast_value_Sale / 1000000) + sum(a.forecast_value_Purchase / 1000000)
+                        + sum(a.forecast_value_Production_Output / 1000000)
+                       ),
+                       2
+                   )
+        FROM
+			[SABIC_DT_Finance_WCI].[dbo].[view_fg_inventory_forecast] a
+			JOIN  SABIC_DT_Finance_Master.[master].[MST_ProfitCenter] p ON a.bu=p.BU and a.sbu = p.SBU and a.profit_center = p.ProfitCenterName
+			JOIN [SABIC_DT_Finance_Master].[master].[MST_Plant] pl ON pl.AffiliateCode = p.AffiliateCode
+			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Affiliate] af on af.AffiliateCode = p.AffiliateCode
+			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Country] c on c.CountryID = af.CountryID
+			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Region] r on r.RegionID=c.RegionID
+
+		WHERE
+			a.plant in (select plant from [SABIC_DT_Finance_Master].[master].[MST_Plant] where (@CompanyCode = '' or AffiliateCode in (select * from string_split(@CompanyCode,','))))
+			--(plant in (select plant from [SABIC_DT_Finance_Master].[master].[MST_Plant] where (@CompanyCode is null or AffiliateCode = @CompanyCode))
+			--OR	plant = (select plant from [SABIC_DT_Finance_Master].[master].[MST_Plant] where Id = @PlantID))
+			AND (CAST(LEFT(a.[Month],4) AS INT) > year(DATEADD(month, -12, @FromDate)) OR (CAST(LEFT(a.[Month],4) AS INT) = YEAR(DATEADD(month, -12, @FromDate)) AND CAST(RIGHT(a.[Month],2) AS INT) >= MONTH(DATEADD(month, -12, @FromDate))))
+			AND (CAST(LEFT(a.[Month],4) AS INT) < year(DATEADD(month, -12, @ToDate)) OR (CAST(LEFT(a.[Month],4) AS INT) = YEAR(DATEADD(month, -12, @ToDate)) AND CAST(RIGHT(a.[Month],2) AS INT) <= MONTH(DATEADD(month, -12, @ToDate))))
+			
+			AND (@BU = '' or a.bu in (select * from string_split(@BU,',')))
+			AND (@SBU = '' or a.sbu in (select * from string_split(@SBU,',')))
+			AND (@RegionID = '' or r.RegionID in (select * from string_split(@RegionID,',')))  
+			AND (@CountryID = '' or c.CountryID in (select * from string_split(@CountryID,','))) 
+			AND (@profitCenterID ='' or p.ProfitCenterName in (select profitCenterName from @ProfitCenterValues)) 
+			AND r.IsActive=1  AND c.IsActive=1 AND af.IsActive=1 AND pl.PlantType in ('Manufacturing Plant')
+
+
+        SET @RecommendationMessage   = 'AI enhanced forecast inventory value ' + STR(@ForecastInventoryValue, len(@ForecastInventoryValue), 2)    + ' M$'
+       
+		update
+			@tblResult
+		SET
+			RecommendationMessage = @RecommendationMessage
+		WHERE
+			RegionID = @TempRegionId
+
+			SET @CurrentId = @CurrentId +1
+		END
+
+
+
+       
+      
+    END
+
+    --INSERT INTO @tblResult Values(1,'China',2,'China',35.8617,104.1954,'AI enhanced forecaste 360 MT,$350 higher, due to 100 MT addional Finished goals')        
+    --INSERT INTO @tblResult Values(1,'Asia',3,'India',20.5937,78.9629,'AI enhanced forecaste 360 MT,$350 higher, due to 100 MT addional Finished goals')        
+    --INSERT INTO @tblResult Values(1,'Europe',4,'Americas',37.0902,-95.7129,'AI enhanced forecaste 360 MT,$350 higher, due to 100 MT addional Finished goals')        
+
+    SELECT CAST(RegionID as varchar(10))as RegionID,
+           RegionName,
+           CAST(CountryID as varchar(10))as CountryID,
+           CountryName,
+           LatGPSValue,
+           LonGPSValue,
+           RecommendationMessage
+    FROM @tblResult
+     
+
+END
+D (@CountryID = '' or c.CountryID in (select * from string_split(@CountryID,','))) 
+			AND (@profitCenterID ='' or p.ProfitCenterName in (select profitCenterName from @ProfitCenterValues)) 
+			AND r.IsActive=1  AND c.IsActive=1 AND af.IsActive=1 AND pl.PlantType in ('Manufacturing Plant')
+
+
+        SET @RecommendationMessage   = 'AI enhanced forecast inventory value ' + STR(@ForecastInventoryValue, len(@ForecastInventoryValue), 2)    + ' M$'
+       
+		update
+			@tblResult
+		SET
+			RecommendationMessage = @RecommendationMessage
+		WHERE
+			RegionID = @TempRegionId
+
+			SET @CurrentId = @CurrentId +1
+		END
+
+
+
+       
+      
+    END
+
+    --INSERT INTO @tblResult Values(1,'China',2,'China',35.8617,104.1954,'AI enhanced forecaste 360 MT,$350 higher, due to 100 MT addional Finished goals')        
+    --INSERT INTO @tblResult Values(1,'Asia',3,'India',20.5937,78.9629,'AI enhanced forecaste 360 MT,$350 higher, due to 100 MT addional Finished goals')        
+    --INSERT INTO @tblResult Values(1,'Europe',4,'Americas',37.0902,-95.7129,'AI enhanced forecaste 360 MT,$350 higher, due to 100 MT addional Finished goals')        
+
+    SELECT CAST(RegionID as varchar(10))as RegionID,
+           RegionName,
+           CAST(CountryID as varchar(10))as CountryID,
+           CountryName,
+           LatGPSValue,
+           LonGPSValue,
+           RecommendationMessage
+    FROM @tblResult
+     
+
+END
