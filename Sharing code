@@ -1,3 +1,31 @@
+Hi Team,
+
+As discussed regarding the code freeze process, I have implemented the following changes to ensure controlled releases:
+
+1. Created a new release branch release-February from the current "dev" branch.
+
+2. Stopped using direct PR from "dev" to "master".
+
+3. Locked the "master" branch to prevent any accidental merges during the freeze period.
+
+4. The release process will now follow this structure:
+   
+   - Local → dev
+   - dev → release branch (as needed)
+   - release branch → master (only after approval)
+
+Going forward, any production deployments will be performed only through the respective release branch via PR approval to "master".
+
+Please let me know if any additional controls or branch policies need to be configured.
+
+Thanks & Regards,
+K.L Sathish
+
+
+
+
+
+
 ALTER PROCEDURE [dbo].[SP_GetInventoryGlobalMap]
 (
      @TypeID INT = 0,
