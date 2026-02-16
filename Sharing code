@@ -1,176 +1,108 @@
-Hi Team,
 
-As discussed regarding the code freeze process, I have implemented the following changes to ensure controlled releases:
+/*                
+---------------------------------------------------------------------------                
+Author: Khaja M          
+Create Date: 2025-05-15 10:00:00     
+    
+ EXEC SP_GetWorkflowTaskActionsByTaskName 'EPM Manager Review'          
+ EXEC SP_GetWorkflowTaskActionsByTaskName 'BU Manager Review'           
+ EXEC SP_GetWorkflowTaskActionsByTaskName 'EPM Planner Review & Submit'    
+ EXEC SP_GetWorkflowTaskActionsByTaskName 'SNOP Planner Action'   
+ EXEC SP_GetWorkflowTaskActionsByTaskName 1,'sabiccorp\\3079003','BU Manager Action'  
+ EXEC SP_GetWorkflowTaskActionsByTaskName 1,'sabiccorp\\30790093','FBP Analyst Review & Submit' 
 
-1. Created a new release branch release-February from the current "dev" branch.
-
-2. Stopped using direct PR from "dev" to "master".
-
-3. Locked the "master" branch to prevent any accidental merges during the freeze period.
-
-4. The release process will now follow this structure:
-   
-   - Local → dev
-   - dev → release branch (as needed)
-   - release branch → master (only after approval)
-
-Going forward, any production deployments will be performed only through the respective release branch via PR approval to "master".
-
-Please let me know if any additional controls or branch policies need to be configured.
-
-Thanks & Regards,
-K.L Sathish
+ EXEC SP_GetWorkflowTaskActionsByTaskName 1,'SABICCORP\30751894','admin' 
 
 
+---------------------------------------------------------------------------                
+*/                
+ALTER   PROC [dbo].[SP_GetWorkflowTaskActionsByTaskName]          
+(     
+	@RecommendationID INT,
+	@DomainLoginID VARCHAR(100),
+	@TaskName VARCHAR(100)
+)            
+AS              
+BEGIN             
+SET NOCOUNT ON;            
+           
 
+	--Declare
+	--	@RecommendationID Int = 2,
+	--	@DomainLoginID Varchar(100) = 'SABICCORP\30751894',
+	--	@TaskName Varchar(100) ='BU Manager Action'
 
+	IF EXISTS(SELECT 1 FROM TRN_WorkflowTask_SF WHERE RecommendationID=@RecommendationID   and taskState='STATE_READY' and assignedTo=REPLACE(@DomainLoginID,'\\','\'))
+	BEGIN
+		SELECT   
+			 ta.TaskActionName         
+			,t.TaskName    
+		FROM          
+			MST_Tasks t          
+			INNER JOIN MST_TaskAction ta ON ta.TaskID = t.TaskID          
+		WHERE          
+			t.TaskName LIKE '%'+TRIM(REPLACE(REPLACE(REPLACE(@TaskName,'& Submit',''),'& Approval',''),'Action',''))+'%'        
+			AND t.IsActive = 1          
+			AND ta.IsActive = 1  
+	END
+	ELSE IF EXISTS(SELECT 1 FROM TRN_WorklistRedirection WHERE RecommendationRequestID=@RecommendationID AND IsActive=1  AND ToUserDomainLoginID=REPLACE(@DomainLoginID,'\\','\'))
+	BEGIN
 
+	DECLARE @RedirectSourceID varchar(30);
+	SELECT @RedirectSourceID = FromUserDomainLoginID FROM TRN_WorklistRedirection WHERE RecommendationRequestID=@RecommendationID AND IsActive=1  AND ToUserDomainLoginID=REPLACE(@DomainLoginID,'\\','\')
 
-ALTER PROCEDURE [dbo].[SP_GetInventoryGlobalMap]
-(
-     @TypeID INT = 0,
-     @RegionID VARCHAR(50) = NULL,
-     @CountryID VARCHAR(50) = NULL,
-     @CompanyCode VARCHAR(50) = NULL,
-     @ProfitCenterID VARCHAR(500) = NULL,
-     @PlantID VARCHAR(50) = NULL,
-     @SBU VARCHAR(50) = NULL,
-     @BU VARCHAR(50) = NULL,
-     @FromDate DATE = NULL,
-     @ToDate DATE = NULL
-)
-AS
-BEGIN
-    SET NOCOUNT ON;
+		IF EXISTS(select 1 from TRN_WorkflowTask_SF WHERE RecommendationID=@RecommendationID   and taskState='STATE_READY' and assignedTo=REPLACE(@RedirectSourceID,'\\','\'))
+		BEGIN
+			SELECT   DISTINCT
+					 ta.TaskActionName         
+					,'Redirect User'  TaskName    
+				FROM          
+					MST_Tasks t          
+					INNER JOIN MST_TaskAction ta ON ta.TaskID = t.TaskID          
+				WHERE          
+					ta.TaskActionName in ('Approve','Reject','SendBack')      
+					AND t.IsActive = 1          
+					AND ta.IsActive = 1  
+		END
+		ELSE
+		BEGIN
+		SELECT top 0
+			'' AS TaskActionName,
+			'' AS TaskName 
+		END
+	END
+	ELSE IF EXISTS(select 1 from TRN_Delegation where IsActive=1  AND ToUserDomainLoginID=REPLACE(@DomainLoginID,'\\','\'))
+	BEGIN
 
-    ------------------------------------------------------------
-    -- Parameter Cleanup
-    ------------------------------------------------------------
-    SET @SBU = ISNULL(@SBU, '');
-    SET @BU = ISNULL(@BU, '');
-    SET @ProfitCenterID = ISNULL(@ProfitCenterID, '');
-    SET @RegionID = ISNULL(@RegionID, '');
-    SET @CountryID = ISNULL(@CountryID, '');
-    SET @CompanyCode = ISNULL(@CompanyCode, '');
+	DECLARE @DelegateSourceID varchar(30);
+	SELECT @DelegateSourceID = FromUserDomainLoginID from TRN_WorklistRedirection WHERE RecommendationRequestID=@RecommendationID AND IsActive=1  AND ToUserDomainLoginID=REPLACE(@DomainLoginID,'\\','\')
 
-    IF(@CompanyCode IN ('0','1')) SET @CompanyCode = '';
-    IF(@ProfitCenterID IN ('0','1')) SET @ProfitCenterID = '';
-
-    IF @FromDate IS NULL OR @ToDate IS NULL
-    BEGIN
-        SELECT @FromDate = FromDate,
-               @ToDate   = ToDate
-        FROM ADM_DefaultDatesForFilter
-        WHERE IsActive = 1
-    END
-
-    DECLARE @FromDateCalMonth INT =
-        YEAR(@FromDate) * 100 + MONTH(@FromDate);
-
-    DECLARE @ToDateCalMonth INT =
-        YEAR(@ToDate) * 100 + MONTH(@ToDate);
-
-    ------------------------------------------------------------
-    -- Profit Center Table
-    ------------------------------------------------------------
-    DECLARE @ProfitCenterValues TABLE (ProfitCenterName NVARCHAR(100));
-
-    INSERT INTO @ProfitCenterValues
-    SELECT ProfitCenterName
-    FROM SABIC_DT_Finance_Master.master.MST_ProfitCenter
-    WHERE ProfitCenterID IN (SELECT value FROM STRING_SPLIT(@ProfitCenterID, ','));
-
-    ------------------------------------------------------------
-    -- Main Query (NO LOOP)
-    ------------------------------------------------------------
-
-    IF @TypeID = 2   -- Finished Goods Volume
-    BEGIN
-        SELECT
-            CAST(r.RegionID AS VARCHAR(10)) AS RegionID,
-            r.RegionName,
-            '0' AS CountryID,
-            ''  AS CountryName,
-            r.Latitude  AS LatGPSValue,
-            r.Longitude AS LonGPSValue,
-            'AI enhanced forecast inventory volume '
-            + CAST(ROUND(
-                SUM(a.value_Sale/1000.0 +
-                    a.value_Purchase/1000.0 +
-                    a.value_Consumed_in_production/1000.0), 2
-              ) AS VARCHAR(50))
-            + ' MT' AS RecommendationMessage
-        FROM SABIC_DT_Finance_WCI.dbo.view_fg_inventory_forecast a
-        INNER JOIN SABIC_DT_Finance_Master.master.MST_Affiliate af
-            ON af.AffiliateCode = a.AffiliateCode
-        INNER JOIN SABIC_DT_Finance_Master.master.MST_Country c
-            ON c.CountryID = af.CountryID
-        INNER JOIN SABIC_DT_Finance_Master.master.MST_Region r
-            ON r.RegionID = c.RegionID
-        INNER JOIN SABIC_DT_Finance_Master.master.MST_ProfitCenter p
-            ON a.bu = p.BU
-           AND a.sbu = p.SBU
-           AND a.profit_center = p.ProfitCenterName
-        WHERE
-            r.IsActive = 1
-            AND c.IsActive = 1
-            AND af.IsActive = 1
-            AND CAST(REPLACE(a.[Month],'-','') AS INT)
-                BETWEEN @FromDateCalMonth AND @ToDateCalMonth
-            AND (@RegionID = '' OR r.RegionID IN (SELECT value FROM STRING_SPLIT(@RegionID, ',')))
-            AND (@CountryID = '' OR c.CountryID IN (SELECT value FROM STRING_SPLIT(@CountryID, ',')))
-            AND (@BU = '' OR a.bu IN (SELECT value FROM STRING_SPLIT(@BU, ',')))
-            AND (@SBU = '' OR a.sbu IN (SELECT value FROM STRING_SPLIT(@SBU, ',')))
-            AND (@ProfitCenterID = '' OR p.ProfitCenterName IN (SELECT ProfitCenterName FROM @ProfitCenterValues))
-        GROUP BY
-            r.RegionID,
-            r.RegionName,
-            r.Latitude,
-            r.Longitude;
-    END
-
-    IF @TypeID = 3   -- Rolling 18 Month Value
-    BEGIN
-        SELECT
-            CAST(r.RegionID AS VARCHAR(10)) AS RegionID,
-            r.RegionName,
-            '0' AS CountryID,
-            ''  AS CountryName,
-            r.Latitude  AS LatGPSValue,
-            r.Longitude AS LonGPSValue,
-            'AI enhanced forecast inventory value '
-            + CAST(ROUND(
-                SUM(a.forecast_value_Sale/1000000.0 +
-                    a.forecast_value_Purchase/1000000.0 +
-                    a.forecast_value_Production_Output/1000000.0), 2
-              ) AS VARCHAR(50))
-            + ' M$' AS RecommendationMessage
-        FROM SABIC_DT_Finance_WCI.dbo.view_fg_inventory_forecast a
-        INNER JOIN SABIC_DT_Finance_Master.master.MST_Affiliate af
-            ON af.AffiliateCode = a.AffiliateCode
-        INNER JOIN SABIC_DT_Finance_Master.master.MST_Country c
-            ON c.CountryID = af.CountryID
-        INNER JOIN SABIC_DT_Finance_Master.master.MST_Region r
-            ON r.RegionID = c.RegionID
-        INNER JOIN SABIC_DT_Finance_Master.master.MST_ProfitCenter p
-            ON a.bu = p.BU
-           AND a.sbu = p.SBU
-           AND a.profit_center = p.ProfitCenterName
-        WHERE
-            r.IsActive = 1
-            AND c.IsActive = 1
-            AND af.IsActive = 1
-            AND CAST(REPLACE(a.[Month],'-','') AS INT)
-                BETWEEN @FromDateCalMonth AND @ToDateCalMonth
-            AND (@RegionID = '' OR r.RegionID IN (SELECT value FROM STRING_SPLIT(@RegionID, ',')))
-            AND (@CountryID = '' OR c.CountryID IN (SELECT value FROM STRING_SPLIT(@CountryID, ',')))
-            AND (@BU = '' OR a.bu IN (SELECT value FROM STRING_SPLIT(@BU, ',')))
-            AND (@SBU = '' OR a.sbu IN (SELECT value FROM STRING_SPLIT(@SBU, ',')))
-            AND (@ProfitCenterID = '' OR p.ProfitCenterName IN (SELECT ProfitCenterName FROM @ProfitCenterValues))
-        GROUP BY
-            r.RegionID,
-            r.RegionName,
-            r.Latitude,
-            r.Longitude;
-    END
+		IF EXISTS(SELECT 1 FROM TRN_WorkflowTask_SF where RecommendationID=@RecommendationID   and taskState='STATE_READY' and assignedTo=REPLACE(@DelegateSourceID,'\\','\'))
+		BEGIN
+			SELECT   DISTINCT
+				 ta.TaskActionName         
+				,'Redirect User'  TaskName    
+			FROM          
+				MST_Tasks t          
+				INNER JOIN MST_TaskAction ta ON ta.TaskID = t.TaskID          
+			WHERE          
+				ta.TaskActionName in ('Approve','Reject','SendBack')      
+				AND t.IsActive = 1          
+				AND ta.IsActive = 1  
+		END	
+		ELSE
+		BEGIN
+		SELECT top 0
+			'' AS TaskActionName,
+			'' AS TaskName 
+		END
+	END
+	ELSE
+	BEGIN
+	SELECT top 0
+		'' AS TaskActionName,
+		'' AS TaskName 
+	END
+          
 END
+
