@@ -1,108 +1,43 @@
-
-/*                
----------------------------------------------------------------------------                
-Author: Khaja M          
-Create Date: 2025-05-15 10:00:00     
-    
- EXEC SP_GetWorkflowTaskActionsByTaskName 'EPM Manager Review'          
- EXEC SP_GetWorkflowTaskActionsByTaskName 'BU Manager Review'           
- EXEC SP_GetWorkflowTaskActionsByTaskName 'EPM Planner Review & Submit'    
- EXEC SP_GetWorkflowTaskActionsByTaskName 'SNOP Planner Action'   
- EXEC SP_GetWorkflowTaskActionsByTaskName 1,'sabiccorp\\3079003','BU Manager Action'  
- EXEC SP_GetWorkflowTaskActionsByTaskName 1,'sabiccorp\\30790093','FBP Analyst Review & Submit' 
-
- EXEC SP_GetWorkflowTaskActionsByTaskName 1,'SABICCORP\30751894','admin' 
-
-
----------------------------------------------------------------------------                
-*/                
-ALTER   PROC [dbo].[SP_GetWorkflowTaskActionsByTaskName]          
-(     
-	@RecommendationID INT,
-	@DomainLoginID VARCHAR(100),
-	@TaskName VARCHAR(100)
-)            
-AS              
-BEGIN             
-SET NOCOUNT ON;            
-           
-
-	--Declare
-	--	@RecommendationID Int = 2,
-	--	@DomainLoginID Varchar(100) = 'SABICCORP\30751894',
-	--	@TaskName Varchar(100) ='BU Manager Action'
-
-	IF EXISTS(SELECT 1 FROM TRN_WorkflowTask_SF WHERE RecommendationID=@RecommendationID   and taskState='STATE_READY' and assignedTo=REPLACE(@DomainLoginID,'\\','\'))
-	BEGIN
-		SELECT   
-			 ta.TaskActionName         
-			,t.TaskName    
-		FROM          
-			MST_Tasks t          
-			INNER JOIN MST_TaskAction ta ON ta.TaskID = t.TaskID          
-		WHERE          
-			t.TaskName LIKE '%'+TRIM(REPLACE(REPLACE(REPLACE(@TaskName,'& Submit',''),'& Approval',''),'Action',''))+'%'        
-			AND t.IsActive = 1          
-			AND ta.IsActive = 1  
-	END
-	ELSE IF EXISTS(SELECT 1 FROM TRN_WorklistRedirection WHERE RecommendationRequestID=@RecommendationID AND IsActive=1  AND ToUserDomainLoginID=REPLACE(@DomainLoginID,'\\','\'))
-	BEGIN
-
-	DECLARE @RedirectSourceID varchar(30);
-	SELECT @RedirectSourceID = FromUserDomainLoginID FROM TRN_WorklistRedirection WHERE RecommendationRequestID=@RecommendationID AND IsActive=1  AND ToUserDomainLoginID=REPLACE(@DomainLoginID,'\\','\')
-
-		IF EXISTS(select 1 from TRN_WorkflowTask_SF WHERE RecommendationID=@RecommendationID   and taskState='STATE_READY' and assignedTo=REPLACE(@RedirectSourceID,'\\','\'))
-		BEGIN
-			SELECT   DISTINCT
-					 ta.TaskActionName         
-					,'Redirect User'  TaskName    
-				FROM          
-					MST_Tasks t          
-					INNER JOIN MST_TaskAction ta ON ta.TaskID = t.TaskID          
-				WHERE          
-					ta.TaskActionName in ('Approve','Reject','SendBack')      
-					AND t.IsActive = 1          
-					AND ta.IsActive = 1  
-		END
-		ELSE
-		BEGIN
-		SELECT top 0
-			'' AS TaskActionName,
-			'' AS TaskName 
-		END
-	END
-	ELSE IF EXISTS(select 1 from TRN_Delegation where IsActive=1  AND ToUserDomainLoginID=REPLACE(@DomainLoginID,'\\','\'))
-	BEGIN
-
-	DECLARE @DelegateSourceID varchar(30);
-	SELECT @DelegateSourceID = FromUserDomainLoginID from TRN_WorklistRedirection WHERE RecommendationRequestID=@RecommendationID AND IsActive=1  AND ToUserDomainLoginID=REPLACE(@DomainLoginID,'\\','\')
-
-		IF EXISTS(SELECT 1 FROM TRN_WorkflowTask_SF where RecommendationID=@RecommendationID   and taskState='STATE_READY' and assignedTo=REPLACE(@DelegateSourceID,'\\','\'))
-		BEGIN
-			SELECT   DISTINCT
-				 ta.TaskActionName         
-				,'Redirect User'  TaskName    
-			FROM          
-				MST_Tasks t          
-				INNER JOIN MST_TaskAction ta ON ta.TaskID = t.TaskID          
-			WHERE          
-				ta.TaskActionName in ('Approve','Reject','SendBack')      
-				AND t.IsActive = 1          
-				AND ta.IsActive = 1  
-		END	
-		ELSE
-		BEGIN
-		SELECT top 0
-			'' AS TaskActionName,
-			'' AS TaskName 
-		END
-	END
-	ELSE
-	BEGIN
-	SELECT top 0
-		'' AS TaskActionName,
-		'' AS TaskName 
-	END
-          
-END
-
+INSERT INTO TRN_Delegation  
+  (    
+   --DelegationID  
+    FromUserDomainLoginID  
+   ,ToUserDomainLoginID  
+   ,StartDate  
+   ,EndDate  
+   ,IsActive  
+   ,CreatedBy  
+   ,CreatedDate  
+   ,UpdatedBy  
+   ,UpdatedDate   
+   ,Role  
+  )    
+  VALUES  
+  (    
+    @FromUserDomainLoginID  
+   ,@ToUserDomainLoginID  
+   ,@StartDate  
+   ,@EndDate  
+   ,@IsEnable  
+   ,@CreatedBy  
+   ,@CreatedDate  
+   ,NULL  
+   ,NULL  
+   ,(  
+      SELECT top 1 R.RoleName   
+     FROM [SABIC_DT_Finance_SF_WebUI].[dbo].[ADM_User] AS W  
+     INNER JOIN [SABIC_DT_Finance_SF_WebUI].[dbo].[ADM_UserRoleMapping] AS ADM  
+     ON W.UserID = ADM.UserID  
+     INNER JOIN [SABIC_DT_Finance_SF_WebUI].[dbo].[ADM_Role] AS R  
+     ON ADM.RoleID = R.RoleID  
+     WHERE   
+       W.IsActive = 1  
+     AND ADM.IsActive = 1  
+	 AND ADM.IsSelectedRole=1
+	-- AND R.RoleID in (13,11,10,14,12)
+	AND R.RoleName in (
+		'SNOP Manager','EPM Manager','EPM Planner','SNOP Planner','BU Manager','Admin','FBP Analyst','FBP Manager'
+	)
+     AND W.Username = @FromUserDomainLoginID  
+   )  
+  )  
