@@ -1,43 +1,89 @@
-INSERT INTO TRN_Delegation  
-  (    
-   --DelegationID  
-    FromUserDomainLoginID  
-   ,ToUserDomainLoginID  
-   ,StartDate  
-   ,EndDate  
-   ,IsActive  
-   ,CreatedBy  
-   ,CreatedDate  
-   ,UpdatedBy  
-   ,UpdatedDate   
-   ,Role  
-  )    
-  VALUES  
-  (    
-    @FromUserDomainLoginID  
-   ,@ToUserDomainLoginID  
-   ,@StartDate  
-   ,@EndDate  
-   ,@IsEnable  
-   ,@CreatedBy  
-   ,@CreatedDate  
-   ,NULL  
-   ,NULL  
-   ,(  
-      SELECT top 1 R.RoleName   
-     FROM [SABIC_DT_Finance_SF_WebUI].[dbo].[ADM_User] AS W  
-     INNER JOIN [SABIC_DT_Finance_SF_WebUI].[dbo].[ADM_UserRoleMapping] AS ADM  
-     ON W.UserID = ADM.UserID  
-     INNER JOIN [SABIC_DT_Finance_SF_WebUI].[dbo].[ADM_Role] AS R  
-     ON ADM.RoleID = R.RoleID  
-     WHERE   
-       W.IsActive = 1  
-     AND ADM.IsActive = 1  
-	 AND ADM.IsSelectedRole=1
-	-- AND R.RoleID in (13,11,10,14,12)
-	AND R.RoleName in (
-		'SNOP Manager','EPM Manager','EPM Planner','SNOP Planner','BU Manager','Admin','FBP Analyst','FBP Manager'
-	)
-     AND W.Username = @FromUserDomainLoginID  
-   )  
-  )  
+   public async Task<List<RevenueMap>> GetRevenueMapDetails(RevenueFilterReq model)
+       => await _dbContext.RevenueMap.FromSqlRaw(
+           @"EXEC dbo.SP_GetRecommendationForGlobalMap
+           @TypeID = @TypeID,
+           @SBU = @SBU,
+           @BU = @BU,
+           @CompanyCode = @CompanyCode,
+           @ProfitCenterID = @ProfitCenterID,
+           @FromDate = @FromDate,
+           @ToDate = @ToDate",
+           new SqlParameter("@TypeID", model.TypeID),
+           new SqlParameter("@TypeID", model.RegionID),
+           new SqlParameter("@TypeID", model.CountryID),
+           new SqlParameter("@CompanyCode", model.CompanyID.DbValue()),
+           new SqlParameter("@ProfitCenterID", model.ProfitCenterID.DbValue()),
+           new SqlParameter("@FromDate", model.FromDate),
+           new SqlParameter("@ToDate", model.ToDate)
+       ).ToListAsync();
+
+   public async Task<List<ContributionMarginTrend>> GetContributionMariginTrend(RevenueFilterReq model)
+       => await _dbContext.ContributionMarginTrend.FromSqlRaw(
+           @"EXEC dbo.SP_GetContributionMarginTrend
+           @TypeID = @TypeID,
+           @SBU = @SBU,
+           @BU = @BU,
+           @CompanyCode = @CompanyCode,
+           @ProfitCenterID = @ProfitCenterID,
+           @FromDate = @FromDate,
+           @ToDate = @ToDate",
+           new SqlParameter("@TypeID", model.TypeID),
+           new SqlParameter("@TypeID", model.RegionID),
+           new SqlParameter("@TypeID", model.CountryID),
+           new SqlParameter("@CompanyCode", model.CompanyID.DbValue()),
+           new SqlParameter("@ProfitCenterID", model.ProfitCenterID.DbValue()),
+           new SqlParameter("@FromDate", model.FromDate),
+           new SqlParameter("@ToDate", model.ToDate)
+       ).ToListAsync();
+
+   public async Task<List<RevenueTrend>> GetRevenueTrend(RevenueFilterReq model)
+       => await _dbContext.RevenueTrend.FromSqlRaw(
+           @"EXEC dbo.SP_GetRevenueTrend
+            @TypeID = @TypeID,
+           @SBU = @SBU,
+           @BU = @BU,
+           @CompanyCode = @CompanyCode,
+           @ProfitCenterID = @ProfitCenterID,
+           @FromDate = @FromDate,
+           @ToDate = @ToDate",
+           new SqlParameter("@TypeID", model.TypeID),
+           new SqlParameter("@TypeID", model.RegionID),
+           new SqlParameter("@TypeID", model.CountryID),
+           new SqlParameter("@CompanyCode", model.CompanyID.DbValue()),
+           new SqlParameter("@ProfitCenterID", model.ProfitCenterID.DbValue()),
+           new SqlParameter("@FromDate", model.FromDate),
+           new SqlParameter("@ToDate", model.ToDate)
+       ).ToListAsync();
+
+
+anything will ujse common funtion and use stron type return..previosly used common retun class like
+ //private async Task<List<object>> manipulateProc(RevenueFilterReq req, string procName,Type obj)
+ //{
+ //    var sqlStr = $@"EXEC {procName}
+ //                            @CurrencyType = @CurrencyType,
+ //                            @Metrics = @Metrics,
+ //                            @RegionID = @RegionID,
+ //                            @CountryID = @CountryID,
+ //                            @CompanyCode = @CompanyCode,
+ //                            @ProfitCenterID = @ProfitCenterID,
+ //                            @PlantID = @PlantID,
+ //                            @Sbu = @Sbu,
+ //                            @Bu = @Bu,
+ //                            @FromDate = @FromDate,
+ //                            @ToDate = @ToDate";
+
+ //    return await _dbContext[obj]
+ //       .FromSqlRaw(sqlStr,
+ //           new SqlParameter("@CurrencyType", req.CurrencyType),
+ //           new SqlParameter("@Metrics", req.Metrics),
+ //           new SqlParameter("@RegionID", req.RegionCode ?? (object)DBNull.Value),
+ //           new SqlParameter("@CountryID", req.CountryCode ?? (object)DBNull.Value),
+ //           new SqlParameter("@CompanyCode", req.CompanyCode ?? (object)DBNull.Value),
+ //           new SqlParameter("@ProfitCenterID", req.ProfitCenterID ?? (object)DBNull.Value),
+ //           new SqlParameter("@PlantID", req.PlantID ?? (object)DBNull.Value),
+ //           new SqlParameter("@Sbu", req.SbuName ?? (object)DBNull.Value),
+ //           new SqlParameter("@Bu", req.BuName ?? (object)DBNull.Value),
+ //           new SqlParameter("@FromDate", req.FromDate ?? (object)DBNull.Value),
+ //           new SqlParameter("@ToDate", req.ToDate ?? (object)DBNull.Value))
+ //       .ToListAsync();
+ //}
