@@ -1,164 +1,113 @@
-from constroller [Authorize(AuthenticationSchemes = NegotiateDefaults.AuthenticationScheme)]
-[HttpGet("login")]
-public async Task<IActionResult> LoginAPI()
+using Microsoft.Data.SqlClient;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
+using WCICore.Common;
+
+namespace WCI_APIs.Utils
 {
-    var currentUser = User.Identity;
-    if (currentUser!.IsAuthenticated)
+    public class CommonUtils
     {
-        string ip = HttpContext.Connection.RemoteIpAddress!.ToString();
-        string clientId = HttpContext.Connection.LocalIpAddress!.ToString();
-        string ipAddress = ip + "|" + clientId;
-        string browserName = Request.Headers["Sec-Ch-Ua"]!;
-        string userAgent = Request.Headers["User-Agent"]!;
-        string languages = Request.Headers["Accept-Language"]!;
-        languages = languages == null ? "" : languages.Split(",")[0].ToString();
-        string browser = (browserName == null ? "" : browserName) + "|" + languages + "|" + (userAgent == null ? "" : userAgent);
-        var result = await _authenticationService.AuthenticateAsync(currentUser.Name, ipAddress, browser);
-        if (result.StatusCode == SabicConstants.UnAuthorizedStatusCode)
+        public static string GetCurrentSession(HttpContext context)
         {
-            var userInfo = await _authenticationService.GetUserFromCommonDb(currentUser.Name.ToString());
-            if (userInfo != null)
-            {
-                return Unauthorized(new
-                {
-                    StatusMessage = SabicConstants.UnAuthorized,
-                    UserName = userInfo.EmployeeName,
-                    result.StatusCode
-                });
-            }
-            return Unauthorized(new
-            {
-                StatusMessage = SabicConstants.UnAuthorized,
-                UserName = "",
-                result.StatusCode
-            });
+            var claims = context.User.Identity as ClaimsIdentity;
+            Claim? claimUID = claims!.Claims.FirstOrDefault(claim => claim.Type == "uid");
+            var userId = claimUID != null ? claimUID.Value : CommonMethod.GetUserName(context.User.Claims);
+            Claim? JTI = claims!.Claims.FirstOrDefault(claim => claim.Type == "jti");
+            var sessionId = JTI == null ? "" : JTI.Value.ToString();
+            Claim? claimRID = claims!.Claims.FirstOrDefault(claim => claim.Type == "rid");
+            var roleId = claimRID != null ? claimRID.Value : "";
+            Claim? claimDomainLoginID = claims!.Claims.FirstOrDefault(claim => claim.Type == "domainLoginID");
+            var userName = claimDomainLoginID != null ? claimDomainLoginID.Value : "";
+
+            return userId + ":" + sessionId + ":" + roleId + ":" + userName;
         }
-        var refreshToken = _authenticationService.GenerateRefreshToken(currentUser.Name.ToString());
-        if (result.StatusCode == SabicConstants.SuccessStatusCode)
+       
+        public static string GetStatusFromException(Exception ex)
         {
-            return Ok(new TokenResponse<object>(result.Token!, refreshToken.Token));
+            return ex switch
+            {
+                ArgumentException => "Validation Error",
+                UnauthorizedAccessException => "Unauthorized",
+                SqlException => "DataBase Error",
+                TimeoutException => "Timeout Error",
+                NotImplementedException => "Feature Not Implement",
+                NullReferenceException => "Object Reference Not Set",
+                InvalidOperationException => "Invalid Operation",
+                IOException => "File I/O Error",
+                _ => "Unhandle Exception"
+            };
+        }
+
+
+        public static string GetRequestParameters(HttpContext context)
+        {
+            var parameters = new Dictionary<string, object>();
+            foreach (var (key, value) in context.Request.Query)
+            {
+                parameters[$"{key}"] = value;
+            }
+            if (context.Request.HasFormContentType)
+            {
+                foreach (var (key, value) in context.Request.Form)
+                {
+                    parameters[$"{key}"] = value;
+                }
+            }
+            return JsonSerializer.Serialize(parameters);
+        }
+
+        public async Task<string> ReadRequestBodyAsync(HttpRequest request)
+        {
+            try
+            {
+                request.Body.Seek(0, SeekOrigin.Begin);
+                using var reader = new StreamReader(request.Body, leaveOpen: true);
+                var body = await reader.ReadToEndAsync();
+                request.Body.Seek(0, SeekOrigin.Begin);
+                return body;
+            }
+            catch
+            {
+                return "[Could not read request body]";
+            }
+        }
+
+        public async Task<string> ReadResponseBodyAsync(HttpResponse response)
+        {
+            if (response.Body == null)
+                return string.Empty;
+
+            response.Body.Seek(0, SeekOrigin.Begin);
+
+            using var reader = new StreamReader(
+                response.Body,
+                Encoding.UTF8,
+                detectEncodingFromByteOrderMarks: false,
+                leaveOpen: true);
+
+            var body = await reader.ReadToEndAsync();
+
+            response.Body.Seek(0, SeekOrigin.Begin);
+
+            return body;
+        }
+
+
+        public static int GetStatusCodeFromString(string stackTrace)
+        {
+            if (string.IsNullOrEmpty(stackTrace))
+            {
+                return 500;
+            }
+            else
+            {
+                if (stackTrace.Contains("Netword Error")) return 503;
+                if (stackTrace.Contains("Unauthirized")) return 501;
+                if (stackTrace.Contains("not found")) return 404;
+                else return 500;
+
+            }
         }
     }
-    return Unauthorized();
-}
-
-i previously used statis userid not changed so getting error changes like (tempusermock.SetupGet(u => u.Name).Returns(It.IsAny<string>());)
-
-
-
-[Fact]
-public async Task LoginAPI_ReturnsOkResponseWithTokenWhenUserAuthenticatedUserName()
-{
-    var tempusermock = new Mock<ClaimsIdentity>();
-    tempusermock.SetupGet(u => u.IsAuthenticated).Returns(true);
-    tempusermock.SetupGet(u => u.Name).Returns(It.IsAny<string>());
-    var JwtSettingsMock = new Mock<IOptions<JwtSettings>>();
-    var authenticationResponse = new AuthenticationResponse
-    {
-        StatusCode = 200,
-        Token = "token",
-    };
-    var refreshToken = new RefreshToken
-    {
-        Token = "token"
-    };
-    _authenticationServiceMock.Setup(s => s.AuthenticateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-        .ReturnsAsync(authenticationResponse);
-    _authenticationServiceMock.Setup(s => s.GenerateRefreshToken(It.IsAny<string>())).Returns(refreshToken);
-    _authenticationController.ControllerContext = new ControllerContext();
-    _authenticationController.ControllerContext.HttpContext = new DefaultHttpContext()
-    {
-        User = new ClaimsPrincipal(tempusermock.Object),
-    };
-    _authenticationController.ControllerContext.HttpContext.Request.Headers["Sec-Ch-Ua"] = "CHROME";
-    _authenticationController.ControllerContext.HttpContext.Request.Headers["User-Agent"] = "User Agent";
-    _authenticationController.ControllerContext.HttpContext.Request.Headers["Accept-Language"] = "en-US,en;q=0.9";
-    _authenticationController.ControllerContext.HttpContext.User = new ClaimsPrincipal(tempusermock.Object);
-    _authenticationController.ControllerContext.HttpContext.Connection.RemoteIpAddress = new IPAddress(16885952);
-    _authenticationController.ControllerContext.HttpContext.Connection.LocalIpAddress = new IPAddress(16885952);
-    tempusermock.SetupGet(u => u.IsAuthenticated).Returns(true);
-   
-    var result = await _authenticationController.LoginAPI();
-   
-    var okResult = Assert.IsType<OkObjectResult>(result);
-}
-
-[Fact]
-public async Task LoginAPI_ReturnsUnAuthorizedCommonDbWhenUserNotAuthorized()
-{
-    
-    var tempusermock = new Mock<ClaimsIdentity>();
-    tempusermock.SetupGet(u => u.IsAuthenticated).Returns(true);
-    tempusermock.SetupGet(u => u.Name).Returns(It.IsAny<string>());
-    var JwtSettingsMock = new Mock<IOptions<JwtSettings>>();
-    var authenticationResponse = new AuthenticationResponse
-    {
-        StatusCode = 401,
-        Token = "token",
-    };
-    var refreshToken = new RefreshToken
-    {
-        Token = "token"
-    };
-
-    _authenticationServiceMock.Setup(s => s.AuthenticateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-        .ReturnsAsync(authenticationResponse);
-    _authenticationServiceMock.Setup(s => s.GenerateRefreshToken(It.IsAny<string>())).Returns(refreshToken);
-
-    _authenticationServiceMock.Setup(s => s.GetUserFromCommonDb(It.IsAny<string>())).ReturnsAsync(It.IsAny<MSTUserDetailsInfopoint>());
-
-    _authenticationController.ControllerContext = new ControllerContext();
-    _authenticationController.ControllerContext.HttpContext = new DefaultHttpContext()
-    {
-        User = new ClaimsPrincipal(tempusermock.Object),
-    };
-    _authenticationController.ControllerContext.HttpContext.Request.Headers["Sec-Ch-Ua"] = "CHROME";
-    _authenticationController.ControllerContext.HttpContext.Request.Headers["User-Agent"] = "User Agent";
-    _authenticationController.ControllerContext.HttpContext.Request.Headers["Accept-Language"] = "en-US,en;q=0.9";
-    _authenticationController.ControllerContext.HttpContext.User = new ClaimsPrincipal(tempusermock.Object);
-    _authenticationController.ControllerContext.HttpContext.Connection.RemoteIpAddress = new IPAddress(16885952);
-    _authenticationController.ControllerContext.HttpContext.Connection.LocalIpAddress = new IPAddress(16885952);
-    tempusermock.SetupGet(u => u.IsAuthenticated).Returns(true);
-   
-    var result = await _authenticationController.LoginAPI();
-   
-    var okResult = Assert.IsType<UnauthorizedObjectResult>(result);
-}
-
-[Fact]
-public async Task LoginAPI_ReturnsUnAuthorizedWhenUserNotAuthenticated()
-{
-    
-    var tempusermock = new Mock<ClaimsIdentity>();
-    tempusermock.SetupGet(u => u.IsAuthenticated).Returns(true);
-    tempusermock.SetupGet(u => u.Name).Returns(It.IsAny<string>());
-    var JwtSettingsMock = new Mock<IOptions<JwtSettings>>();
-    var authenticationResponse = new AuthenticationResponse
-    {
-        StatusCode = 401,
-        Token = "token",
-    };
-    var refreshToken = new RefreshToken
-    {
-        Token = "token"
-    };
-    _authenticationServiceMock.Setup(s => s.AuthenticateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-        .ReturnsAsync(authenticationResponse);
-    _authenticationServiceMock.Setup(s => s.GenerateRefreshToken(It.IsAny<string>())).Returns(refreshToken);
-    _authenticationController.ControllerContext = new ControllerContext();
-    _authenticationController.ControllerContext.HttpContext = new DefaultHttpContext()
-    {
-        User = new ClaimsPrincipal(tempusermock.Object),
-    };
-    _authenticationController.ControllerContext.HttpContext.Request.Headers["Sec-Ch-Ua"] = "CHROME";
-    _authenticationController.ControllerContext.HttpContext.Request.Headers["User-Agent"] = "User Agent";
-    _authenticationController.ControllerContext.HttpContext.Request.Headers["Accept-Language"] = "en-US,en;q=0.9";
-    _authenticationController.ControllerContext.HttpContext.User = new ClaimsPrincipal(tempusermock.Object);
-    _authenticationController.ControllerContext.HttpContext.Connection.RemoteIpAddress = new IPAddress(16885952);
-    _authenticationController.ControllerContext.HttpContext.Connection.LocalIpAddress = new IPAddress(16885952);
-    tempusermock.SetupGet(u => u.IsAuthenticated).Returns(true);
-   
-    var result = await _authenticationController.LoginAPI();
-   
-    var okResult = Assert.IsType<UnauthorizedObjectResult>(result);
 }
