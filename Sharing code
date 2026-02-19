@@ -1,30 +1,164 @@
-[HttpPost("InsertUserActivity")]
-public async Task<IActionResult> InsertUserActivity([FromBody] InsertUserActivity InsertUserActivity)
+from constroller [Authorize(AuthenticationSchemes = NegotiateDefaults.AuthenticationScheme)]
+[HttpGet("login")]
+public async Task<IActionResult> LoginAPI()
 {
-    var claims = HttpContext.User.Identity as ClaimsIdentity;
-    var claimDomainLoginID = claims?.Claims.FirstOrDefault(claim => claim.Type == "domainLoginID")?.Value;
-    InsertUserActivity.CreatedBy = claimDomainLoginID;
-    await _iActivityMonitoringService.InsertUserActivity(InsertUserActivity);
-    return StatusCode(StatusCodes.Status200OK, "Activity tracked");
+    var currentUser = User.Identity;
+    if (currentUser!.IsAuthenticated)
+    {
+        string ip = HttpContext.Connection.RemoteIpAddress!.ToString();
+        string clientId = HttpContext.Connection.LocalIpAddress!.ToString();
+        string ipAddress = ip + "|" + clientId;
+        string browserName = Request.Headers["Sec-Ch-Ua"]!;
+        string userAgent = Request.Headers["User-Agent"]!;
+        string languages = Request.Headers["Accept-Language"]!;
+        languages = languages == null ? "" : languages.Split(",")[0].ToString();
+        string browser = (browserName == null ? "" : browserName) + "|" + languages + "|" + (userAgent == null ? "" : userAgent);
+        var result = await _authenticationService.AuthenticateAsync(currentUser.Name, ipAddress, browser);
+        if (result.StatusCode == SabicConstants.UnAuthorizedStatusCode)
+        {
+            var userInfo = await _authenticationService.GetUserFromCommonDb(currentUser.Name.ToString());
+            if (userInfo != null)
+            {
+                return Unauthorized(new
+                {
+                    StatusMessage = SabicConstants.UnAuthorized,
+                    UserName = userInfo.EmployeeName,
+                    result.StatusCode
+                });
+            }
+            return Unauthorized(new
+            {
+                StatusMessage = SabicConstants.UnAuthorized,
+                UserName = "",
+                result.StatusCode
+            });
+        }
+        var refreshToken = _authenticationService.GenerateRefreshToken(currentUser.Name.ToString());
+        if (result.StatusCode == SabicConstants.SuccessStatusCode)
+        {
+            return Ok(new TokenResponse<object>(result.Token!, refreshToken.Token));
+        }
+    }
+    return Unauthorized();
 }
+
+i previously used statis userid not changed so getting error
+
 
 
 [Fact]
-public async Task InsertUserActivityTest()
+public async Task LoginAPI_ReturnsOkResponseWithTokenWhenUserAuthenticatedUserName()
 {
-
-    var expectedLoginId = "testuser";
-    var claim = new List<Claim> { new Claim("domainLoginID", expectedLoginId) };
-    var identity = new ClaimsIdentity(claim, "TesrAuthType");
-    _activityMonitoringController.ControllerContext = new ControllerContext
+    var tempusermock = new Mock<ClaimsIdentity>();
+    tempusermock.SetupGet(u => u.IsAuthenticated).Returns(true);
+    tempusermock.SetupGet(u => u.Name).Returns(It.IsAny<string>());
+    var JwtSettingsMock = new Mock<IOptions<JwtSettings>>();
+    var authenticationResponse = new AuthenticationResponse
     {
-        HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(identity) }
+        StatusCode = 200,
+        Token = "token",
+    };
+    var refreshToken = new RefreshToken
+    {
+        Token = "token"
+    };
+    _authenticationServiceMock.Setup(s => s.AuthenticateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+        .ReturnsAsync(authenticationResponse);
+    _authenticationServiceMock.Setup(s => s.GenerateRefreshToken(It.IsAny<string>())).Returns(refreshToken);
+    _authenticationController.ControllerContext = new ControllerContext();
+    _authenticationController.ControllerContext.HttpContext = new DefaultHttpContext()
+    {
+        User = new ClaimsPrincipal(tempusermock.Object),
+    };
+    _authenticationController.ControllerContext.HttpContext.Request.Headers["Sec-Ch-Ua"] = "CHROME";
+    _authenticationController.ControllerContext.HttpContext.Request.Headers["User-Agent"] = "User Agent";
+    _authenticationController.ControllerContext.HttpContext.Request.Headers["Accept-Language"] = "en-US,en;q=0.9";
+    _authenticationController.ControllerContext.HttpContext.User = new ClaimsPrincipal(tempusermock.Object);
+    _authenticationController.ControllerContext.HttpContext.Connection.RemoteIpAddress = new IPAddress(16885952);
+    _authenticationController.ControllerContext.HttpContext.Connection.LocalIpAddress = new IPAddress(16885952);
+    tempusermock.SetupGet(u => u.IsAuthenticated).Returns(true);
+   
+    var result = await _authenticationController.LoginAPI();
+   
+    var okResult = Assert.IsType<OkObjectResult>(result);
+}
+
+[Fact]
+public async Task LoginAPI_ReturnsUnAuthorizedCommonDbWhenUserNotAuthorized()
+{
+    
+    var tempusermock = new Mock<ClaimsIdentity>();
+    tempusermock.SetupGet(u => u.IsAuthenticated).Returns(true);
+    tempusermock.SetupGet(u => u.Name).Returns(It.IsAny<string>());
+    var JwtSettingsMock = new Mock<IOptions<JwtSettings>>();
+    var authenticationResponse = new AuthenticationResponse
+    {
+        StatusCode = 401,
+        Token = "token",
+    };
+    var refreshToken = new RefreshToken
+    {
+        Token = "token"
     };
 
-    var result = await _activityMonitoringController.InsertUserActivity(It.IsAny<InsertUserActivity>());
+    _authenticationServiceMock.Setup(s => s.AuthenticateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+        .ReturnsAsync(authenticationResponse);
+    _authenticationServiceMock.Setup(s => s.GenerateRefreshToken(It.IsAny<string>())).Returns(refreshToken);
 
+    _authenticationServiceMock.Setup(s => s.GetUserFromCommonDb(It.IsAny<string>())).ReturnsAsync(It.IsAny<MSTUserDetailsInfopoint>());
+
+    _authenticationController.ControllerContext = new ControllerContext();
+    _authenticationController.ControllerContext.HttpContext = new DefaultHttpContext()
+    {
+        User = new ClaimsPrincipal(tempusermock.Object),
+    };
+    _authenticationController.ControllerContext.HttpContext.Request.Headers["Sec-Ch-Ua"] = "CHROME";
+    _authenticationController.ControllerContext.HttpContext.Request.Headers["User-Agent"] = "User Agent";
+    _authenticationController.ControllerContext.HttpContext.Request.Headers["Accept-Language"] = "en-US,en;q=0.9";
+    _authenticationController.ControllerContext.HttpContext.User = new ClaimsPrincipal(tempusermock.Object);
+    _authenticationController.ControllerContext.HttpContext.Connection.RemoteIpAddress = new IPAddress(16885952);
+    _authenticationController.ControllerContext.HttpContext.Connection.LocalIpAddress = new IPAddress(16885952);
+    tempusermock.SetupGet(u => u.IsAuthenticated).Returns(true);
    
-    var objectResult = Assert.IsType<ObjectResult>(result);
-    //Assert.Equal(result..StatusCode, objectResult.StatusCode);
-    Assert.NotNull(result);
+    var result = await _authenticationController.LoginAPI();
+   
+    var okResult = Assert.IsType<UnauthorizedObjectResult>(result);
+}
+
+[Fact]
+public async Task LoginAPI_ReturnsUnAuthorizedWhenUserNotAuthenticated()
+{
+    
+    var tempusermock = new Mock<ClaimsIdentity>();
+    tempusermock.SetupGet(u => u.IsAuthenticated).Returns(true);
+    tempusermock.SetupGet(u => u.Name).Returns(It.IsAny<string>());
+    var JwtSettingsMock = new Mock<IOptions<JwtSettings>>();
+    var authenticationResponse = new AuthenticationResponse
+    {
+        StatusCode = 401,
+        Token = "token",
+    };
+    var refreshToken = new RefreshToken
+    {
+        Token = "token"
+    };
+    _authenticationServiceMock.Setup(s => s.AuthenticateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+        .ReturnsAsync(authenticationResponse);
+    _authenticationServiceMock.Setup(s => s.GenerateRefreshToken(It.IsAny<string>())).Returns(refreshToken);
+    _authenticationController.ControllerContext = new ControllerContext();
+    _authenticationController.ControllerContext.HttpContext = new DefaultHttpContext()
+    {
+        User = new ClaimsPrincipal(tempusermock.Object),
+    };
+    _authenticationController.ControllerContext.HttpContext.Request.Headers["Sec-Ch-Ua"] = "CHROME";
+    _authenticationController.ControllerContext.HttpContext.Request.Headers["User-Agent"] = "User Agent";
+    _authenticationController.ControllerContext.HttpContext.Request.Headers["Accept-Language"] = "en-US,en;q=0.9";
+    _authenticationController.ControllerContext.HttpContext.User = new ClaimsPrincipal(tempusermock.Object);
+    _authenticationController.ControllerContext.HttpContext.Connection.RemoteIpAddress = new IPAddress(16885952);
+    _authenticationController.ControllerContext.HttpContext.Connection.LocalIpAddress = new IPAddress(16885952);
+    tempusermock.SetupGet(u => u.IsAuthenticated).Returns(true);
+   
+    var result = await _authenticationController.LoginAPI();
+   
+    var okResult = Assert.IsType<UnauthorizedObjectResult>(result);
 }
