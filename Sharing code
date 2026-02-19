@@ -42,7 +42,7 @@ public async Task<IActionResult> LoginAPI()
     return Unauthorized();
 }
 
-i previously used statis userid not changed so getting error
+i previously used statis userid not changed so getting error changes like (tempusermock.SetupGet(u => u.Name).Returns(It.IsAny<string>());)
 
 
 
