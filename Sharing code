@@ -1,40 +1,30 @@
- [HttpGet("GetUserDetails")]
- public async Task<IActionResult> GetUserDetails()
- {
-     var claims = HttpContext.User.Identity as ClaimsIdentity;
-     var claimDomainLoginID = claims?.Claims.FirstOrDefault(claim => claim.Type == "domainLoginID")?.Value;
-     UserModel userAuthenticateModel = new UserModel();
-     if (claimDomainLoginID != null)
-     {
-         userAuthenticateModel = await _accountService.GetUserbyLoginIdAsync(claimDomainLoginID);
-         return StatusCode(userAuthenticateModel.StatusCode, userAuthenticateModel);
-     }
-     else
-     {
-         userAuthenticateModel.StatusMessage = "Username not found from system";
-         userAuthenticateModel.StatusCode = 404;
-         return StatusCode(userAuthenticateModel.StatusCode, userAuthenticateModel);
-     }
- }
+[HttpPost("InsertUserActivity")]
+public async Task<IActionResult> InsertUserActivity([FromBody] InsertUserActivity InsertUserActivity)
+{
+    var claims = HttpContext.User.Identity as ClaimsIdentity;
+    var claimDomainLoginID = claims?.Claims.FirstOrDefault(claim => claim.Type == "domainLoginID")?.Value;
+    InsertUserActivity.CreatedBy = claimDomainLoginID;
+    await _iActivityMonitoringService.InsertUserActivity(InsertUserActivity);
+    return StatusCode(StatusCodes.Status200OK, "Activity tracked");
+}
 
- [Fact]
- public async Task GetUserDetails_ReturnsUserDetails_WhenClaimDomainLoginIDExists()
- {
 
-     var claim = new ClaimsIdentity();
-     _accountController.ControllerContext = new ControllerContext
-     {
-         HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(claim) }
-     };
-     var userModel = new UserModel { StatusCode = 200, };
-     _accountServiceMock.Setup(s => s.GetUserbyLoginIdAsync(It.IsAny<string>())).ReturnsAsync(userModel);
+[Fact]
+public async Task InsertUserActivityTest()
+{
 
-     
-     var result = await _accountController.GetUserDetails();
+    var expectedLoginId = "testuser";
+    var claim = new List<Claim> { new Claim("domainLoginID", expectedLoginId) };
+    var identity = new ClaimsIdentity(claim, "TesrAuthType");
+    _activityMonitoringController.ControllerContext = new ControllerContext
+    {
+        HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(identity) }
+    };
 
-     
-     var objectResult = Assert.IsType<ObjectResult>(result);
-     Assert.Equal(userModel.StatusCode, objectResult.StatusCode);
-     Assert.Equal(userModel, objectResult.Value);
-     Assert.NotNull(result);
- }
+    var result = await _activityMonitoringController.InsertUserActivity(It.IsAny<InsertUserActivity>());
+
+   
+    var objectResult = Assert.IsType<ObjectResult>(result);
+    //Assert.Equal(result..StatusCode, objectResult.StatusCode);
+    Assert.NotNull(result);
+}
