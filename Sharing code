@@ -1,243 +1,213 @@
-Perfect 👍 I’ll guide you method-by-method how to refactor and how to use each properly in .NET Core 8 (clean architecture style).
-
-We’ll convert your old CommonUtils into proper services + helpers and show:
-
-✔ Where to place
-
-✔ How to register
-
-✔ How to use in Controller
-
-✔ How to use in Middleware
-
-🔹 1️⃣ GetCurrentSession → Session Service
-✅ Model
-public class CurrentSessionInfo
-{
-    public string UserId { get; set; } = string.Empty;
-    public string SessionId { get; set; } = string.Empty;
-    public string RoleId { get; set; } = string.Empty;
-    public string DomainLoginId { get; set; } = string.Empty;
-}
-
-✅ Interface
-public interface ICurrentSessionService
-{
-    CurrentSessionInfo GetCurrentSession(HttpContext context);
-}
-
-✅ Implementation
-public class CurrentSessionService : ICurrentSessionService
-{
-    public CurrentSessionInfo GetCurrentSession(HttpContext context)
+ public class WCIDbContext : DbContext
+ {
+     public WCIDbContext(DbContextOptions<WCIDbContext> options) : base(options) { }
+     public virtual DbSet<User> User { get; set; }
+     public virtual DbSet<UserMenu> UserMenu { get; set; }
+     public virtual DbSet<UserAuth> UserAuth { get; set; }
+     public virtual DbSet<BaseFilterResult> BaseFilterResult { get; set; }
+     public virtual DbSet<MoreFiltersSBUandBUResult> MoreFiltersSBUandBUResult { get; set; }
+     public virtual DbSet<MoreFiltersProfitCenterResult> MoreFiltersProfitCenterResult { get; set; }
+     public virtual DbSet<MoreFiltersPlantResult> MoreFiltersPlantResult { get; set; }
+------------------------
+ protected override void OnModelCreating(ModelBuilder modelBuilder)
+ {
+     modelBuilder.ApplyConfigurationsFromAssembly(typeof(WCIDbContext).Assembly);
+     modelBuilder.Entity<User>(eb => { eb.HasNoKey(); });
+     modelBuilder.Entity<UserMenuAccessModel>(eb => { eb.HasNoKey(); });
+     modelBuilder.Entity<UserMenu>(eb => { eb.HasNoKey(); });
+     modelBuilder.Entity<UserAuth>(eb => { eb.HasNoKey(); });
+     modelBuilder.Entity<UserDetails>(eb => { eb.HasNoKey(); });
+     modelBuilder.Entity<BaseFilterResult>(eb => { eb.HasNoKey(); });
+     modelBuilder.Entity<MoreFiltersSBUandBUResult>(eb => { eb.HasNoKey(); });
+     modelBuilder.Entity<MoreFiltersProfitCenterResult>(eb => { eb.HasNoKey(); });
+     modelBuilder.Entity<MoreFiltersPlantResult>(eb => { eb.HasNoKey(); });
+----------------------------------------
+    public class UserManagementRepository : IUserManagementRepository
     {
-        var claims = context.User.Identity as ClaimsIdentity;
-
-        return new CurrentSessionInfo
+        private readonly WCIDbContext _dbContext;
+        private readonly CommonDbContext _commonDbContext;
+        public UserManagementRepository(WCIDbContext dbContext, CommonDbContext commonDbContext)
         {
-            UserId = claims?.FindFirst("uid")?.Value
-                     ?? CommonMethod.GetUserName(context.User.Claims),
-
-            SessionId = claims?.FindFirst("jti")?.Value ?? "",
-
-            RoleId = claims?.FindFirst("rid")?.Value ?? "",
-
-            DomainLoginId = claims?.FindFirst("domainLoginID")?.Value ?? ""
-        };
-    }
-}
-
-✅ Register in Program.cs
-builder.Services.AddScoped<ICurrentSessionService, CurrentSessionService>();
-
-✅ Use in Controller
-private readonly ICurrentSessionService _sessionService;
-
-public MyController(ICurrentSessionService sessionService)
-{
-    _sessionService = sessionService;
-}
-
-public IActionResult Test()
-{
-    var session = _sessionService.GetCurrentSession(HttpContext);
-
-    return Ok(session.UserId);
-}
-
-✅ Use in Middleware
-public class LoggingMiddleware
-{
-    private readonly RequestDelegate _next;
-    private readonly ICurrentSessionService _sessionService;
-
-    public LoggingMiddleware(
-        RequestDelegate next,
-        ICurrentSessionService sessionService)
-    {
-        _next = next;
-        _sessionService = sessionService;
-    }
-
-    public async Task InvokeAsync(HttpContext context)
-    {
-        var session = _sessionService.GetCurrentSession(context);
-
-        await _next(context);
-    }
-}
-
-
-Register:
-
-app.UseMiddleware<LoggingMiddleware>();
-
-🔹 2️⃣ GetStatusFromException → Exception Mapper (Static OK)
-
-This has no dependency → keep static.
-
-✅ Create
-public static class ExceptionMapper
-{
-    public static string GetStatus(Exception ex)
-    {
-        return ex switch
+            _dbContext = dbContext;
+            _commonDbContext = commonDbContext;
+        }
+        public async Task<List<UserAuth>> IsAuthenticationUser(string userName)
         {
-            ArgumentException => "Validation Error",
-            UnauthorizedAccessException => "Unauthorized",
-            SqlException => "Database Error",
-            TimeoutException => "Timeout Error",
-            _ => "Unhandled Exception"
-        };
-    }
-}
-
-✅ Use Anywhere
-catch (Exception ex)
-{
-    var message = ExceptionMapper.GetStatus(ex);
-}
-
-🔹 3️⃣ GetRequestParameters → Request Logger Helper
-
-Since it uses HttpContext → better as service.
-
-✅ Interface
-public interface IRequestLoggingService
-{
-    string GetRequestParameters(HttpContext context);
-    Task<string> ReadRequestBodyAsync(HttpRequest request);
-    Task<string> ReadResponseBodyAsync(HttpResponse response);
-}
-
-✅ Implementation
-public class RequestLoggingService : IRequestLoggingService
-{
-    public string GetRequestParameters(HttpContext context)
-    {
-        var parameters = new Dictionary<string, object>();
-
-        foreach (var (key, value) in context.Request.Query)
-        {
-            parameters[key] = value.ToString();
+            return await _dbContext.UserAuth
+                .FromSqlRaw("EXEC [dbo].[SP_IsInternal_AuthenticatedUser] @UserName",
+                    new SqlParameter("@UserName", userName))
+                .ToListAsync();
         }
 
-        if (context.Request.HasFormContentType)
+        public async Task<List<UserMenu>> GetUserMenuList(int? userId, int? roleId)
         {
-            foreach (var (key, value) in context.Request.Form)
+            return await _dbContext.UserMenu
+                .FromSqlRaw("EXEC [dbo].[SP_GetUserMenus] @UserID, @RoleID",
+                    new SqlParameter("@UserID", userId ?? (object)DBNull.Value),
+                    new SqlParameter("@RoleID", roleId ?? (object)DBNull.Value))
+                .ToListAsync();
+        }
+
+        public async Task<List<User>> GetUserList()
+        {
+            return await _dbContext.User
+                .FromSqlRaw("EXEC [dbo].[SP_GetUsers]")
+                .ToListAsync();
+        }
+
+        public async Task<InsertUpdateUserRes> InsertUpdateUserReq(InsertUpdateUserReq req)
+        {
+            var parameters = new[]
             {
-                parameters[key] = value.ToString();
-            }
+                new SqlParameter("@UserID", req.UserID),
+                new SqlParameter("@UserRoleIDs", req.UserRoleIDs ?? string.Empty),
+                new SqlParameter("@UserName", req.UserName ?? string.Empty),
+                new SqlParameter("@Email", req.Email ?? string.Empty),
+                new SqlParameter("@FirstName", req.FirstName ?? string.Empty),
+                new SqlParameter("@LastName", req.LastName ?? string.Empty),
+                new SqlParameter("@EmployeeID", req.EmployeeID ?? string.Empty),
+                new SqlParameter("@AffiliateID", req.AffiliateID),
+                new SqlParameter("@StatusID", req.StatusID),
+                new SqlParameter("@CreatedBy", req.CreatedBy),
+                new SqlParameter("@IsInsert", req.IsInsert)
+            };
+
+            var result = _dbContext.Database.SqlQueryRaw<string>(
+                "EXEC dbo.SP_Insert_Update_AssignedUser @UserID, @UserRoleIDs, @UserName, @Email, @FirstName, @LastName, @EmployeeID, @AffiliateID, @StatusID, @CreatedBy, @IsInsert",
+                parameters)
+                .AsEnumerable()
+                .FirstOrDefault();
+
+            return new InsertUpdateUserRes { Message = result ?? string.Empty };
         }
 
-        return JsonSerializer.Serialize(parameters);
-    }
+        public async Task<string> DeactivateUserReq(DeactivateUserReq req)
+        {
+            var response = await _dbContext.Database.ExecuteSqlRawAsync(
+                "EXEC dbo.SP_Update_User_IsActivated @UserID, @IsActivated, @UpdatedBy",
+                new SqlParameter("@UserID", req.UserID),
+                new SqlParameter("@IsActivated", req.IsActivated),
+                new SqlParameter("@UpdatedBy", req.UpdatedBy)
+            );
 
-    public async Task<string> ReadRequestBodyAsync(HttpRequest request)
-    {
-        request.EnableBuffering();
-        request.Body.Seek(0, SeekOrigin.Begin);
+            return response == 0 ? SabicConstants.RecordNotFoundMessage : SabicConstants.SuccessMessage;
+        }
 
-        using var reader = new StreamReader(request.Body, leaveOpen: true);
-        var body = await reader.ReadToEndAsync();
+        public async Task<List<SearchUser>> GetSearchUserListFromAD(string searchText)
+        {
+            var searchUsers = new List<SearchUser>();
 
-        request.Body.Seek(0, SeekOrigin.Begin);
+            if (!string.IsNullOrWhiteSpace(searchText) && searchText.Length > 3)
+            {
+                var lstSearchUserFromCommonDb = await _commonDbContext.MST_UserDetails_Infopoint
+                    .Where(x =>
+                        (x.DomainLoginID ?? "").Replace("SABICCORP\\", "").ToLower().Contains(searchText.ToLower().Trim()) ||
+                        (x.Email ?? "").ToLower().Contains(searchText.ToLower().Trim()) ||
+                        (x.EmployeeName ?? "").ToLower().Contains(searchText.ToLower().Trim()))
+                    .ToListAsync();
 
-        return body;
-    }
+                searchUsers.AddRange(lstSearchUserFromCommonDb.Select(item => new SearchUser
+                {
+                    EmployeeID = Convert.ToString(item.EmployeeID),
+                    LoginName = item.DomainLoginID!.Replace("SABIC\\", "SABICCORP\\"),
+                    FirstName = item.FirstName!,
+                    LastName = item.LastName!,
+                    UserName = item.FirstName + " " + item.LastName,
+                    Email = item.Email!
+                }));
+            }
 
-    public async Task<string> ReadResponseBodyAsync(HttpResponse response)
-    {
-        response.Body.Seek(0, SeekOrigin.Begin);
+            return searchUsers;
+        }
 
-        using var reader = new StreamReader(response.Body, leaveOpen: true);
-        var body = await reader.ReadToEndAsync();
+        public async Task<List<Role>> GetRoleList()
+        {
+            return await _dbContext.Roles
+                .FromSqlRaw("EXEC [dbo].[SP_GetRole]")
+                .ToListAsync();
+        }
 
-        response.Body.Seek(0, SeekOrigin.Begin);
+        public async Task<List<Affiliate>> GetAffiliateList()
+        {
+            return await _dbContext.Affiliates
+                .FromSqlRaw("EXEC [dbo].[SP_GetAffiliateForUserManagement]")
+                .ToListAsync();
+        }
 
-        return body;
-    }
-}
+        public async Task<UserMenuAccessModel> IsAuthorizedUserMenu(UserNameWithMenu req)
+        {
+            var res = await _dbContext.UserMenuAccessModel
+                .FromSqlRaw("EXEC dbo.SP_CheckUserMenuAccess @UserID, @MenuID",
+                    new SqlParameter("@UserID", req.UserID!),
+                    new SqlParameter("@MenuID", req.MenuID))
+                .ToListAsync();
 
-✅ Register
-builder.Services.AddScoped<IRequestLoggingService, RequestLoggingService>();
-
-✅ Use Inside Middleware
-public class RequestResponseMiddleware
-{
-    private readonly RequestDelegate _next;
-    private readonly IRequestLoggingService _loggingService;
-
-    public RequestResponseMiddleware(
-        RequestDelegate next,
-        IRequestLoggingService loggingService)
-    {
-        _next = next;
-        _loggingService = loggingService;
-    }
-
-    public async Task InvokeAsync(HttpContext context)
-    {
-        var parameters = _loggingService.GetRequestParameters(context);
-        var requestBody = await _loggingService.ReadRequestBodyAsync(context.Request);
-
-        await _next(context);
-    }
-}
-
-🔹 4️⃣ GetStatusCodeFromString → Static HTTP Mapper
-
-No dependency → keep static.
-
-public static class HttpStatusMapper
-{
-    public static int GetStatusCode(string message)
-    {
-        if (string.IsNullOrEmpty(message))
-            return 500;
-
-        if (message.Contains("Network Error")) return 503;
-        if (message.Contains("Unauthorized")) return 401;
-        if (message.Contains("not found")) return 404;
-
-        return 500;
+            return res.FirstOrDefault()!;
+        }
     }
 }
+---------------------------------------------
+  public class UserManagementService : IUserManagementService
+  {
+      private readonly IUserManagementRepository _userManagementRepository;
+      public UserManagementService(IUserManagementRepository userManagementRepository)
+      {
+          _userManagementRepository = userManagementRepository;
+      }
+      public async Task<UserAuthenticationModel> GetUserAuthenticationReq(string userName)
+      {
+          var result = await _userManagementRepository.IsAuthenticationUser(userName);
+          var (message, code) = CommonMethod.GetStatus(result?.Count ?? 0);
 
-🏗 Final Folder Structure
-Services/
-   Session/
-      ICurrentSessionService.cs
-      CurrentSessionService.cs
+          return new UserAuthenticationModel
+          {
+              StatusMessage = message,
+              StatusCode = code,
+              UserAuth = result?.FirstOrDefault()
+          };
+      }
 
-   Logging/
-      IRequestLoggingService.cs
-      RequestLoggingService.cs
+      public async Task<UserMenuModel> GetUserMenuList(int userId, int roleId)
+      {
+          UserMenuModel userMenuModel = new UserMenuModel();
+          var userMenus = await _userManagementRepository.GetUserMenuList(userId, roleId);
 
-Utilities/
-   ExceptionMapper.cs
-   HttpStatusMapper.cs
+          if (userMenus.Count > 0)
+          {
+              userMenuModel.StatusMessage = SabicConstants.SuccessMessage;
+              userMenuModel.StatusCode = SabicConstants.SuccessStatusCode;
+              userMenuModel.UserMenus = userMenus;
+          }
+          else
+          {
+              userMenuModel.StatusMessage = SabicConstants.RecordNotFoundMessage;
+              userMenuModel.StatusCode = SabicConstants.RecordNotFoundStatusCode;
+          }
+          return userMenuModel;
 
-Middleware/
-   LoggingMiddleware.cs
-   RequestResponseMiddleware.cs
+-------------------------
+ [Route("api/userManagement")]
+ [ApiController]
+ public class UserManagementController : BaseController
+ {
+     private readonly IUserManagementService _userManagementService;
+     public UserManagementController(IUserManagementService userManagementService)
+     {
+         _userManagementService = userManagementService;
+     }
+     [HttpGet("getUserList")]
+
+     public async Task<IActionResult> GetUserList()
+     {
+         UserListModel userModel = await _userManagementService.GetUserList();
+         return StatusCode(userModel.StatusCode, userModel);
+     }
+
+     [HttpGet("getUserMenuList")]
+
+     public async Task<IActionResult> GetUserMenuList(int userId, int roleId)
+     {
+
+         UserMenuModel userMenuModel = await _userManagementService.GetUserMenuList(userId, roleId);
+         return StatusCode(userMenuModel.StatusCode, userMenuModel);
+     }
