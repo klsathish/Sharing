@@ -1,3 +1,4 @@
+error
 
 Unmapped members were found. Review the types and members below.
 Add a custom mapping expression, ignore, add a custom resolver, or modify the source/destination type
@@ -18,3 +19,52 @@ Unmapped properties:
 StatusCode
 StatusMessage
 ErrorMessage
+
+0-----------------
+using AutoMapper;
+using WCICore.Dtos.UserManagement;
+using WCICore.Model;
+using WCICore.Models;
+
+namespace WCIInfrastructure.MappingProfile
+{
+    public class MappingProfile : Profile
+    {
+        public MappingProfile()
+        {
+            CreateMap<User, UserDto>();
+            CreateMap<UserAuth, UserAuthDto>();
+            CreateMap<UserMenu, UserMenuDto>();
+            CreateMap<InsertUpdateUserRes, InsertUpdateUserDto>(MemberList.None)
+                .ForMember(dest => dest.StatusCode, opt => opt.Ignore())
+                .ForMember(dest => dest.StatusMessage, opt => opt.Ignore())
+                .ForMember(dest => dest.ErrorMessage, opt => opt.Ignore());
+            CreateMap<SearchUser, SearchUserDto>();
+            CreateMap<UserMenuAccessModel, UserMenuAccessDto>(MemberList.None)
+                .ForMember(dest => dest.StatusCode, opt => opt.Ignore())
+                .ForMember(dest => dest.StatusMessage, opt => opt.Ignore())
+                .ForMember(dest => dest.ErrorMessage, opt => opt.Ignore());
+        }
+    }
+}
+
+-----------------------
+--source
+public class InsertUpdateUserRes
+{
+    public string Message { get; set; } = string.Empty;
+}
+--dest
+ public class InsertUpdateUserDto : CommonRes
+ {
+     public string Message { get; set; } = string.Empty;
+ }
+public class CommonRes
+{
+    [NotMapped]
+    public int StatusCode { get; set; }
+    [NotMapped]
+    public string? StatusMessage { get; set; }
+    [NotMapped]
+    public string? ErrorMessage { get; set; }
+}
