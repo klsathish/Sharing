@@ -1,70 +1,26 @@
-error
-
-Unmapped members were found. Review the types and members below.
-Add a custom mapping expression, ignore, add a custom resolver, or modify the source/destination type
-For no matching constructor, add a no-arg ctor, add optional arguments, or map all of the constructor parameters
-======================================================================================
-InsertUpdateUserRes -> InsertUpdateUserDto (Destination member list)
-WCICore.Models.InsertUpdateUserRes -> WCICore.Dtos.UserManagement.InsertUpdateUserDto (Destination member list)
-
-Unmapped properties:
-StatusCode
-StatusMessage
-ErrorMessage
-===================================================================================
-UserMenuAccessModel -> UserMenuAccessDto (Destination member list)
-WCICore.Model.UserMenuAccessModel -> WCICore.Dtos.UserManagement.UserMenuAccessDto (Destination member list)
-
-Unmapped properties:
-StatusCode
-StatusMessage
-ErrorMessage
-
-0-----------------
-using AutoMapper;
-using WCICore.Dtos.UserManagement;
-using WCICore.Model;
-using WCICore.Models;
-
-namespace WCIInfrastructure.MappingProfile
-{
-    public class MappingProfile : Profile
-    {
-        public MappingProfile()
-        {
-            CreateMap<User, UserDto>();
-            CreateMap<UserAuth, UserAuthDto>();
-            CreateMap<UserMenu, UserMenuDto>();
-            CreateMap<InsertUpdateUserRes, InsertUpdateUserDto>(MemberList.None)
-                .ForMember(dest => dest.StatusCode, opt => opt.Ignore())
-                .ForMember(dest => dest.StatusMessage, opt => opt.Ignore())
-                .ForMember(dest => dest.ErrorMessage, opt => opt.Ignore());
-            CreateMap<SearchUser, SearchUserDto>();
-            CreateMap<UserMenuAccessModel, UserMenuAccessDto>(MemberList.None)
-                .ForMember(dest => dest.StatusCode, opt => opt.Ignore())
-                .ForMember(dest => dest.StatusMessage, opt => opt.Ignore())
-                .ForMember(dest => dest.ErrorMessage, opt => opt.Ignore());
-        }
-    }
-}
-
------------------------
---source
-public class InsertUpdateUserRes
-{
-    public string Message { get; set; } = string.Empty;
-}
---dest
- public class InsertUpdateUserDto : CommonRes
- {
-     public string Message { get; set; } = string.Empty;
- }
-public class CommonRes
-{
-    [NotMapped]
-    public int StatusCode { get; set; }
-    [NotMapped]
-    public string? StatusMessage { get; set; }
-    [NotMapped]
-    public string? ErrorMessage { get; set; }
-}
+crit: Microsoft.AspNetCore.Hosting.Diagnostics[6]
+      Application startup exception
+      System.InvalidOperationException: Cannot resolve scoped service 'WCI_APIs.Services.Session.ICurrentSessionService' from root provider.
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteValidator.ValidateResolution(ServiceCallSite callSite, IServiceScope scope, IServiceScope rootScope)
+         at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+         at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(Type serviceType)
+         at Microsoft.Extensions.Internal.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+         at Microsoft.Extensions.Internal.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+         at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.ReflectionMiddlewareBinder.CreateMiddleware(RequestDelegate next)
+         at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+         at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+         at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+fail: Microsoft.Extensions.Hosting.Internal.Host[11]
+      Hosting failed to start
+      System.InvalidOperationException: Cannot resolve scoped service 'WCI_APIs.Services.Session.ICurrentSessionService' from root provider.
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteValidator.ValidateResolution(ServiceCallSite callSite, IServiceScope scope, IServiceScope rootScope)
+         at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+         at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(Type serviceType)
+         at Microsoft.Extensions.Internal.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+         at Microsoft.Extensions.Internal.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+         at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.ReflectionMiddlewareBinder.CreateMiddleware(RequestDelegate next)
+         at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+         at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+         at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+         at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+         at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
