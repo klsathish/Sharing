@@ -1,110 +1,20 @@
- public class WCIDbContext : DbContext
- {
-     public WCIDbContext(DbContextOptions<WCIDbContext> options) : base(options) { }
-     public virtual DbSet<User> User { get; set; }
-     public virtual DbSet<UserMenu> UserMenu { get; set; }
-     public virtual DbSet<UserAuth> UserAuth { get; set; }
-     public virtual DbSet<BaseFilterResult> BaseFilterResult { get; set; }
-     public virtual DbSet<MoreFiltersSBUandBUResult> MoreFiltersSBUandBUResult { get; set; }
-     public virtual DbSet<MoreFiltersProfitCenterResult> MoreFiltersProfitCenterResult { get; set; }
-     public virtual DbSet<MoreFiltersPlantResult> MoreFiltersPlantResult { get; set; }
-     public virtual DbSet<ExceptionResults> ExceptionResults { get; set; }
-     public virtual DbSet<PerformanceAPIResults> PerformanceAPIResults { get; set; }
-     public virtual DbSet<APIRequestResults> APIRequestResults { get; set; }
-     public virtual DbSet<UserActivityResults> UserActivityResults { get; set; }
-     public virtual DbSet<LoginActivityResults> LoginActivityResults { get; set; }
-     public virtual DbSet<GetDataForAuthenticationByUserId> GetDataForAuthenticationByUserId { get; set; }
-     public virtual DbSet<UserDetails> UserDetails { get; set; }
-     public virtual DbSet<ExceptionUserActivityModel> ExceptionUserActivityModel { get; set; }
-     public virtual DbSet<InventoryDiffValue> InventoryDiffValue { get; set; }
-     public virtual DbSet<InventoryDiffVolume> InventoryDiffVolume { get; set; }
-     public virtual DbSet<InventoryAIForecastValue> InventoryAIForecastValue { get; set; }
-     public virtual DbSet<FinishedGoodsDemandComparison> FinishedGoodsDemandComparison { get; set; }
-     public virtual DbSet<FinishedGoodsProductionComparison> FinishedGoodsProductionComparison { get; set; }
-     public virtual DbSet<FinishedGoodsDemandChart> FinishedGoodsDemandChart { get; set; }
-     public virtual DbSet<RawMaterialsGoodsReceiptChart> RawMaterialsGoodsReceiptChart { get; set; }
-     public virtual DbSet<FinishedGoodsProductionChart> FinishedGoodsProductionChart { get; set; }
-     public virtual DbSet<InventoryMap> InventoryMap { get; set; }
-     public virtual DbSet<FinishedGoodsPurchaseChart> FinishedGoodsPurchaseChart { get; set; }
-     public virtual DbSet<FinishedGoodsPurchaseComparison> FinishedGoodsPurchaseComparison { get; set; }
-     public virtual DbSet<InterCompanyTransferComparison> InterCompanyTransferComparison { get; set; }
-     public virtual DbSet<FinishedGoodsInterCompanyTransferChart> FinishedGoodsInterCompanyTransferChart { get; set; }
-     public virtual DbSet<TotalInventoryValueDifference> TotalInventoryValueDifference { get; set; }
-     public virtual DbSet<TotalInventoryVolumeDifference> TotalInventoryVolumeDifference { get; set; }
-     public virtual DbSet<InventoryDIO> InventoryDIO { get; set; }
-     public virtual DbSet<ClosingInventoryBalanceChart> ClosingInventoryBalanceChart { get; set; }
-     public virtual DbSet<ClosingInventoryBalanceDetailChart> ClosingInventoryBalanceDetailChart { get; set; }
-     public virtual DbSet<InventoryInsightsGrid> InventoryInsightsGrid { get; set; }
-     public virtual DbSet<FinishedGoodsInterCompanyTransfer> FinishedGoodsInterCompanyTransfer { get; set; }
-     public virtual DbSet<RawMaterialsConsumedProductionChart> RawMaterialsConsumedProductionChart { get; set; }
-     public virtual DbSet<RawMaterialsConsumedComparison> RawMaterialsConsumedComparison { get; set; }
-     public virtual DbSet<RawMaterialsGoodsReceiptComparison> RawMaterialsGoodsReceiptComparison { get; set; }
-     public virtual DbSet<RMInterCompanyTransferChart> RMInterCompanyTransferChart { get; set; }
-     public virtual DbSet<RMInterCompanyTransferComparison> RMInterCompanyTransferComparison { get; set; }
-     public virtual DbSet<RMConsumptionTrendChart> RMConsumptionTrendChart { get; set; }
-     public virtual DbSet<RMConsumptionTrendComparison> RMConsumptionTrendComparison { get; set; }
-     public DbSet<Role> Roles { get; set; }
-     public DbSet<Affiliate> Affiliates { get; set; }
-     public DbSet<UnitOfMeasure> UnitOfMeasure { get; set; }
-     public DbSet<ErrorLogStatus> ErrorLogStatus { get; set; }
-     public DbSet<ErrorLogAssignToUser> ErrorLogAssignToUser { get; set; }
-     public DbSet<UserMenuAccessModel> UserMenuAccessModel { get; set; }
 
-     public virtual DbSet<ChartData> ChartData { get; set; }
-     public virtual DbSet<MapChartData> MapChartData { get; set; }
+Unmapped members were found. Review the types and members below.
+Add a custom mapping expression, ignore, add a custom resolver, or modify the source/destination type
+For no matching constructor, add a no-arg ctor, add optional arguments, or map all of the constructor parameters
+======================================================================================
+InsertUpdateUserRes -> InsertUpdateUserDto (Destination member list)
+WCICore.Models.InsertUpdateUserRes -> WCICore.Dtos.UserManagement.InsertUpdateUserDto (Destination member list)
 
-     protected override void OnModelCreating(ModelBuilder modelBuilder)
-     {
-         modelBuilder.ApplyConfigurationsFromAssembly(typeof(WCIDbContext).Assembly);
-         modelBuilder.Entity<User>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<UserMenuAccessModel>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<UserMenu>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<UserAuth>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<UserDetails>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<BaseFilterResult>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<MoreFiltersSBUandBUResult>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<MoreFiltersProfitCenterResult>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<MoreFiltersPlantResult>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<ExceptionResults>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<PerformanceAPIResults>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<APIRequestResults>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<UserActivityResults>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<LoginActivityResults>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<GetDataForAuthenticationByUserId>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<ExceptionUserActivityModel>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<InventoryDiffValue>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<InventoryDiffVolume>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<InventoryAIForecastValue>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<FinishedGoodsDemandComparison>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<FinishedGoodsProductionComparison>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<FinishedGoodsDemandChart>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<RawMaterialsGoodsReceiptChart>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<FinishedGoodsProductionChart>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<InventoryMap>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<FinishedGoodsPurchaseChart>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<FinishedGoodsPurchaseComparison>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<InterCompanyTransferComparison>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<FinishedGoodsInterCompanyTransferChart>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<TotalInventoryValueDifference>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<TotalInventoryVolumeDifference>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<InventoryDIO>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<ClosingInventoryBalanceChart>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<ClosingInventoryBalanceDetailChart>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<InventoryInsightsGrid>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<FinishedGoodsInterCompanyTransfer>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<RawMaterialsConsumedProductionChart>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<RawMaterialsConsumedComparison>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<RawMaterialsGoodsReceiptComparison>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<RMInterCompanyTransferChart>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<RMInterCompanyTransferComparison>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<RMConsumptionTrendChart>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<RMConsumptionTrendComparison>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<Role>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<Affiliate>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<ErrorLogStatus>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<ErrorLogAssignToUser>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<ChartData>(eb => { eb.HasNoKey(); });
-         modelBuilder.Entity<MapChartData>(eb => { eb.HasNoKey(); });
-     }
- }
+Unmapped properties:
+StatusCode
+StatusMessage
+ErrorMessage
+===================================================================================
+UserMenuAccessModel -> UserMenuAccessDto (Destination member list)
+WCICore.Model.UserMenuAccessModel -> WCICore.Dtos.UserManagement.UserMenuAccessDto (Destination member list)
 
+Unmapped properties:
+StatusCode
+StatusMessage
+ErrorMessage
