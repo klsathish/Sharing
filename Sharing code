@@ -1,4 +1,31 @@
+PR Updates and Release Notes – Completed Tasks
+
 Dear Harish,
+
+Good Evening.
+
+I have completed the below-mentioned tasks and updated them in the same PR. The release notes document (with US numbers) has also been attached in the PR for reference.
+
+Minutes of Updates:
+
+1. Release Notes (Document with US number) – Added as PR attachment
+2. Removed multiple environment files – Completed
+3. Commented full API – Completed
+4. Common Utils segregation – Completed
+5. Score Models – To be taken in next release
+6. One solution for one DB – Completed (Updated in SQL PR)
+7. Hardcoding to be avoided (Mock) – Completed (Priority 2)
+8. Strong case changes – Completed
+9. Raw SQL mapping – Updated
+
+Please review and let me know if any further changes are required.
+
+Thanks & Regards,
+Sathish
+
+
+
+Harish,
 
 Good Eve..!
 
