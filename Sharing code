@@ -1,17 +1,18 @@
-Missing type map configuration or unsupported mapping.
+Dear Harish,
 
-Mapping types:
-UserMenuAccess -> UserMenuAccessDto
-WCICore.Model.UserMenuAccess -> WCICore.Dtos.UserManagement.UserMenuAccessDto
+Good Eve..!
 
-
-  public class UserMenuAccessDto
-  {
-      public bool HasAccess { get; set; }
-  }
+Had complete below mentioned taks and Its updated in same PR. And added attachment for release notes in PR itseems
 
 
- public class UserMenuAccess
- {
-     public bool HasAccess { get; set; }
- }
+Minutes
+1.	Release note (Docs with US number)   -- Added PR Details Attchment
+2.	Remove the multiple envt files 		        -- Completed
+3.	Comment full API                                                    -- Completed	
+4.	Common Utils segregation		       -- Completed
+5.	Score models (To be taken in next release) 
+6.	keep one solution for one Db		       -- Completed It is in SQL PR
+7.	Hardcoding to be avoided. (Mock) (Priority 2) -- Completed
+8.	Strong case to be changed		      -- Completed
+9.	Raw SQL mapping                                                -- Partially Completed(User Management and Rawmaterials) will complete in next upcoming occurrence.
+ 
