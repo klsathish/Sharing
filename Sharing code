@@ -1,3 +1,42 @@
+Updates
+This PR includes comprehensive updates and improvements to the Dashboard module and supporting components across the application.
+Functional Areas Covered
+The Dashboard consists of the following tabs:
+Rolling 18 Months Inventory
+Finished Goods
+Raw Materials
+Insights
+Each tab includes:
+Interactive Map View
+Analytical Charts
+Detailed Grid View
+Enhancements & Improvements
+Refactored dashboard APIs for better performance and maintainability
+Improved data binding for maps, charts, and grid components
+Updated Raw SQL mappings to align with entity models
+Removed hardcoded values and implemented configurable/mock-based handling
+Segregated Common Utilities for cleaner architecture
+Removed multiple environment files and streamlined configuration
+Updated strong case handling logic
+Added/updated inline API comments for better code readability
+System-Level Improvements
+User Management enhancements
+Activity Monitoring improvements
+Error Logging refinements
+Performance Monitoring optimizations
+Overall Impact
+These changes improve:
+Code maintainability
+Data accuracy in dashboard visualizations
+System performance
+Monitoring and traceability
+Application structure and scalability
+If you want, I can also give you a short 5–6 line version (some architects prefer very concise PR descriptions).
+
+
+
+
+
 PR Updates and Release Notes – Completed Tasks
 
 Dear Harish,
