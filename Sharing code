@@ -1,151 +1,134 @@
-Affiliate.cs
-AffiliateModel.cs
-ApiRequest.cs
-ApiRequestAndPerformanceLogModel.cs
-ApiRequestAndPerformanceLogRequest.cs
-APIRequestModel.cs
-APIRequestResults.cs
-AuthenticationResponse.cs
-BaseFilterResult.cs
-ChartData.cs
-ChartDataFilterReq.cs
-ChartFormat.cs
-ChartFormatInOut.cs
-ChartModel.cs
-ClosingInventoryBalanceDetailChart.cs
-CommonChartFilter.cs
-CommonChartProp.cs
-CommonMapProp.cs
-CommonRes.cs
-CurrentSessionInfo.cs
-DateFilter.cs
-DeactivateUserReq.cs
-EnumHelper.cs
-ErrorLogAssignToUser.cs
-ErrorLogStatus.cs
-ExceptionDetails.cs
-ExceptionHandlerModel.cs
-ExceptionResults.cs
-ExceptionUserActivityModel.cs
-ExceptionUserActivityResponseModel.cs
-ExceptionUserActivityResults.cs
-FilterModel.cs
-FinishedGoodsClosingInventoryBalanceChartModel.cs
-FinishedGoodsClosingInventoryBalanceDetailChartModel.cs
-FinishedGoodsDemandChart.cs
-FinishedGoodsDemandChartFormat.cs
-FinishedGoodsDemandChartModel.cs
-FinishedGoodsDemandComparison.cs
-FinishedGoodsDemandComparisonModel.cs
-FinishedGoodsInterCompanyTransfer.cs
-FinishedGoodsInterCompanyTransferChart.cs
-FinishedGoodsInterCompanyTransferChartFormat.cs
-FinishedGoodsInterCompanyTransferChartModel.cs
-FinishedGoodsInterCompanyTransferModel.cs
-FinishedGoodsProductionChart.cs
-FinishedGoodsProductionChartFormat.cs
-FinishedGoodsProductionChartModel.cs
-FinishedGoodsProductionComparison.cs
-FinishedGoodsProductionComparisonModel.cs
-FinishedGoodsPurchaseChart.cs
-FinishedGoodsPurchaseChartFormat.cs
-FinishedGoodsPurchaseChartModel.cs
-FinishedGoodsPurchaseComparison.cs
-FinishedGoodsPurchaseComparisonModel.cs
-InsertUpdateUserReq.cs
-InsertUpdateUserRes.cs
-InsertUserActivity.cs
-InsertUserActivityResult.cs
-InterCompanyTransferComparison.cs
-InterCompanyTransferComparisonModel.cs
-InventoryAIForecastValue.cs
-InventoryAIForecastValueRes.cs
-InventoryDiffValue.cs
-InventoryDiffValueRes.cs
-InventoryDiffVolume.cs
-InventoryDiffVolumeRes.cs
-InventoryDIO.cs
-InventoryDIOModel.cs
-InventoryFilterReq.cs
-InventoryInsightsGrid.cs
-InventoryInsightsGridDetailChartModel.cs
-InventoryInsightsGridModel.cs
-InventoryInsightsGroup.cs
-InventoryMap.cs
-InventoryMapModel.cs
-InvInterCompanyTransferComparisonChartData.cs
-JwtSettings.cs
-LogExceptionModel.cs
-LoginActivityModel.cs
-LoginActivityObjModel.cs
-LoginActivityResults.cs
-MapChartData.cs
-MapChartModel.cs
-MoreFiltersPlantResult.cs
-MoreFiltersProfitCenterResult.cs
-MoreFiltersSBUandBUResult.cs
-MSTUserDetailsInfopoint.cs
-PerformanceAPIModel.cs
-PerformanceAPIResults.cs
-PerformanceLog.cs
-RawMaterialsConsumedComparison.cs
-RawMaterialsConsumedComparisonModel.cs
-RawMaterialsConsumedProductionChart.cs
-RawMaterialsConsumedProductionChartFormat.cs
-RawMaterialsConsumedProductionChartModel.cs
-RawMaterialsGoodsReceiptChart.cs
-RawMaterialsGoodsReceiptChartFormat.cs
-RawMaterialsGoodsReceiptChartModel.cs
-RawMaterialsGoodsReceiptComparison.cs
-RawMaterialsGoodsReceiptComparisonModel.cs
-RefreshToken.cs
-RMConsumptionTrendChart.cs
-RMConsumptionTrendChartFormat.cs
-RMConsumptionTrendChartModel.cs
-RMConsumptionTrendComparison.cs
-RMConsumptionTrendComparisonModel.cs
-RMInterCompanyTransferChart.cs
-RMInterCompanyTransferChartFormat.cs
-RMInterCompanyTransferChartModel.cs
-RMInterCompanyTransferComparison.cs
-RMInterCompanyTransferComparisonModel.cs
-Role.cs
-RoleModel.cs
-SearchUser.cs
-SearchUserRes.cs
-TotalInventoryValueDifference.cs
-TotalInventoryValueDifferenceModel.cs
-TotalInventoryVolumeDifference.cs
-TotalInventoryVolumeDifferenceModel.cs
-UnitOfMeasure.cs
-UnitOfMeasureModel.cs
-User.cs
-UserActivityModel.cs
-UserActivityResults.cs
-UserAuth.cs
-UserAuthenticationModel.cs
-UserDetailInfoModel.cs
-UserDetails.cs
-UserListModel.cs
-UserMenu.cs
-UserMenuAccessModel.cs
-UserMenuModel.cs
-UserModel.cs
-UserNameWithMenu.cs
+ public async Task<ClosingInventoryBalanceDetailChartModel> GetClosingInventoryBalanceDetailChart(ChartDataFilterReq chartDataFilterReq)
+ {
+     var filterRes = new ClosingInventoryBalanceDetailChartModel();
+     var tempDate = string.IsNullOrEmpty(chartDataFilterReq.SelectedMonth) ? chartDataFilterReq.FromDate!.Value.ToString("MMM yyyy").ToUpper() : chartDataFilterReq.SelectedMonth;
+     var (fromDate, toDate) = GetStartandEndDate(tempDate); // DEC 2023
+     if (string.IsNullOrEmpty(chartDataFilterReq.SelectedMonth))
+     {
+         chartDataFilterReq.FromDate = chartDataFilterReq.FromDate;
+         chartDataFilterReq.ToDate = chartDataFilterReq.ToDate;
+     }
+     else
+     {
+         chartDataFilterReq.FromDate = fromDate;
+         chartDataFilterReq.ToDate = toDate;
+     }
+     var result = await _dashboardRepository.GetClosingInventoryBalanceDetailChart(chartDataFilterReq);
+
+     var FGResult = result?.Where(x => x.InventoryType == "Finished Goods").ToList();
+     var RMResult = result?.Where(x => x.InventoryType == "Raw Materials").ToList();
 
 
+     if (FGResult != null || RMResult != null)
+     {
+         // Finished Goods
+         var (FGchartData, FGgridList) = getFilteredClosingInventoryDetailList(chartDataFilterReq, FGResult, chartDataFilterReq.Metrics == 1 ? "Value" : "Volume");
+         filterRes.FGClosingInventoryBalanceDetailsChart = FGgridList;
+         filterRes.FGChartData = FGchartData;
+
+         //Raw Materials
+         var (RMchartData, RMgridList) = getFilteredClosingInventoryDetailList(chartDataFilterReq, RMResult, chartDataFilterReq.Metrics == 1 ? "Value" : "Volume");
+         filterRes.RMClosingInventoryBalanceDetailsChart = RMgridList;
+         filterRes.RMChartData = RMchartData;
+
+         filterRes.StatusMessage = SabicConstants.SuccessMessage;
+         filterRes.StatusCode = SabicConstants.SuccessStatusCode;
+     }
+     else
+     {
+         filterRes.StatusMessage = SabicConstants.RecordNotFoundMessage;
+         filterRes.StatusCode = SabicConstants.RecordNotFoundStatusCode;
+     }
+     return filterRes;
+ }
+
+ public (List<ClosingInventoryBalanceChartFormat>, List<object>) getFilteredClosingInventoryDetailList(ChartDataFilterReq chartDataFilterReq, List<ClosingInventoryBalanceDetailChart> result, string type)
+ {
+     if (result != null && result.Count > 0)
+     {
+         var props = result.First().GetType().GetProperties();
+         var groupValues = new Dictionary<string, double>();
+         var totals = new ClosingInventoryBalanceDetailChart();
+
+         var filteredProps = props
+             .Where(p => p.Name.Contains(type, StringComparison.OrdinalIgnoreCase))
+             .ToList();
+
+         foreach (var row in result)
+         {
+             foreach (var prop in filteredProps)
+             {
+                 if (prop.Name != "CalYear" && prop.Name != "CalMonth" && prop.Name != "CalYear" && prop.Name != "InventoryType" && prop.Name != "CompanyCode")
+                 {
+                     var displayAttr = prop.GetCustomAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>();
+                     var jsonAttr = prop.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
+
+                     var displayName = jsonAttr?.Name ?? displayAttr?.Name ?? prop.Name;
+
+                     var value = prop.GetValue(row);
+                     if (value != null && double.TryParse(value.ToString(), out double numbericValue))
+                     {
+                         if (groupValues.ContainsKey(displayName))
+                             groupValues[displayName] += numbericValue;
+                         else
+                             groupValues[displayName] = numbericValue;
+                     }
+                 }
+             }
+         }
+
+         var chartData = groupValues.Select(g => new ClosingInventoryBalanceChartFormat
+         {
+             x = g.Key.Replace("_", " "),
+             y = Math.Round(g.Value, 2)
+         }).ToList();
 
 
+         foreach (var prop in filteredProps)
+         {
+             if (prop.Name != "CalYear" && prop.Name != "CalMonth" && prop.Name != "CalYear" && prop.Name != "InventoryType" && prop.Name != "CompanyCode")
+             {
+                 {
+                     double sum = result.Sum(r => Convert.ToDouble(prop.GetValue(r) ?? 0));
+                     prop.SetValue(totals, Math.Round(sum, 2));
+                 }
+             }
+         }
 
+         var gridList = new List<ClosingInventoryBalanceDetailChart> { totals };
+         var filteredList = new List<object>();
 
-In my application
-Menu
-1.Home
-  Tabs(a.Rolling18monthinventory,b.FininsedGoods,c.RawMaterials,d.Insughts)
-  Cards(AI Forecast Value,Ai Forecast Volume)
-     Graph(FinishedGoodsDemand,FinishedGoodsProduction,FinishedGoodsPurchases,FinishedGoodsConsumedinProduction,FinishedGoodsSTO,FinishedGoodsTransfer,FinishedGoodsUnallocated,FinishedGoodsOthers)
+         foreach (var row in gridList)
+         {
+             var dict = new Dictionary<string, double>();
 
-2.UserManagement
-3.ActivityMonitoring
-4.ErrorLogging
-5.PerformanceMonitoring
+             foreach (var prop in filteredProps)
+             {
+                 var displayAttr = prop.GetCustomAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>();
+                 var jsonAttr = prop.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
+
+                 var displayName = jsonAttr?.Name ?? displayAttr?.Name ?? prop.Name;
+
+                 var val = prop.GetValue(row);
+                 if (val != null && double.TryParse(val.ToString(), out double num))
+                     dict[displayName] = Math.Round(num, 2);
+             }
+
+             filteredList.Add(dict);
+         }
+
+         return (chartData, filteredList);
+     }
+
+     return (null, null);
+ }
+  public class ClosingInventoryBalanceDetailChartModel : CommonRes
+  {
+      public List<ClosingInventoryBalanceChartFormat>? FGChartData { get; set; }
+      public List<ClosingInventoryBalanceChartFormat>? RMChartData { get; set; }
+      public List<ClosingInventoryBalanceChartFormat>? AllChartData { get; set; }
+
+      public List<object>? FGClosingInventoryBalanceDetailsChart { get; set; }
+      public List<object>? RMClosingInventoryBalanceDetailsChart { get; set; }
+      public List<object>? AllClosingInventoryBalanceDetailsChart { get; set; }
+  }
