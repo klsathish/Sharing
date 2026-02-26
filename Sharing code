@@ -132,3 +132,9 @@
       public List<object>? RMClosingInventoryBalanceDetailsChart { get; set; }
       public List<object>? AllClosingInventoryBalanceDetailsChart { get; set; }
   }
+
+
+Db REsult
+CalYear	CalMonth	InventoryType	OpeningInventory_Value_In_Million	OpeningInventory_Volume_In_MT	forecast_value_Production_Output_In_Million	forecast_volume_Production_Output_In_MT	forecast_value_STO_IN_In_Million	forecast_volume_STO_IN_In_MT	forecast_value_STO_OUT_In_Million	forecast_volume_STO_OUT_In_MT	forecast_value_Transfers_IN_In_Million	forecast_volume_Transfers_IN_In_MT	forecast_value_Demand_In_Million	forecast_volume_Demand_In_MT	forecast_value_Consumed_in_production_In_Million	forecast_volume_Consumed_in_production_In_MT	forecast_value_Others_In_Million	forecast_volume_Others_In_MT	forecast_value_Purchase_In_Million	forecast_volume_Purchase_In_MT	forecast_value_Unallocated_In_Million	forecast_volume_Unallocated_In_MT	ClosingInventory_Value_In_Million	ClosingInventory_Volume_In_MT
+2024	6	Finished Goods	9212.83	2863784.53	4486.48	1647748.34	2159.65	1057431.64	-3486.46	-1306772.93	2.8	-10914.52	-499.15	-94616.52	-2810.06	-1259934.34	-0.04	-4.47	125.87	17154.36	0	0	9191.92	2913876.09
+2024	6	Raw Materials	1535.66	3055500.73	0.23	55.74	45.28	114.91	-0.49	-165.23	-0.01	-399.69	-0.03	-0.8	-229.06	-548631.58	0	0	290.56	717015.66	0	0	1642.14	3223489.74
