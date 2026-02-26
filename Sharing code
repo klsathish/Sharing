@@ -1,110 +1,151 @@
-ORDER BY CalYear, 
-         CASE CalMonth
-              WHEN 'JAN' THEN 1
-              WHEN 'FEB' THEN 2
-              WHEN 'MAR' THEN 3
-              WHEN 'APR' THEN 4
-              WHEN 'MAY' THEN 5
-              WHEN 'JUN' THEN 6
-              WHEN 'JUL' THEN 7
-              WHEN 'AUG' THEN 8
-              WHEN 'SEP' THEN 9
-              WHEN 'OCT' THEN 10
-              WHEN 'NOV' THEN 11
-              WHEN 'DEC' THEN 12
-         END
+Affiliate.cs
+AffiliateModel.cs
+ApiRequest.cs
+ApiRequestAndPerformanceLogModel.cs
+ApiRequestAndPerformanceLogRequest.cs
+APIRequestModel.cs
+APIRequestResults.cs
+AuthenticationResponse.cs
+BaseFilterResult.cs
+ChartData.cs
+ChartDataFilterReq.cs
+ChartFormat.cs
+ChartFormatInOut.cs
+ChartModel.cs
+ClosingInventoryBalanceDetailChart.cs
+CommonChartFilter.cs
+CommonChartProp.cs
+CommonMapProp.cs
+CommonRes.cs
+CurrentSessionInfo.cs
+DateFilter.cs
+DeactivateUserReq.cs
+EnumHelper.cs
+ErrorLogAssignToUser.cs
+ErrorLogStatus.cs
+ExceptionDetails.cs
+ExceptionHandlerModel.cs
+ExceptionResults.cs
+ExceptionUserActivityModel.cs
+ExceptionUserActivityResponseModel.cs
+ExceptionUserActivityResults.cs
+FilterModel.cs
+FinishedGoodsClosingInventoryBalanceChartModel.cs
+FinishedGoodsClosingInventoryBalanceDetailChartModel.cs
+FinishedGoodsDemandChart.cs
+FinishedGoodsDemandChartFormat.cs
+FinishedGoodsDemandChartModel.cs
+FinishedGoodsDemandComparison.cs
+FinishedGoodsDemandComparisonModel.cs
+FinishedGoodsInterCompanyTransfer.cs
+FinishedGoodsInterCompanyTransferChart.cs
+FinishedGoodsInterCompanyTransferChartFormat.cs
+FinishedGoodsInterCompanyTransferChartModel.cs
+FinishedGoodsInterCompanyTransferModel.cs
+FinishedGoodsProductionChart.cs
+FinishedGoodsProductionChartFormat.cs
+FinishedGoodsProductionChartModel.cs
+FinishedGoodsProductionComparison.cs
+FinishedGoodsProductionComparisonModel.cs
+FinishedGoodsPurchaseChart.cs
+FinishedGoodsPurchaseChartFormat.cs
+FinishedGoodsPurchaseChartModel.cs
+FinishedGoodsPurchaseComparison.cs
+FinishedGoodsPurchaseComparisonModel.cs
+InsertUpdateUserReq.cs
+InsertUpdateUserRes.cs
+InsertUserActivity.cs
+InsertUserActivityResult.cs
+InterCompanyTransferComparison.cs
+InterCompanyTransferComparisonModel.cs
+InventoryAIForecastValue.cs
+InventoryAIForecastValueRes.cs
+InventoryDiffValue.cs
+InventoryDiffValueRes.cs
+InventoryDiffVolume.cs
+InventoryDiffVolumeRes.cs
+InventoryDIO.cs
+InventoryDIOModel.cs
+InventoryFilterReq.cs
+InventoryInsightsGrid.cs
+InventoryInsightsGridDetailChartModel.cs
+InventoryInsightsGridModel.cs
+InventoryInsightsGroup.cs
+InventoryMap.cs
+InventoryMapModel.cs
+InvInterCompanyTransferComparisonChartData.cs
+JwtSettings.cs
+LogExceptionModel.cs
+LoginActivityModel.cs
+LoginActivityObjModel.cs
+LoginActivityResults.cs
+MapChartData.cs
+MapChartModel.cs
+MoreFiltersPlantResult.cs
+MoreFiltersProfitCenterResult.cs
+MoreFiltersSBUandBUResult.cs
+MSTUserDetailsInfopoint.cs
+PerformanceAPIModel.cs
+PerformanceAPIResults.cs
+PerformanceLog.cs
+RawMaterialsConsumedComparison.cs
+RawMaterialsConsumedComparisonModel.cs
+RawMaterialsConsumedProductionChart.cs
+RawMaterialsConsumedProductionChartFormat.cs
+RawMaterialsConsumedProductionChartModel.cs
+RawMaterialsGoodsReceiptChart.cs
+RawMaterialsGoodsReceiptChartFormat.cs
+RawMaterialsGoodsReceiptChartModel.cs
+RawMaterialsGoodsReceiptComparison.cs
+RawMaterialsGoodsReceiptComparisonModel.cs
+RefreshToken.cs
+RMConsumptionTrendChart.cs
+RMConsumptionTrendChartFormat.cs
+RMConsumptionTrendChartModel.cs
+RMConsumptionTrendComparison.cs
+RMConsumptionTrendComparisonModel.cs
+RMInterCompanyTransferChart.cs
+RMInterCompanyTransferChartFormat.cs
+RMInterCompanyTransferChartModel.cs
+RMInterCompanyTransferComparison.cs
+RMInterCompanyTransferComparisonModel.cs
+Role.cs
+RoleModel.cs
+SearchUser.cs
+SearchUserRes.cs
+TotalInventoryValueDifference.cs
+TotalInventoryValueDifferenceModel.cs
+TotalInventoryVolumeDifference.cs
+TotalInventoryVolumeDifferenceModel.cs
+UnitOfMeasure.cs
+UnitOfMeasureModel.cs
+User.cs
+UserActivityModel.cs
+UserActivityResults.cs
+UserAuth.cs
+UserAuthenticationModel.cs
+UserDetailInfoModel.cs
+UserDetails.cs
+UserListModel.cs
+UserMenu.cs
+UserMenuAccessModel.cs
+UserMenuModel.cs
+UserModel.cs
+UserNameWithMenu.cs
 
-This PR includes overall enhancements to the Dashboard module covering Rolling 18 Months Inventory, Finished Goods, Raw Materials, and Insights tabs.
-Each tab supports Map view, Charts, and Grid details with improved data binding and performance.
-Refactored dashboard APIs for better maintainability and scalability.
-Updated Raw SQL mappings to align with entity models.
-Removed hardcoded values and streamlined environment configurations.
-Segregated Common Utils to improve modular architecture.
-Enhanced User Management and Activity Monitoring components.
-Improved Error Logging
-
-
-Updates
-This PR includes comprehensive updates and improvements to the Dashboard module and supporting components across the application.
-Functional Areas Covered
-The Dashboard consists of the following tabs:
-Rolling 18 Months Inventory
-Finished Goods
-Raw Materials
-Insights
-Each tab includes:
-Interactive Map View
-Analytical Charts
-Detailed Grid View
-Enhancements & Improvements
-Refactored dashboard APIs for better performance and maintainability
-Improved data binding for maps, charts, and grid components
-Updated Raw SQL mappings to align with entity models
-Removed hardcoded values and implemented configurable/mock-based handling
-Segregated Common Utilities for cleaner architecture
-Removed multiple environment files and streamlined configuration
-Updated strong case handling logic
-Added/updated inline API comments for better code readability
-System-Level Improvements
-User Management enhancements
-Activity Monitoring improvements
-Error Logging refinements
-Performance Monitoring optimizations
-Overall Impact
-These changes improve:
-Code maintainability
-Data accuracy in dashboard visualizations
-System performance
-Monitoring and traceability
-Application structure and scalability
-If you want, I can also give you a short 5–6 line version (some architects prefer very concise PR descriptions).
 
 
 
 
 
-PR Updates and Release Notes – Completed Tasks
+In my application
+Menu
+1.Home
+  Tabs(a.Rolling18monthinventory,b.FininsedGoods,c.RawMaterials,d.Insughts)
+  Cards(AI Forecast Value,Ai Forecast Volume)
+     Graph(FinishedGoodsDemand,FinishedGoodsProduction,FinishedGoodsPurchases,FinishedGoodsConsumedinProduction,FinishedGoodsSTO,FinishedGoodsTransfer,FinishedGoodsUnallocated,FinishedGoodsOthers)
 
-Dear Harish,
-
-Good Evening.
-
-I have completed the below-mentioned tasks and updated them in the same PR. The release notes document (with US numbers) has also been attached in the PR for reference.
-
-Minutes of Updates:
-
-1. Release Notes (Document with US number) – Added as PR attachment
-2. Removed multiple environment files – Completed
-3. Commented full API – Completed
-4. Common Utils segregation – Completed
-5. Score Models – To be taken in next release
-6. One solution for one DB – Completed (Updated in SQL PR)
-7. Hardcoding to be avoided (Mock) – Completed (Priority 2)
-8. Strong case changes – Completed
-9. Raw SQL mapping – Updated
-
-Please review and let me know if any further changes are required.
-
-Thanks & Regards,
-Sathish
-
-
-
-Harish,
-
-Good Eve..!
-
-Had complete below mentioned taks and Its updated in same PR. And added attachment for release notes in PR itseems
-
-
-Minutes
-1.	Release note (Docs with US number)   -- Added PR Details Attchment
-2.	Remove the multiple envt files 		        -- Completed
-3.	Comment full API                                                    -- Completed	
-4.	Common Utils segregation		       -- Completed
-5.	Score models (To be taken in next release) 
-6.	keep one solution for one Db		       -- Completed It is in SQL PR
-7.	Hardcoding to be avoided. (Mock) (Priority 2) -- Completed
-8.	Strong case to be changed		      -- Completed
-9.	Raw SQL mapping                                                -- Partially Completed(User Management and Rawmaterials) will complete in next upcoming occurrence.
- 
+2.UserManagement
+3.ActivityMonitoring
+4.ErrorLogging
+5.PerformanceMonitoring
