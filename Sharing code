@@ -1,140 +1,731 @@
- public async Task<ClosingInventoryBalanceDetailChartModel> GetClosingInventoryBalanceDetailChart(ChartDataFilterReq chartDataFilterReq)
- {
-     var filterRes = new ClosingInventoryBalanceDetailChartModel();
-     var tempDate = string.IsNullOrEmpty(chartDataFilterReq.SelectedMonth) ? chartDataFilterReq.FromDate!.Value.ToString("MMM yyyy").ToUpper() : chartDataFilterReq.SelectedMonth;
-     var (fromDate, toDate) = GetStartandEndDate(tempDate); // DEC 2023
-     if (string.IsNullOrEmpty(chartDataFilterReq.SelectedMonth))
-     {
-         chartDataFilterReq.FromDate = chartDataFilterReq.FromDate;
-         chartDataFilterReq.ToDate = chartDataFilterReq.ToDate;
-     }
-     else
-     {
-         chartDataFilterReq.FromDate = fromDate;
-         chartDataFilterReq.ToDate = toDate;
-     }
-     var result = await _dashboardRepository.GetClosingInventoryBalanceDetailChart(chartDataFilterReq);
+using AutoMapper;
+using System.Reflection;
+using WCICore.Common;
+using WCICore.Contract;
+using WCICore.Contract.Repositories;
+using WCICore.Dtos;
+using WCICore.Dtos.Common;
+using WCICore.Dtos.Inventory;
+using WCICore.Model;
+using WCICore.Model.Common;
+using WCICore.Model.Inventory;
+using WCICore.Model.Inventory.Charts;
+using WCICore.Model.Inventory.Forecast;
+using WCICore.Model.Inventory.Insights;
+using WCICore.Model.Inventory.RollingInventory;
+using WCICore.Model.UserManagement;
 
-     var FGResult = result?.Where(x => x.InventoryType == "Finished Goods").ToList();
-     var RMResult = result?.Where(x => x.InventoryType == "Raw Materials").ToList();
+namespace WCI_APIs.Services.DashboardService
+{
+    public class DashboardService : IDashboardService
+    {
+        private readonly IDashboardRepository _dashboardRepository;
+        private readonly IMapper _mapper;
+
+        public DashboardService(IDashboardRepository dashboardRepository, IMapper mapper)
+        {
+            _dashboardRepository = dashboardRepository;
+            _mapper = mapper;
+        }
+
+        public async Task<FilterModel> GetBaseFilter(FilterModel model)
+        {
+            var filterRes = new FilterModel();
+            var result = await _dashboardRepository.GetBaseFilter(model);
+            var mappedResult = _mapper.Map<List<BaseFilterResultDto>>(result);
+
+            var (message, code) = CommonMethod.GetStatus(mappedResult?.Count ?? 0);
+            filterRes.StatusMessage = message;
+            filterRes.StatusCode = code;
+            filterRes.BaseFilterResult = mappedResult;
+            return filterRes;
+        }
+
+        public async Task<FilterModel> GetMoreFiltersSBUandBU(FilterModel model)
+        {
+            var filterRes = new FilterModel();
+            var result = await _dashboardRepository.GetMoreFiltersSBUandBU(model);
+            var mappedResult = _mapper.Map<List<MoreFiltersSBUandBUResultDto>>(result);
+
+            var (message, code) = CommonMethod.GetStatus(mappedResult?.Count ?? 0);
+            filterRes.StatusMessage = message;
+            filterRes.StatusCode = code;
+            filterRes.MoreFiltersSBUandBUResult = mappedResult;
+            return filterRes;
+        }
+
+        public async Task<FilterModel> GetMoreFiltersProfitCenter(FilterModel model)
+        {
+            var filterRes = new FilterModel();
+            var result = await _dashboardRepository.GetMoreFiltersProfitCenter(model);
+            var mappedResult = _mapper.Map<List<MoreFiltersProfitCenterResultDto>>(result);
+
+            var (message, code) = CommonMethod.GetStatus(mappedResult?.Count ?? 0);
+            filterRes.StatusMessage = message;
+            filterRes.StatusCode = code;
+            filterRes.MoreFiltersProfitCenterResult = mappedResult;
+            return filterRes;
+        }
+        public async Task<FilterModel> GetMoreFiltersPlant(FilterModel model)
+        {
+            var filterRes = new FilterModel();
+            var result = await _dashboardRepository.GetMoreFiltersPlant(model);
+            var mappedResult = _mapper.Map<List<MoreFiltersPlantResultDto>>(result);
+
+            var (message, code) = CommonMethod.GetStatus(mappedResult?.Count ?? 0);
+            filterRes.StatusMessage = message;
+            filterRes.StatusCode = code;
+            filterRes.MoreFiltersPlantResult = mappedResult;
+            return filterRes;
+        }
+
+        public async Task<InventoryDiffValueRes> GetInventoryDifferenceValue(InventoryFilterReq inventoryFilterReq)
+        {
+            var filterRes = new InventoryDiffValueRes();
+            var result = await _dashboardRepository.GetInventoryDifferenceValue(inventoryFilterReq);
+            var mappedResult = _mapper.Map<InventoryDiffValueDto>(result);
+
+            var (message, code) = CommonMethod.GetStatus(result != null ? 1 : 0);
+            filterRes.StatusMessage = message;
+            filterRes.StatusCode = code;
+            filterRes.InventoryDiffValue = mappedResult;
+            return filterRes;
+        }
+
+        public async Task<InventoryDiffVolumeRes> GetInventoryDifferenceVolume(InventoryFilterReq inventoryFilterReq)
+        {
+            var filterRes = new InventoryDiffVolumeRes();
+            var result = await _dashboardRepository.GetInventoryDifferenceVolume(inventoryFilterReq);
+            var (message, code) = CommonMethod.GetStatus(result != null ? 1 : 0);
+            filterRes.StatusMessage = message;
+            filterRes.StatusCode = code;
+            filterRes.InventoryDiffVolume = result;
+            return filterRes;
+        }
+
+        public async Task<InventoryAIForecastValueRes> GetInventoryAIForecastValue(InventoryFilterReq inventoryFilterReq)
+        {
+            var filterRes = new InventoryAIForecastValueRes();
+            var result = await _dashboardRepository.GetInventoryAIForecastValue(inventoryFilterReq);
+            var (message, code) = CommonMethod.GetStatus(result != null ? 1 : 0);
+            filterRes.StatusMessage = message;
+            filterRes.StatusCode = code;
+            filterRes.InventoryAIForecastValue = result;
+            return filterRes;
+        }
+
+        public async Task<FinishedGoodsDemandChartModel> GetFinishedGoodsDemandChartData(ChartDataFilterReq chartDataFilterReq)
+        {
+            var model = new FinishedGoodsDemandChartModel();
+            var result = await _dashboardRepository.GetFinishedGoodsDemandChartData(chartDataFilterReq);
+
+            var (message, code) = CommonMethod.GetStatus(result?.Count ?? 0);
+            model.StatusMessage = message;
+            model.StatusCode = code;
+
+            var finalData = result?.GroupBy(x => new { x.CalYear, x.CalMonth })
+                .Select(g => new
+                {
+                    x = g.First().CalMonth + " " + g.First().CalYear,
+                    actual = g.Where(a => a.DataType == "Actuals")
+                    .Select(a => a.DataValue)
+                    .FirstOrDefault(),
+                    aiforecast = g.Where(a => a.DataType == "AIForecast")
+                    .Select(a => a.DataValue)
+                    .FirstOrDefault()
+                })
+                .OrderBy(x => DateTime.ParseExact(x.x, "MMM yyyy", null))
+                .ToList();
+
+            if (result?.Count > 0)
+            {
+                model.FinishedGoodsDemandChart = result;
+                model.FinishedGoodsDemandChartFormat = finalData?
+                    .Select(i => new FinishedGoodsDemandChartFormat
+                    {
+                        x = i.x,
+                        actuals = i.actual,
+                        aiforecast = i.aiforecast
+                    })
+                    .ToList();
+            }
+
+            return model;
+        }
 
 
-     if (FGResult != null || RMResult != null)
-     {
-         // Finished Goods
-         var (FGchartData, FGgridList) = getFilteredClosingInventoryDetailList(chartDataFilterReq, FGResult, chartDataFilterReq.Metrics == 1 ? "Value" : "Volume");
-         filterRes.FGClosingInventoryBalanceDetailsChart = FGgridList;
-         filterRes.FGChartData = FGchartData;
+        public async Task<FinishedGoodsProductionChartModel> GetFinishedGoodsProductionChartData(ChartDataFilterReq chartDataFilterReq)
+        {
+            var model = new FinishedGoodsProductionChartModel();
+            var result = await _dashboardRepository.GetFinishedGoodsProductionChartData(chartDataFilterReq);
 
-         //Raw Materials
-         var (RMchartData, RMgridList) = getFilteredClosingInventoryDetailList(chartDataFilterReq, RMResult, chartDataFilterReq.Metrics == 1 ? "Value" : "Volume");
-         filterRes.RMClosingInventoryBalanceDetailsChart = RMgridList;
-         filterRes.RMChartData = RMchartData;
+            var (message, code) = CommonMethod.GetStatus(result?.Count ?? 0);
+            model.StatusMessage = message;
+            model.StatusCode = code;
 
-         filterRes.StatusMessage = SabicConstants.SuccessMessage;
-         filterRes.StatusCode = SabicConstants.SuccessStatusCode;
-     }
-     else
-     {
-         filterRes.StatusMessage = SabicConstants.RecordNotFoundMessage;
-         filterRes.StatusCode = SabicConstants.RecordNotFoundStatusCode;
-     }
-     return filterRes;
- }
+            var finalData = result?.GroupBy(x => new { x.CalYear, x.CalMonth })
+                .Select(g => new
+                {
+                    x = g.First().CalMonth + " " + g.First().CalYear,
+                    actual = g.Where(a => a.DataType == "Actuals")
+                    .Select(a => a.DataValue)
+                    .FirstOrDefault(),
+                    aiforecast = g.Where(a => a.DataType == "AIForecast")
+                    .Select(a => a.DataValue)
+                    .FirstOrDefault()
+                })
+                .OrderBy(x => DateTime.ParseExact(x.x, "MMM yyyy", null))
+                .ToList();
 
- public (List<ClosingInventoryBalanceChartFormat>, List<object>) getFilteredClosingInventoryDetailList(ChartDataFilterReq chartDataFilterReq, List<ClosingInventoryBalanceDetailChart> result, string type)
- {
-     if (result != null && result.Count > 0)
-     {
-         var props = result.First().GetType().GetProperties();
-         var groupValues = new Dictionary<string, double>();
-         var totals = new ClosingInventoryBalanceDetailChart();
-
-         var filteredProps = props
-             .Where(p => p.Name.Contains(type, StringComparison.OrdinalIgnoreCase))
-             .ToList();
-
-         foreach (var row in result)
-         {
-             foreach (var prop in filteredProps)
-             {
-                 if (prop.Name != "CalYear" && prop.Name != "CalMonth" && prop.Name != "CalYear" && prop.Name != "InventoryType" && prop.Name != "CompanyCode")
-                 {
-                     var displayAttr = prop.GetCustomAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>();
-                     var jsonAttr = prop.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
-
-                     var displayName = jsonAttr?.Name ?? displayAttr?.Name ?? prop.Name;
-
-                     var value = prop.GetValue(row);
-                     if (value != null && double.TryParse(value.ToString(), out double numbericValue))
-                     {
-                         if (groupValues.ContainsKey(displayName))
-                             groupValues[displayName] += numbericValue;
-                         else
-                             groupValues[displayName] = numbericValue;
-                     }
-                 }
-             }
-         }
-
-         var chartData = groupValues.Select(g => new ClosingInventoryBalanceChartFormat
-         {
-             x = g.Key.Replace("_", " "),
-             y = Math.Round(g.Value, 2)
-         }).ToList();
+            if (result?.Count > 0)
+            {
+                model.FinishedGoodsProductionChart = result;
+                model.FinishedGoodsProductionChartFormat = finalData?
+                    .Select(i => new FinishedGoodsProductionChartFormat
+                    {
+                        x = i.x,
+                        actuals = i.actual,
+                        aiforecast = i.aiforecast
+                    })
+                    .ToList();
+            }
 
 
-         foreach (var prop in filteredProps)
-         {
-             if (prop.Name != "CalYear" && prop.Name != "CalMonth" && prop.Name != "CalYear" && prop.Name != "InventoryType" && prop.Name != "CompanyCode")
-             {
-                 {
-                     double sum = result.Sum(r => Convert.ToDouble(prop.GetValue(r) ?? 0));
-                     prop.SetValue(totals, Math.Round(sum, 2));
-                 }
-             }
-         }
+            return model;
+        }
+        public async Task<InventoryMapModel> GetInventoryMapDetails(InventoryFilterReq inventoryFilterReq)
+        {
+            var model = new InventoryMapModel();
+            var result = await _dashboardRepository.GetInventoryMapDetails(inventoryFilterReq);
 
-         var gridList = new List<ClosingInventoryBalanceDetailChart> { totals };
-         var filteredList = new List<object>();
+            var (message, code) = CommonMethod.GetStatus(result?.Count ?? 0);
+            model.StatusMessage = message;
+            model.StatusCode = code;
+            model.InventoryMap = result;
 
-         foreach (var row in gridList)
-         {
-             var dict = new Dictionary<string, double>();
+            return model;
 
-             foreach (var prop in filteredProps)
-             {
-                 var displayAttr = prop.GetCustomAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>();
-                 var jsonAttr = prop.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
+        }
 
-                 var displayName = jsonAttr?.Name ?? displayAttr?.Name ?? prop.Name;
+        public async Task<MapChartModel> GetInventoryMapDetailsChart(ChartDataFilterReq inventoryFilterReq)
+        {
+            var model = new MapChartModel();
+            var result = await _dashboardRepository.GetInventoryMapDetailsChart(inventoryFilterReq);
 
-                 var val = prop.GetValue(row);
-                 if (val != null && double.TryParse(val.ToString(), out double num))
-                     dict[displayName] = Math.Round(num, 2);
-             }
+            var (message, code) = CommonMethod.GetStatus(result?.Count ?? 0);
+            model.StatusMessage = message;
+            model.StatusCode = code;
+            model.ChartsData = result;
 
-             filteredList.Add(dict);
-         }
-
-         return (chartData, filteredList);
-     }
-
-     return (null, null);
- }
-  public class ClosingInventoryBalanceDetailChartModel : CommonRes
-  {
-      public List<ClosingInventoryBalanceChartFormat>? FGChartData { get; set; }
-      public List<ClosingInventoryBalanceChartFormat>? RMChartData { get; set; }
-      public List<ClosingInventoryBalanceChartFormat>? AllChartData { get; set; }
-
-      public List<object>? FGClosingInventoryBalanceDetailsChart { get; set; }
-      public List<object>? RMClosingInventoryBalanceDetailsChart { get; set; }
-      public List<object>? AllClosingInventoryBalanceDetailsChart { get; set; }
-  }
+            return model;
+        }
 
 
-Db REsult
-CalYear	CalMonth	InventoryType	OpeningInventory_Value_In_Million	OpeningInventory_Volume_In_MT	forecast_value_Production_Output_In_Million	forecast_volume_Production_Output_In_MT	forecast_value_STO_IN_In_Million	forecast_volume_STO_IN_In_MT	forecast_value_STO_OUT_In_Million	forecast_volume_STO_OUT_In_MT	forecast_value_Transfers_IN_In_Million	forecast_volume_Transfers_IN_In_MT	forecast_value_Demand_In_Million	forecast_volume_Demand_In_MT	forecast_value_Consumed_in_production_In_Million	forecast_volume_Consumed_in_production_In_MT	forecast_value_Others_In_Million	forecast_volume_Others_In_MT	forecast_value_Purchase_In_Million	forecast_volume_Purchase_In_MT	forecast_value_Unallocated_In_Million	forecast_volume_Unallocated_In_MT	ClosingInventory_Value_In_Million	ClosingInventory_Volume_In_MT
-2024	6	Finished Goods	9212.83	2863784.53	4486.48	1647748.34	2159.65	1057431.64	-3486.46	-1306772.93	2.8	-10914.52	-499.15	-94616.52	-2810.06	-1259934.34	-0.04	-4.47	125.87	17154.36	0	0	9191.92	2913876.09
-2024	6	Raw Materials	1535.66	3055500.73	0.23	55.74	45.28	114.91	-0.49	-165.23	-0.01	-399.69	-0.03	-0.8	-229.06	-548631.58	0	0	290.56	717015.66	0	0	1642.14	3223489.74
+        public async Task<FinishedGoodsPurchaseChartModel> GetFinishedGoodsPurchaseChartData(ChartDataFilterReq chartDataFilterReq)
+        {
+            var model = new FinishedGoodsPurchaseChartModel();
+            var result = await _dashboardRepository.GetFinishedGoodsPurchaseChartData(chartDataFilterReq);
+
+            var (message, code) = CommonMethod.GetStatus(result?.Count ?? 0);
+            model.StatusMessage = message;
+            model.StatusCode = code;
+
+            var finalData = result?.GroupBy(x => new { x.CalYear, x.CalMonth })
+               .Select(g => new
+               {
+                   x = g.First().CalMonth + " " + g.First().CalYear,
+                   actual = g.Where(a => a.DataType == "Actuals")
+                   .Select(a => a.DataValue)
+                   .FirstOrDefault(),
+                   aiforecast = g.Where(a => a.DataType == "AIForecast")
+                   .Select(a => a.DataValue)
+                   .FirstOrDefault()
+               })
+               .OrderBy(x => DateTime.ParseExact(x.x, "MMM yyyy", null))
+               .ToList();
+
+            if (result?.Count > 0)
+            {
+                model.FinishedGoodsPurchaseChart = result;
+                model.FinishedGoodsPurchaseChartFormat = finalData?
+                    .Select(i => new FinishedGoodsPurchaseChartFormat
+                    {
+                        x = i.x,
+                        actuals = i.actual,
+                        aiforecast = i.aiforecast
+                    })
+                    .ToList();
+            }
+
+            return model;
+        }
+
+        public async Task<TotalInventoryValueDifferenceModel> GetTotalInventoryValueDifference(InventoryFilterReq inventoryFilterReq)
+        {
+            var model = new TotalInventoryValueDifferenceModel();
+            var result = await _dashboardRepository.GetTotalInventoryValueDifference(inventoryFilterReq);
+            var (message, code) = CommonMethod.GetStatus(result != null ? 1 : 0);
+            model.StatusMessage = message;
+            model.StatusCode = code;
+            model.TotalInventoryValueDifference = result;
+
+            return model;
+        }
+
+        public async Task<TotalInventoryVolumeDifferenceModel> GetTotalInventoryVolumeDifference(InventoryFilterReq inventoryFilterReq)
+        {
+            var model = new TotalInventoryVolumeDifferenceModel();
+            var result = await _dashboardRepository.GetTotalInventoryVolumeDifference(inventoryFilterReq);
+            var (message, code) = CommonMethod.GetStatus(result != null ? 1 : 0);
+            model.StatusMessage = message;
+            model.StatusCode = code;
+            model.TotalInventoryVolumeDifference = result;
+
+            return model;
+        }
+
+        public async Task<InventoryDIOModel> GetInventoryDIO(InventoryFilterReq inventoryFilterReq)
+        {
+            var model = new InventoryDIOModel();
+            var result = await _dashboardRepository.GetInventoryDIO(inventoryFilterReq);
+            var (message, code) = CommonMethod.GetStatus(result != null ? 1 : 0);
+            model.StatusMessage = message;
+            model.StatusCode = code;
+            model.InventoryDIO = result;
+
+            return model;
+        }
+
+        public async Task<ClosingInventoryBalanceChartModel> GetClosingInventoryBalanceChart(ChartDataFilterReq req)
+        {
+            var filterRes = new ClosingInventoryBalanceChartModel();
+            var result = await _dashboardRepository.GetClosingInventoryBalanceChart(req);
+
+            if (result != null)
+            {
+                var fgActual = new List<ClosingInventoryBalanceChartFormat>();
+                var fgAiForeCast = new List<ClosingInventoryBalanceChartFormat>();
+                var rmActual = new List<ClosingInventoryBalanceChartFormat>();
+                var rmAiForeCast = new List<ClosingInventoryBalanceChartFormat>();
+
+                var goodsInTransitChartData = new List<ClosingInventoryBalanceChartFormat>();
+                foreach (var data in result)
+                {
+                    fgActual.Add(new ClosingInventoryBalanceChartFormat()
+                    {
+                        x = $"{data.CalMonth} {data.CalYear}",
+                        y = data.FG_Actual
+                    });
+                    fgAiForeCast.Add(new ClosingInventoryBalanceChartFormat()
+                    {
+                        x = $"{data.CalMonth} {data.CalYear}",
+                        y = data.FG_AiForecast
+                    });
+
+                    rmActual.Add(new ClosingInventoryBalanceChartFormat()
+                    {
+                        x = $"{data.CalMonth} {data.CalYear}",
+                        y = data.RM_Actual
+                    });
+                    rmAiForeCast.Add(new ClosingInventoryBalanceChartFormat()
+                    {
+                        x = $"{data.CalMonth} {data.CalYear}",
+                        y = data.RM_AiForecast
+                    });
+
+                }
+                var gridResult = new List<ClosingInventoryBalanceChart>();
+
+                foreach (var row in result)
+                {
+                    // Actual 
+                    if (row.RM_Actual.HasValue || row.FG_Actual.HasValue)
+                    {
+                        gridResult.Add(new ClosingInventoryBalanceChart
+                        {
+                            CalYear = row.CalYear,
+                            CalMonth = row.CalMonth,
+                            CurrencyType = row.CurrencyType,
+                            Metrics = row.Metrics,
+                            DataType = "Actuals",
+                            RMValue = row.RM_Actual,
+                            FGValue = row.FG_Actual,
+                        });
+                    }
+
+                    // Forecast 
+                    if (row.FG_AiForecast.HasValue || row.RM_AiForecast.HasValue)
+                    {
+                        gridResult.Add(new ClosingInventoryBalanceChart
+                        {
+                            CalYear = row.CalYear,
+                            CalMonth = row.CalMonth,
+                            CurrencyType = row.CurrencyType,
+                            Metrics = row.Metrics,
+                            DataType = "AIForecast",
+                            RMValue = row.RM_AiForecast,
+                            FGValue = row.FG_AiForecast,
+                        });
+                    }
+                }
+
+
+                filterRes.StatusMessage = SabicConstants.SuccessMessage;
+                filterRes.StatusCode = SabicConstants.SuccessStatusCode;
+                filterRes.FGActualChartData = fgActual;
+                filterRes.FGAiForecastChartData = fgAiForeCast;
+                filterRes.RMActualChartData = rmActual;
+                filterRes.RMAiForecastChartData = rmAiForeCast;
+
+                filterRes.ClosingInventoryBalanceCharts = gridResult;
+            }
+            else
+            {
+                filterRes.StatusMessage = SabicConstants.RecordNotFoundMessage;
+                filterRes.StatusCode = SabicConstants.RecordNotFoundStatusCode;
+            }
+            return filterRes;
+        }
+
+        public async Task<ClosingInventoryBalanceDetailChartModel> GetClosingInventoryBalanceDetailChart(ChartDataFilterReq chartDataFilterReq)
+        {
+            var filterRes = new ClosingInventoryBalanceDetailChartModel();
+            var tempDate = string.IsNullOrEmpty(chartDataFilterReq.SelectedMonth) ? chartDataFilterReq.FromDate!.Value.ToString("MMM yyyy").ToUpper() : chartDataFilterReq.SelectedMonth;
+            var (fromDate, toDate) = GetStartandEndDate(tempDate); // DEC 2023
+            chartDataFilterReq.FromDate = fromDate;
+            chartDataFilterReq.ToDate = toDate;
+            var result = await _dashboardRepository.GetClosingInventoryBalanceDetailChart(chartDataFilterReq);
+
+            var FGResult = result?.Where(x => x.InventoryType == "Finished Goods").ToList();
+            var RMResult = result?.Where(x => x.InventoryType == "Raw Materials").ToList();
+
+
+            if (FGResult != null || RMResult != null)
+            {
+                // Finished Goods
+                var (FGchartData, FGgridList) = getFilteredClosingInventoryDetailList(chartDataFilterReq, FGResult, chartDataFilterReq.Metrics == 1 ? "Value" : "Volume");
+                filterRes.FGClosingInventoryBalanceDetailsChart = FGgridList; 
+                filterRes.FGChartData = FGchartData;
+
+                //Raw Materials
+                var (RMchartData, RMgridList) = getFilteredClosingInventoryDetailList(chartDataFilterReq, RMResult, chartDataFilterReq.Metrics == 1 ? "Value" : "Volume");
+                filterRes.RMClosingInventoryBalanceDetailsChart = RMgridList;
+                filterRes.RMChartData = RMchartData;
+
+                filterRes.StatusMessage = SabicConstants.SuccessMessage;
+                filterRes.StatusCode = SabicConstants.SuccessStatusCode;
+            }
+            else
+            {
+                filterRes.StatusMessage = SabicConstants.RecordNotFoundMessage;
+                filterRes.StatusCode = SabicConstants.RecordNotFoundStatusCode;
+            }
+            return filterRes;
+        }
+
+        public (List<ClosingInventoryBalanceChartFormat>, List<object>) getFilteredClosingInventoryDetailList(ChartDataFilterReq chartDataFilterReq, List<ClosingInventoryBalanceDetailChart> result, string type)
+        {
+            if (result != null && result.Count > 0)
+            {
+                var props = result.First().GetType().GetProperties();
+                var groupValues = new Dictionary<string, double>();
+                var totals = new ClosingInventoryBalanceDetailChart();
+
+                var filteredProps = props
+                    .Where(p => p.Name.Contains(type, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                foreach (var row in result)
+                {
+                    foreach (var prop in filteredProps)
+                    {
+                        if (prop.Name != "CalYear" && prop.Name != "CalMonth" && prop.Name != "CalYear" && prop.Name != "InventoryType" && prop.Name != "CompanyCode")
+                        {
+                            var displayAttr = prop.GetCustomAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>();
+                            var jsonAttr = prop.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
+
+                            var displayName = jsonAttr?.Name ?? displayAttr?.Name ?? prop.Name;
+
+                            var value = prop.GetValue(row);
+                            if (value != null && double.TryParse(value.ToString(), out double numbericValue))
+                            {
+                                if (groupValues.ContainsKey(displayName))
+                                    groupValues[displayName] += numbericValue;
+                                else
+                                    groupValues[displayName] = numbericValue;
+                            }
+                        }
+                    }
+                }
+
+                var chartData = groupValues.Select(g => new ClosingInventoryBalanceChartFormat
+                {
+                    x = g.Key.Replace("_", " "),
+                    y = Math.Round(g.Value, 2)
+                }).ToList();
+
+
+                foreach (var prop in filteredProps)
+                {
+                    if (prop.Name != "CalYear" && prop.Name != "CalMonth" && prop.Name != "CalYear" && prop.Name != "InventoryType" && prop.Name != "CompanyCode")
+                    {
+                        {
+                            double sum = result.Sum(r => Convert.ToDouble(prop.GetValue(r) ?? 0));
+                            prop.SetValue(totals, Math.Round(sum, 2));
+                        }
+                    }
+                }
+
+                var gridList = new List<ClosingInventoryBalanceDetailChart> { totals };
+                var filteredList = new List<object>();
+
+                foreach (var row in gridList)
+                {
+                    var dict = new Dictionary<string, double>();
+
+                    foreach (var prop in filteredProps)
+                    {
+                        var displayAttr = prop.GetCustomAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>();
+                        var jsonAttr = prop.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
+
+                        var displayName = jsonAttr?.Name ?? displayAttr?.Name ?? prop.Name;
+
+                        var val = prop.GetValue(row);
+                        if (val != null && double.TryParse(val.ToString(), out double num))
+                            dict[displayName] = Math.Round(num, 2);
+                    }
+
+                    filteredList.Add(dict);
+                }
+
+                return (chartData, filteredList);
+            }
+
+            return (null, null);
+        }
+
+        public async Task<InventoryInsightsGridModel> GetInventoryInsightsGridData(InventoryFilterReq inventoryFilterReq)
+        {
+            var filterRes = new InventoryInsightsGridModel();
+            var inventoryInsightsGroups = new List<InventoryInsightsGroup>();
+            var result = await _dashboardRepository.GetInventoryInsightsGridData(inventoryFilterReq);
+            if (result != null)
+            {
+                var response = result.GroupBy(x => x.CompanyName).ToList();
+                foreach (var data in response)
+                {
+                    var inventoryInsightsGroup = new InventoryInsightsGroup();
+                    inventoryInsightsGroup.CompanyName = data.Key;
+                    inventoryInsightsGroup.InventoryType = "";
+                    inventoryInsightsGroup.OpeningInventory_Volume_In_MT = data.Sum(x => x.OpeningInventory_Volume_In_MT);
+                    inventoryInsightsGroup.ClosingInventory_Volume_In_MT = data.Sum(x => x.ClosingInventory_Volume_In_MT);
+                    inventoryInsightsGroup.OpeningInventory_Value_In_MillionSAR = data.Sum(x => x.OpeningInventory_Value_In_MillionSAR);
+                    inventoryInsightsGroup.ClosingInventory_Value_In_MillionSAR = data.Sum(x => x.ClosingInventory_Value_In_MillionSAR);
+                    inventoryInsightsGroup.DIO_OpeningInventory = data.Sum(x => x.DIO_OpeningInventory);
+                    inventoryInsightsGroup.DIO_ClosingInventory = data.Sum(x => x.DIO_ClosingInventory);
+                    inventoryInsightsGroup.CostOfWC_OpeningInventory = data.Sum(x => x.CostOfWC_OpeningInventory);
+                    inventoryInsightsGroup.CostOfWC_ClosingInventory = data.Sum(x => x.CostOfWC_ClosingInventory);
+                    var inventoryInsightsGrids = new List<InventoryInsightsGrid>();
+                    foreach (var item in data)
+                    {
+                        inventoryInsightsGrids.Add(item);
+                    }
+                    inventoryInsightsGroup.InventoryInsightsGrids = inventoryInsightsGrids;
+                    if (inventoryInsightsGroup != null)
+                    {
+                        inventoryInsightsGroups.Add(inventoryInsightsGroup);
+                    }
+                }
+
+                filterRes.InventoryInsightsGroups = inventoryInsightsGroups;
+
+                if (filterRes?.InventoryInsightsGroups?.Count() > 0)
+                {
+                    filterRes.StatusMessage = SabicConstants.SuccessMessage;
+                    filterRes.StatusCode = SabicConstants.SuccessStatusCode;
+                }
+            }
+            else
+            {
+                filterRes.StatusMessage = SabicConstants.RecordNotFoundMessage;
+                filterRes.StatusCode = SabicConstants.RecordNotFoundStatusCode;
+            }
+            return filterRes!;
+        }
+        public async Task<FinishedGoodsInterCompanyTransferChartModel> GetFGInterCompanyTransferAIFCChartDataForGIT(InvChartDataFilterReq fGChartDataFilterReq)
+        {
+            var model = new FinishedGoodsInterCompanyTransferChartModel();
+            var result = await _dashboardRepository.GetFGInterCompanyTransferAIFCChartDataForGIT(fGChartDataFilterReq);
+
+            var (message, code) = CommonMethod.GetStatus(result?.Count ?? 0);
+            model.StatusMessage = message;
+            model.StatusCode = code;
+
+            var finalData = result?.GroupBy(x => new { x.CalYear, x.CalMonth })
+                .Select(g => new
+                {
+                    x = g.First().CalMonth + " " + g.First().CalYear,
+                    actual = g.Where(a => a.DataType == "Actuals")
+                    .Select(a => a.DataValue)
+                    .FirstOrDefault(),
+                    aiforecast = g.Where(a => a.DataType == "AIForecast")
+                    .Select(a => a.DataValue)
+                    .FirstOrDefault()
+                })
+                .OrderBy(x => DateTime.ParseExact(x.x, "MMM yyyy", null))
+                .ToList();
+
+            if (result?.Count > 0)
+            {
+                model.FinishedGoodsInterCompanyTransferCharts = result;
+                model.FinishedGoodsInterCompanyTransferChartFormats = finalData?
+                    .Select(i => new FinishedGoodsInterCompanyTransferChartFormat
+                    {
+                        x = i.x,
+                        actuals = i.actual,
+                        aiforecast = i.aiforecast
+                    })
+                    .ToList();
+            }
+
+            return model;
+        }
+
+        public async Task<FinishedGoodsInterCompanyTransferChartModel> GetFGInterCompanyTransferAIFCChartDataForWIP(InvChartDataFilterReq fGChartDataFilterReq)
+        {
+            var model = new FinishedGoodsInterCompanyTransferChartModel();
+            var result = await _dashboardRepository.GetFGInterCompanyTransferAIFCChartDataForWIP(fGChartDataFilterReq);
+
+            var (message, code) = CommonMethod.GetStatus(result?.Count ?? 0);
+            model.StatusMessage = message;
+            model.StatusCode = code;
+
+            var finalData = result?.GroupBy(x => new { x.CalYear, x.CalMonth })
+                .Select(g => new
+                {
+                    x = g.First().CalMonth + " " + g.First().CalYear,
+                    actual = g.Where(a => a.DataType == "Actuals")
+                    .Select(a => a.DataValue)
+                    .FirstOrDefault(),
+                    aiforecast = g.Where(a => a.DataType == "AIForecast")
+                    .Select(a => a.DataValue)
+                    .FirstOrDefault()
+                })
+                .OrderBy(x => DateTime.ParseExact(x.x, "MMM yyyy", null))
+                .ToList();
+
+            if (result?.Count > 0)
+            {
+                model.FinishedGoodsInterCompanyTransferCharts = result;
+                model.FinishedGoodsInterCompanyTransferChartFormats = finalData?
+                    .Select(i => new FinishedGoodsInterCompanyTransferChartFormat
+                    {
+                        x = i.x,
+                        actuals = i.actual,
+                        aiforecast = i.aiforecast
+                    })
+                    .ToList();
+            }
+
+            return model;
+        }
+
+        public async Task<ChartModel> GetFinishedGoodsSTOChartData(ChartDataFilterReq req)
+        {
+            var result = await _dashboardRepository.GetFinishedGoodsSTOChartData(req);
+            var mappedResult = _mapper.Map<List<ChartDataDto>>(result);
+            return CommonMethod.chartManipilateInOutData(mappedResult);
+        }
+
+        public async Task<ChartModel> GetFinishedGoodsTransfersChartData(ChartDataFilterReq req)
+        {
+            var result = await _dashboardRepository.GetFinishedGoodsTransfersChartData(req);
+            var mappedResult = _mapper.Map<List<ChartDataDto>>(result);
+            return CommonMethod.chartManipilateInOutData(mappedResult);
+        }
+
+        public async Task<ChartModel> GetFinishedGoodsConsumedProductionChartData(ChartDataFilterReq req)
+        {
+            var result = await _dashboardRepository.GetFinishedGoodsConsumedProductionChartData(req);
+            var mappedResult = _mapper.Map<List<ChartDataDto>>(result);
+            return CommonMethod.chartManipulateData(mappedResult);
+        }
+
+        public async Task<ChartModel> GetFinishedGoodsUnallocatedChartData(ChartDataFilterReq req)
+        {
+            var result = await _dashboardRepository.GetFinishedGoodsUnallocatedChartData(req);
+            var mappedResult = _mapper.Map<List<ChartDataDto>>(result);
+            return CommonMethod.chartManipulateData(mappedResult);
+        }
+
+        public async Task<ChartModel> GetFinishedGoodsOthersChartData(ChartDataFilterReq req)
+        {
+            var result = await _dashboardRepository.GetFinishedGoodsOthersChartData(req);
+            var mappedResult = _mapper.Map<List<ChartDataDto>>(result);
+            return CommonMethod.chartManipulateData(mappedResult);
+        }
+
+        public async Task<InventoryInsightsGridDetailChartModel> getInventoryInsightsGridDetailChart(ChartDataFilterReq chartDataFilterReq)
+        {
+            var filterRes = new InventoryInsightsGridDetailChartModel();
+            var result = await _dashboardRepository.GetInventoryInsightDetailChart(chartDataFilterReq);
+
+            var FGResult = result?.Where(x => x.InventoryType == "Finished Goods").ToList();
+            var RMResult = result?.Where(x => x.InventoryType == "Raw Materials").ToList();
+
+
+            if (FGResult != null || RMResult != null)
+            {
+                // Finished Goods
+                var (FGchartData, FGgridList) = getFilteredClosingInventoryDetailList(chartDataFilterReq, FGResult, chartDataFilterReq.Metrics == 1 ? "Value" : "Volume");
+                filterRes.FGInventoryIndightDetailsChart = FGgridList;
+                filterRes.FGChartData = FGchartData;
+
+                //Raw Materials
+                var (RMchartData, RMgridList) = getFilteredClosingInventoryDetailList(chartDataFilterReq, RMResult, chartDataFilterReq.Metrics == 1 ? "Value" : "Volume");
+                filterRes.RMInventoryIndightDetailsChart = RMgridList;
+                filterRes.RMChartData = RMchartData;
+
+                filterRes.StatusMessage = SabicConstants.SuccessMessage;
+                filterRes.StatusCode = SabicConstants.SuccessStatusCode;
+            }
+            else
+            {
+                filterRes.StatusMessage = SabicConstants.RecordNotFoundMessage;
+                filterRes.StatusCode = SabicConstants.RecordNotFoundStatusCode;
+            }
+            return filterRes;
+        }
+
+        public async Task<UnitOfMeasureModel> GetUnitOfMeasure()
+        {
+            var model = new UnitOfMeasureModel();
+            var result = await _dashboardRepository.GetUnitOfMeasure();
+
+            var (message, code) = CommonMethod.GetStatus(result?.Count ?? 0);
+            model.StatusMessage = message;
+            model.StatusCode = code;
+            model.LstUnitOfMeasure = result;
+
+            return model;
+        }
+
+        private static (DateTime startDate, DateTime toDate) GetStartandEndDate(string monthYear)
+        {
+            if (DateTime.TryParseExact(monthYear, "MMM yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime parseDate))
+            {
+                DateTime startDate = new DateTime(parseDate.Year, parseDate.Month, 1);
+                DateTime endDate = startDate.AddMonths(1).AddDays(-1);
+
+                return (startDate, endDate);
+            }
+            else
+            {
+                return (new DateTime(), new DateTime().AddDays(1));
+            }
+
+        }
+
+    }
+
+}
