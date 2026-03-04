@@ -1,13 +1,45 @@
-For that meeting of comments,
+Dear Team,
 
-1.	RawSQL Mapper use only one
-a.	Like  ( _dbContext.UserDetails.FromSqlRaw   or _dbContext.Database.ExecuteSqlRawAsync), 
-b.	Note is no need AutoMapper  further ?.
-2.	SQL 
-a.	Use pre and post deployment script
-b.	Use two projects have each solution n 
-c.	Reply Rahil, Atif comments
-d.	Note: you are telling variable to execute deployment (give any example. It will useful for me and DevOps developer)
-3.	Remove LogException Endpoint no point to use
-4.	Remove dll no point of used in build
-5.	If any missed please add here to  address
+Please find below the updated Minutes of Meeting (MoM) with action items and clarifications discussed:
+
+1. **Raw SQL Mapper Usage**
+
+   * Use only one approach for Raw SQL execution:
+
+     * Either `_dbContext.UserDetails.FromSqlRaw(...)`
+     * Or `_dbContext.Database.ExecuteSqlRawAsync(...)`
+   * If Raw SQL is used directly and mapped properly, there is **no need to use AutoMapper additionally**.
+
+2. **SQL & Deployment Process**
+
+   * Implement **Pre-Deployment** and **Post-Deployment** scripts.
+   * Maintain **two separate projects within each solution** (Application Project and Database/SQL Project).
+   * Respond to comments raised by **Rahil** and **Atif**.
+   * Regarding deployment variables: Use environment-based variables in the release pipeline.
+
+     **Example:**
+
+     * `$(EnvironmentName)`
+     * `$(ConnectionString)`
+     * `$(SchemaName)`
+
+     These variables can be configured in Azure DevOps Release Pipeline and passed during deployment to control environment-specific execution. This will be helpful for both development and DevOps teams.
+
+3. **LogException Endpoint**
+
+   * Remove the `LogException` endpoint, as it is not required and has no practical usage.
+
+4. **Unused DLLs**
+
+   * Remove unused DLL references from the build to avoid unnecessary dependencies.
+
+5. **Additional Notes**
+
+   * Ensure proper code review before merging.
+   * Confirm all unused classes, endpoints, and configurations are cleaned up.
+   * Validate deployment scripts in lower environments before production release.
+
+Please review and let me know if anything is missed or needs further clarification.
+
+Thanks & Regards,
+[Your Name]
