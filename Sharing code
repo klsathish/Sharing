@@ -1,5 +1,20 @@
 Hi [Architect Name],
 
+I had shared an email earlier regarding the implementation approach, but I have not yet received an update from your end.
+
+Based on the discussion in the recent call and the options mentioned in my previous email, I will proceed with the following approach for now:
+
+1. Raw SQL Mapper Usage – I will remove the AutoMapper usage and implement a common "FromSql" mapping approach.
+2. SQL Deployment Process – I will maintain two solutions based on schema, configure the pipeline for successful deployment, and include pre-deployment and post-deployment scripts.
+
+Please let me know if any changes or additional guidelines need to be considered.
+
+Thanks,
+Sathish
+
+
+Hi [Architect Name],
+
 Regarding the point on SABIC standards, I have been referring to the available code standard document and implementing the changes accordingly.
 
 If there are any additional or updated guidelines that need to be followed for this implementation, kindly share the reference so that I can ensure the changes are aligned with the expected standards.
