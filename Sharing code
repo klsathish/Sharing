@@ -1,3 +1,21 @@
+Hi [Architect Name],
+
+Regarding the point on SABIC standards, I have been referring to the available code standard document and implementing the changes accordingly.
+
+If there are any additional or updated guidelines that need to be followed for this implementation, kindly share the reference so that I can ensure the changes are aligned with the expected standards.
+
+As discussed earlier, I am proceeding with the following approach for now:
+
+1. Raw SQL Mapper Usage – Removing AutoMapper and implementing a common "FromSql" mapping approach.
+2. SQL Deployment Process – Maintaining two solutions based on schema, configuring the pipeline for deployment, and including pre-deployment and post-deployment scripts.
+
+Please let me know if any adjustments are required.
+
+Thanks,
+Sathish
+
+
+
 Dear Team,
 
 Please find below the updated Minutes of Meeting (MoM) with action items and clarifications discussed:
