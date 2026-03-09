@@ -1,4 +1,57 @@
 
+
+Generate INSERT Query from Excel
+Create a new column in Excel:
+Excel
+Copy code
+="INSERT INTO #TempProfitCenter (ProfitCenterID,SUB_BU,PRODUCT,AffiliateCode,ProfitCenterName) VALUES ("&J2&",'"&D2&"','"&E2&"',"&G2&","&F2&");"
+Example output:
+Sql
+Copy code
+INSERT INTO #TempProfitCenter (ProfitCenterID,SUB_BU,PRODUCT,AffiliateCode,ProfitCenterName)
+VALUES (112,'PE-LL/LD','LDPE',1000,1315);
+Copy all rows → paste in SQL Server.
+3️⃣ Create Temp Table in SQL
+Sql
+Copy code
+CREATE TABLE #TempProfitCenter
+(
+ProfitCenterID INT,
+SUB_BU VARCHAR(100),
+PRODUCT VARCHAR(100),
+AffiliateCode INT,
+ProfitCenterName INT
+)
+Then run the Excel INSERT queries.
+4️⃣ Compare Data Before Update
+Sql
+Copy code
+SELECT 
+T.ProfitCenterID,
+T.SUB_BU AS New_SUB_BU,
+M.SUB_BU AS Old_SUB_BU,
+T.PRODUCT AS New_PRODUCT,
+M.PRODUCT AS Old_PRODUCT
+FROM #TempProfitCenter T
+JOIN MST_ProfitCenter M
+ON T.ProfitCenterID = M.ProfitCenterID
+This lets you verify changes safely.
+5️⃣ Update After Verification
+Sql
+Copy code
+UPDATE M
+SET 
+M.SUB_BU = T.SUB_BU,
+M.PRODUCT = T.PRODUCT
+FROM MST_ProfitCenter M
+JOIN #TempProfitCenter T
+ON M.ProfitCenterID = T.ProfitCenterID
+6️⃣ Final Verification
+Sql
+Copy code
+SELECT *
+FROM MST_ProfitCenter
+WHERE ProfitCenterID IN (SELECT ProfitCenterID FROM #TempProfitCenter)
 Hi [Architect Name],
 
 Thanks for the update.
