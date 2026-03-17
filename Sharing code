@@ -1,3 +1,19 @@
+
+Hi Harish,
+
+Good Day.
+
+The changes in this PR were implemented based on the discussion from the earlier call, where it was mentioned to maintain two separate projects for Master and Web, with the Master schema handled using variables and ensuring the pipeline build succeeds.
+
+Accordingly, the tables and procedures were separated under the Master schema. The previous PR comments were mainly related to foreign keys and views, which are part of the Master schema, and those were treated as exceptions based on the earlier discussion.
+
+Since the PR has now been rejected mentioning that it is not aligned, could you please clarify what specific changes are required so that we can update it accordingly?
+
+Thanks,
+Sathish
+
+
+
 Subject: Request for Review - SQL PR for Master & Web Modules
 
 Hi Team,
