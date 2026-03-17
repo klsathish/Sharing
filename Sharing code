@@ -1,3 +1,21 @@
+Subject: Request for Review - SQL PR for Master & Web Modules
+
+Hi Team,
+
+The middleware PR has already been approved.
+
+I have now raised the SQL PR for the Master and Web modules.
+
+Please review the changes at your convenience.
+
+Note:
+
+The foreign key update for the Master tables has not been included in this PR, as making that change now may impact ongoing development work. Once the development activities are stable, I will include the FK update in a separate PR.
+
+Let me know if any adjustments are needed.
+
+Thanks & Regards, Sathish
+
 Title: SQL Project - Master & Web Script Updates
 
 Description:
