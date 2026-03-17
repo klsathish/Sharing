@@ -1,4 +1,40 @@
+Title: SQL Project - Master & Web Script Updates
 
+Description:
+
+This pull request includes updates to the SQL project covering both Master and Web modules.
+
+I Changes Included
+
+Added/updated Master DB scripts
+
+Added/updated Web DB scripts
+
+Ensured script ordering and dependencies are correct
+
+Verified compatibility with existing schema
+
+Cleaned unused objects (if applicable)
+
+Added comments for clarity in the script files
+
+Testing Performed
+
+Executed scripts in local/dev environment
+
+Verified schema changes applied successfully
+
+Confirmed no conflicts with existing objects
+
+Checked for errors in build/compilation of SQL project
+
+Additional Notes
+
+No breaking changes expected
+
+Please review object changes carefully
+
+Let me know if any script needs reordering or consolidation
 
 Generate INSERT Query from Excel
 Create a new column in Excel:
