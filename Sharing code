@@ -1,214 +1,117 @@
-
-Hi Harish,
-
-Good Day.
-
-The changes in this PR were implemented based on the discussion from the earlier call, where it was mentioned to maintain two separate projects for Master and Web, with the Master schema handled using variables and ensuring the pipeline build succeeds.
-
-Accordingly, the tables and procedures were separated under the Master schema. The previous PR comments were mainly related to foreign keys and views, which are part of the Master schema, and those were treated as exceptions based on the earlier discussion.
-
-Since the PR has now been rejected mentioning that it is not aligned, could you please clarify what specific changes are required so that we can update it accordingly?
-
-Thanks,
-Sathish
-
-
-
-Subject: Request for Review - SQL PR for Master & Web Modules
-
-Hi Team,
-
-The middleware PR has already been approved.
-
-I have now raised the SQL PR for the Master and Web modules.
-
-Please review the changes at your convenience.
-
-Note:
-
-The foreign key update for the Master tables has not been included in this PR, as making that change now may impact ongoing development work. Once the development activities are stable, I will include the FK update in a separate PR.
-
-Let me know if any adjustments are needed.
-
-Thanks & Regards, Sathish
-
-Title: SQL Project - Master & Web Script Updates
-
-Description:
-
-This pull request includes updates to the SQL project covering both Master and Web modules.
-
-I Changes Included
-
-Added/updated Master DB scripts
-
-Added/updated Web DB scripts
-
-Ensured script ordering and dependencies are correct
-
-Verified compatibility with existing schema
-
-Cleaned unused objects (if applicable)
-
-Added comments for clarity in the script files
-
-Testing Performed
-
-Executed scripts in local/dev environment
-
-Verified schema changes applied successfully
-
-Confirmed no conflicts with existing objects
-
-Checked for errors in build/compilation of SQL project
-
-Additional Notes
-
-No breaking changes expected
-
-Please review object changes carefully
-
-Let me know if any script needs reordering or consolidation
-
-Generate INSERT Query from Excel
-Create a new column in Excel:
-Excel
-Copy code
-="INSERT INTO #TempProfitCenter (ProfitCenterID,SUB_BU,PRODUCT,AffiliateCode,ProfitCenterName) VALUES ("&J2&",'"&D2&"','"&E2&"',"&G2&","&F2&");"
-Example output:
-Sql
-Copy code
-INSERT INTO #TempProfitCenter (ProfitCenterID,SUB_BU,PRODUCT,AffiliateCode,ProfitCenterName)
-VALUES (112,'PE-LL/LD','LDPE',1000,1315);
-Copy all rows → paste in SQL Server.
-3️⃣ Create Temp Table in SQL
-Sql
-Copy code
-CREATE TABLE #TempProfitCenter
-(
-ProfitCenterID INT,
-SUB_BU VARCHAR(100),
-PRODUCT VARCHAR(100),
-AffiliateCode INT,
-ProfitCenterName INT
-)
-Then run the Excel INSERT queries.
-4️⃣ Compare Data Before Update
-Sql
-Copy code
-SELECT 
-T.ProfitCenterID,
-T.SUB_BU AS New_SUB_BU,
-M.SUB_BU AS Old_SUB_BU,
-T.PRODUCT AS New_PRODUCT,
-M.PRODUCT AS Old_PRODUCT
-FROM #TempProfitCenter T
-JOIN MST_ProfitCenter M
-ON T.ProfitCenterID = M.ProfitCenterID
-This lets you verify changes safely.
-5️⃣ Update After Verification
-Sql
-Copy code
-UPDATE M
-SET 
-M.SUB_BU = T.SUB_BU,
-M.PRODUCT = T.PRODUCT
-FROM MST_ProfitCenter M
-JOIN #TempProfitCenter T
-ON M.ProfitCenterID = T.ProfitCenterID
-6️⃣ Final Verification
-Sql
-Copy code
-SELECT *
-FROM MST_ProfitCenter
-WHERE ProfitCenterID IN (SELECT ProfitCenterID FROM #TempProfitCenter)
-Hi [Architect Name],
-
-Thanks for the update.
-
-Based on the discussion in the call, I have shared the implementation points in my previous email. I will proceed with the same approach and start working on them.
-
-Kindly acknowledge or confirm if this approach is fine, or let me know if any changes are required.
-
-Thanks,
-Sathish
-
-
-Hi [Architect Name],
-
-I had shared an email earlier regarding the implementation approach, but I have not yet received an update from your end.
-
-Based on the discussion in the recent call and the options mentioned in my previous email, I will proceed with the following approach for now:
-
-1. Raw SQL Mapper Usage – I will remove the AutoMapper usage and implement a common "FromSql" mapping approach.
-2. SQL Deployment Process – I will maintain two solutions based on schema, configure the pipeline for successful deployment, and include pre-deployment and post-deployment scripts.
-
-Please let me know if any changes or additional guidelines need to be considered.
-
-Thanks,
-Sathish
-
-
-Hi [Architect Name],
-
-Regarding the point on SABIC standards, I have been referring to the available code standard document and implementing the changes accordingly.
-
-If there are any additional or updated guidelines that need to be followed for this implementation, kindly share the reference so that I can ensure the changes are aligned with the expected standards.
-
-As discussed earlier, I am proceeding with the following approach for now:
-
-1. Raw SQL Mapper Usage – Removing AutoMapper and implementing a common "FromSql" mapping approach.
-2. SQL Deployment Process – Maintaining two solutions based on schema, configuring the pipeline for deployment, and including pre-deployment and post-deployment scripts.
-
-Please let me know if any adjustments are required.
-
-Thanks,
-Sathish
-
-
-
-Dear Team,
-
-Please find below the updated Minutes of Meeting (MoM) with action items and clarifications discussed:
-
-1. **Raw SQL Mapper Usage**
-
-   * Use only one approach for Raw SQL execution:
-
-     * Either `_dbContext.UserDetails.FromSqlRaw(...)`
-     * Or `_dbContext.Database.ExecuteSqlRawAsync(...)`
-   * If Raw SQL is used directly and mapped properly, there is **no need to use AutoMapper additionally**.
-
-2. **SQL & Deployment Process**
-
-   * Implement **Pre-Deployment** and **Post-Deployment** scripts.
-   * Maintain **two separate projects within each solution** (Application Project and Database/SQL Project).
-   * Respond to comments raised by **Rahil** and **Atif**.
-   * Regarding deployment variables: Use environment-based variables in the release pipeline.
-
-     **Example:**
-
-     * `$(EnvironmentName)`
-     * `$(ConnectionString)`
-     * `$(SchemaName)`
-
-     These variables can be configured in Azure DevOps Release Pipeline and passed during deployment to control environment-specific execution. This will be helpful for both development and DevOps teams.
-
-3. **LogException Endpoint**
-
-   * Remove the `LogException` endpoint, as it is not required and has no practical usage.
-
-4. **Unused DLLs**
-
-   * Remove unused DLL references from the build to avoid unnecessary dependencies.
-
-5. **Additional Notes**
-
-   * Ensure proper code review before merging.
-   * Confirm all unused classes, endpoints, and configurations are cleaned up.
-   * Validate deployment scripts in lower environments before production release.
-
-Please review and let me know if anything is missed or needs further clarification.
-
-Thanks & Regards,
-[Your Name]
+wants excel like (Menu	Section	Section Inside Section	ProcedureName, params)
+
+and PROCS
+ProcedureName	Parameters	OutputColumns
+SP_GetAffiliateForUserManagement		NULL
+SP_GetErrorLog_AssignToUser		NULL
+SP_GetErrorLogStatus		NULL
+SP_GetForecastRanges		NULL
+SP_GetRecommendationsStatistics		NULL
+SP_GetRegion		NULL
+SP_GetRole		NULL
+SP_GetUsers		NULL
+SP_Insert_SF_CM_From_SourceView		NULL
+SP_Insert_SF_Historic_Cogs_CM_From_SourceView		NULL
+SP_Insert_SF_Historic_SalesRevenue_From_SourceView		NULL
+SP_InsertActualsDataFromMasterViews		NULL
+SP_InsertDSOutput		NULL
+SP_Insert_Update_ActivityTracker	@ActivityTrackerID int, @ScreenID int, @FunctionID int, @UserActionID int, @CreatedBy varchar	NULL
+SP_GetMoreFiltersProfitCenter	@affiliateID int, @profitCenterID int	NULL
+SP_CreateCMLogicFORRecommendations	@CompanyCode int, @ProfitCenterID int, @FromDate datetime, @ToDate datetime, @SBU int, @BU int	NULL
+sp_GetWorkflowDelegationList	@CompanyCode nvarchar, @ProfitCenter nvarchar, @FromDate date, @ToDate date	NULL
+SP_GetAllWorkRecommendations	@CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime, @SBU int, @BU int	NULL
+SP_GetWorkFlowRecommendationDetails	@CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime, @SBU int, @BU int	NULL
+SP_GetWorkSummaryCounts	@CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime, @SBU int, @BU int	NULL
+SP_GetAffiliate	@CountryID varchar	NULL
+SP_Update_ErrorLogging_AssigneeWith_Status	@ErrorLogID int, @AssigneeUserID varchar, @ErrorStatusID int, @UpdatedBy varchar	NULL
+SP_Insert_Update_ErrorLogging	@ErrorLogID int, @UserID int, @RoleID int, @SessionID varchar, @ApplicationID int, @ScreenID int, @ModuleID int, @FunctionID int, @LayerID int, @APIID int, @StoredProcedureID int, @ErrorNumber int, @ErrorState int, @ErrorSeverity varchar, @StackTrace nvarchar, @ErrorMessage nvarchar, @RequestBody nvarchar, @ResponseBody nvarchar, @Status varchar, @HostName varchar, @Environment varchar, @CreatedBy varchar, @UpdatedBy varchar, @IpAddress nvarchar	NULL
+SP_GetErrorLogging	@ErrorMessage nvarchar	NULL
+SP_GetAllErrorLogging	@FromDate datetime, @ToDate datetime	NULL
+SP_GetAPIRequestLog	@FromDate datetime, @ToDate datetime	NULL
+SP_GetLoginActivity	@FromDate datetime, @ToDate datetime	NULL
+SP_GetLoginUserActivity	@FromDate datetime, @ToDate datetime	NULL
+SP_GetPerformanceLog	@FromDate datetime, @ToDate datetime	NULL
+SP_Insert_Update_UserToken	@ID int, @SessionID varchar, @Token varchar, @IsActive bit, @UserID int	SELECT @CreatedBy =Username from ADM_User where UserID= @UserID 
+SP_Insert_Update_LoginActivity	@LoginID int, @RoleID int, @IpAddress varchar, @BrowserName varchar, @LoginTime datetime, @LogoutTime datetime, @SessionID varchar, @IsOnline bit, @UserID int, @UserAgent varchar, @Browser varchar, @BrowserVersion varchar, @SessionStartTimeStamp datetime	SELECT @CreatedBy =Username from ADM_User where UserID= @UserID , SELECT @UpdatedBy =Username from ADM_User where UserID= @UserID , SELECT @ApplicationID = ApplicationID from ADM_Application where ApplicationName='Digital AI Finance - Smart Forecast' 
+SP_Insert_Update_PerformanceLog	@PerformanceLogID int, @UserID int, @RoleID int, @SessionID varchar, @ComponentName varchar, @ActionName varchar, @StartTime datetime, @EndTime datetime, @Duration varchar, @CreatedBy varchar, @CreatedOn datetime	NULL
+sp_AddWorkflowDelegation	@ProcessId int, @FromUserId nvarchar, @ToUserId nvarchar, @FromDate date, @ToDate date, @IsEffective bit, @CreatedBy nvarchar	NULL
+SP_GetCMRecommendationsDetailsByID	@RecommendationID int	NULL
+SP_GetCMRecommendationViewRegionData	@RecommendationID int	NULL
+SP_GetRevenueRecommendations	@RecommendationID int	NULL
+SP_GetVariableCostRecommendations	@RecommendationID int	NULL
+SP_Update_RecommendationStatus	@RecommendationID int, @ActionTaken varchar, @ActionTakenBy varchar, @Comments nvarchar, @WorkFlowStageName varchar	NULL
+SP_GetViewDataForRecommendations_tobeDelete	@RecommendationID int, @TypeID int	NULL
+sp_GetWorkflowRedirects	@RecommendationRequestID nvarchar	NULL
+SP_GetCountry	@RegionID varchar	NULL
+SP_Insert_Update_APIRequestLog	@RequestLogID int, @UserID int, @RoleID int, @SessionID varchar, @AppModuleMappingID int, @ApiEndPoint varchar, @HttpMethod nvarchar, @StatusCode int, @RequestBody nvarchar, @RequestTimeStamp datetime, @ResponseBody nvarchar, @ResponseTimeStamp datetime, @Duration varchar, @CreatedBy varchar, @LayerID int	NULL
+SP_GetWorkListActionHistoryDetails	@RequestNumber varchar	NULL
+SP_GetWorkListChangeSellingVolumeDetails	@RequestNumber varchar	NULL
+SP_GetWorkListRegionDetails	@RequestNumber varchar	SELECT * FROM #ContributorsMatrix; 
+SP_GetWorkListRequestActions	@RequestNumber varchar	NULL
+SP_AddWorkRecommendationAction	@RequestNumber varchar, @StageName varchar, @ActionTaken varchar, @ActionBy varchar, @Comments nvarchar	NULL
+SP_CheckRolePageAccess	@RoleID int, @PageUrl varchar	NULL
+SP_GetBaseFilters	@RoleID int, @TypeID int, @RegionID varchar, @CountryID varchar	NULL
+SP_GetMoreFiltersSBUandBU	@sbuID int	NULL
+SP_GetExceptionUserActivityDetailsBySessionID	@SessionID nvarchar	NULL
+SP_GetSessionDetails	@SessionID varchar	NULL
+SP_GetSearchExistUser	@str varchar	NULL
+SP_AddActivityLogForAdmin	@TableName nvarchar, @OldValue xml, @NewValue xml, @IdentityColID int, @ActivityType nvarchar, @CreatedBy nvarchar	NULL
+SP_GetAverageSellingPrice	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+SP_GetCMRecommendations	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+SP_GetContributionMargin	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+SP_GetContributionMarginCard	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+SP_GetContributionMarginTrend	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+SP_GetCostofGoodsSoldGraphComparisonData	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+SP_GetHistoricalSavings	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+SP_GetProductionMapDetails	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+SP_GetRecommendationDetails	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+SP_GetRecommendationForGlobalMap	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+SP_GetRecommendationsCard	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+SP_GetRevenueTrend	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+SP_GetSalesVolumeTrend	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+SP_LogoutAndEndSessionByUserId	@UserID int	NULL
+SP_Update_User_IsActivated	@UserID int, @IsActivated bit, @UpdatedBy varchar	NULL
+SP_GetUserMenus	@UserID int, @RoleID int	NULL
+SP_Insert_Update_AssignedUser	@UserID int, @UserRoleIDs varchar, @UserName nvarchar, @Email nvarchar, @FirstName nvarchar, @LastName nvarchar, @EmployeeID nvarchar, @AffiliateID int, @StatusID bit, @CreatedBy varchar, @IsInsert bit	NULL
+SP_GetDataForAuthenticationByUserId	@UserID varchar	NULL
+SP_Insert_Update_UserLoginSession	@UserLoginSessionID int, @UserID int, @SessionID varchar, @IsActive bit	SELECT @CreatedBy =Username from ADM_User where UserID= @UserID , SELECT @UpdatedBy =Username from ADM_User where UserID= @UserID 
+usp_AddandUpdateUserAndRoleMapping	@Username nvarchar, @EmployeeId nvarchar, @Email nvarchar, @FirstName nvarchar, @LastName nvarchar, @RoleID int	NULL
+SP_CheckUserMenuAccess	@UserName nvarchar, @MenuID int	NULL
+SP_GetAuthenticatedUserDetails	@Username varchar	NULL
+SP_IsInternal_AuthenticatedUser	@Username varchar	NULL
+SP_Insert_Update_UserRoleMapping	@UserRoleMappingID int, @DomainUserID varchar, @RoleIDs varchar, @IsActive bit, @IsSelectedRole bit, @CreatedBy varchar	NULL
+sp_AddWorkflowRedirect	@WorkflowNumber nvarchar, @RedirectedFrom nvarchar, @RedirectedFromEmail nvarchar, @RedirectedTo nvarchar, @RedirectedToEmail nvarchar, @RedirectedOn datetime, @Reason nvarchar, @PendingWithId nvarchar, @PendingWithName nvarchar, @PendingWithDesignate nvarchar, @AssignedDate datetime, @Department nvarchar	NULL
+
+Page Details
+Home -Filter
+Home -Revenue (card(Recommendations,Historical saving trend,contribution margin), Graph(Contribution Margin trend,Revenue Trend, sales volume trend,ASP(Average selling price) forecast trend))
+Home -Production (card(Recommendations,Historical saving trend,contribution margin), Graph(Contribution Margin trend,Revenue Trend, sales volume trend,ASP(Average selling price) forecast trend)Cost of Goods Sold Trend-variable cost)
+WorkList
+User Management
+Activity Monitoring(User Activity,Login Activity)
+Error Logging
+Performance Monitoring(Performance Log,API Request Log)
+Redirect WorkFlow
+Delegate To
+
+
+and More Details card(Recommendations
+Proposed
+1694
+Accepted
+N/A
+Send Back
+N/A
+Historical Savings Trend (M $)
+SAR
+$
+N/A
+N/A
+N/A
+Contribution Margin (M $)
+SAR
+$
+SAC Forecast CM
+N/A
+Smart Forecast CM
+924)
