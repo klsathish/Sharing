@@ -163,3 +163,94 @@ User Management	Action	Add and Update User Role Mapping	usp_AddandUpdateUserAndR
 Redirect Workflow	Action	Add Workflow Redirect	sp_AddWorkflowRedirect	@WorkflowNumber nvarchar, @RedirectedFrom nvarchar, @RedirectedFromEmail nvarchar, @RedirectedTo nvarchar, @RedirectedToEmail nvarchar, @RedirectedOn datetime, @Reason nvarchar, @PendingWithId nvarchar, @PendingWithName nvarchar, @PendingWithDesignate nvarchar, @AssignedDate datetime, @Department nvarchar
 Delegate To	Action	Add Workflow Delegation	sp_AddWorkflowDelegation	@ProcessId int, @FromUserId nvarchar, @ToUserId nvarchar, @FromDate date, @ToDate date, @IsEffective bit, @CreatedBy nvarchar
 Activity Monitoring	Action	Update Activity Tracker	SP_Insert_Update_ActivityTracker	@ActivityTrackerID int, @ScreenID int, @FunctionID int, @UserActionID int, @CreatedBy varchar
+
+
+------------
+
+Menu	Section	Sub-Section	Procedure Name	Parameters	Output Columns
+Home	Filter		SP_GetAffiliate	@CountryID varchar	NULL
+Home	Filter		SP_GetRegion		NULL
+Home	Filter		SP_GetCountry	@RegionID varchar	NULL
+Home	Filter		SP_GetBaseFilters	@RoleID int, @TypeID int, @RegionID varchar, @CountryID varchar	NULL
+Home	Filter		SP_GetMoreFiltersProfitCenter	@affiliateID int, @profitCenterID int	NULL
+Home	Filter		SP_GetMoreFiltersSBUandBU	@sbuID int	NULL
+Home	Revenue	Card - Recommendations	SP_GetRecommendationsCard	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Revenue	Card - Historical Saving Trend	SP_GetHistoricalSavings	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Revenue	Card - Contribution Margin	SP_GetContributionMarginCard	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Revenue	Graph - Contribution Margin Trend	SP_GetContributionMarginTrend	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Revenue	Graph - Revenue Trend	SP_GetRevenueTrend	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Revenue	Graph - Sales Volume Trend	SP_GetSalesVolumeTrend	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Revenue	Graph - ASP Forecast Trend	SP_GetAverageSellingPrice	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Revenue	Recommendations	SP_GetCMRecommendations	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Revenue	Contribution Margin	SP_GetContributionMargin	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Revenue	Recommendation Details	SP_GetRecommendationDetails	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Revenue	Global Map	SP_GetRecommendationForGlobalMap	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Revenue	Production Map	SP_GetProductionMapDetails	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Production	Card - Recommendations	SP_GetRecommendationsCard	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Production	Card - Historical Saving Trend	SP_GetHistoricalSavings	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Production	Card - Contribution Margin	SP_GetContributionMarginCard	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Production	Graph - Contribution Margin Trend	SP_GetContributionMarginTrend	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Production	Graph - Revenue Trend	SP_GetRevenueTrend	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Production	Graph - Sales Volume Trend	SP_GetSalesVolumeTrend	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Production	Graph - ASP Forecast Trend	SP_GetAverageSellingPrice	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+Home	Production	Graph - Cost of Goods Sold Trend	SP_GetCostofGoodsSoldGraphComparisonData	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime	NULL
+WorkList	Recommendations		SP_GetAllWorkRecommendations	@CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime, @SBU int, @BU int	NULL
+WorkList	Recommendations		SP_GetWorkSummaryCounts	@CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime, @SBU int, @BU int	NULL
+WorkList	Recommendations		SP_GetRecommendationsStatistics		NULL
+WorkList	Recommendations		SP_CreateCMLogicFORRecommendations	@CompanyCode int, @ProfitCenterID int, @FromDate datetime, @ToDate datetime, @SBU int, @BU int	NULL
+WorkList	Recommendation Details		SP_GetWorkFlowRecommendationDetails	@CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime, @SBU int, @BU int	NULL
+WorkList	Recommendation Details		SP_GetCMRecommendationsDetailsByID	@RecommendationID int	NULL
+WorkList	Recommendation Details	Region Data	SP_GetCMRecommendationViewRegionData	@RecommendationID int	NULL
+WorkList	Recommendation Details	Revenue	SP_GetRevenueRecommendations	@RecommendationID int	NULL
+WorkList	Recommendation Details	Variable Cost	SP_GetVariableCostRecommendations	@RecommendationID int	NULL
+WorkList	Recommendation Details	To Be Deleted View	SP_GetViewDataForRecommendations_tobeDelete	@RecommendationID int, @TypeID int	NULL
+WorkList	Action History		SP_GetWorkListActionHistoryDetails	@RequestNumber varchar	NULL
+WorkList	Change Selling Volume		SP_GetWorkListChangeSellingVolumeDetails	@RequestNumber varchar	NULL
+WorkList	Region Details		SP_GetWorkListRegionDetails	@RequestNumber varchar	SELECT * FROM #ContributorsMatrix
+WorkList	Request Actions		SP_GetWorkListRequestActions	@RequestNumber varchar	NULL
+WorkList	Add Action		SP_AddWorkRecommendationAction	@RequestNumber varchar, @StageName varchar, @ActionTaken varchar, @ActionBy varchar, @Comments nvarchar	NULL
+WorkList	Update Status		SP_Update_RecommendationStatus	@RecommendationID int, @ActionTaken varchar, @ActionTakenBy varchar, @Comments nvarchar, @WorkFlowStageName varchar	NULL
+User Management	Users		SP_GetUsers		NULL
+User Management	Users		SP_GetSearchExistUser	@str varchar	NULL
+User Management	Users		SP_GetAffiliateForUserManagement		NULL
+User Management	Users		SP_Insert_Update_AssignedUser	@UserID int, @UserRoleIDs varchar, @UserName nvarchar, @Email nvarchar, @FirstName nvarchar, @LastName nvarchar, @EmployeeID nvarchar, @AffiliateID int, @StatusID bit, @CreatedBy varchar, @IsInsert bit	NULL
+User Management	Users		SP_Update_User_IsActivated	@UserID int, @IsActivated bit, @UpdatedBy varchar	NULL
+User Management	Roles & Access		SP_GetRole		NULL
+User Management	Roles & Access		SP_CheckRolePageAccess	@RoleID int, @PageUrl varchar	NULL
+User Management	Roles & Access		SP_CheckUserMenuAccess	@UserName nvarchar, @MenuID int	NULL
+User Management	Roles & Access		SP_GetUserMenus	@UserID int, @RoleID int	NULL
+User Management	Role Mapping		SP_Insert_Update_UserRoleMapping	@UserRoleMappingID int, @DomainUserID varchar, @RoleIDs varchar, @IsActive bit, @IsSelectedRole bit, @CreatedBy varchar	NULL
+User Management	Role Mapping		usp_AddandUpdateUserAndRoleMapping	@Username nvarchar, @EmployeeId nvarchar, @Email nvarchar, @FirstName nvarchar, @LastName nvarchar, @RoleID int	NULL
+User Management	Authentication		SP_GetAuthenticatedUserDetails	@Username varchar	NULL
+User Management	Authentication		SP_IsInternal_AuthenticatedUser	@Username varchar	NULL
+User Management	Authentication		SP_GetDataForAuthenticationByUserId	@UserID varchar	NULL
+User Management	Session		SP_Insert_Update_UserLoginSession	@UserLoginSessionID int, @UserID int, @SessionID varchar, @IsActive bit	SELECT @CreatedBy / @UpdatedBy from ADM_User
+User Management	Session		SP_Insert_Update_UserToken	@ID int, @SessionID varchar, @Token varchar, @IsActive bit, @UserID int	SELECT @CreatedBy from ADM_User
+User Management	Session		SP_GetSessionDetails	@SessionID varchar	NULL
+User Management	Session		SP_LogoutAndEndSessionByUserId	@UserID int	NULL
+Activity Monitoring	User Activity		SP_GetLoginUserActivity	@FromDate datetime, @ToDate datetime	NULL
+Activity Monitoring	User Activity		SP_GetExceptionUserActivityDetailsBySessionID	@SessionID nvarchar	NULL
+Activity Monitoring	User Activity		SP_Insert_Update_ActivityTracker	@ActivityTrackerID int, @ScreenID int, @FunctionID int, @UserActionID int, @CreatedBy varchar	NULL
+Activity Monitoring	User Activity		SP_AddActivityLogForAdmin	@TableName nvarchar, @OldValue xml, @NewValue xml, @IdentityColID int, @ActivityType nvarchar, @CreatedBy nvarchar	NULL
+Activity Monitoring	Login Activity		SP_GetLoginActivity	@FromDate datetime, @ToDate datetime	NULL
+Activity Monitoring	Login Activity		SP_Insert_Update_LoginActivity	@LoginID int, @RoleID int, @IpAddress varchar, @BrowserName varchar, @LoginTime datetime, @LogoutTime datetime, @SessionID varchar, @IsOnline bit, @UserID int, @UserAgent varchar, @Browser varchar, @BrowserVersion varchar, @SessionStartTimeStamp datetime	SELECT @CreatedBy / @UpdatedBy from ADM_User; SELECT @ApplicationID from ADM_Application
+Error Logging	Error Log		SP_GetErrorLogging	@ErrorMessage nvarchar	NULL
+Error Logging	Error Log		SP_GetAllErrorLogging	@FromDate datetime, @ToDate datetime	NULL
+Error Logging	Error Log		SP_Insert_Update_ErrorLogging	@ErrorLogID int, @UserID int, @RoleID int, @SessionID varchar, @ApplicationID int, @ScreenID int, @ModuleID int, @FunctionID int, @LayerID int, @APIID int, @StoredProcedureID int, @ErrorNumber int, @ErrorState int, @ErrorSeverity varchar, @StackTrace nvarchar, @ErrorMessage nvarchar, @RequestBody nvarchar, @ResponseBody nvarchar, @Status varchar, @HostName varchar, @Environment varchar, @CreatedBy varchar, @UpdatedBy varchar, @IpAddress nvarchar	NULL
+Error Logging	Error Log		SP_GetErrorLog_AssignToUser		NULL
+Error Logging	Error Log		SP_GetErrorLogStatus		NULL
+Error Logging	Error Log		SP_Update_ErrorLogging_AssigneeWith_Status	@ErrorLogID int, @AssigneeUserID varchar, @ErrorStatusID int, @UpdatedBy varchar	NULL
+Performance Monitoring	Performance Log		SP_GetPerformanceLog	@FromDate datetime, @ToDate datetime	NULL
+Performance Monitoring	Performance Log		SP_Insert_Update_PerformanceLog	@PerformanceLogID int, @UserID int, @RoleID int, @SessionID varchar, @ComponentName varchar, @ActionName varchar, @StartTime datetime, @EndTime datetime, @Duration varchar, @CreatedBy varchar, @CreatedOn datetime	NULL
+Performance Monitoring	API Request Log		SP_GetAPIRequestLog	@FromDate datetime, @ToDate datetime	NULL
+Performance Monitoring	API Request Log		SP_Insert_Update_APIRequestLog	@RequestLogID int, @UserID int, @RoleID int, @SessionID varchar, @AppModuleMappingID int, @ApiEndPoint varchar, @HttpMethod nvarchar, @StatusCode int, @RequestBody nvarchar, @RequestTimeStamp datetime, @ResponseBody nvarchar, @ResponseTimeStamp datetime, @Duration varchar, @CreatedBy varchar, @LayerID int	NULL
+Redirect WorkFlow	Workflow Redirects		sp_GetWorkflowRedirects	@RecommendationRequestID nvarchar	NULL
+Redirect WorkFlow	Workflow Redirects		sp_AddWorkflowRedirect	@WorkflowNumber nvarchar, @RedirectedFrom nvarchar, @RedirectedFromEmail nvarchar, @RedirectedTo nvarchar, @RedirectedToEmail nvarchar, @RedirectedOn datetime, @Reason nvarchar, @PendingWithId nvarchar, @PendingWithName nvarchar, @PendingWithDesignate nvarchar, @AssignedDate datetime, @Department nvarchar	NULL
+Delegate To	Delegation List		sp_GetWorkflowDelegationList	@CompanyCode nvarchar, @ProfitCenter nvarchar, @FromDate date, @ToDate date	NULL
+Delegate To	Delegation List		sp_AddWorkflowDelegation	@ProcessId int, @FromUserId nvarchar, @ToUserId nvarchar, @FromDate date, @ToDate date, @IsEffective bit, @CreatedBy nvarchar	NULL
+Data Insertion (ETL)	Source View Inserts		SP_Insert_SF_CM_From_SourceView		NULL
+Data Insertion (ETL)	Source View Inserts		SP_Insert_SF_Historic_Cogs_CM_From_SourceView		NULL
+Data Insertion (ETL)	Source View Inserts		SP_Insert_SF_Historic_SalesRevenue_From_SourceView		NULL
+Data Insertion (ETL)	Master View Inserts		SP_InsertActualsDataFromMasterViews		NULL
+Data Insertion (ETL)	DS Output		SP_InsertDSOutput		NULL
+Data Insertion (ETL)	Forecast Ranges		SP_GetForecastRanges		NULL
