@@ -115,3 +115,35 @@ SAC Forecast CM
 N/A
 Smart Forecast CM
 924)
+
+
+Menu	Section	Section Inside Section	ProcedureName	Parameters
+Home	Filter	Base Filters	SP_GetBaseFilters	@RoleID int, @TypeID int, @RegionID varchar, @CountryID varchar
+Home	Filter	Affiliate	SP_GetAffiliate	@CountryID varchar
+Home	Filter	Region	SP_GetRegion	
+Home	Filter	Country	SP_GetCountry	@RegionID varchar
+Home	Revenue	Recommendations Card	SP_GetRecommendationsCard	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime
+Home	Revenue	Historical Savings Trend	SP_GetHistoricalSavings	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime
+Home	Revenue	Contribution Margin Card	SP_GetContributionMarginCard	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime
+Home	Revenue	Contribution Margin Trend	SP_GetContributionMarginTrend	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime
+Home	Revenue	Revenue Trend	SP_GetRevenueTrend	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime
+Home	Revenue	Sales Volume Trend	SP_GetSalesVolumeTrend	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime
+Home	Revenue	Average Selling Price Forecast	SP_GetAverageSellingPrice	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime
+Home	Production	Cost Of Goods Sold Trend	SP_GetCostofGoodsSoldGraphComparisonData	@TypeID int, @RegionID varchar, @CountryID varchar, @CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime
+WorkList		Work Recommendations	SP_GetAllWorkRecommendations	@CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime, @SBU int, @BU int
+WorkList		Work Summary Counts	SP_GetWorkSummaryCounts	@CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime, @SBU int, @BU int
+WorkList		Recommendation Details	SP_GetWorkFlowRecommendationDetails	@CompanyCode varchar, @ProfitCenterID varchar, @FromDate datetime, @ToDate datetime, @SBU int, @BU int
+WorkList		Action History	SP_GetWorkListActionHistoryDetails	@RequestNumber varchar
+WorkList		Region Details	SP_GetWorkListRegionDetails	@RequestNumber varchar
+WorkList		Request Actions	SP_GetWorkListRequestActions	@RequestNumber varchar
+User Management		Users	SP_GetUsers	
+User Management		Roles	SP_GetRole	
+User Management		Affiliate For User	SP_GetAffiliateForUserManagement	
+Activity Monitoring	User Activity		SP_GetLoginUserActivity	@FromDate datetime, @ToDate datetime
+Activity Monitoring	Login Activity		SP_GetLoginActivity	@FromDate datetime, @ToDate datetime
+Error Logging		Error Logs	SP_GetErrorLogging	@ErrorMessage nvarchar
+Error Logging		All Error Logs	SP_GetAllErrorLogging	@FromDate datetime, @ToDate datetime
+Performance Monitoring	Performance Log		SP_GetPerformanceLog	@FromDate datetime, @ToDate datetime
+Performance Monitoring	API Request Log		SP_GetAPIRequestLog	@FromDate datetime, @ToDate datetime
+Redirect Workflow		Workflow Redirect	sp_GetWorkflowRedirects	@RecommendationRequestID nvarchar
+Delegate To		Workflow Delegation List	sp_GetWorkflowDelegationList	@CompanyCode nvarchar, @ProfitCenter nvarchar, @FromDate date, @ToDate date
