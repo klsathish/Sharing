@@ -1,1 +1,1 @@
-/p:SqlReferencePath="$(Build.SourcesDirectory)\ExternalRefs" /p:AIFinance_SQL_Master=$(Build.SourcesDirectory)\ExternalRefs\AIFinance_SQL_Master.dacpac
+@Pat, Harish middleware PR after success in local build we are pushing master branch without check dev(because from isolate master branch we are using local freeze master branch)
