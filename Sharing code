@@ -1,3 +1,247 @@
+ALTER PROCEDURE [dbo].[SP_GetInventoryGlobalMap]
+(
+    @TypeID             INT          = 0,
+    @RegionID           VARCHAR(50)  = NULL,
+    @CountryID          VARCHAR(50)  = NULL,
+    @CompanyCode        VARCHAR(50)  = NULL,
+    @ProfitCenterID     VARCHAR(500) = NULL,
+    @PlantID            VARCHAR(50)  = NULL,
+    @SBU                VARCHAR(50)  = NULL,
+    @BU                 VARCHAR(50)  = NULL,
+    @FromDate           DATE         = NULL,
+    @ToDate             DATE         = NULL
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- ── 1. Normalize NULLs ────────────────────────────────────────────
+    SET @SBU            = ISNULL(@SBU, '');
+    SET @BU             = ISNULL(@BU, '');
+    SET @ProfitCenterID = ISNULL(@ProfitCenterID, '');
+    SET @RegionID       = ISNULL(@RegionID, '');
+    SET @CountryID      = ISNULL(@CountryID, '');
+    SET @CompanyCode    = ISNULL(@CompanyCode, '');
+
+    IF (@CompanyCode   IN ('0','1')) SET @CompanyCode   = '';
+    IF (@ProfitCenterID IN ('0','1')) SET @ProfitCenterID = '';
+
+    -- ── 2. Resolve default dates once ────────────────────────────────
+    IF (@FromDate IS NULL OR @FromDate = '' OR @ToDate IS NULL OR @ToDate = '')
+    BEGIN
+        SELECT @FromDate = FromDate, @ToDate = ToDate
+        FROM ADM_DefaultDatesForFilter
+        WHERE IsActive = 1;
+    END
+
+    DECLARE @FromDateCalMonth INT = YEAR(@FromDate) * 100 + MONTH(@FromDate);
+    DECLARE @ToDateCalMonth   INT = YEAR(@ToDate)   * 100 + MONTH(@ToDate);
+
+    -- ── 3. Pre-split all filter values into temp tables (parse ONCE) ──
+    -- Profit Center names
+    CREATE TABLE #ProfitCenterValues (ProfitCenterName NVARCHAR(100));
+    IF @ProfitCenterID <> ''
+        INSERT INTO #ProfitCenterValues
+        SELECT pc.ProfitCenterName
+        FROM SABIC_DT_Finance_Master.master.MST_ProfitCenter pc
+        WHERE pc.ProfitCenterID IN (SELECT value FROM STRING_SPLIT(@ProfitCenterID, ','));
+
+    -- Profit Center numeric keys for JOIN (strip leading zeros once here)
+    CREATE TABLE #ProfitCenterInt (ProfitCenterInt INT);
+    INSERT INTO #ProfitCenterInt (ProfitCenterInt)
+    SELECT DISTINCT TRY_CAST(ProfitCenterName AS INT)
+    FROM #ProfitCenterValues
+    WHERE TRY_CAST(ProfitCenterName AS INT) IS NOT NULL;
+
+    -- Region filter
+    CREATE TABLE #RegionFilter (RegionID INT);
+    IF @RegionID <> ''
+        INSERT INTO #RegionFilter
+        SELECT TRY_CAST(value AS INT) FROM STRING_SPLIT(@RegionID, ',');
+
+    -- Country filter
+    CREATE TABLE #CountryFilter (CountryID INT);
+    IF @CountryID <> ''
+        INSERT INTO #CountryFilter
+        SELECT TRY_CAST(value AS INT) FROM STRING_SPLIT(@CountryID, ',');
+
+    -- BU filter
+    CREATE TABLE #BUFilter (BU VARCHAR(50));
+    IF @BU <> ''
+        INSERT INTO #BUFilter SELECT value FROM STRING_SPLIT(@BU, ',');
+
+    -- SBU filter
+    CREATE TABLE #SBUFilter (SBU VARCHAR(50));
+    IF @SBU <> ''
+        INSERT INTO #SBUFilter SELECT value FROM STRING_SPLIT(@SBU, ',');
+
+    -- ── 4. Pre-compute MonthInt in a temp table (avoid CAST per row) ──
+    -- This avoids CAST(REPLACE([Month],'-','') AS INT) on every row
+    CREATE TABLE #ForecastFiltered
+    (
+        AffiliateCode                       VARCHAR(50),
+        bu                                  VARCHAR(50),
+        sbu                                 VARCHAR(50),
+        profit_center_int                   INT,           -- pre-cast once
+        MonthInt                            INT,           -- pre-cast once
+        forecast_value_Sale                 DECIMAL(18,4),
+        forecast_value_Purchase             DECIMAL(18,4),
+        forecast_value_Production_Output    DECIMAL(18,4),
+        value_Sale                          DECIMAL(18,4),
+        value_Purchase                      DECIMAL(18,4),
+        value_Consumed_in_production        DECIMAL(18,4)
+    );
+
+    INSERT INTO #ForecastFiltered
+    SELECT
+        a.AffiliateCode,
+        a.bu,
+        a.sbu,
+        TRY_CAST(a.profit_center AS INT)            AS profit_center_int,
+        CAST(REPLACE(a.[Month], '-', '') AS INT)    AS MonthInt,
+        a.forecast_value_Sale,
+        a.forecast_value_Purchase,
+        a.forecast_value_Production_Output,
+        a.value_Sale,
+        a.value_Purchase,
+        a.value_Consumed_in_production
+    FROM SABIC_DT_Finance_WCI.dbo.view_fg_inventory_forecast a
+    WHERE
+        CAST(REPLACE(a.[Month], '-', '') AS INT)
+            BETWEEN @FromDateCalMonth AND @ToDateCalMonth
+        AND (@BU  = '' OR a.bu  IN (SELECT BU  FROM #BUFilter))
+        AND (@SBU = '' OR a.sbu IN (SELECT SBU FROM #SBUFilter));
+
+    -- Index the temp table for fast JOIN
+    CREATE INDEX IX_ForecastFiltered 
+        ON #ForecastFiltered (profit_center_int, bu, sbu, AffiliateCode);
+
+    -- ── 5. TypeID = 1 → Inventory VALUE (M$) ────────────────────────
+    IF @TypeID = 1
+    BEGIN
+        SELECT
+            CAST(r.RegionID AS VARCHAR(10)) AS RegionID,
+            r.RegionName,
+            '0' AS CountryID,
+            ''  AS CountryName,
+            r.Latitude  AS LatGPSValue,
+            r.Longitude AS LonGPSValue,
+            'AI enhanced forecast inventory value '
+            + CAST(ROUND(SUM(
+                a.forecast_value_Sale              / 1000000.0 +
+                a.forecast_value_Purchase          / 1000000.0 +
+                a.forecast_value_Production_Output / 1000000.0
+              ), 2) AS VARCHAR(50))
+            + ' M$' AS RecommendationMessage
+        FROM #ForecastFiltered a
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_ProfitCenter p
+            ON  a.bu              = p.BU
+            AND a.sbu             = p.SBU
+            AND a.profit_center_int = TRY_CAST(p.ProfitCenterName AS INT)  -- both pre-cast
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Affiliate af
+            ON af.AffiliateCode = a.AffiliateCode
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Country c
+            ON c.CountryID = af.CountryID
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Region r
+            ON r.RegionID = c.RegionID
+        WHERE
+            r.IsActive  = 1
+            AND c.IsActive  = 1
+            AND af.IsActive = 1
+            AND (@RegionID  = '' OR r.RegionID  IN (SELECT RegionID  FROM #RegionFilter))
+            AND (@CountryID = '' OR c.CountryID IN (SELECT CountryID FROM #CountryFilter))
+            AND (@ProfitCenterID = '' OR p.ProfitCenterName IN (SELECT ProfitCenterName FROM #ProfitCenterValues))
+        GROUP BY r.RegionID, r.RegionName, r.Latitude, r.Longitude;
+    END
+
+    -- ── 6. TypeID = 2 → Inventory VOLUME (MT) ───────────────────────
+    IF @TypeID = 2
+    BEGIN
+        SELECT
+            CAST(r.RegionID AS VARCHAR(10)) AS RegionID,
+            r.RegionName,
+            '0' AS CountryID,
+            ''  AS CountryName,
+            r.Latitude  AS LatGPSValue,
+            r.Longitude AS LonGPSValue,
+            'AI enhanced forecast inventory volume '
+            + CAST(ROUND(SUM(
+                a.value_Sale                   / 1000.0 +
+                a.value_Purchase               / 1000.0 +
+                a.value_Consumed_in_production / 1000.0
+              ), 2) AS VARCHAR(50))
+            + ' MT' AS RecommendationMessage
+        FROM #ForecastFiltered a
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_ProfitCenter p
+            ON  a.bu              = p.BU
+            AND a.sbu             = p.SBU
+            AND a.profit_center_int = TRY_CAST(p.ProfitCenterName AS INT)
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Affiliate af
+            ON af.AffiliateCode = a.AffiliateCode
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Country c
+            ON c.CountryID = af.CountryID
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Region r
+            ON r.RegionID = c.RegionID
+        WHERE
+            r.IsActive  = 1
+            AND c.IsActive  = 1
+            AND af.IsActive = 1
+            AND (@RegionID  = '' OR r.RegionID  IN (SELECT RegionID  FROM #RegionFilter))
+            AND (@CountryID = '' OR c.CountryID IN (SELECT CountryID FROM #CountryFilter))
+            AND (@ProfitCenterID = '' OR p.ProfitCenterName IN (SELECT ProfitCenterName FROM #ProfitCenterValues))
+        GROUP BY r.RegionID, r.RegionName, r.Latitude, r.Longitude;
+    END
+
+    -- ── 7. TypeID = 3 → same as TypeID 1 (reuse same logic) ─────────
+    IF @TypeID = 3
+    BEGIN
+        SELECT
+            CAST(r.RegionID AS VARCHAR(10)) AS RegionID,
+            r.RegionName,
+            '0' AS CountryID,
+            ''  AS CountryName,
+            r.Latitude  AS LatGPSValue,
+            r.Longitude AS LonGPSValue,
+            'AI enhanced forecast inventory value '
+            + CAST(ROUND(SUM(
+                a.forecast_value_Sale              / 1000000.0 +
+                a.forecast_value_Purchase          / 1000000.0 +
+                a.forecast_value_Production_Output / 1000000.0
+              ), 2) AS VARCHAR(50))
+            + ' M$' AS RecommendationMessage
+        FROM #ForecastFiltered a
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_ProfitCenter p
+            ON  a.bu              = p.BU
+            AND a.sbu             = p.SBU
+            AND a.profit_center_int = TRY_CAST(p.ProfitCenterName AS INT)
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Affiliate af
+            ON af.AffiliateCode = a.AffiliateCode
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Country c
+            ON c.CountryID = af.CountryID
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Region r
+            ON r.RegionID = c.RegionID
+        WHERE
+            r.IsActive  = 1
+            AND c.IsActive  = 1
+            AND af.IsActive = 1
+            AND (@RegionID  = '' OR r.RegionID  IN (SELECT RegionID  FROM #RegionFilter))
+            AND (@CountryID = '' OR c.CountryID IN (SELECT CountryID FROM #CountryFilter))
+            AND (@ProfitCenterID = '' OR p.ProfitCenterName IN (SELECT ProfitCenterName FROM #ProfitCenterValues))
+        GROUP BY r.RegionID, r.RegionName, r.Latitude, r.Longitude;
+    END
+
+    -- ── 8. Cleanup ────────────────────────────────────────────────────
+    DROP TABLE IF EXISTS #ForecastFiltered;
+    DROP TABLE IF EXISTS #ProfitCenterValues;
+    DROP TABLE IF EXISTS #ProfitCenterInt;
+    DROP TABLE IF EXISTS #RegionFilter;
+    DROP TABLE IF EXISTS #CountryFilter;
+    DROP TABLE IF EXISTS #BUFilter;
+    DROP TABLE IF EXISTS #SBUFilter;
+
+END
+
+
 USE [SABIC_DT_Finance_WCI_WebUI]
 GO
 /****** Object:  StoredProcedure [dbo].[SP_GetInventoryGlobalMap]    Script Date: 3/31/2026 7:04:07 PM ******/
