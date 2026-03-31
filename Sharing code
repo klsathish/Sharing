@@ -1,240 +1,66 @@
-CREATE VIEW [dbo].[view_fg_inventory_forecast]
-	AS 
-select  mm.bu,
-		mm.sbu,
-		mm.sub_bu,
-		mm.Month,
-		mm.posting_month,
-		sum(mm.forecast_volume_Production_Output) as forecast_volume_Production_Output,
-		sum(mm.forecast_volume_Transfers_IN) as forecast_volume_Transfers_IN,
-		sum(mm.forecast_volume_Transfers_OUT) as forecast_volume_Transfers_OUT,
-		sum(mm.forecast_volume_STO_IN) as forecast_volume_STO_IN,
-		sum(mm.forecast_volume_STO_OUT) as forecast_volume_STO_OUT,
-		(sum(mm.forecast_volume_STO_IN)+sum(mm.forecast_volume_STO_OUT)) as forecast_volume_STO,
-		sum(mm.forecast_volume_Sale) as forecast_volume_Sale,
-		sum(mm.forecast_volume_Consumed_in_production) as forecast_volume_Consumed_in_production,
-		sum(mm.forecast_volume_Adjustments) as forecast_volume_Adjustments,
-		sum(mm.forecast_volume_Purchase) as forecast_volume_Purchase,
-		sum(mm.forecast_volume_Samples) as forecast_volume_Samples,
-		sum(mm.forecast_volume_Losses) as forecast_volume_Losses,
-		sum(mm.forecast_volume_Own_Consumption) as forecast_volume_Own_Consumption,
-		sum(mm.forecast_volume_Other) as forecast_volume_Other,
+################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
 
-		sum(mm.volume_Production_output) as volume_Production_output,
-		sum(mm.volume_Transfers_IN) as volume_Transfers_IN,
-		sum(mm.volume_Transfers_OUT) as volume_Transfers_OUT,
-		sum(mm.volume_STO_IN) as volume_STO_IN,
-		sum(mm.volume_STO_OUT) as volume_STO_OUT,
-		(sum(mm.volume_STO_IN)+sum(mm.volume_STO_OUT)) as volume_STO,
-		sum(mm.volume_Sale) as volume_Sale,
-		sum(mm.volume_Consumed_in_production) as volume_Consumed_in_production,
-		sum(mm.volume_Adjustments) as volume_Adjustments,
-		sum(mm.volume_Purchase) as volume_Purchase,
-		sum(mm.volume_Samples) as volume_Samples,
-		sum(mm.volume_Losses) as volume_Losses,
-		sum(mm.volume_Own_Consumption) as volume_Own_Consumption,
-		sum(mm.volume_Other) as volume_Other,
-
-		sum(mm.forecast_value_Production_Output) as forecast_value_Production_Output,
-		sum(mm.forecast_value_Transfers_IN) as forecast_value_Transfers_IN,
-		sum(mm.forecast_value_Transfers_OUT) as forecast_value_Transfers_OUT,
-		sum(mm.forecast_value_STO_IN) as forecast_value_STO_IN,
-		sum(mm.forecast_value_STO_OUT) as forecast_value_STO_OUT,
-		(sum(mm.forecast_value_STO_IN)-sum(mm.forecast_value_STO_OUT)) as forecast_value_STO,
-		sum(mm.forecast_value_Sale) as forecast_value_Sale,
-		sum(mm.forecast_value_Consumed_in_production) as forecast_value_Consumed_in_production,
-		sum(mm.forecast_value_Adjustments) as forecast_value_Adjustments,
-		sum(mm.forecast_value_Purchase) as forecast_value_Purchase,
-		sum(mm.forecast_value_Samples) as forecast_value_Samples,
-		sum(mm.forecast_value_Losses) as forecast_value_Losses,
-		sum(mm.forecast_value_Own_Consumption) as forecast_value_Own_Consumption,
-		sum(mm.forecast_value_Other) as forecast_value_Other,
-
-		sum(mm.value_Production_output) as value_Production_output,
-		sum(mm.value_Transfers_IN) as value_Transfers_IN,
-		sum(mm.value_Transfers_OUT) as value_Transfers_OUT,
-		sum(mm.value_STO_IN) as value_STO_IN,
-		sum(mm.value_STO_OUT) as value_STO_OUT,
-		(sum(mm.value_STO_IN)-sum(mm.value_STO_OUT)) as value_STO,
-		sum(mm.value_Sale) as value_Sale,
-		sum(mm.value_Consumed_in_production) as value_Consumed_in_production,
-		sum(mm.value_Adjustments) as value_Adjustments,
-		sum(mm.value_Purchase) as value_Purchase,
-		sum(mm.value_Samples) as value_Samples,
-		sum(mm.value_Losses) as value_Losses,
-		sum(mm.value_Own_Consumption) as value_Own_Consumption,
-		sum(mm.value_Other) as value_Other,
-		mm.material_number,
-		mm.materialtype,
-		mm.plant,
-		mm.Unit_of_measure,
-		mm.currency,
-		mm.profit_center,
-		plnt.AffiliateCode
-
-		from (	
-	SELECT
-		b.bu,
-		b.sbu,
-	    b.sub_bu,
-		b.posting_month as [Month],
-		CAST(b.posting_month + '-05' AS DATE) as posting_month,
-		b.forecast_volume_Production_Output,
-		b.forecast_volume_Transfers_IN,
-		b.forecast_volume_Transfers_OUT,
-		b.forecast_volume_STO_IN,
-		b.forecast_volume_STO_OUT,
-		b.forecast_volume_Sale,
-		b.forecast_volume_Consumed_in_production,
-		b.forecast_volume_Adjustments,
-		b.forecast_volume_Purchase,
-		b.forecast_volume_Samples,
-		b.forecast_volume_Losses,
-		b.forecast_volume_Own_Consumption,
-		b.forecast_volume_Other,
-
-		b.volume_Production_output,
-		b.volume_Transfers_IN,
-		b.volume_Transfers_OUT,
-		b.volume_STO_IN,
-		b.volume_STO_OUT,
-		b.volume_Sale,
-		b.volume_Consumed_in_production,
-		b.volume_Adjustments,
-		b.volume_Purchase,
-		b.volume_Samples,
-		b.volume_Losses,
-		b.volume_Own_Consumption,
-		b.volume_Other,
-		
-		0 as forecast_value_Production_Output,
-		0 as forecast_value_Transfers_IN,
-		0 as forecast_value_Transfers_OUT,
-		0 as forecast_value_STO_IN,
-		0 as forecast_value_STO_OUT,
-		0 as forecast_value_Sale,
-		0 as forecast_value_Consumed_in_production,
-		0 as forecast_value_Adjustments,
-		0 as forecast_value_Purchase,
-		0 as forecast_value_Samples,
-		0 as forecast_value_Losses,
-		0 as forecast_value_Own_Consumption,
-		0 as forecast_value_Other,
-
-		0 as value_Production_output,
-		0 as value_Transfers_IN,
-		0 as value_Transfers_OUT,
-		0 as value_STO_IN,
-		0 as value_STO_OUT,
-		0 as value_Sale,
-		0 as value_Consumed_in_production,
-		0 as value_Adjustments,
-		0 as value_Purchase,
-		0 as value_Samples,
-		0 as value_Losses,
-		0 as value_Own_Consumption,
-		0 as value_Other,
-
-		b.[plant],
-		b.Unit_of_measure,
-		'SAR' as currency,
-		b.material_number,
-		'HALB' as materialtype,
-		b.profit_center
-	FROM 
-		dbo.ds_v_materials_movement_volume_heirarchial_v2 b with (nolock)
-		where b.material_number is not null
-
-	UNION ALL
-	SELECT
-		b.bu,
-		b.sbu,
-		b.sub_bu,
-		b.posting_month as [Month],
-		CAST(b.posting_month + '-05' AS DATE) as posting_month,
-		
-		0 as forecast_volume_Production_Output,
-		0 as forecast_volume_Transfers_IN,
-		0 as forecast_volume_Transfers_OUT,
-		0 as forecast_volume_STO_IN,
-		0 as forecast_volume_STO_OUT,
-		0 as forecast_volume_Sale,
-		0 as forecast_volume_Consumed_in_production,
-		0 as forecast_volume_Adjustments,
-		0 as forecast_volume_Purchase,
-		0 as forecast_volume_Samples,
-		0 as forecast_volume_Losses,
-		0 as forecast_volume_Own_Consumption,
-		0 as forecast_volume_Other,
-
-		0 as volume_Production_output,
-		0 as volume_Transfers_IN,
-		0 as volume_Transfers_OUT,
-		0 as volume_STO_IN,
-		0 as volume_STO_OUT,
-		0 as volume_Sale,
-		0 as volume_Consumed_in_production,
-		0 as volume_Adjustments,
-		0 as volume_Purchase,
-		0 as volume_Samples,
-		0 as volume_Losses,
-		0 as volume_Own_Consumption,
-		0 as volume_Other,
-
-		b.forecast_value_Production_Output,
-		b.forecast_value_Transfers_IN,
-		b.forecast_value_Transfers_OUT,
-		b.forecast_value_STO_IN,
-		b.forecast_value_STO_OUT,
-		b.forecast_value_Sale,
-		b.forecast_value_Consumed_in_production,
-		b.forecast_value_Adjustments,
-		b.forecast_value_Purchase,
-		b.forecast_value_Samples,
-		b.forecast_value_Losses,
-		b.forecast_value_Own_Consumption,
-		b.forecast_value_Other,
-
-		b.value_Production_output,
-		b.value_Transfers_IN,
-		b.value_Transfers_OUT,
-		b.value_STO_IN,
-		b.value_STO_OUT,
-		b.value_Sale,
-		b.value_Consumed_in_production,
-		b.value_Adjustments,
-		b.value_Purchase,
-		b.value_Samples,
-		b.value_Losses,
-		b.value_Own_Consumption,
-		b.value_Other,
-
-		b.[plant],
-
-		b.Unit_of_measure,
-		'SAR' as currency,
-		b.material_number,
-		'HALB' as materialtype,
-		b.profit_center
-	FROM 
-		dbo.ds_v_materials_movement_value_heirarchial_v2 b with (nolock)
-		where b.material_number is not null
-		) MM
-		LEFT JOIN [$(AIFinance_SQL_Master)].[master].[MST_plant] plnt with (nolock) on MM.plant = plnt.plant
-
-		group by 
-		mm.bu,
-		mm.sbu,
-		mm.sub_bu,
-		mm.material_number,
-		mm.[materialtype],
-		mm.[plant],
-		mm.[Month],
-		mm.posting_month,
-		mm.Unit_of_measure,
-		mm.currency,
-		mm.profit_center,
-		plnt.AffiliateCode
-
-
-GO
+/.vs
+/packages
+/bin
+/obj
+/WCI_APIs/bin
+/WCI_APIs/obj
+/WCI_APIs_Test/obj/Debug
+/WCI_APIs/obj/project.assets.json
+/WCI_APIs_Test/bin/Debug/WCI_APIs_Test.dll
+/WCI_APIs_Test/bin/Debug/WCI_APIs_Test.pdb
+/WCI_APIs_Test/obj/project.assets.json
+/WCI_APIs_Test/obj/project.nuget.cache
+/WCI_APIs_Test/obj/WCI_APIs_Test.csproj.nuget.dgspec.json
+/WCI_APIs_Test/obj/WCI_APIs_Test.csproj.nuget.g.props
+/WCICore/obj/Debug/net8.0/WCICore.AssemblyInfo.cs
+/WCICore/obj/Debug/net8.0/WCICore.AssemblyInfoInputs.cache
+/WCICore/obj/Debug/net8.0/WCICore.assets.cache
+/WCICore/obj/Debug/net8.0/WCICore.GeneratedMSBuildEditorConfig.editorconfig
+/WCICore/obj/project.assets.json
+/WCICore/obj/project.nuget.cache
+/WCICore/obj/WCICore.csproj.nuget.dgspec.json
+/WCICore/obj/WCICore.csproj.nuget.g.props
+/WCIInfrastructure/obj/WCIInfrastructure.csproj.nuget.g.props
+/WCIInfrastructure/obj/WCIInfrastructure.csproj.nuget.dgspec.json
+/WCIInfrastructure/obj/project.nuget.cache
+/WCIInfrastructure/obj/project.assets.json
+/WCIInfrastructure/obj/Debug/net8.0/WCIInfrastructure.GeneratedMSBuildEditorConfig.editorconfig
+/WCIInfrastructure/obj/Debug/net8.0/WCIInfrastructure.AssemblyInfo.cs
+/WCIInfrastructure/obj/Debug/net8.0/WCIInfrastructure.AssemblyInfoInputs.cache
+/WCIInfrastructure/obj/Debug/net8.0/WCIInfrastructure.assets.cache
+/WCIInfrastructure/obj/Debug/net8.0/WCIInfrastructure.csproj.AssemblyReference.cache
+/WCICore/bin/Debug/net8.0/WCICore.dll
+/WCICore/bin/Debug/net8.0/WCICore.pdb
+/WCIInfrastructure/obj/Debug/net8.0/ref/WCIInfrastructure.dll
+/WCIInfrastructure/obj/Debug/net8.0/refint/WCIInfrastructure.dll
+/WCIInfrastructure/obj/Debug/net8.0/WCIInfrastructure.csproj.BuildWithSkipAnalyzers
+/WCIInfrastructure/obj/Debug/net8.0/WCIInfrastructure.csproj.CoreCompileInputs.cache
+/WCIInfrastructure/obj/Debug/net8.0/WCIInfrastructure.csproj.FileListAbsolute.txt
+/WCIInfrastructure/obj/Debug/net8.0/WCIInfrastructure.dll
+/WCIInfrastructure/obj/Debug/net8.0/WCIInfrastructure.pdb
+/WCI_APIs_Test/obj/Debug/net8.0/ref/WCI_APIs_Test.dll
+/WCI_APIs_Test/bin/Debug/net8.0/WCI_APIs_Test.dll
+/WCI_APIs_Test/bin/Debug/net8.0/WCI_APIs_Test.pdb
+/WCI_APIs_Test/obj/Debug/net8.0/refint/WCI_APIs_Test.dll
+/WCIInfrastructure/bin/Debug/net8.0/WCICore.dll
+/WCIInfrastructure/bin/Debug/net8.0/WCICore.pdb
+/WCIInfrastructure/bin/Debug/net8.0/WCIInfrastructure.dll
+/WCIInfrastructure/bin/Debug/net8.0/WCIInfrastructure.pdb
+/WCICore/obj/Debug/net8.0/ref/WCICore.dll
+/WCICore/obj/Debug/net8.0/refint/WCICore.dll
+/WCICore/obj/Debug/net8.0/WCICore.csproj.BuildWithSkipAnalyzers
+/WCICore/obj/Debug/net8.0/WCICore.csproj.CoreCompileInputs.cache
+/WCICore/obj/Debug/net8.0/WCICore.csproj.FileListAbsolute.txt
+/WCICore/obj/Debug/net8.0/WCICore.dll
+/WCICore/obj/Debug/net8.0/WCICore.pdb
+/WCI_APIs_Test/obj/Debug/net8.0/WCI_APIs.1570993E.Up2Date
+/WCI_APIs_Test/bin/Debug/net8.0/cs
+/WCI_APIs_Test/bin/Debug/net8.0
+/WCI_APIs_Test/obj/WCI_APIs_Test.csproj.nuget.g.targets
+/WCIInfrastructure/obj/Debug/net8.0/WCIInfra.EFD16BED.Up2Date
+/WCI_APIs/libs
+/WCIInfrastructure/obj/Release/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs
