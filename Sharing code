@@ -1,93 +1,51 @@
-public async Task InvokeAsync(HttpContext httpContext)
-{
-    string requestBody = string.Empty;
-    string requestParameters = string.Empty;
-    string responseBody = string.Empty;
+   public async Task InvokeAsync(HttpContext httpContext)
+   {
+       httpContext.Request.EnableBuffering();
 
-    // ✅ KEY FIX: Replace response body stream with MemoryStream buffer
-    var originalResponseBodyStream = httpContext.Response.Body;
-    using var memoryStream = new MemoryStream();
-    httpContext.Response.Body = memoryStream;
+       var originalResponseBody = httpContext.Response.Body;
 
-    try
-    {
-        // Read request body
-        requestBody = await _requestLoggingService.ReadRequestBodyAsync(httpContext.Request);
-        requestParameters = _requestLoggingService.GetRequestParameters(httpContext.Request);
+       string requestBody = string.Empty;
+       string requestParameters = string.Empty;
+       string responseBody = string.Empty;
 
-        // Execute the next middleware/controller
-        await _next(httpContext);
+       using var responseBuffer = new MemoryStream();
+       httpContext.Response.Body = responseBuffer;
 
-        // ✅ Read response AFTER pipeline completes (no exception case)
-        responseBody = await _requestLoggingService.ReadResponseBodyAsync(httpContext.Response);
-    }
-    catch (Exception ex)
-    {
-        // ✅ Read whatever was written to MemoryStream before exception
-        responseBody = await ReadMemoryStreamSafeAsync(memoryStream);
+       try
+       {
+           requestParameters = _requestLoggingService.GetRequestParameters(httpContext);
 
-        await HandlerExceptionAsync(httpContext, ex, requestBody, requestParameters, responseBody);
-    }
-    finally
-    {
-        // ✅ Always copy MemoryStream content back to original stream
-        if (memoryStream.Length > 0)
-        {
-            memoryStream.Seek(0, SeekOrigin.Begin);
-            await memoryStream.CopyToAsync(originalResponseBodyStream);
-        }
+           if (httpContext.Request.ContentLength.HasValue &&
+               httpContext.Request.ContentLength > 0 &&
+               !string.Equals(httpContext.Request.Method, "GET", StringComparison.OrdinalIgnoreCase))
+           {
+               requestBody = await _requestLoggingService.ReadRequestBodyAsync(httpContext.Request);
+           }
 
-        // Restore original stream
-        httpContext.Response.Body = originalResponseBodyStream;
-    }
-}
-
-// ✅ Safe reader for MemoryStream (never throws ObjectDisposedException)
-private async Task<string> ReadMemoryStreamSafeAsync(MemoryStream memoryStream)
-{
-    try
-    {
-        if (memoryStream.Length == 0)
-            return "[No response body before exception]";
-
-        memoryStream.Seek(0, SeekOrigin.Begin);
-        using var reader = new StreamReader(memoryStream, Encoding.UTF8, leaveOpen: true);
-        return await reader.ReadToEndAsync();
-    }
-    catch
-    {
-        return "[Could not read response body]";
-    }
-}
+           await _next(httpContext);
 
 
+           responseBuffer.Position = 0;
+           responseBuffer.Seek(0, SeekOrigin.Begin);
+           responseBody = await new StreamReader(responseBuffer).ReadToEndAsync();
+           responseBuffer.Seek(0, SeekOrigin.Begin);
 
-public async Task<string> ReadResponseBodyAsync(HttpResponse response)
-{
-    try
-    {
-        // Stream must be a MemoryStream and must be readable/seekable
-        if (response.Body == null || !response.Body.CanSeek || !response.Body.CanRead)
-            return "[Response body not readable]";
+           responseBuffer.Position = 0;
 
-        var currentPosition = response.Body.Position;
+           await responseBuffer.CopyToAsync(originalResponseBody);
+       }
+       catch (Exception ex)
+       {
 
-        response.Body.Seek(0, SeekOrigin.Begin);
-
-        using var reader = new StreamReader(response.Body, Encoding.UTF8, leaveOpen: true);
-        var body = await reader.ReadToEndAsync();
-
-        // Restore original position
-        response.Body.Seek(currentPosition, SeekOrigin.Begin);
-
-        return body;
-    }
-    catch (ObjectDisposedException)
-    {
-        return "[Response stream already disposed]";
-    }
-    catch (Exception ex)
-    {
-        return $"[Error reading response body: {ex.Message}]";
-    }
-}
+           await HandlerExceptionAsync(
+               httpContext,
+               ex,
+               requestBody,
+               requestParameters,
+               responseBody);
+       }
+       finally
+       {
+           httpContext.Response.Body = originalResponseBody;
+       }
+   }
