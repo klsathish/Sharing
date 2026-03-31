@@ -1,49 +1,202 @@
-SELECT 
-    'ALTER TABLE [' + tp.name + '] ADD CONSTRAINT [' + fk.name + '] 
-    FOREIGN KEY ([' + cp.name + ']) 
-    REFERENCES [' + tr.name + '] ([' + cr.name + ']);' 
-    AS FK_ReCreate_Script
-FROM sys.foreign_keys fk
-INNER JOIN sys.tables tp ON fk.parent_object_id = tp.object_id
-INNER JOIN sys.tables tr ON fk.referenced_object_id = tr.object_id
-INNER JOIN sys.foreign_key_columns fkc ON fk.object_id = fkc.constraint_object_id
-INNER JOIN sys.columns cp ON fkc.parent_object_id = cp.object_id 
-    AND fkc.parent_column_id = cp.column_id
-INNER JOIN sys.columns cr ON fkc.referenced_object_id = cr.object_id 
-    AND fkc.referenced_column_id = cr.column_id
-WHERE tp.name = 'YourTableName'   -- 🔁 Replace your table name
+USE [SABIC_DT_Finance_WCI_WebUI]
+GO
+/****** Object:  StoredProcedure [dbo].[SP_GetInventoryGlobalMap]    Script Date: 3/31/2026 7:04:07 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 
-
-
- Update [dbo].[TRN_UserLoginSession] set IsActive=0,UpdatedBy=@UpdatedBy,UpdatedOn=getdate() where  UserID = @UserID 
-
-Exec SP_GetXMLValueForLog '[TRN_UserLoginSession]', 'UserID', @UserID, @NewValueTemp output
-SET @NewValue = isnull(CAST(@NewValueTemp AS XML),'');
-SET @OldValue = isnull(CAST(@OldValueTemp AS XML),'');
-
- 
- SET @Message = 'User logout and end session has been updated successfully.';
-
-END
-
-
-ALTER PROCEDURE [dbo].[SP_GetXMLValueForLog]
+/*            
+=========================================================
+Author: Khaja Moinuddin      
+Create Date: 2025-05-26 10:00:00      
+Description:- Its used for Get total Inventory Volume and Inventory Value      
+           
+[dbo].[SP_GetInventoryGlobalMap] 1,'','','1','0','',null,null,null,null
+[dbo].[SP_GetInventoryGlobalMap] 2,'','','1','0','',null,null,null,null
+[dbo].[SP_GetInventoryGlobalMap] 3,'','','1','0','',null,null,null,null
+=========================================================
+*/
+ALTER   PROCEDURE [dbo].[SP_GetInventoryGlobalMap]
 (
-	@Tablename nVarChar(100),
-	@IdentityColumn nVarChar(100),
-	@ID INT,
-	@XMLValue nVarChar(MAX) OUTPUT
+     @TypeID INT = 0,
+     @RegionID VARCHAR(50) = NULL,
+     @CountryID VARCHAR(50) = NULL,
+     @CompanyCode VARCHAR(50) = NULL,
+     @ProfitCenterID VARCHAR(500) = NULL,
+     @PlantID VARCHAR(50) = NULL,
+     @SBU VARCHAR(50) = NULL,
+     @BU VARCHAR(50) = NULL,
+     @FromDate DATE = NULL,
+     @ToDate DATE = NULL
 )
 AS
 BEGIN
+    SET NOCOUNT ON;
 
-	SET NOCOUNT ON;
-	DECLARE @SQL NVARCHAR(MAX), @Results XML;
+    SET @SBU = ISNULL(@SBU, '');
+    SET @BU = ISNULL(@BU, '');
+    SET @ProfitCenterID = ISNULL(@ProfitCenterID, '');
+    SET @RegionID = ISNULL(@RegionID, '');
+    SET @CountryID = ISNULL(@CountryID, '');
+    SET @CompanyCode = ISNULL(@CompanyCode, '');
 
-	SET @SQL = N'SET @Out = (SELECT * FROM ' + @tablename + ' WHERE ' + @identityColumn + ' = ' + CAST(@ID AS nVarchar(10)) + ' FOR XML AUTO, ELEMENTS);';
+    IF(@CompanyCode IN ('0','1')) SET @CompanyCode = '';
+    IF(@ProfitCenterID IN ('0','1')) SET @ProfitCenterID = '';
 
-	EXEC sp_executesql @SQL, N'@Out XML OUTPUT', @Out = @Results OUTPUT;
+    IF (@FromDate = '' or @FromDate is null or @ToDate = '' or @ToDate is null)
+    BEGIN
+        SELECT @FromDate = FromDate,
+               @ToDate   = ToDate
+        FROM ADM_DefaultDatesForFilter
+        WHERE IsActive = 1
+    END
 
-	SET @XMLValue = CONVERT(NVARCHAR(MAX), @Results)
+    DECLARE @FromDateCalMonth INT =
+        YEAR(@FromDate) * 100 + MONTH(@FromDate);
 
+    DECLARE @ToDateCalMonth INT =
+        YEAR(@ToDate) * 100 + MONTH(@ToDate);
+
+    DECLARE @ProfitCenterValues TABLE (ProfitCenterName NVARCHAR(100));
+
+    INSERT INTO @ProfitCenterValues
+    SELECT ProfitCenterName
+    FROM SABIC_DT_Finance_Master.master.MST_ProfitCenter
+    WHERE ProfitCenterID IN (SELECT value FROM STRING_SPLIT(@ProfitCenterID, ','));
+
+
+    IF @TypeID = 1       BEGIN
+        SELECT
+            CAST(r.RegionID AS VARCHAR(10)) AS RegionID,
+            r.RegionName,
+            '0' AS CountryID,
+            ''  AS CountryName,
+            r.Latitude  AS LatGPSValue,
+            r.Longitude AS LonGPSValue,
+            'AI enhanced forecast inventory value '
+            + CAST(ROUND(
+                SUM(a.forecast_value_Sale/1000000.0 +
+                    a.forecast_value_Purchase/1000000.0 +
+                    a.forecast_value_Production_Output/1000000.0), 2
+              ) AS VARCHAR(50))
+            + ' M$' AS RecommendationMessage
+        FROM SABIC_DT_Finance_WCI.dbo.view_fg_inventory_forecast a
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Affiliate af
+            ON af.AffiliateCode = a.AffiliateCode
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Country c
+            ON c.CountryID = af.CountryID
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Region r
+            ON r.RegionID = c.RegionID
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_ProfitCenter p
+            ON 
+			a.bu = p.BU
+			AND a.sbu = p.SBU
+            AND cast(a.profit_center as int) = cast(p.ProfitCenterName as int)
+        WHERE
+            r.IsActive = 1
+            AND c.IsActive = 1
+            AND af.IsActive = 1
+            AND CAST(REPLACE(a.[Month],'-','') AS INT)
+                BETWEEN @FromDateCalMonth AND @ToDateCalMonth
+            AND (@RegionID = '' OR r.RegionID IN (SELECT value FROM STRING_SPLIT(@RegionID, ',')))
+            AND (@CountryID = '' OR c.CountryID IN (SELECT value FROM STRING_SPLIT(@CountryID, ',')))
+            AND (@BU = '' OR a.bu IN (SELECT value FROM STRING_SPLIT(@BU, ',')))
+            AND (@SBU = '' OR a.sbu IN (SELECT value FROM STRING_SPLIT(@SBU, ',')))
+            AND (@ProfitCenterID = '' OR p.ProfitCenterName IN (SELECT ProfitCenterName FROM @ProfitCenterValues))
+        GROUP BY
+            r.RegionID,
+            r.RegionName,
+            r.Latitude,
+            r.Longitude;
+    END
+
+	  IF @TypeID = 2   	  BEGIN
+			SELECT
+				CAST(r.RegionID AS VARCHAR(10)) AS RegionID,
+				r.RegionName,
+				'0' AS CountryID,
+				''  AS CountryName,
+				r.Latitude  AS LatGPSValue,
+				r.Longitude AS LonGPSValue,
+				'AI enhanced forecast inventory volume '
+				+ CAST(ROUND(
+					SUM(a.value_Sale/1000.0 +
+						a.value_Purchase/1000.0 +
+						a.value_Consumed_in_production/1000.0), 2
+				  ) AS VARCHAR(50))
+				+ ' MT' AS RecommendationMessage
+			FROM SABIC_DT_Finance_WCI.dbo.view_fg_inventory_forecast a
+			INNER JOIN SABIC_DT_Finance_Master.master.MST_Affiliate af
+				ON af.AffiliateCode = a.AffiliateCode
+			INNER JOIN SABIC_DT_Finance_Master.master.MST_Country c
+				ON c.CountryID = af.CountryID
+			INNER JOIN SABIC_DT_Finance_Master.master.MST_Region r
+				ON r.RegionID = c.RegionID
+			INNER JOIN SABIC_DT_Finance_Master.master.MST_ProfitCenter p
+				ON a.bu = p.BU
+			   AND a.sbu = p.SBU
+			   AND cast(a.profit_center as int) = cast(p.ProfitCenterName as int)
+			WHERE
+				r.IsActive = 1
+				AND c.IsActive = 1
+				AND af.IsActive = 1
+				AND CAST(REPLACE(a.[Month],'-','') AS INT)
+					BETWEEN @FromDateCalMonth AND @ToDateCalMonth
+				AND (@RegionID = '' OR r.RegionID IN (SELECT value FROM STRING_SPLIT(@RegionID, ',')))
+				AND (@CountryID = '' OR c.CountryID IN (SELECT value FROM STRING_SPLIT(@CountryID, ',')))
+				AND (@BU = '' OR a.bu IN (SELECT value FROM STRING_SPLIT(@BU, ',')))
+				AND (@SBU = '' OR a.sbu IN (SELECT value FROM STRING_SPLIT(@SBU, ',')))
+				AND (@ProfitCenterID = '' OR p.ProfitCenterName IN (SELECT ProfitCenterName FROM @ProfitCenterValues))
+			GROUP BY
+				r.RegionID,
+				r.RegionName,
+				r.Latitude,
+				r.Longitude;
+		END
+
+	IF @TypeID = 3       BEGIN
+        SELECT
+            CAST(r.RegionID AS VARCHAR(10)) AS RegionID,
+            r.RegionName,
+            '0' AS CountryID,
+            ''  AS CountryName,
+            r.Latitude  AS LatGPSValue,
+            r.Longitude AS LonGPSValue,
+			'AI enhanced forecast inventory value '
+            + CAST(ROUND(
+                SUM(a.forecast_value_Sale/1000000.0 +
+                    a.forecast_value_Purchase/1000000.0 +
+                    a.forecast_value_Production_Output/1000000.0), 2
+              ) AS VARCHAR(50))
+            + ' M$' AS RecommendationMessage
+           
+        FROM SABIC_DT_Finance_WCI.dbo.view_fg_inventory_forecast a
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Affiliate af
+            ON af.AffiliateCode = a.AffiliateCode
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Country c
+            ON c.CountryID = af.CountryID
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_Region r
+            ON r.RegionID = c.RegionID
+        INNER JOIN SABIC_DT_Finance_Master.master.MST_ProfitCenter p
+            ON a.bu = p.BU
+           AND a.sbu = p.SBU
+           AND cast(a.profit_center as int) = cast(p.ProfitCenterName as int)
+        WHERE
+            r.IsActive = 1
+            AND c.IsActive = 1
+            AND af.IsActive = 1
+            AND CAST(REPLACE(a.[Month],'-','') AS INT)
+                BETWEEN @FromDateCalMonth AND @ToDateCalMonth
+            AND (@RegionID = '' OR r.RegionID IN (SELECT value FROM STRING_SPLIT(@RegionID, ',')))
+            AND (@CountryID = '' OR c.CountryID IN (SELECT value FROM STRING_SPLIT(@CountryID, ',')))
+            AND (@BU = '' OR a.bu IN (SELECT value FROM STRING_SPLIT(@BU, ',')))
+            AND (@SBU = '' OR a.sbu IN (SELECT value FROM STRING_SPLIT(@SBU, ',')))
+            AND (@ProfitCenterID = '' OR p.ProfitCenterName IN (SELECT ProfitCenterName FROM @ProfitCenterValues))
+        GROUP BY
+            r.RegionID,
+            r.RegionName,
+            r.Latitude,
+            r.Longitude;
+    END
 END
