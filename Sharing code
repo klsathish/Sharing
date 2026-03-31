@@ -38,6 +38,9 @@ The AuthenticationController.cs in WCI_APIs is actively using two legacy assembl
 • AdProvider.dll – used for [Active Directory / user authentication logic]
 • System.Web.Services.dll – used for [SOAP / web service calls]
 
+What I Already Tried:
+I stored the DLLs in /WCI_APIs/libs folder and added it to .gitignore to keep them out of source control. This works locally since the DLLs are physically present on developer machines. However, the CI agent clones only what is in the repository — so the libs folder never reaches the build agent, causing the failure. This means we cannot use gitignore as a solution here — the DLLs either need to be in the repo, in a NuGet feed, or the code needs to be rewritten.
+
 These DLLs are currently stored in the /WCI_APIs/libs folder locally, and the build works fine on local machines. However, since the CI agent runs on Linux with .NET 8, the build is failing with the following errors:
 
 • CS0246: 'AdProvider' could not be found
