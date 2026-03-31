@@ -1,51 +1,82 @@
-   public async Task InvokeAsync(HttpContext httpContext)
-   {
-       httpContext.Request.EnableBuffering();
+public async Task InvokeAsync(HttpContext httpContext)
+{
+    httpContext.Request.EnableBuffering();
 
-       var originalResponseBody = httpContext.Response.Body;
+    var originalResponseBody = httpContext.Response.Body;
 
-       string requestBody = string.Empty;
-       string requestParameters = string.Empty;
-       string responseBody = string.Empty;
+    string requestBody = string.Empty;
+    string requestParameters = string.Empty;
+    string responseBody = string.Empty;
 
-       using var responseBuffer = new MemoryStream();
-       httpContext.Response.Body = responseBuffer;
+    using var responseBuffer = new MemoryStream();
+    httpContext.Response.Body = responseBuffer;
 
-       try
-       {
-           requestParameters = _requestLoggingService.GetRequestParameters(httpContext);
+    try
+    {
+        requestParameters = _requestLoggingService.GetRequestParameters(httpContext);
 
-           if (httpContext.Request.ContentLength.HasValue &&
-               httpContext.Request.ContentLength > 0 &&
-               !string.Equals(httpContext.Request.Method, "GET", StringComparison.OrdinalIgnoreCase))
-           {
-               requestBody = await _requestLoggingService.ReadRequestBodyAsync(httpContext.Request);
-           }
+        if (httpContext.Request.ContentLength.HasValue &&
+            httpContext.Request.ContentLength > 0 &&
+            !string.Equals(httpContext.Request.Method, "GET", StringComparison.OrdinalIgnoreCase))
+        {
+            requestBody = await _requestLoggingService.ReadRequestBodyAsync(httpContext.Request);
+        }
 
-           await _next(httpContext);
+        await _next(httpContext);
 
+        // ✅ Read response body AFTER pipeline completes (happy path)
+        if (responseBuffer.Length > 0)
+        {
+            responseBuffer.Seek(0, SeekOrigin.Begin);
+            responseBody = await new StreamReader(responseBuffer, Encoding.UTF8, leaveOpen: true)
+                                     .ReadToEndAsync();
+        }
+    }
+    catch (Exception ex)
+    {
+        // ✅ Safely read whatever was buffered before the exception
+        try
+        {
+            if (responseBuffer.Length > 0)
+            {
+                responseBuffer.Seek(0, SeekOrigin.Begin);
+                responseBody = await new StreamReader(responseBuffer, Encoding.UTF8, leaveOpen: true)
+                                         .ReadToEndAsync();
+            }
+            else
+            {
+                responseBody = "[No response body captured before exception]";
+            }
+        }
+        catch
+        {
+            responseBody = "[Error reading response body during exception]";
+        }
 
-           responseBuffer.Position = 0;
-           responseBuffer.Seek(0, SeekOrigin.Begin);
-           responseBody = await new StreamReader(responseBuffer).ReadToEndAsync();
-           responseBuffer.Seek(0, SeekOrigin.Begin);
+        await HandlerExceptionAsync(
+            httpContext,
+            ex,
+            requestBody,
+            requestParameters,
+            responseBody);
+    }
+    finally
+    {
+        // ✅ Always copy buffered response back to original stream
+        try
+        {
+            if (responseBuffer.Length > 0)
+            {
+                responseBuffer.Seek(0, SeekOrigin.Begin);
+                await responseBuffer.CopyToAsync(originalResponseBody);
+            }
+        }
+        catch
+        {
+            // Suppress — original stream may already be closed
+        }
 
-           responseBuffer.Position = 0;
-
-           await responseBuffer.CopyToAsync(originalResponseBody);
-       }
-       catch (Exception ex)
-       {
-
-           await HandlerExceptionAsync(
-               httpContext,
-               ex,
-               requestBody,
-               requestParameters,
-               responseBody);
-       }
-       finally
-       {
-           httpContext.Response.Body = originalResponseBody;
-       }
-   }
+        // ✅ Always restore original response stream
+        httpContext.Response.Body = originalResponseBody;
+    }
+}
