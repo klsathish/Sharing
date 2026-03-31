@@ -21,3 +21,48 @@
 
 # ── Third-party / local libraries ───────────────────────────────────────────
 /WCI_APIs/libs
+
+
+
+
+Subject: CI Build Failure – AdProvider & System.Web.Services DLL Dependency in WCI_APIs
+
+Hi [Architect Name],
+
+Hope you are doing well.
+
+I wanted to bring to your attention a CI build issue we are currently facing in the WCI project and seek your guidance on the best approach to resolve it.
+
+**Current Situation:**
+The AuthenticationController.cs in WCI_APIs is actively using two legacy assemblies:
+• AdProvider.dll – used for [Active Directory / user authentication logic]
+• System.Web.Services.dll – used for [SOAP / web service calls]
+
+These DLLs are currently stored in the /WCI_APIs/libs folder locally, and the build works fine on local machines. However, since the CI agent runs on Linux with .NET 8, the build is failing with the following errors:
+
+• CS0246: 'AdProvider' could not be found
+• CS0234: 'Services' does not exist in namespace 'System.Web'
+
+**The Core Problem:**
+System.Web.Services is a .NET Framework (Windows-only) assembly and is not supported on .NET 8 / Linux environments. AdProvider.dll is also not available on the CI agent.
+
+**I understand your preference is to avoid including these DLLs directly in the repository.** Given this constraint, I would like your guidance on which approach you would prefer us to take:
+
+Option 1 – Rewrite using .NET 8 compatible libraries:
+• Replace AdProvider with Microsoft.Identity.Client (MSAL) or System.DirectoryServices.AccountManagement
+• Replace System.Web.Services with HttpClient or System.ServiceModel
+
+Option 2 – Host DLLs as an internal NuGet package in Azure Artifacts:
+• Package AdProvider as an internal NuGet feed so it is consumed cleanly without storing raw DLLs in source control
+
+Option 3 – Temporarily include libs folder in the repository:
+• As a short-term fix to unblock the CI pipeline while the permanent solution is implemented
+
+I am ready to proceed with whichever approach you recommend. Please let me know your preferred direction so I can plan the implementation accordingly.
+
+Thank you for your time and guidance.
+
+Best regards,
+[Your Name]
+Lead Developer – WCI Project
+Wipro Limited
