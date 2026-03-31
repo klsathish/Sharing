@@ -1,40 +1,93 @@
-System.ObjectDisposedException: Cannot access a closed Stream.
-   at System.IO.MemoryStream.Seek(Int64 offset, SeekOrigin loc)
-   at WCI_APIs.Services.Logging.RequestLoggingService.ReadResponseBodyAsync(HttpResponse response) in C:\TFSCode\API\WorkingCapitalInsights_Middleware\WCI_APIs\Services\Logging\RequestLoggingService.cs:line 42
-   at WCI_APIs.ExceptionHandler.ExceptionHandlerMiddleware.HandlerExceptionAsync(HttpContext context, Exception ex, String requestBody, String requestParameters, String responseBody) in C:\TFSCode\API\WorkingCapitalInsights_Middleware\WCI_APIs\Middlewares\ExceptionMiddleware.cs:line 105
-   at WCI_APIs.ExceptionHandler.ExceptionHandlerMiddleware.InvokeAsync(HttpContext httpContext) in C:\TFSCode\API\WorkingCapitalInsights_Middleware\WCI_APIs\Middlewares\ExceptionMiddleware.cs:line 73
-   at Program.<>c__DisplayClass0_0.<<<Main>$>b__5>d.MoveNext() in C:\TFSCode\API\WorkingCapitalInsights_Middleware\WCI_APIs\Program.cs:line 107
---- End of stack trace from previous location ---
-   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
-   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
-   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+public async Task InvokeAsync(HttpContext httpContext)
+{
+    string requestBody = string.Empty;
+    string requestParameters = string.Empty;
+    string responseBody = string.Empty;
 
-HEADERS
-=======
-Accept: */*
-Connection: keep-alive
-Host: localhost:5000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0
-Accept-Encoding: gzip, deflate, br, zstd
-Accept-Language: en-US,en;q=0.9
-Referer: http://localhost:5000/swagger/index.html
-sec-ch-ua-platform: "Windows"
-sec-ch-ua: "Not:A-Brand";v="99", "Microsoft Edge";v="145", "Chromium";v="145"
-sec-ch-ua-mobile: ?0
-Sec-Fetch-Site: same-origin
-Sec-Fetch-Mode: cors
-------------------------------
+    // ✅ KEY FIX: Replace response body stream with MemoryStream buffer
+    var originalResponseBodyStream = httpContext.Response.Body;
+    using var memoryStream = new MemoryStream();
+    httpContext.Response.Body = memoryStream;
 
-responseBody = await _requestLoggingService.ReadResponseBodyAsync(context.Response);
+    try
+    {
+        // Read request body
+        requestBody = await _requestLoggingService.ReadRequestBodyAsync(httpContext.Request);
+        requestParameters = _requestLoggingService.GetRequestParameters(httpContext.Request);
 
-  public async Task<string> ReadResponseBodyAsync(HttpResponse response)
-  {
-      response.Body.Seek(0, SeekOrigin.Begin);
+        // Execute the next middleware/controller
+        await _next(httpContext);
 
-      using var reader = new StreamReader(response.Body, leaveOpen: true);
-      var body = await reader.ReadToEndAsync();
+        // ✅ Read response AFTER pipeline completes (no exception case)
+        responseBody = await _requestLoggingService.ReadResponseBodyAsync(httpContext.Response);
+    }
+    catch (Exception ex)
+    {
+        // ✅ Read whatever was written to MemoryStream before exception
+        responseBody = await ReadMemoryStreamSafeAsync(memoryStream);
 
-      response.Body.Seek(0, SeekOrigin.Begin);
+        await HandlerExceptionAsync(httpContext, ex, requestBody, requestParameters, responseBody);
+    }
+    finally
+    {
+        // ✅ Always copy MemoryStream content back to original stream
+        if (memoryStream.Length > 0)
+        {
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            await memoryStream.CopyToAsync(originalResponseBodyStream);
+        }
 
-      return body;
-  }
+        // Restore original stream
+        httpContext.Response.Body = originalResponseBodyStream;
+    }
+}
+
+// ✅ Safe reader for MemoryStream (never throws ObjectDisposedException)
+private async Task<string> ReadMemoryStreamSafeAsync(MemoryStream memoryStream)
+{
+    try
+    {
+        if (memoryStream.Length == 0)
+            return "[No response body before exception]";
+
+        memoryStream.Seek(0, SeekOrigin.Begin);
+        using var reader = new StreamReader(memoryStream, Encoding.UTF8, leaveOpen: true);
+        return await reader.ReadToEndAsync();
+    }
+    catch
+    {
+        return "[Could not read response body]";
+    }
+}
+
+
+
+public async Task<string> ReadResponseBodyAsync(HttpResponse response)
+{
+    try
+    {
+        // Stream must be a MemoryStream and must be readable/seekable
+        if (response.Body == null || !response.Body.CanSeek || !response.Body.CanRead)
+            return "[Response body not readable]";
+
+        var currentPosition = response.Body.Position;
+
+        response.Body.Seek(0, SeekOrigin.Begin);
+
+        using var reader = new StreamReader(response.Body, Encoding.UTF8, leaveOpen: true);
+        var body = await reader.ReadToEndAsync();
+
+        // Restore original position
+        response.Body.Seek(currentPosition, SeekOrigin.Begin);
+
+        return body;
+    }
+    catch (ObjectDisposedException)
+    {
+        return "[Response stream already disposed]";
+    }
+    catch (Exception ex)
+    {
+        return $"[Error reading response body: {ex.Message}]";
+    }
+}
