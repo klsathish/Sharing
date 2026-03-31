@@ -1,82 +1,121 @@
-public async Task InvokeAsync(HttpContext httpContext)
-{
-    httpContext.Request.EnableBuffering();
+ public async Task LogoutAndEndSessionByUserIdAsync(int userId)
+ {
+     await _dbContext.Database.ExecuteSqlRawAsync(
+         @"EXEC [dbo].[SP_LogoutAndEndSessionByUserId]
+                 @UserID = @UserID",
+         new SqlParameter("@UserID", userId)
+     );
+ }
 
-    var originalResponseBody = httpContext.Response.Body;
+Error converting data type nvarchar to int.
+Error converting data type nvarchar to int.
 
-    string requestBody = string.Empty;
-    string requestParameters = string.Empty;
-    string responseBody = string.Empty;
 
-    using var responseBuffer = new MemoryStream();
-    httpContext.Response.Body = responseBuffer;
 
-    try
-    {
-        requestParameters = _requestLoggingService.GetRequestParameters(httpContext);
 
-        if (httpContext.Request.ContentLength.HasValue &&
-            httpContext.Request.ContentLength > 0 &&
-            !string.Equals(httpContext.Request.Method, "GET", StringComparison.OrdinalIgnoreCase))
-        {
-            requestBody = await _requestLoggingService.ReadRequestBodyAsync(httpContext.Request);
-        }
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.CompleteAsyncExecuteReader(Boolean isInternal, Boolean forDescribeParameterEncryption)
+   at Microsoft.Data.SqlClient.SqlCommand.InternalEndExecuteNonQuery(IAsyncResult asyncResult, Boolean isInternal, String endMethod)
+   at Microsoft.Data.SqlClient.SqlCommand.EndExecuteNonQueryInternal(IAsyncResult asyncResult)
+   at Microsoft.Data.SqlClient.SqlCommand.EndExecuteNonQueryAsync(IAsyncResult asyncResult)
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<InternalExecuteNonQueryAsync>b__210_1(IAsyncResult result)
+   at System.Threading.Tasks.TaskFactory`1.FromAsyncCoreLogic(IAsyncResult iar, Func`2 endFunction, Action`1 endAction, Task`1 promise, Boolean requiresSynchronization)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.<ExecuteNonQueryAsync>d__14.MoveNext()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.<ExecuteNonQueryAsync>d__14.MoveNext()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.<ExecuteNonQueryAsync>d__14.MoveNext()
+   at Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.<ExecuteSqlRawAsync>d__17.MoveNext()
+   at WCIInfrastructure.Repositories.AccountRepository.<LogoutAndEndSessionByUserIdAsync>d__6.MoveNext() in C:\TFSCode\API\WorkingCapitalInsights_Middleware\WCIInfrastructure\Repositories\AccountRepository.cs:line 64
+   at WCIInfrastructure.Service.AuthenticationService.<LogoutAndEndSessionByUserIdAsync>d__11.MoveNext() in C:\TFSCode\API\WorkingCapitalInsights_Middleware\WCIInfrastructure\Service\AuthenticationService.cs:line 295
+   at WCIInfrastructure.Service.AuthenticationService.<GenerateTokenWhenActiveSessionFound>d__7.MoveNext() in C:\TFSCode\API\WorkingCapitalInsights_Middleware\WCIInfrastructure\Service\AuthenticationService.cs:line 163
+   at WCIInfrastructure.Service.AuthenticationService.<GenerateToken>d__6.MoveNext() in C:\TFSCode\API\WorkingCapitalInsights_Middleware\WCIInfrastructure\Service\AuthenticationService.cs:line 106
+   at WCIInfrastructure.Service.AuthenticationService.<AuthenticateAsync>d__5.MoveNext() in C:\TFSCode\API\WorkingCapitalInsights_Middleware\WCIInfrastructure\Service\AuthenticationService.cs:line 61
+   at WCI_APIs.Controllers.AuthenticationController.<LoginAPI>d__2.MoveNext() in C:\TFSCode\API\WorkingCapitalInsights_Middleware\WCI_APIs\Controllers\AuthenticationController.cs:line 38
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.<Execute>d__0.MoveNext()
+   at System.Threading.Tasks.ValueTask`1.get_Result()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<<InvokeActionMethodAsync>g__Logged|12_1>d.MoveNext()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<<InvokeNextActionFilterAsync>g__Awaited|10_0>d.MoveNext()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<<InvokeInnerFilterAsync>g__Awaited|13_0>d.MoveNext()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<<InvokeFilterPipelineAsync>g__Awaited|20_0>d.MoveNext()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<<InvokeAsync>g__Logged|17_1>d.MoveNext()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<<InvokeAsync>g__Logged|17_1>d.MoveNext()
+   at WCI_APIs.Middlewares.ApiLoggingMiddleware.<InvokeAsync>d__4.MoveNext() in C:\TFSCode\API\WorkingCapitalInsights_Middleware\WCI_APIs\Middlewares\ApiLoggingMiddleware.cs:line 38
+   at WCI_APIs.Middlewares.RoleAuthorizationMiddleware.<InvokeAsync>d__5.MoveNext() in C:\TFSCode\API\WorkingCapitalInsights_Middleware\WCI_APIs\Middlewares\RoleAuthorizationMiddleware.cs:line 33
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.<Invoke>d__11.MoveNext()
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.<Invoke>d__6.MoveNext()
+   at Microsoft.AspNetCore.Session.SessionMiddleware.<Invoke>d__8.MoveNext()
+   at Microsoft.AspNetCore.Session.SessionMiddleware.<Invoke>d__8.MoveNext()
+   at WCI_APIs.Middlewares.CustomHttpContextMiddleware.<InvokeAsync>d__3.MoveNext() in C:\TFSCode\API\WorkingCapitalInsights_Middleware\WCI_APIs\Middlewares\CustomHttpContextMiddleware.cs:line 44
+   at WCI_APIs.ExceptionHandler.ExceptionHandlerMiddleware.<InvokeAsync>d__5.MoveNext() in C:\TFSCode\API\WorkingCapitalInsights_Middleware\WCI_APIs\Middlewares\ExceptionMiddleware.cs:line 58
 
-        await _next(httpContext);
 
-        // ✅ Read response body AFTER pipeline completes (happy path)
-        if (responseBuffer.Length > 0)
-        {
-            responseBuffer.Seek(0, SeekOrigin.Begin);
-            responseBody = await new StreamReader(responseBuffer, Encoding.UTF8, leaveOpen: true)
-                                     .ReadToEndAsync();
-        }
-    }
-    catch (Exception ex)
-    {
-        // ✅ Safely read whatever was buffered before the exception
-        try
-        {
-            if (responseBuffer.Length > 0)
-            {
-                responseBuffer.Seek(0, SeekOrigin.Begin);
-                responseBody = await new StreamReader(responseBuffer, Encoding.UTF8, leaveOpen: true)
-                                         .ReadToEndAsync();
-            }
-            else
-            {
-                responseBody = "[No response body captured before exception]";
-            }
-        }
-        catch
-        {
-            responseBody = "[Error reading response body during exception]";
-        }
+    
+ALTER PROCEDURE [dbo].[SP_LogoutAndEndSessionByUserId]      
+(      
+   @UserID int      
+)      
+As      
+      
+BEGIN      
+      
+DECLARE @updatedBy nvarchar(50);     
+DECLARE @sessionID nvarchar(100);      
+    
+Declare  @Message varchar(MAX) = '';
 
-        await HandlerExceptionAsync(
-            httpContext,
-            ex,
-            requestBody,
-            requestParameters,
-            responseBody);
-    }
-    finally
-    {
-        // ✅ Always copy buffered response back to original stream
-        try
-        {
-            if (responseBuffer.Length > 0)
-            {
-                responseBuffer.Seek(0, SeekOrigin.Begin);
-                await responseBuffer.CopyToAsync(originalResponseBody);
-            }
-        }
-        catch
-        {
-            // Suppress — original stream may already be closed
-        }
+select @updatedBy = Username from [dbo].[ADM_User] where UserID = @UserID     
+    
+SELECT TOP 1 @sessionID = SessionID  FROM [dbo].[TRN_UserLoginSession] where UserID = @UserID and IsActive=1 order by CreatedDate desc    
+     
+DECLARE @ID Int, @OldValue XML, @NewValue XML, @OldValueTemp NVARCHAR(MAX), @NewValueTemp NVARCHAR(MAX)
 
-        // ✅ Always restore original response stream
-        httpContext.Response.Body = originalResponseBody;
-    }
-}
+Exec SP_GetXMLValueForLog 'ADM_LoginActivity', 'SessionID', @sessionID, @OldValueTemp output      
+SET @OldValue = CAST(@OldValueTemp AS XML)
+
+ Update [dbo].[ADM_LoginActivity] set IsOnline=0,UpdatedBy=@UpdatedBy,UpdatedOn=getdate(),LogoutTime=getdate() where  UserID = @UserID AND SessionID=@sessionID  
+ 
+Exec SP_GetXMLValueForLog 'ADM_LoginActivity', 'SessionID', @sessionID, @NewValueTemp output
+SET @NewValue = isnull(CAST(@NewValueTemp AS XML),'');
+SET @OldValue = isnull(CAST(@OldValueTemp AS XML),'');
+
+Exec SP_GetXMLValueForLog '[TRN_UserLoginSession]', 'UserID', @UserID, @OldValueTemp output      
+SET @OldValue = CAST(@OldValueTemp AS XML)
+
+ Update [dbo].[TRN_UserLoginSession] set IsActive=0,UpdatedBy=@UpdatedBy,UpdatedOn=getdate() where  UserID = @UserID 
+
+Exec SP_GetXMLValueForLog '[TRN_UserLoginSession]', 'UserID', @UserID, @NewValueTemp output
+SET @NewValue = isnull(CAST(@NewValueTemp AS XML),'');
+SET @OldValue = isnull(CAST(@OldValueTemp AS XML),'');
+
+ 
+ SET @Message = 'User logout and end session has been updated successfully.';
+
+END
+
+
+ALTER PROCEDURE [dbo].[SP_GetXMLValueForLog]
+(
+	@Tablename nVarChar(100),
+	@IdentityColumn nVarChar(100),
+	@ID INT,
+	@XMLValue nVarChar(MAX) OUTPUT
+)
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+	DECLARE @SQL NVARCHAR(MAX), @Results XML;
+
+	SET @SQL = N'SET @Out = (SELECT * FROM ' + @tablename + ' WHERE ' + @identityColumn + ' = ' + CAST(@ID AS nVarchar(10)) + ' FOR XML AUTO, ELEMENTS);';
+
+	EXEC sp_executesql @SQL, N'@Out XML OUTPUT', @Out = @Results OUTPUT;
+
+	SET @XMLValue = CONVERT(NVARCHAR(MAX), @Results)
+
+END
