@@ -1,3 +1,21 @@
+Subject: RE: Clarification – Master Branch PR Auto-Completion
+
+Hi [Architect Name],
+
+Thank you for your response and I completely understand your concern.
+
+To be transparent — the PR was created using Arul's account, and during the configuration, I was simultaneously handling multiple tasks. Due to this, I missed noticing that your approval was set as optional instead of required, which led to the auto-completion.
+
+I acknowledge that I should have verified the reviewer settings more carefully before submitting the PR. It was only after you brought this up in our conversation that I realized the issue and reached out immediately.
+
+I take full responsibility for this oversight. The branch policy has since been corrected to ensure your approval is set as required going forward.
+
+Please let me know if you wish to review the merged changes or if any corrective action is needed.
+
+Thanks & Regards,
+Sathish
+
+
 Subject: Pull Request Raised – SQL Schema Changes for WCI/SF Web Database
 
 Dear [Manager Name] and Team,
