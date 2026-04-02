@@ -1,3 +1,39 @@
+Subject: Pull Request Raised – SQL Schema Changes for WCI/SF Web Database
+
+Dear [Manager Name] and Team,
+
+This is to inform you that the Pull Requests for the SQL schema changes have been successfully created and are ready for review.
+
+Below are the details:
+
+Project: WCI / Smart Forecast (SF)
+Database: SABIC_DT_Finance_WCI_WebUI
+Master DACPAC Reference: AIFinance_SQL_Master
+
+Changes Included:
+- Table structure updates (ADM_ActivityTracker, ADM_APIRequestLog)
+- Stored procedure modifications
+- Schema compare applied (DB → SQL Project)
+
+Deployment Configuration:
+- BlockOnPossibleDataLoss: Enabled (no data loss changes included)
+- IgnoreColumnNullability: Enabled
+- CI Pipeline: Passed successfully
+
+PR Links:
+- Web SQL PR: [Add PR URL]
+- Master DACPAC PR: [Add PR URL]
+
+Kindly review and approve the PRs at your earliest convenience so we can proceed with the CD deployment.
+
+Please let me know if you need any additional information or clarification.
+
+Thanks & Regards,
+Sathish
+Lead Developer – WCI/SF
+Wipro Limited
+
+
 ALTER PROCEDURE [dbo].[SP_GetInventoryGlobalMap]
 (
     @TypeID             INT          = 0,
