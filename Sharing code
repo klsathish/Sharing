@@ -1,3 +1,22 @@
+SELECT 
+    p.name AS ProcedureName,
+    pm.name AS ParameterName,
+    t.name AS DataType,
+    pm.max_length,
+    pm.is_output
+FROM 
+    sys.procedures p
+INNER JOIN 
+    sys.parameters pm ON p.object_id = pm.object_id
+INNER JOIN 
+    sys.types t ON pm.user_type_id = t.user_type_id
+WHERE 
+    pm.name LIKE '%ProfitCenter%'   -- change this keyword
+    OR pm.name LIKE '%Profit%'
+ORDER BY 
+    p.name, pm.parameter_id;
+
+
 --USE [SABIC_DT_Finance_WCI_WebUI]
 --GO
 --/****** Object:  StoredProcedure [dbo].[SP_GetDiffrencesValues]    Script Date: 4/1/2026 3:17:32 PM ******/
