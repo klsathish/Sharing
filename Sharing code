@@ -1,3 +1,103 @@
+[HttpPost("testlogin")]
+[AllowAnonymous]
+public async Task<IActionResult> TestLogin([FromBody] LoginRequest request)
+{
+    string username;
+
+    var hasCredentials = !string.IsNullOrEmpty(request.Username) 
+                      && !string.IsNullOrEmpty(request.Password);
+
+    if (hasCredentials)
+    {
+        // ── Basic Auth path
+        var validUser = _testAuthSettings.Username;
+        var validPass = _testAuthSettings.Password;
+
+        if (request.Username != validUser || request.Password != validPass)
+            return Unauthorized(new {
+                StatusMessage = SabicConstants.UnAuthorized,
+                UserName      = request.Username,
+                StatusCode    = SabicConstants.UnAuthorizedStatusCode
+            });
+
+        username = request.Username;
+    }
+    else
+    {
+        // ── Windows Auth path
+        var currentUser = User.Identity;
+
+        if (currentUser == null || !currentUser.IsAuthenticated)
+            return Unauthorized(new {
+                StatusMessage = SabicConstants.UnAuthorized,
+                UserName      = "",
+                StatusCode    = SabicConstants.UnAuthorizedStatusCode
+            });
+
+        username = currentUser.Name!;
+    }
+
+    // ── Common path — same for both Basic and Windows
+    string ip        = HttpContext.Connection.RemoteIpAddress!.ToString();
+    string clientId  = HttpContext.Connection.LocalIpAddress!.ToString();
+    string ipAddress = clientId;
+
+    string browserName = Request.Headers["Sec-Ch-Ua"]!;
+    string userAgent   = Request.Headers["User-Agent"]!;
+    string languages   = Request.Headers["Accept-Language"]!;
+    languages = languages == null ? languages : languages.Split(",")[0].ToString();
+    string browser = (browserName == null ? browserName : languages)
+                   ?? (userAgent == null ? userAgent : "");
+
+    var result = await authenticationService.AuthenticateAsync(
+                     username, ipAddress, browser);
+
+    if (result.StatusCode == SabicConstants.UnAuthorizedStatusCode)
+    {
+        var userInfo = await authenticationService
+                           .GetUserFromCommando(username);
+        if (userInfo != null)
+            return Unauthorized(new {
+                StatusMessage = SabicConstants.UnAuthorized,
+                UserName      = userInfo.EmployeeName,
+                result.StatusCode
+            });
+
+        return Unauthorized(new {
+            StatusMessage = SabicConstants.UnAuthorized,
+            UserName      = "",
+            result.StatusCode
+        });
+    }
+
+    var refreshToken = authenticationService.GenerateRefreshToken(username);
+
+    if (result.StatusCode == SabicConstants.SuccessStatusCode)
+        return Ok(new TokenResponse<object>(result.Token!, refreshToken.Token));
+
+    return Unauthorized();
+}
+
+
+const handleTestLogin = async () => {
+    try {
+        const res = await axios.post("/api/auth/testlogin",
+            {
+                username: username,  // empty string if not filled
+                password: password   // empty string if not filled
+            },
+            {
+                withCredentials: true  // needed for Windows Auth path
+            }
+        );
+        localStorage.setItem("token", res.data.token);
+        window.location.href = "/dashboard";
+    } catch {
+        setError("Authentication failed.");
+    }
+};
+
+
 // ================================================================
 // NEW TESTING ENDPOINTS — Existing code above is ZERO TOUCH
 // ================================================================
