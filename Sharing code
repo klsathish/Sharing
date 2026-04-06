@@ -1,3 +1,43 @@
+Subject: Action Required: WEB SQL Dev CD Pipeline Failure – Primary Key Conflict (Blocking Paul's Fixes)
+
+Hi Team,
+
+Hope you are doing well.
+
+I wanted to bring to your attention an issue we are currently facing with the WEB SQL Dev CD Pipeline execution.
+
+**Issue:**
+The Dev CD Pipeline is failing during table creation due to a Primary Key constraint conflict. Due to this pipeline failure, we are currently unable to deploy and fix the issues mentioned by Paul.
+
+**Root Cause:**
+All tables have been renamed (e.g., Aggregate_Actuals_OpeningClosingInventory_FG → _obsolete), however the Primary Key names were not updated. Since both the old (obsolete) and new tables share the same PK name, DACPAC is unable to create the new tables.
+
+Error:
+• Msg 2714 – There is already an object named 'PK_Aggregate_Actuals_ClosingInventory_fg' in the database.
+
+**Impact:**
+• Dev CD Pipeline is blocked
+• QA CD Pipeline cannot be executed (QA runs only after Dev CD succeeds)
+• Paul's reported issues cannot be deployed and fixed until this is resolved
+
+**Environment Details:**
+• Server: dc2dpbicln004
+• Database: SABIC_DT_Finance_WCI_WebUI
+• Both Dev CD and QA CD pipelines point to the same database
+
+**Action Required:**
+Kindly rename the Primary Key constraints on all _obsolete tables in the database so that they do not conflict with the new table PK names. This change will not impact any existing data.
+
+Request you to please prioritize this so that Paul's issues can be fixed at the earliest.
+
+Please let me know if you need any further details.
+
+Thanks & Regards,
+Sathish
+
+
+
+
 Team and Khaja,
 
 Not able to execute WEB SQL Dev CD Pipeline after some changes. Because getting error
