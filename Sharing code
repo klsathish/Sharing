@@ -1,358 +1,149 @@
-SELECT 
-    p.name AS ProcedureName,
-    pm.name AS ParameterName,
-    t.name AS DataType,
-    pm.max_length,
-    pm.is_output
-FROM 
-    sys.procedures p
-INNER JOIN 
-    sys.parameters pm ON p.object_id = pm.object_id
-INNER JOIN 
-    sys.types t ON pm.user_type_id = t.user_type_id
-WHERE 
-    pm.name LIKE '%ProfitCenter%'   -- change this keyword
-    OR pm.name LIKE '%Profit%'
-ORDER BY 
-    p.name, pm.parameter_id;
+2026-04-06T05:23:21.4462524Z ##[section]Starting: Deploy using : dacpac
+2026-04-06T05:23:21.5918369Z ==============================================================================
+2026-04-06T05:23:21.5919402Z Task         : SQL Server database deploy
+2026-04-06T05:23:21.5919983Z Description  : Deploy a SQL Server database using DACPAC or SQL scripts
+2026-04-06T05:23:21.5920484Z Version      : 0.198.0
+2026-04-06T05:23:21.5920983Z Author       : Microsoft Corporation
+2026-04-06T05:23:21.5921566Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/deploy/sql-dacpac-deployment-on-machine-group
+2026-04-06T05:23:21.5922076Z ==============================================================================
+2026-04-06T05:25:34.3112717Z *** Could not deploy package.
+2026-04-06T05:25:34.3115699Z Warning SQL72030: If this deployment is executed, changes to [dbo].[SP_GetXMLValueForLog] might introduce run-time errors in [dbo].[SP_LogoutAndEndSessionByUserId].
+2026-04-06T05:25:34.3118241Z Error SQL72014: Framework Microsoft SqlClient Data Provider: Msg 1038, Level 15, State 4, Procedure fn_GetPlantIds, Line 26 An object or column name is missing or empty. For SELECT INTO statements, verify each column has a name. For other statements, look for empty alias names. Aliases defined as "" or [] are not allowed. Change the alias to a valid name.
+2026-04-06T05:25:34.3121927Z Error SQL72045: Script execution error.  The executed script:
+2026-04-06T05:25:34.3122610Z ALTER FUNCTION dbo.fn_GetPlantIds
+2026-04-06T05:25:34.3123550Z (@RegionID VARCHAR (MAX)=NULL, @CountryID VARCHAR (MAX)=NULL, @CompanyCode VARCHAR (MAX)=NULL, @ProfitCenter VARCHAR (MAX)=NULL, @SBU VARCHAR (MAX)=NULL, @BU VARCHAR (MAX)=NULL)
+2026-04-06T05:25:34.3124375Z RETURNS TABLE 
+2026-04-06T05:25:34.3124712Z AS
+2026-04-06T05:25:34.3125008Z RETURN 
+2026-04-06T05:25:34.3125401Z     (SELECT DISTINCT pl.plant,
+2026-04-06T05:25:34.3125804Z                      pl.PlantName
+2026-04-06T05:25:34.3126313Z      FROM   [$(AIFinance_SQL_Master)].[master].[MST_Plant] AS pl
+2026-04-06T05:25:34.3126806Z             INNER JOIN
+2026-04-06T05:25:34.3127303Z             [$(AIFinance_SQL_Master)].[master].[MST_Affiliate] AS af
+2026-04-06T05:25:34.3127874Z             ON af.AffiliateCode = pl.AffiliateCode
+2026-04-06T05:25:34.3128339Z                AND af.IsActive = 1
+2026-04-06T05:25:34.3128705Z             INNER JOIN
+2026-04-06T05:25:34.3129187Z             [$(AIFinance_SQL_Master)].[master].[MST_Country] AS c
+2026-04-06T05:25:34.3129710Z             ON c.CountryID = af.CountryID
+2026-04-06T05:25:34.3130144Z                AND c.IsActive = 1
+2026-04-06T05:25:34.3130506Z             INNER JOIN
+2026-04-06T05:25:34.3130968Z             [$(AIFinance_SQL_Master)].[master].[MST_Region] AS r
+2026-04-06T05:25:34.3131653Z             ON r.RegionID = c.RegionID
+2026-04-06T05:25:34.3132063Z                AND r.IsActive = 1
+2026-04-06T05:25:34.3132515Z             INNER JOIN
+2026-04-06T05:25:34.3133003Z             [$(AIFinance_SQL_Master)].[master].[MST_ProfitCenter] AS p
+2026-04-06T05:25:34.3133552Z             ON p.AffiliateCode = pl.
+2026-04-06T05:25:34.3134910Z Error SQL72014: Framework Microsoft SqlClient Data Provider: Msg 1038, Level 15, State 4, Procedure fn_GetPlantIds, Line 28 An object or column name is missing or empty. For SELECT INTO statements, verify each column has a name. For other statements, look for empty alias names. Aliases defined as "" or [] are not allowed. Change the alias to a valid name.
+2026-04-06T05:25:34.3136376Z Error SQL72045: Script execution error.  The executed script:
+2026-04-06T05:25:34.3136946Z ALTER FUNCTION dbo.fn_GetPlantIds
+2026-04-06T05:25:34.3137845Z (@RegionID VARCHAR (MAX)=NULL, @CountryID VARCHAR (MAX)=NULL, @CompanyCode VARCHAR (MAX)=NULL, @ProfitCenter VARCHAR (MAX)=NULL, @SBU VARCHAR (MAX)=NULL, @BU VARCHAR (MAX)=NULL)
+2026-04-06T05:25:34.3138682Z RETURNS TABLE 
+2026-04-06T05:25:34.3138997Z AS
+2026-04-06T05:25:34.3139553Z RETURN 
+2026-04-06T05:25:34.3139956Z     (SELECT DISTINCT pl.plant,
+2026-04-06T05:25:34.3140357Z                      pl.PlantName
+2026-04-06T05:25:34.3144568Z      FROM   [$(AIFinance_SQL_Master)].[master].[MST_Plant] AS pl
+2026-04-06T05:25:34.3145071Z             INNER JOIN
+2026-04-06T05:25:34.3145564Z             [$(AIFinance_SQL_Master)].[master].[MST_Affiliate] AS af
+2026-04-06T05:25:34.3146126Z             ON af.AffiliateCode = pl.AffiliateCode
+2026-04-06T05:25:34.3146578Z                AND af.IsActive = 1
+2026-04-06T05:25:34.3146963Z             INNER JOIN
+2026-04-06T05:25:34.3147430Z             [$(AIFinance_SQL_Master)].[master].[MST_Country] AS c
+2026-04-06T05:25:34.3147968Z             ON c.CountryID = af.CountryID
+2026-04-06T05:25:34.3148391Z                AND c.IsActive = 1
+2026-04-06T05:25:34.3148771Z             INNER JOIN
+2026-04-06T05:25:34.3149237Z             [$(AIFinance_SQL_Master)].[master].[MST_Region] AS r
+2026-04-06T05:25:34.3149763Z             ON r.RegionID = c.RegionID
+2026-04-06T05:25:34.3150176Z                AND r.IsActive = 1
+2026-04-06T05:25:34.3150553Z             INNER JOIN
+2026-04-06T05:25:34.3151048Z             [$(AIFinance_SQL_Master)].[master].[MST_ProfitCenter] AS p
+2026-04-06T05:25:34.3153044Z             ON p.AffiliateCode = pl.
+2026-04-06T05:25:34.3154420Z Error SQL72014: Framework Microsoft SqlClient Data Provider: Msg 1038, Level 15, State 4, Procedure fn_GetPlantIds, Line 32 An object or column name is missing or empty. For SELECT INTO statements, verify each column has a name. For other statements, look for empty alias names. Aliases defined as "" or [] are not allowed. Change the alias to a valid name.
+2026-04-06T05:25:34.3155895Z Error SQL72045: Script execution error.  The executed script:
+2026-04-06T05:25:34.3156456Z ALTER FUNCTION dbo.fn_GetPlantIds
+2026-04-06T05:25:34.3157378Z (@RegionID VARCHAR (MAX)=NULL, @CountryID VARCHAR (MAX)=NULL, @CompanyCode VARCHAR (MAX)=NULL, @ProfitCenter VARCHAR (MAX)=NULL, @SBU VARCHAR (MAX)=NULL, @BU VARCHAR (MAX)=NULL)
+2026-04-06T05:25:34.3158224Z RETURNS TABLE 
+2026-04-06T05:25:34.3158544Z AS
+2026-04-06T05:25:34.3158875Z RETURN 
+2026-04-06T05:25:34.3159252Z     (SELECT DISTINCT pl.plant,
+2026-04-06T05:25:34.3159661Z                      pl.PlantName
+2026-04-06T05:25:34.3160171Z      FROM   [$(AIFinance_SQL_Master)].[master].[MST_Plant] AS pl
+2026-04-06T05:25:34.3160646Z             INNER JOIN
+2026-04-06T05:25:34.3161140Z             [$(AIFinance_SQL_Master)].[master].[MST_Affiliate] AS af
+2026-04-06T05:25:34.3161704Z             ON af.AffiliateCode = pl.AffiliateCode
+2026-04-06T05:25:34.3162174Z                AND af.IsActive = 1
+2026-04-06T05:25:34.3162541Z             INNER JOIN
+2026-04-06T05:25:34.3163025Z             [$(AIFinance_SQL_Master)].[master].[MST_Country] AS c
+2026-04-06T05:25:34.3163550Z             ON c.CountryID = af.CountryID
+2026-04-06T05:25:34.3163994Z                AND c.IsActive = 1
+2026-04-06T05:25:34.3164359Z             INNER JOIN
+2026-04-06T05:25:34.3164838Z             [$(AIFinance_SQL_Master)].[master].[MST_Region] AS r
+2026-04-06T05:25:34.3165347Z             ON r.RegionID = c.RegionID
+2026-04-06T05:25:34.3165889Z                AND r.IsActive = 1
+2026-04-06T05:25:34.3166262Z             INNER JOIN
+2026-04-06T05:25:34.3166760Z             [$(AIFinance_SQL_Master)].[master].[MST_ProfitCenter] AS p
+2026-04-06T05:25:34.3167283Z             ON p.AffiliateCode = pl.
+2026-04-06T05:25:34.3168653Z Error SQL72014: Framework Microsoft SqlClient Data Provider: Msg 1038, Level 15, State 4, Procedure fn_GetPlantIds, Line 36 An object or column name is missing or empty. For SELECT INTO statements, verify each column has a name. For other statements, look for empty alias names. Aliases defined as "" or [] are not allowed. Change the alias to a valid name.
+2026-04-06T05:25:34.3170091Z Error SQL72045: Script execution error.  The executed script:
+2026-04-06T05:25:34.3170660Z ALTER FUNCTION dbo.fn_GetPlantIds
+2026-04-06T05:25:34.3171552Z (@RegionID VARCHAR (MAX)=NULL, @CountryID VARCHAR (MAX)=NULL, @CompanyCode VARCHAR (MAX)=NULL, @ProfitCenter VARCHAR (MAX)=NULL, @SBU VARCHAR (MAX)=NULL, @BU VARCHAR (MAX)=NULL)
+2026-04-06T05:25:34.3175712Z RETURNS TABLE 
+2026-04-06T05:25:34.3176070Z AS
+2026-04-06T05:25:34.3176366Z RETURN 
+2026-04-06T05:25:34.3176777Z     (SELECT DISTINCT pl.plant,
+2026-04-06T05:25:34.3177228Z                      pl.PlantName
+2026-04-06T05:25:34.3177718Z      FROM   [$(AIFinance_SQL_Master)].[master].[MST_Plant] AS pl
+2026-04-06T05:25:34.3178213Z             INNER JOIN
+2026-04-06T05:25:34.3178693Z             [$(AIFinance_SQL_Master)].[master].[MST_Affiliate] AS af
+2026-04-06T05:25:34.3179276Z             ON af.AffiliateCode = pl.AffiliateCode
+2026-04-06T05:25:34.3179732Z                AND af.IsActive = 1
+2026-04-06T05:25:34.3180115Z             INNER JOIN
+2026-04-06T05:25:34.3180586Z             [$(AIFinance_SQL_Master)].[master].[MST_Country] AS c
+2026-04-06T05:25:34.3181127Z             ON c.CountryID = af.CountryID
+2026-04-06T05:25:34.3181552Z                AND c.IsActive = 1
+2026-04-06T05:25:34.3181933Z             INNER JOIN
+2026-04-06T05:25:34.3182414Z             [$(AIFinance_SQL_Master)].[master].[MST_Region] AS r
+2026-04-06T05:25:34.3182960Z             ON r.RegionID = c.RegionID
+2026-04-06T05:25:34.3186570Z                AND r.IsActive = 1
+2026-04-06T05:25:34.3186971Z             INNER JOIN
+2026-04-06T05:25:34.3187453Z             [$(AIFinance_SQL_Master)].[master].[MST_ProfitCenter] AS p
+2026-04-06T05:25:34.3187989Z             ON p.AffiliateCode = pl.
+2026-04-06T05:25:34.3189342Z Error SQL72014: Framework Microsoft SqlClient Data Provider: Msg 1038, Level 15, State 4, Procedure fn_GetPlantIds, Line 40 An object or column name is missing or empty. For SELECT INTO statements, verify each column has a name. For other statements, look for empty alias names. Aliases defined as "" or [] are not allowed. Change the alias to a valid name.
+2026-04-06T05:25:34.3190804Z Error SQL72045: Script execution error.  The executed script:
+2026-04-06T05:25:34.3191374Z ALTER FUNCTION dbo.fn_GetPlantIds
+2026-04-06T05:25:34.3192270Z (@RegionID VARCHAR (MAX)=NULL, @CountryID VARCHAR (MAX)=NULL, @CompanyCode VARCHAR (MAX)=NULL, @ProfitCenter VARCHAR (MAX)=NULL, @SBU VARCHAR (MAX)=NULL, @BU VARCHAR (MAX)=NULL)
+2026-04-06T05:25:34.3193133Z RETURNS TABLE 
+2026-04-06T05:25:34.3193449Z AS
+2026-04-06T05:25:34.3193762Z RETURN 
+2026-04-06T05:25:34.3194135Z     (SELECT DISTINCT pl.plant,
+2026-04-06T05:25:34.3194551Z                      pl.PlantName
+2026-04-06T05:25:34.3195040Z      FROM   [$(AIFinance_SQL_Master)].[master].[MST_Plant] AS pl
+2026-04-06T05:25:34.3195638Z             INNER JOIN
+2026-04-06T05:25:34.3196122Z             [$(AIFinance_SQL_Master)].[master].[MST_Affiliate] AS af
+2026-04-06T05:25:34.3196681Z             ON af.AffiliateCode = pl.AffiliateCode
+2026-04-06T05:25:34.3197151Z                AND af.IsActive = 1
+2026-04-06T05:25:34.3197515Z             INNER JOIN
+2026-04-06T05:25:34.3198000Z             [$(AIFinance_SQL_Master)].[master].[MST_Country] AS c
+2026-04-06T05:25:34.3198521Z             ON c.CountryID = af.CountryID
+2026-04-06T05:25:34.3198974Z                AND c.IsActive = 1
+2026-04-06T05:25:34.3199337Z             INNER JOIN
+2026-04-06T05:25:34.3199825Z             [$(AIFinance_SQL_Master)].[master].[MST_Region] AS r
+2026-04-06T05:25:34.3200333Z             ON r.RegionID = c.RegionID
+2026-04-06T05:25:34.3200760Z                AND r.IsActive = 1
+2026-04-06T05:25:34.3201121Z             INNER JOIN
+2026-04-06T05:25:34.3201619Z             [$(AIFinance_SQL_Master)].[master].[MST_ProfitCenter] AS p
+2026-04-06T05:25:34.3202168Z             ON p.AffiliateCode = pl.
+2026-04-06T05:25:34.3202370Z 
+2026-04-06T05:25:34.5266709Z ##[error]Publishing to database 'SABIC_DT_Finance_WCI_WebUI' on server 'dc2dpbicln004,1433'. 
+Initializing deployment (Start) 
+Initializing deployment (Complete) 
+Analyzing deployment plan (Start) 
+*** If this deployment is executed, changes to [dbo].[SP_GetXMLValueForLog] might introduce run-time errors in [dbo].[SP_LogoutAndEndSessionByUserId]. 
+Analyzing deployment plan (Complete) 
+Updating database (Start) 
+Altering Function [dbo].[fn_GetPlantIds]... 
+An error occurred while the batch was being executed. 
+Updating database (Failed) 
+Time elapsed 0:01:24.09 
 
-
---USE [SABIC_DT_Finance_WCI_WebUI]
---GO
---/****** Object:  StoredProcedure [dbo].[SP_GetDiffrencesValues]    Script Date: 4/1/2026 3:17:32 PM ******/
---SET ANSI_NULLS ON
---GO
---SET QUOTED_IDENTIFIER ON
---GO
-
---/*    
---=========================================================
--- Author: Ganesh Khedekar    
--- Create Date: 2025-05-07 10:00:00    
--- Description:- Its used for Get ProfitCenter and Plant Details    
-   
---Exec [dbo].[SP_GetDiffrencesVolumes]   2,'1200',1,1,'','','01/01/2025','01/01/2025'
---Exec [dbo].[SP_GetDiffrencesValues] 0,'1200',1,1,'','','01/01/2022','01/01/2025'
-
---Exec [dbo].[SP_GetDiffrencesValues] 2
---Exec [dbo].[SP_GetDiffrencesValues] 2,'1'
---Exec [dbo].[SP_GetDiffrencesValues] 2,'2'
-
---Exec [dbo].[SP_GetDiffrencesValues] 2,'3,7'
---Exec [dbo].[SP_GetDiffrencesValues] 2,'3'
---Exec [dbo].[SP_GetDiffrencesValues] 2,'7'
-
---Exec [dbo].[SP_GetDiffrencesValues] 2,'','','3300',0,0,NULL,NULL,'01/06/2023','12/31/2023'
---Exec [dbo].[SP_GetDiffrencesValues] 2,'1,2','1,2',1000,0,0,NULL,NULL,'01/06/2023','12/31/2023'
---Exec [dbo].[SP_GetDiffrencesValues] 0,'1,2','1,2,115','1000'
-
---Exec [dbo].[SP_GetDiffrencesValues] 1,1,115,1300,0,null,null,null,null,null
---Exec [dbo].[SP_GetDiffrencesValues] 2,1,115,1300,0,null,null,null,null,null
---Exec [dbo].[SP_GetDiffrencesValues] 3,1,115,1300,0,null,null,null,null,null
---=========================================================
---*/    
---ALTER   PROCEDURE [dbo].[SP_GetDiffrencesValues]
---(
---	 @TypeID INT = 0 	
---	,@RegionID VARCHAR(MAX) = NULL    
---	,@CountryID VARCHAR(MAX) = NULL   
---	,@CompanyCode VARCHAR(max) = NULL
---	,@ProfitCenterID varchar(max) = null
---	,@PlantID VARCHAR(max) = NULL
---	,@SBU VARCHAR(MAX)=NULL  
---	,@BU VARCHAR(MAX)=NULL
---	,@FromDate DATETIME = null
---	,@ToDate DATETIME = NULL  
---)
---AS  
---BEGIN
-
-declare
-	 @TypeID INT = 2	
-	,@RegionID VARCHAR(MAX) = '8'    
-	,@CountryID VARCHAR(MAX) = NULL   
-	,@CompanyCode VARCHAR(max) = NULL
-	,@ProfitCenterID varchar(max) = null
-	,@PlantID VARCHAR(max) = NULL
-	,@SBU VARCHAR(MAX)=NULL  
-	,@BU VARCHAR(MAX)=NULL
-	,@FromDate DATETIME = null
-	,@ToDate DATETIME = NULL  
-
-SET NOCOUNT ON;
-
-	DECLARE @InventoryType VARCHAR(500)
-
-	IF(@TypeID = 1)
-	BEGIN
-		SET @InventoryType = 'Raw Materials'
-	END
-	ELSE IF(@TypeID = 2)
-	BEGIN
-		SET @InventoryType = 'Finished Goods'
-	END
-	ELSE
-	BEGIN
-		SET @InventoryType = 'Raw Materials,Finished Goods'
-	END
-
-    IF(@CompanyCode ='1' or @CompanyCode ='0')      
-	BEGIN      
-		SET @CompanyCode = ''      
-	END 
-
-	IF(@ProfitCenterID ='1' or @ProfitCenterID ='0')      
-	BEGIN      
-		SET @ProfitCenterID = ''      
-	END  
-	
-	IF(@PlantID ='1' or @PlantID ='0')      
-	BEGIN      
-		SET @PlantID = ''      
-	END
-		
-	DECLARE @tbl_ProfitCenterValues TABLE (profitCenterName NVARCHAR(100));
-	INSERT INTO @tbl_ProfitCenterValues(profitCenterName)
-	SELECT ProfitCenterName FROM [SABIC_DT_Finance_Master].[master].[MST_ProfitCenter] WHERE ProfitCenterID  in (select * from string_split(@ProfitCenterID,','))
-
-	SET @RegionID = ISNULL(@RegionID, '');
-	SET @CountryID = ISNULL(@CountryID, '');
-	SET @CompanyCode = ISNULL(@CompanyCode, '');
-	SET @SBU = ISNULL(@SBU, '');
-	SET @BU = ISNULL(@BU, '');
-	SET @ProfitCenterID = ISNULL(@ProfitCenterID, '');
-	SET @PlantID = ISNULL(@PlantID, '');
-	SET @FromDate = NULLIF(@FromDate, '');
-	SET @ToDate = NULLIF(@ToDate, '');
-
-	IF (@FromDate = '' or @FromDate is null or @ToDate = '' or @ToDate is null)
-	SELECT
-		@FromDate = FromDate
-		,@ToDate = ToDate
-	FROM
-		ADM_DefaultDatesForFilter
-	WHERE
-		IsActive = 1
-
-	DECLARE @FromCalMonth int, @ToCalMonth int
-
-	SELECT
-		@FromCalMonth = cast(
-						cast(YEAR(@FromDate) as varchar(4))
-						+
-						CASE WHEN MONTH(@FromDate) < 10 THEN '0' + cast(MONTH(@FromDate) as varchar(2))
-						ELSE cast(MONTH(@FromDate) as varchar(2)) END
-					as int)
-		,@ToCalMonth  = cast(
-						cast(YEAR(@ToDate) as varchar(4))
-						+
-						CASE WHEN MONTH(@ToDate) < 10 THEN '0' + cast(MONTH(@ToDate) as varchar(2))
-						ELSE cast(MONTH(@ToDate) as varchar(2)) END
-					as int)
-
-	DECLARE @tblResult TABLE(RecID INT IDENTITY(1,1), OpeningInventoryValueInMillionSAR decimal(18,6), OpeningInventoryValueInMillionUSD decimal(18,6), AIForecastVolumeInMillionSAR decimal(18,6), AIForecastVolumeInMillionUSD decimal(18,6))
-	DECLARE @AIForecastValueInMilionSAR decimal(18,6), @OpeningInventoryValueInMilionSAR decimal(18,6), @AIForecastValueInMilionUSD decimal(18,6), @OpeningInventoryValueInMilionUSD decimal(18,6)
-
-	IF(@TypeID = 1)
-	BEGIN
-		SET @InventoryType = 'Raw Materials'
-
-		SELECT 
-			@OpeningInventoryValueInMilionSAR = ISNULL(sum(cast(a.OpeningInventory_Value_In_MillionSAR as decimal(18,6))), 0),
-			@OpeningInventoryValueInMilionUSD = ISNULL(sum(cast(a.OpeningInventory_Value_In_MillionUSD as decimal(18,6))), 0)
-		FROM
-			[SABIC_DT_Finance_WCI_WebUI].[dbo].[Aggregate_Forecast_InventoryDetails_RM] a		
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Affiliate] af on af.AffiliateCode = a.CompanyCode
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Country] c on c.CountryID = af.CountryID
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Region] r on r.RegionID=c.RegionID
-		WHERE
-			(@RegionID = '' or r.RegionID in (select * from string_split(@RegionID,','))) 
-			AND (@CountryID = '' OR c.CountryID IN (SELECT * FROM string_split(@CountryID,','))) 
-			AND (@CompanyCode = '' OR a.CompanyCode IN (SELECT * FROM string_split(@CompanyCode,',')))
-			AND (@SBU = '' or a.sbu in (select * from string_split(@SBU,',')))
-			AND (@BU = '' or a.bu in (select * from string_split(@BU,',')))
-			AND (@PlantID = '' OR a.Plant IN (SELECT Plant FROM [SABIC_DT_Finance_Master].[master].[MST_Plant] WHERE id = (SELECT * FROM string_split(@PlantID,','))))
-			AND r.IsActive=1
-			AND c.IsActive=1
-			AND af.IsActive=1
-			AND a.CalYearMonth = @FromCalMonth
-			AND a.InventoryType = @InventoryType
-
-		SELECT 
-      		@AIForecastValueInMilionSAR = ISNULL(sum(cast(a.ClosingInventory_Value_In_MillionSAR as decimal(18,6))), 0),
-			@AIForecastValueInMilionUSD =  ISNULL(sum(cast(a.ClosingInventory_Value_In_MillionUSD as decimal(18,6))), 0)
-
-		FROM
-			[SABIC_DT_Finance_WCI_WebUI].[dbo].[Aggregate_Forecast_InventoryDetails_RM] a		
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Affiliate] af on af.AffiliateCode = a.CompanyCode
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Country] c on c.CountryID = af.CountryID
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Region] r on r.RegionID=c.RegionID
-		WHERE
-			(@RegionID = '' or r.RegionID in (select * from string_split(@RegionID,','))) 
-			AND (@CountryID = '' OR c.CountryID IN (SELECT * FROM string_split(@CountryID,','))) 
-			AND (@CompanyCode = '' OR a.CompanyCode IN (SELECT * FROM string_split(@CompanyCode,',')))
-			AND (@SBU = '' or a.sbu in (select * from string_split(@SBU,',')))
-			AND (@BU = '' or a.bu in (select * from string_split(@BU,',')))
-			AND (@PlantID = '' OR a.Plant IN (SELECT Plant FROM [SABIC_DT_Finance_Master].[master].[MST_Plant] WHERE id = (SELECT * FROM string_split(@PlantID,','))))
-			AND r.IsActive=1
-			AND c.IsActive=1
-			AND af.IsActive=1
-			AND a.CalYearMonth = @ToCalMonth
-
-			AND a.InventoryType = @InventoryType
-	END
-	ELSE IF(@TypeID = 2)
-	BEGIN
-		SET @InventoryType = 'Finished Goods'
-
-		SELECT 
-			@OpeningInventoryValueInMilionSAR = ISNULL(sum(cast(a.OpeningInventory_Value_In_MillionSAR as decimal(18,6))), 0),
-			@OpeningInventoryValueInMilionUSD = ISNULL(sum(cast(a.OpeningInventory_Value_In_MillionUSD as decimal(18,6))), 0)
-
-		FROM
-			[SABIC_DT_Finance_WCI_WebUI].[dbo].[Aggregate_Forecast_InventoryDetails_FG] a		
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Affiliate] af on af.AffiliateCode = a.CompanyCode
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Country] c on c.CountryID = af.CountryID
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Region] r on r.RegionID=c.RegionID
-		WHERE
-			(@RegionID = '' or r.RegionID in (select * from string_split(@RegionID,','))) 
-			AND (@CountryID = '' OR c.CountryID IN (SELECT * FROM string_split(@CountryID,','))) 
-			AND (@CompanyCode = '' OR a.CompanyCode IN (SELECT * FROM string_split(@CompanyCode,',')))
-			AND (@SBU = '' or a.sbu in (select * from string_split(@SBU,',')))
-			AND (@BU = '' or a.bu in (select * from string_split(@BU,',')))
-			AND (@PlantID = '' OR a.Plant IN (SELECT Plant FROM [SABIC_DT_Finance_Master].[master].[MST_Plant] WHERE id = (SELECT * FROM string_split(@PlantID,','))))
-			AND r.IsActive=1
-			AND c.IsActive=1
-			AND af.IsActive=1
-			AND a.CalYearMonth = @FromCalMonth
-			AND a.InventoryType = @InventoryType
-
-		SELECT 
-     		@AIForecastValueInMilionSAR = ISNULL(sum(cast(a.ClosingInventory_Value_In_MillionSAR as decimal(18,6))), 0),
-			@AIForecastValueInMilionUSD = ISNULL(sum(cast(a.ClosingInventory_Value_In_MillionUSD as decimal(18,6))), 0)
-
-		FROM
-			[SABIC_DT_Finance_WCI_WebUI].[dbo].[Aggregate_Forecast_InventoryDetails_FG] a		
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Affiliate] af on af.AffiliateCode = a.CompanyCode
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Country] c on c.CountryID = af.CountryID
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Region] r on r.RegionID=c.RegionID
-		WHERE
-			(@RegionID = '' or r.RegionID in (select * from string_split(@RegionID,','))) 
-			AND (@CountryID = '' OR c.CountryID IN (SELECT * FROM string_split(@CountryID,','))) 
-			AND (@CompanyCode = '' OR a.CompanyCode IN (SELECT * FROM string_split(@CompanyCode,',')))
-			AND (@SBU = '' or a.sbu in (select * from string_split(@SBU,',')))
-			AND (@BU = '' or a.bu in (select * from string_split(@BU,',')))
-			AND (@PlantID = '' OR a.Plant IN (SELECT Plant FROM [SABIC_DT_Finance_Master].[master].[MST_Plant] WHERE id = (SELECT * FROM string_split(@PlantID,','))))
-			AND r.IsActive=1
-			AND c.IsActive=1
-			AND af.IsActive=1
-			AND a.CalYearMonth = @ToCalMonth
-
-			AND a.InventoryType = @InventoryType
-	END
-	ELSE
-	BEGIN
-		SET @InventoryType = 'Finished Goods'
-
-		SELECT 
-			@OpeningInventoryValueInMilionSAR = ISNULL(sum(cast(a.OpeningInventory_Value_In_MillionSAR as decimal(18,6))), 0),
-			@OpeningInventoryValueInMilionUSD = ISNULL(sum(cast(a.OpeningInventory_Value_In_MillionUSD as decimal(18,6))), 0)
-		FROM
-			[SABIC_DT_Finance_WCI_WebUI].[dbo].[Aggregate_Forecast_InventoryDetails_FG] a		
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Affiliate] af on af.AffiliateCode = a.CompanyCode
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Country] c on c.CountryID = af.CountryID
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Region] r on r.RegionID=c.RegionID
-		WHERE
-			(@RegionID = '' or r.RegionID in (select * from string_split(@RegionID,','))) 
-			AND (@CountryID = '' OR c.CountryID IN (SELECT * FROM string_split(@CountryID,','))) 
-			AND (@CompanyCode = '' OR a.CompanyCode IN (SELECT * FROM string_split(@CompanyCode,',')))
-			AND (@SBU = '' or a.sbu in (select * from string_split(@SBU,',')))
-			AND (@BU = '' or a.bu in (select * from string_split(@BU,',')))
-			AND (@PlantID = '' OR a.Plant IN (SELECT Plant FROM [SABIC_DT_Finance_Master].[master].[MST_Plant] WHERE id = (SELECT * FROM string_split(@PlantID,','))))
-			AND r.IsActive=1
-			AND c.IsActive=1
-			AND af.IsActive=1
-			AND a.CalYearMonth = @FromCalMonth
-			AND a.InventoryType = @InventoryType
-
-		SELECT 
-			@AIForecastValueInMilionSAR = ISNULL(sum(cast(a.ClosingInventory_Value_In_MillionSAR as decimal(18,6))), 0),
-			@AIForecastValueInMilionUSD =  ISNULL(sum(cast(a.ClosingInventory_Value_In_MillionUSD as decimal(18,6))), 0)
-		FROM
-			[SABIC_DT_Finance_WCI_WebUI].[dbo].[Aggregate_Forecast_InventoryDetails_FG] a		
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Affiliate] af on af.AffiliateCode = a.CompanyCode
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Country] c on c.CountryID = af.CountryID
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Region] r on r.RegionID=c.RegionID
-		WHERE
-			(@RegionID = '' or r.RegionID in (select * from string_split(@RegionID,','))) 
-			AND (@CountryID = '' OR c.CountryID IN (SELECT * FROM string_split(@CountryID,','))) 
-			AND (@CompanyCode = '' OR a.CompanyCode IN (SELECT * FROM string_split(@CompanyCode,',')))
-			AND (@SBU = '' or a.sbu in (select * from string_split(@SBU,',')))
-			AND (@BU = '' or a.bu in (select * from string_split(@BU,',')))
-			AND (@PlantID = '' OR a.Plant IN (SELECT Plant FROM [SABIC_DT_Finance_Master].[master].[MST_Plant] WHERE id = (SELECT * FROM string_split(@PlantID,','))))
-			AND r.IsActive=1
-			AND c.IsActive=1
-			AND af.IsActive=1
-			AND a.CalYearMonth = @ToCalMonth			
-			AND a.InventoryType = @InventoryType
-		
-		
-		SET @InventoryType = 'Raw Materials'
-
-		SELECT 
-			@OpeningInventoryValueInMilionSAR = @OpeningInventoryValueInMilionSAR + ISNULL(sum(cast(a.OpeningInventory_Value_In_MillionSAR as decimal(18,6))), 0),
-			@OpeningInventoryValueInMilionUSD = @OpeningInventoryValueInMilionUSD + ISNULL(sum(cast(a.OpeningInventory_Value_In_MillionUSD as decimal(18,6))), 0)
-		FROM
-			[SABIC_DT_Finance_WCI_WebUI].[dbo].[Aggregate_Forecast_InventoryDetails_RM] a		
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Affiliate] af on af.AffiliateCode = a.CompanyCode
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Country] c on c.CountryID = af.CountryID
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Region] r on r.RegionID=c.RegionID
-		WHERE
-			(@RegionID = '' or r.RegionID in (select * from string_split(@RegionID,','))) 
-			AND (@CountryID = '' OR c.CountryID IN (SELECT * FROM string_split(@CountryID,','))) 
-			AND (@CompanyCode = '' OR a.CompanyCode IN (SELECT * FROM string_split(@CompanyCode,',')))
-			AND (@SBU = '' or a.sbu in (select * from string_split(@SBU,',')))
-			AND (@BU = '' or a.bu in (select * from string_split(@BU,',')))
-			AND (@PlantID = '' OR a.Plant IN (SELECT Plant FROM [SABIC_DT_Finance_Master].[master].[MST_Plant] WHERE id = (SELECT * FROM string_split(@PlantID,','))))
-			AND r.IsActive=1
-			AND c.IsActive=1
-			AND af.IsActive=1
-			AND a.CalYearMonth = @FromCalMonth
-			AND a.InventoryType = @InventoryType
-
-		SELECT 
-			@AIForecastValueInMilionSAR = @AIForecastValueInMilionSAR + ISNULL(sum(cast(a.ClosingInventory_Value_In_MillionSAR as decimal(18,6))), 0),
-			@AIForecastValueInMilionUSD = @AIForecastValueInMilionUSD +  ISNULL(sum(cast(a.ClosingInventory_Value_In_MillionUSD as decimal(18,6))), 0)
-		FROM
-			[SABIC_DT_Finance_WCI_WebUI].[dbo].[Aggregate_Forecast_InventoryDetails_RM] a		
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Affiliate] af on af.AffiliateCode = a.CompanyCode
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Country] c on c.CountryID = af.CountryID
-			INNER JOIN [SABIC_DT_Finance_Master].[master].[MST_Region] r on r.RegionID=c.RegionID
-		WHERE
-			(@RegionID = '' or r.RegionID in (select * from string_split(@RegionID,','))) 
-			AND (@CountryID = '' OR c.CountryID IN (SELECT * FROM string_split(@CountryID,','))) 
-			AND (@CompanyCode = '' OR a.CompanyCode IN (SELECT * FROM string_split(@CompanyCode,',')))
-			AND (@SBU = '' or a.sbu in (select * from string_split(@SBU,',')))
-			AND (@BU = '' or a.bu in (select * from string_split(@BU,',')))
-			AND (@PlantID = '' OR a.Plant IN (SELECT Plant FROM [SABIC_DT_Finance_Master].[master].[MST_Plant] WHERE id = (SELECT * FROM string_split(@PlantID,','))))
-			AND r.IsActive=1
-			AND c.IsActive=1
-			AND af.IsActive=1
-			AND a.CalYearMonth = @ToCalMonth
-
-			AND a.InventoryType = @InventoryType
-	END
-
-	INSERT INTO @tblResult Values(@OpeningInventoryValueInMilionSAR, @OpeningInventoryValueInMilionUSD, @AIForecastValueInMilionSAR, @AIForecastValueInMilionUSD)
-	
-	SELECT
-		RecID
-		,ceiling(OpeningInventoryValueInMillionSAR) AS OpeningInventoryValueInMillionSAR
-		,ceiling(OpeningInventoryValueInMillionUSD) AS OpeningInventoryValueInMillionUSD
-		,ceiling(AIForecastVolumeInMillionSAR) AS AIForecastVolumeInMillionSAR
-		,ceiling(AIForecastVolumeInMillionUSD) AS AIForecastVolumeInMillionUSD
-	FROM
-		@tblResult
-		
-
---END
+2026-04-06T05:25:34.6965538Z ##[section]Finishing: Deploy using : dacpac
