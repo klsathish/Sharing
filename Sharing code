@@ -1,3 +1,172 @@
+// ================================================================
+// NEW TESTING ENDPOINTS — Existing code above is ZERO TOUCH
+// ================================================================
+
+// ── NEW: Windows Auth login for testing
+[HttpGet("testlogin")]
+[Authorize(AuthenticationSchemes = NegotiateDefaults.AuthenticationScheme)]
+public async Task<IActionResult> TestLoginWindows()
+{
+    var currentUser = User.Identity;
+    if (currentUser!.IsAuthenticated)
+    {
+        string ip        = HttpContext.Connection.RemoteIpAddress!.ToString();
+        string clientId  = HttpContext.Connection.LocalIpAddress!.ToString();
+        string ipAddress = clientId;
+
+        string browserName = Request.Headers["Sec-Ch-Ua"]!;
+        string userAgent   = Request.Headers["User-Agent"]!;
+        string languages   = Request.Headers["Accept-Language"]!;
+        languages = languages == null ? languages : languages.Split(",")[0].ToString();
+        string browser = (browserName == null ? browserName : languages)
+                       ?? (userAgent == null ? userAgent : "");
+
+        var result = await authenticationService.AuthenticateAsync(
+                         currentUser.Name!, ipAddress, browser);
+
+        if (result.StatusCode == SabicConstants.UnAuthorizedStatusCode)
+        {
+            var userInfo = await authenticationService
+                               .GetUserFromCommando(currentUser.Name!.ToString());
+            if (userInfo != null)
+                return Unauthorized(new {
+                    StatusMessage = SabicConstants.UnAuthorized,
+                    UserName      = userInfo.EmployeeName,
+                    result.StatusCode
+                });
+
+            return Unauthorized(new {
+                StatusMessage = SabicConstants.UnAuthorized,
+                UserName      = "",
+                result.StatusCode
+            });
+        }
+
+        var refreshToken = authenticationService
+                               .GenerateRefreshToken(currentUser.Name!.ToString());
+
+        if (result.StatusCode == SabicConstants.SuccessStatusCode)
+            return Ok(new TokenResponse<object>(result.Token!, refreshToken.Token));
+    }
+
+    return Unauthorized();
+}
+
+// ── NEW: Basic Auth login for testing (automation / pipeline agent)
+[HttpPost("testlogin")]
+[AllowAnonymous]
+public async Task<IActionResult> TestLoginBasic([FromBody] LoginRequest request)
+{
+    // Validate credentials from appsettings
+    var validUser = _configuration["TestAuth:Username"];
+    var validPass = _configuration["TestAuth:Password"];
+
+    if (request.Username != validUser || request.Password != validPass)
+        return Unauthorized(new {
+            StatusMessage = SabicConstants.UnAuthorized,
+            UserName      = request.Username,
+            StatusCode    = SabicConstants.UnAuthorizedStatusCode
+        });
+
+    string ip        = HttpContext.Connection.RemoteIpAddress!.ToString();
+    string clientId  = HttpContext.Connection.LocalIpAddress!.ToString();
+    string ipAddress = clientId;
+
+    string browserName = Request.Headers["Sec-Ch-Ua"]!;
+    string userAgent   = Request.Headers["User-Agent"]!;
+    string languages   = Request.Headers["Accept-Language"]!;
+    languages = languages == null ? languages : languages.Split(",")[0].ToString();
+    string browser = (browserName == null ? browserName : languages)
+                   ?? (userAgent == null ? userAgent : "");
+
+    // Reuse exact same service methods as existing login
+    var result = await authenticationService.AuthenticateAsync(
+                     request.Username, ipAddress, browser);
+
+    if (result.StatusCode == SabicConstants.UnAuthorizedStatusCode)
+        return Unauthorized(new {
+            StatusMessage = SabicConstants.UnAuthorized,
+            UserName      = request.Username,
+            result.StatusCode
+        });
+
+    var refreshToken = authenticationService.GenerateRefreshToken(request.Username);
+
+    if (result.StatusCode == SabicConstants.SuccessStatusCode)
+        return Ok(new TokenResponse<object>(result.Token!, refreshToken.Token));
+
+    return Unauthorized();
+}
+
+private readonly IAuthenticationService _authenticationService;
+private readonly IConfiguration         _configuration;        // ADD
+
+public AuthController(
+    IAuthenticationService authenticationService,
+    IConfiguration configuration)                              // ADD
+{
+    _authenticationService = authenticationService;
+    _configuration         = configuration;                    // ADD
+}
+
+
+// TestLoginPage.jsx — separate page, existing LoginPage.jsx untouched
+
+export default function TestLoginPage() {
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError]       = useState("");
+
+    const handleLogin = async () => {
+        try {
+            const hasCredentials =
+                username.trim() !== "" && password.trim() !== "";
+
+            let res;
+
+            if (hasCredentials) {
+                // ── Basic Auth → POST testlogin
+                res = await axios.post("/api/auth/testlogin", {
+                    username,
+                    password
+                });
+            } else {
+                // ── Windows Auth → GET testlogin
+                res = await axios.get("/api/auth/testlogin", {
+                    withCredentials: true
+                });
+            }
+
+            localStorage.setItem("token", res.data.token);
+            window.location.href = "/dashboard";
+
+        } catch {
+            setError("Authentication failed.");
+        }
+    };
+
+    return (
+        <div>
+            <h2>Test Login</h2>
+            <input
+                placeholder="Username"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+            />
+            <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+            />
+            <button onClick={handleLogin}>Login</button>
+            {error && <p style={{ color: "red" }}>{error}</p>}
+        </div>
+    );
+}
+
+
+
 Subject: Action Required: WEB SQL Dev CD Pipeline Failure – Primary Key Conflict (Blocking Paul's Fixes)
 
 Hi Team,
