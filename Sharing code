@@ -1,60 +1,8 @@
-2026-04-06T19:41:24.0851873Z ##[section]Starting: Deploy using : dacpac
-2026-04-06T19:41:24.2774433Z ==============================================================================
-2026-04-06T19:41:24.2775512Z Task         : SQL Server database deploy
-2026-04-06T19:41:24.2776138Z Description  : Deploy a SQL Server database using DACPAC or SQL scripts
-2026-04-06T19:41:24.2776534Z Version      : 0.198.0
-2026-04-06T19:41:24.2777058Z Author       : Microsoft Corporation
-2026-04-06T19:41:24.2777810Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/deploy/sql-dacpac-deployment-on-machine-group
-2026-04-06T19:41:24.2778344Z ==============================================================================
-2026-04-06T19:42:58.7965980Z *** Could not deploy package.
-2026-04-06T19:42:58.7971574Z Error SQL72014: Framework Microsoft SqlClient Data Provider: Msg 2714, Level 16, State 5, Line 1 There is already an object named 'PK_Aggregate_Actuals_ClosingInventory_fg' in the database.
-2026-04-06T19:42:58.7975102Z Error SQL72045: Script execution error.  The executed script:
-2026-04-06T19:42:58.7977761Z CREATE TABLE [dbo].[Aggregate_Actuals_OpeningClosingInventory_FG] (
-2026-04-06T19:42:58.7983170Z     [RecID]                          INT           IDENTITY (1, 1) NOT NULL,
-2026-04-06T19:42:58.7984304Z     [calYearMonth]                   INT           NULL,
-2026-04-06T19:42:58.7985627Z     [calYear]                        INT           NOT NULL,
-2026-04-06T19:42:58.7986888Z     [calMonth]                       INT           NOT NULL,
-2026-04-06T19:42:58.7988109Z     [SBU]                            VARCHAR (50)  NULL,
-2026-04-06T19:42:58.7989115Z     [BU]                             VARCHAR (50)  NULL,
-2026-04-06T19:42:58.7990463Z     [CompanyCode]                    VARCHAR (50)  NULL,
-2026-04-06T19:42:58.7991787Z     [Plant]                          VARCHAR (50)  NULL,
-2026-04-06T19:42:58.7993045Z     [ProfitCenter]                   VARCHAR (50)  NULL,
-2026-04-06T19:42:58.7994348Z     [InventoryType]                  VARCHAR (50)  NOT NULL,
-2026-04-06T19:42:58.7996414Z     [Opening_Inventory_Volume_In_MT] FLOAT (53)    NULL,
-2026-04-06T19:42:58.7998090Z     [Closing_Inventory_Volume_In_MT] FLOAT (53)    NULL,
-2026-04-06T19:42:58.7999438Z     [Opening_Inventory_Value_In_SAR] FLOAT (53)    NULL,
-2026-04-06T19:42:58.8001581Z     [Closing_Inventory_Value_In_SAR] FLOAT (53)    NULL,
-2026-04-06T19:42:58.8003118Z     [Opening_Inventory_Value_In_USD] FLOAT (53)    NULL,
-2026-04-06T19:42:58.8004524Z     [Closing_Inventory_Value_In_USD] FLOAT (53)    NU
-2026-04-06T19:42:58.8006845Z Error SQL72014: Framework Microsoft SqlClient Data Provider: Msg 1750, Level 16, State 1, Line 1 Could not create constraint or index. See previous errors.
-2026-04-06T19:42:58.8009676Z Error SQL72045: Script execution error.  The executed script:
-2026-04-06T19:42:58.8011451Z CREATE TABLE [dbo].[Aggregate_Actuals_OpeningClosingInventory_FG] (
-2026-04-06T19:42:58.8013111Z     [RecID]                          INT           IDENTITY (1, 1) NOT NULL,
-2026-04-06T19:42:58.8014392Z     [calYearMonth]                   INT           NULL,
-2026-04-06T19:42:58.8015711Z     [calYear]                        INT           NOT NULL,
-2026-04-06T19:42:58.8016905Z     [calMonth]                       INT           NOT NULL,
-2026-04-06T19:42:58.8018093Z     [SBU]                            VARCHAR (50)  NULL,
-2026-04-06T19:42:58.8019215Z     [BU]                             VARCHAR (50)  NULL,
-2026-04-06T19:42:58.8020529Z     [CompanyCode]                    VARCHAR (50)  NULL,
-2026-04-06T19:42:58.8021800Z     [Plant]                          VARCHAR (50)  NULL,
-2026-04-06T19:42:58.8022977Z     [ProfitCenter]                   VARCHAR (50)  NULL,
-2026-04-06T19:42:58.8024355Z     [InventoryType]                  VARCHAR (50)  NOT NULL,
-2026-04-06T19:42:58.8026287Z     [Opening_Inventory_Volume_In_MT] FLOAT (53)    NULL,
-2026-04-06T19:42:58.8027810Z     [Closing_Inventory_Volume_In_MT] FLOAT (53)    NULL,
-2026-04-06T19:42:58.8028836Z     [Opening_Inventory_Value_In_SAR] FLOAT (53)    NULL,
-2026-04-06T19:42:58.8034104Z     [Closing_Inventory_Value_In_SAR] FLOAT (53)    NULL,
-2026-04-06T19:42:58.8034739Z     [Opening_Inventory_Value_In_USD] FLOAT (53)    NULL,
-2026-04-06T19:42:58.8035312Z     [Closing_Inventory_Value_In_USD] FLOAT (53)    NU
-2026-04-06T19:42:58.8035588Z 
-2026-04-06T19:42:59.0200665Z ##[error]Publishing to database 'SABIC_DT_Finance_WCI_WebUI' on server 'dc2dpbicln004,1433'. 
-Initializing deployment (Start) 
-Initializing deployment (Complete) 
-Analyzing deployment plan (Start) 
-Analyzing deployment plan (Complete) 
-Updating database (Start) 
-Creating Table [dbo].[Aggregate_Actuals_OpeningClosingInventory_FG]... 
-An error occurred while the batch was being executed. 
-Updating database (Failed) 
-Time elapsed 0:00:45.51 
+Team and Khaja,
 
-2026-04-06T19:42:59.2247729Z ##[section]Finishing: Deploy using : dacpac
+Not able to execute WEB SQL Dev CD Pipeline after some changes. Because getting error
+
+Note:
+We are using Dev and QA CD pipeline same in(dc2dpbicln004 - SABIC_DT_Finance_WCI_WebUI)
+After dev CD success only we need to push code master and execute QA pipeline
+All tables has renamed and same previous primary key so CD while create table getting error below
