@@ -1,226 +1,60 @@
-2026-04-06T05:23:21.4462524Z ##[section]Starting: Deploy using : dacpac
-2026-04-06T05:23:21.5918369Z ==============================================================================
-2026-04-06T05:23:21.5919402Z Task         : SQL Server database deploy
-2026-04-06T05:23:21.5919983Z Description  : Deploy a SQL Server database using DACPAC or SQL scripts
-2026-04-06T05:23:21.5920484Z Version      : 0.198.0
-2026-04-06T05:23:21.5920983Z Author       : Microsoft Corporation
-2026-04-06T05:23:21.5921566Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/deploy/sql-dacpac-deployment-on-machine-group
-2026-04-06T05:23:21.5922076Z ==============================================================================
-2026-04-06T05:25:34.3112717Z *** Could not deploy package.
-2026-04-06T05:25:34.3115699Z Warning SQL72030: If this deployment is executed, changes to [dbo].[SP_GetXMLValueForLog] might introduce run-time errors in [dbo].[SP_LogoutAndEndSessionByUserId].
-2026-04-06T05:25:34.3118241Z Error SQL72014: Framework Microsoft SqlClient Data Provider: Msg 1038, Level 15, State 4, Procedure fn_GetPlantIds, Line 26 An object or column name is missing or empty. For SELECT INTO statements, verify each column has a name. For other statements, look for empty alias names. Aliases defined as "" or [] are not allowed. Change the alias to a valid name.
-2026-04-06T05:25:34.3121927Z Error SQL72045: Script execution error.  The executed script:
-2026-04-06T05:25:34.3122610Z ALTER FUNCTION dbo.fn_GetPlantIds
-2026-04-06T05:25:34.3123550Z (@RegionID VARCHAR (MAX)=NULL, @CountryID VARCHAR (MAX)=NULL, @CompanyCode VARCHAR (MAX)=NULL, @ProfitCenter VARCHAR (MAX)=NULL, @SBU VARCHAR (MAX)=NULL, @BU VARCHAR (MAX)=NULL)
-2026-04-06T05:25:34.3124375Z RETURNS TABLE 
-2026-04-06T05:25:34.3124712Z AS
-2026-04-06T05:25:34.3125008Z RETURN 
-2026-04-06T05:25:34.3125401Z     (SELECT DISTINCT pl.plant,
-2026-04-06T05:25:34.3125804Z                      pl.PlantName
-2026-04-06T05:25:34.3126313Z      FROM   [$(AIFinance_SQL_Master)].[master].[MST_Plant] AS pl
-2026-04-06T05:25:34.3126806Z             INNER JOIN
-2026-04-06T05:25:34.3127303Z             [$(AIFinance_SQL_Master)].[master].[MST_Affiliate] AS af
-2026-04-06T05:25:34.3127874Z             ON af.AffiliateCode = pl.AffiliateCode
-2026-04-06T05:25:34.3128339Z                AND af.IsActive = 1
-2026-04-06T05:25:34.3128705Z             INNER JOIN
-2026-04-06T05:25:34.3129187Z             [$(AIFinance_SQL_Master)].[master].[MST_Country] AS c
-2026-04-06T05:25:34.3129710Z             ON c.CountryID = af.CountryID
-2026-04-06T05:25:34.3130144Z                AND c.IsActive = 1
-2026-04-06T05:25:34.3130506Z             INNER JOIN
-2026-04-06T05:25:34.3130968Z             [$(AIFinance_SQL_Master)].[master].[MST_Region] AS r
-2026-04-06T05:25:34.3131653Z             ON r.RegionID = c.RegionID
-2026-04-06T05:25:34.3132063Z                AND r.IsActive = 1
-2026-04-06T05:25:34.3132515Z             INNER JOIN
-2026-04-06T05:25:34.3133003Z             [$(AIFinance_SQL_Master)].[master].[MST_ProfitCenter] AS p
-2026-04-06T05:25:34.3133552Z             ON p.AffiliateCode = pl.
-2026-04-06T05:25:34.3134910Z Error SQL72014: Framework Microsoft SqlClient Data Provider: Msg 1038, Level 15, State 4, Procedure fn_GetPlantIds, Line 28 An object or column name is missing or empty. For SELECT INTO statements, verify each column has a name. For other statements, look for empty alias names. Aliases defined as "" or [] are not allowed. Change the alias to a valid name.
-2026-04-06T05:25:34.3136376Z Error SQL72045: Script execution error.  The executed script:
-2026-04-06T05:25:34.3136946Z ALTER FUNCTION dbo.fn_GetPlantIds
-2026-04-06T05:25:34.3137845Z (@RegionID VARCHAR (MAX)=NULL, @CountryID VARCHAR (MAX)=NULL, @CompanyCode VARCHAR (MAX)=NULL, @ProfitCenter VARCHAR (MAX)=NULL, @SBU VARCHAR (MAX)=NULL, @BU VARCHAR (MAX)=NULL)
-2026-04-06T05:25:34.3138682Z RETURNS TABLE 
-2026-04-06T05:25:34.3138997Z AS
-2026-04-06T05:25:34.3139553Z RETURN 
-2026-04-06T05:25:34.3139956Z     (SELECT DISTINCT pl.plant,
-2026-04-06T05:25:34.3140357Z                      pl.PlantName
-2026-04-06T05:25:34.3144568Z      FROM   [$(AIFinance_SQL_Master)].[master].[MST_Plant] AS pl
-2026-04-06T05:25:34.3145071Z             INNER JOIN
-2026-04-06T05:25:34.3145564Z             [$(AIFinance_SQL_Master)].[master].[MST_Affiliate] AS af
-2026-04-06T05:25:34.3146126Z             ON af.AffiliateCode = pl.AffiliateCode
-2026-04-06T05:25:34.3146578Z                AND af.IsActive = 1
-2026-04-06T05:25:34.3146963Z             INNER JOIN
-2026-04-06T05:25:34.3147430Z             [$(AIFinance_SQL_Master)].[master].[MST_Country] AS c
-2026-04-06T05:25:34.3147968Z             ON c.CountryID = af.CountryID
-2026-04-06T05:25:34.3148391Z                AND c.IsActive = 1
-2026-04-06T05:25:34.3148771Z             INNER JOIN
-2026-04-06T05:25:34.3149237Z             [$(AIFinance_SQL_Master)].[master].[MST_Region] AS r
-2026-04-06T05:25:34.3149763Z             ON r.RegionID = c.RegionID
-2026-04-06T05:25:34.3150176Z                AND r.IsActive = 1
-2026-04-06T05:25:34.3150553Z             INNER JOIN
-2026-04-06T05:25:34.3151048Z             [$(AIFinance_SQL_Master)].[master].[MST_ProfitCenter] AS p
-2026-04-06T05:25:34.3153044Z             ON p.AffiliateCode = pl.
-2026-04-06T05:25:34.3154420Z Error SQL72014: Framework Microsoft SqlClient Data Provider: Msg 1038, Level 15, State 4, Procedure fn_GetPlantIds, Line 32 An object or column name is missing or empty. For SELECT INTO statements, verify each column has a name. For other statements, look for empty alias names. Aliases defined as "" or [] are not allowed. Change the alias to a valid name.
-2026-04-06T05:25:34.3155895Z Error SQL72045: Script execution error.  The executed script:
-2026-04-06T05:25:34.3156456Z ALTER FUNCTION dbo.fn_GetPlantIds
-2026-04-06T05:25:34.3157378Z (@RegionID VARCHAR (MAX)=NULL, @CountryID VARCHAR (MAX)=NULL, @CompanyCode VARCHAR (MAX)=NULL, @ProfitCenter VARCHAR (MAX)=NULL, @SBU VARCHAR (MAX)=NULL, @BU VARCHAR (MAX)=NULL)
-2026-04-06T05:25:34.3158224Z RETURNS TABLE 
-2026-04-06T05:25:34.3158544Z AS
-2026-04-06T05:25:34.3158875Z RETURN 
-2026-04-06T05:25:34.3159252Z     (SELECT DISTINCT pl.plant,
-2026-04-06T05:25:34.3159661Z                      pl.PlantName
-2026-04-06T05:25:34.3160171Z      FROM   [$(AIFinance_SQL_Master)].[master].[MST_Plant] AS pl
-2026-04-06T05:25:34.3160646Z             INNER JOIN
-2026-04-06T05:25:34.3161140Z             [$(AIFinance_SQL_Master)].[master].[MST_Affiliate] AS af
-2026-04-06T05:25:34.3161704Z             ON af.AffiliateCode = pl.AffiliateCode
-2026-04-06T05:25:34.3162174Z                AND af.IsActive = 1
-2026-04-06T05:25:34.3162541Z             INNER JOIN
-2026-04-06T05:25:34.3163025Z             [$(AIFinance_SQL_Master)].[master].[MST_Country] AS c
-2026-04-06T05:25:34.3163550Z             ON c.CountryID = af.CountryID
-2026-04-06T05:25:34.3163994Z                AND c.IsActive = 1
-2026-04-06T05:25:34.3164359Z             INNER JOIN
-2026-04-06T05:25:34.3164838Z             [$(AIFinance_SQL_Master)].[master].[MST_Region] AS r
-2026-04-06T05:25:34.3165347Z             ON r.RegionID = c.RegionID
-2026-04-06T05:25:34.3165889Z                AND r.IsActive = 1
-2026-04-06T05:25:34.3166262Z             INNER JOIN
-2026-04-06T05:25:34.3166760Z             [$(AIFinance_SQL_Master)].[master].[MST_ProfitCenter] AS p
-2026-04-06T05:25:34.3167283Z             ON p.AffiliateCode = pl.
-2026-04-06T05:25:34.3168653Z Error SQL72014: Framework Microsoft SqlClient Data Provider: Msg 1038, Level 15, State 4, Procedure fn_GetPlantIds, Line 36 An object or column name is missing or empty. For SELECT INTO statements, verify each column has a name. For other statements, look for empty alias names. Aliases defined as "" or [] are not allowed. Change the alias to a valid name.
-2026-04-06T05:25:34.3170091Z Error SQL72045: Script execution error.  The executed script:
-2026-04-06T05:25:34.3170660Z ALTER FUNCTION dbo.fn_GetPlantIds
-2026-04-06T05:25:34.3171552Z (@RegionID VARCHAR (MAX)=NULL, @CountryID VARCHAR (MAX)=NULL, @CompanyCode VARCHAR (MAX)=NULL, @ProfitCenter VARCHAR (MAX)=NULL, @SBU VARCHAR (MAX)=NULL, @BU VARCHAR (MAX)=NULL)
-2026-04-06T05:25:34.3175712Z RETURNS TABLE 
-2026-04-06T05:25:34.3176070Z AS
-2026-04-06T05:25:34.3176366Z RETURN 
-2026-04-06T05:25:34.3176777Z     (SELECT DISTINCT pl.plant,
-2026-04-06T05:25:34.3177228Z                      pl.PlantName
-2026-04-06T05:25:34.3177718Z      FROM   [$(AIFinance_SQL_Master)].[master].[MST_Plant] AS pl
-2026-04-06T05:25:34.3178213Z             INNER JOIN
-2026-04-06T05:25:34.3178693Z             [$(AIFinance_SQL_Master)].[master].[MST_Affiliate] AS af
-2026-04-06T05:25:34.3179276Z             ON af.AffiliateCode = pl.AffiliateCode
-2026-04-06T05:25:34.3179732Z                AND af.IsActive = 1
-2026-04-06T05:25:34.3180115Z             INNER JOIN
-2026-04-06T05:25:34.3180586Z             [$(AIFinance_SQL_Master)].[master].[MST_Country] AS c
-2026-04-06T05:25:34.3181127Z             ON c.CountryID = af.CountryID
-2026-04-06T05:25:34.3181552Z                AND c.IsActive = 1
-2026-04-06T05:25:34.3181933Z             INNER JOIN
-2026-04-06T05:25:34.3182414Z             [$(AIFinance_SQL_Master)].[master].[MST_Region] AS r
-2026-04-06T05:25:34.3182960Z             ON r.RegionID = c.RegionID
-2026-04-06T05:25:34.3186570Z                AND r.IsActive = 1
-2026-04-06T05:25:34.3186971Z             INNER JOIN
-2026-04-06T05:25:34.3187453Z             [$(AIFinance_SQL_Master)].[master].[MST_ProfitCenter] AS p
-2026-04-06T05:25:34.3187989Z             ON p.AffiliateCode = pl.
-2026-04-06T05:25:34.3189342Z Error SQL72014: Framework Microsoft SqlClient Data Provider: Msg 1038, Level 15, State 4, Procedure fn_GetPlantIds, Line 40 An object or column name is missing or empty. For SELECT INTO statements, verify each column has a name. For other statements, look for empty alias names. Aliases defined as "" or [] are not allowed. Change the alias to a valid name.
-2026-04-06T05:25:34.3190804Z Error SQL72045: Script execution error.  The executed script:
-2026-04-06T05:25:34.3191374Z ALTER FUNCTION dbo.fn_GetPlantIds
-2026-04-06T05:25:34.3192270Z (@RegionID VARCHAR (MAX)=NULL, @CountryID VARCHAR (MAX)=NULL, @CompanyCode VARCHAR (MAX)=NULL, @ProfitCenter VARCHAR (MAX)=NULL, @SBU VARCHAR (MAX)=NULL, @BU VARCHAR (MAX)=NULL)
-2026-04-06T05:25:34.3193133Z RETURNS TABLE 
-2026-04-06T05:25:34.3193449Z AS
-2026-04-06T05:25:34.3193762Z RETURN 
-2026-04-06T05:25:34.3194135Z     (SELECT DISTINCT pl.plant,
-2026-04-06T05:25:34.3194551Z                      pl.PlantName
-2026-04-06T05:25:34.3195040Z      FROM   [$(AIFinance_SQL_Master)].[master].[MST_Plant] AS pl
-2026-04-06T05:25:34.3195638Z             INNER JOIN
-2026-04-06T05:25:34.3196122Z             [$(AIFinance_SQL_Master)].[master].[MST_Affiliate] AS af
-2026-04-06T05:25:34.3196681Z             ON af.AffiliateCode = pl.AffiliateCode
-2026-04-06T05:25:34.3197151Z                AND af.IsActive = 1
-2026-04-06T05:25:34.3197515Z             INNER JOIN
-2026-04-06T05:25:34.3198000Z             [$(AIFinance_SQL_Master)].[master].[MST_Country] AS c
-2026-04-06T05:25:34.3198521Z             ON c.CountryID = af.CountryID
-2026-04-06T05:25:34.3198974Z                AND c.IsActive = 1
-2026-04-06T05:25:34.3199337Z             INNER JOIN
-2026-04-06T05:25:34.3199825Z             [$(AIFinance_SQL_Master)].[master].[MST_Region] AS r
-2026-04-06T05:25:34.3200333Z             ON r.RegionID = c.RegionID
-2026-04-06T05:25:34.3200760Z                AND r.IsActive = 1
-2026-04-06T05:25:34.3201121Z             INNER JOIN
-2026-04-06T05:25:34.3201619Z             [$(AIFinance_SQL_Master)].[master].[MST_ProfitCenter] AS p
-2026-04-06T05:25:34.3202168Z             ON p.AffiliateCode = pl.
-2026-04-06T05:25:34.3202370Z 
-2026-04-06T05:25:34.5266709Z ##[error]Publishing to database 'SABIC_DT_Finance_WCI_WebUI' on server 'dc2dpbicln004,1433'. 
+2026-04-06T19:41:24.0851873Z ##[section]Starting: Deploy using : dacpac
+2026-04-06T19:41:24.2774433Z ==============================================================================
+2026-04-06T19:41:24.2775512Z Task         : SQL Server database deploy
+2026-04-06T19:41:24.2776138Z Description  : Deploy a SQL Server database using DACPAC or SQL scripts
+2026-04-06T19:41:24.2776534Z Version      : 0.198.0
+2026-04-06T19:41:24.2777058Z Author       : Microsoft Corporation
+2026-04-06T19:41:24.2777810Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/deploy/sql-dacpac-deployment-on-machine-group
+2026-04-06T19:41:24.2778344Z ==============================================================================
+2026-04-06T19:42:58.7965980Z *** Could not deploy package.
+2026-04-06T19:42:58.7971574Z Error SQL72014: Framework Microsoft SqlClient Data Provider: Msg 2714, Level 16, State 5, Line 1 There is already an object named 'PK_Aggregate_Actuals_ClosingInventory_fg' in the database.
+2026-04-06T19:42:58.7975102Z Error SQL72045: Script execution error.  The executed script:
+2026-04-06T19:42:58.7977761Z CREATE TABLE [dbo].[Aggregate_Actuals_OpeningClosingInventory_FG] (
+2026-04-06T19:42:58.7983170Z     [RecID]                          INT           IDENTITY (1, 1) NOT NULL,
+2026-04-06T19:42:58.7984304Z     [calYearMonth]                   INT           NULL,
+2026-04-06T19:42:58.7985627Z     [calYear]                        INT           NOT NULL,
+2026-04-06T19:42:58.7986888Z     [calMonth]                       INT           NOT NULL,
+2026-04-06T19:42:58.7988109Z     [SBU]                            VARCHAR (50)  NULL,
+2026-04-06T19:42:58.7989115Z     [BU]                             VARCHAR (50)  NULL,
+2026-04-06T19:42:58.7990463Z     [CompanyCode]                    VARCHAR (50)  NULL,
+2026-04-06T19:42:58.7991787Z     [Plant]                          VARCHAR (50)  NULL,
+2026-04-06T19:42:58.7993045Z     [ProfitCenter]                   VARCHAR (50)  NULL,
+2026-04-06T19:42:58.7994348Z     [InventoryType]                  VARCHAR (50)  NOT NULL,
+2026-04-06T19:42:58.7996414Z     [Opening_Inventory_Volume_In_MT] FLOAT (53)    NULL,
+2026-04-06T19:42:58.7998090Z     [Closing_Inventory_Volume_In_MT] FLOAT (53)    NULL,
+2026-04-06T19:42:58.7999438Z     [Opening_Inventory_Value_In_SAR] FLOAT (53)    NULL,
+2026-04-06T19:42:58.8001581Z     [Closing_Inventory_Value_In_SAR] FLOAT (53)    NULL,
+2026-04-06T19:42:58.8003118Z     [Opening_Inventory_Value_In_USD] FLOAT (53)    NULL,
+2026-04-06T19:42:58.8004524Z     [Closing_Inventory_Value_In_USD] FLOAT (53)    NU
+2026-04-06T19:42:58.8006845Z Error SQL72014: Framework Microsoft SqlClient Data Provider: Msg 1750, Level 16, State 1, Line 1 Could not create constraint or index. See previous errors.
+2026-04-06T19:42:58.8009676Z Error SQL72045: Script execution error.  The executed script:
+2026-04-06T19:42:58.8011451Z CREATE TABLE [dbo].[Aggregate_Actuals_OpeningClosingInventory_FG] (
+2026-04-06T19:42:58.8013111Z     [RecID]                          INT           IDENTITY (1, 1) NOT NULL,
+2026-04-06T19:42:58.8014392Z     [calYearMonth]                   INT           NULL,
+2026-04-06T19:42:58.8015711Z     [calYear]                        INT           NOT NULL,
+2026-04-06T19:42:58.8016905Z     [calMonth]                       INT           NOT NULL,
+2026-04-06T19:42:58.8018093Z     [SBU]                            VARCHAR (50)  NULL,
+2026-04-06T19:42:58.8019215Z     [BU]                             VARCHAR (50)  NULL,
+2026-04-06T19:42:58.8020529Z     [CompanyCode]                    VARCHAR (50)  NULL,
+2026-04-06T19:42:58.8021800Z     [Plant]                          VARCHAR (50)  NULL,
+2026-04-06T19:42:58.8022977Z     [ProfitCenter]                   VARCHAR (50)  NULL,
+2026-04-06T19:42:58.8024355Z     [InventoryType]                  VARCHAR (50)  NOT NULL,
+2026-04-06T19:42:58.8026287Z     [Opening_Inventory_Volume_In_MT] FLOAT (53)    NULL,
+2026-04-06T19:42:58.8027810Z     [Closing_Inventory_Volume_In_MT] FLOAT (53)    NULL,
+2026-04-06T19:42:58.8028836Z     [Opening_Inventory_Value_In_SAR] FLOAT (53)    NULL,
+2026-04-06T19:42:58.8034104Z     [Closing_Inventory_Value_In_SAR] FLOAT (53)    NULL,
+2026-04-06T19:42:58.8034739Z     [Opening_Inventory_Value_In_USD] FLOAT (53)    NULL,
+2026-04-06T19:42:58.8035312Z     [Closing_Inventory_Value_In_USD] FLOAT (53)    NU
+2026-04-06T19:42:58.8035588Z 
+2026-04-06T19:42:59.0200665Z ##[error]Publishing to database 'SABIC_DT_Finance_WCI_WebUI' on server 'dc2dpbicln004,1433'. 
 Initializing deployment (Start) 
 Initializing deployment (Complete) 
 Analyzing deployment plan (Start) 
-*** If this deployment is executed, changes to [dbo].[SP_GetXMLValueForLog] might introduce run-time errors in [dbo].[SP_LogoutAndEndSessionByUserId]. 
 Analyzing deployment plan (Complete) 
 Updating database (Start) 
-Altering Function [dbo].[fn_GetPlantIds]... 
+Creating Table [dbo].[Aggregate_Actuals_OpeningClosingInventory_FG]... 
 An error occurred while the batch was being executed. 
 Updating database (Failed) 
-Time elapsed 0:01:24.09 
+Time elapsed 0:00:45.51 
 
-2026-04-06T05:25:34.6965538Z ##[section]Finishing: Deploy using : dacpac
--------------------------
-
-
-
-
-
-
-/*
-select * from fn_GetPlantIds(null,null,null,null,null,null)
-select * from fn_GetPlantIds(null,null,'1000',null,null,null)
-*/
-CREATE   FUNCTION dbo.fn_GetPlantIds
-(
-    @RegionID      VARCHAR(MAX) = NULL,
-    @CountryID     VARCHAR(MAX) = NULL,
-    @CompanyCode   VARCHAR(MAX) = NULL,
-    @ProfitCenter  VARCHAR(MAX) = NULL,
-    @SBU           VARCHAR(MAX) = NULL,
-	@BU			   VARCHAR(MAX) = NULL 
-)
-RETURNS TABLE
-AS
-RETURN
-(
-
-    SELECT DISTINCT
-			pl.plant,
-			pl.PlantName
-		FROM [$(AIFinance_SQL_Master)].[master].[MST_Plant]  pl
-
-		INNER JOIN [$(AIFinance_SQL_Master)].[master].[MST_Affiliate] af
-			ON af.AffiliateCode = pl.AffiliateCode
-			AND af.IsActive = 1
-
-		INNER JOIN [$(AIFinance_SQL_Master)].[master].[MST_Country] c
-			ON c.CountryID = af.CountryID
-			AND c.IsActive = 1
-
-		INNER JOIN [$(AIFinance_SQL_Master)].[master].[MST_Region] r
-			ON r.RegionID = c.RegionID
-			AND r.IsActive = 1
-
-		INNER JOIN [$(AIFinance_SQL_Master)].[master].[MST_ProfitCenter] p
-			ON p.AffiliateCode = pl.AffiliateCode
-    WHERE
-        (
-            @RegionID IS NULL
-            OR r.RegionID IN (SELECT value FROM STRING_SPLIT(@RegionID, ','))
-        )
-        AND
-        (
-            @CountryID IS NULL
-            OR c.CountryID IN (SELECT value FROM STRING_SPLIT(@CountryID, ','))
-        )
-        AND
-        (
-            @CompanyCode IS NULL
-            OR af.AffiliateCode IN (SELECT value FROM STRING_SPLIT(@CompanyCode, ','))
-        )
-
-        AND
-        (
-            @ProfitCenter IS NULL
-            OR p.ProfitCenterID IN (SELECT value FROM STRING_SPLIT(@ProfitCenter, ','))
-        )
-        AND
-        (
-            @SBU IS NULL
-            OR p.SBU IN (SELECT value FROM STRING_SPLIT(@SBU, ','))
-        )
-		 AND
-        (
-            @BU IS NULL
-            OR p.BU IN (SELECT value FROM STRING_SPLIT(@BU, ','))
-        )
-
-);
+2026-04-06T19:42:59.2247729Z ##[section]Finishing: Deploy using : dacpac
