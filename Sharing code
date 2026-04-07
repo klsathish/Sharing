@@ -1,3 +1,100 @@
+-- ============================================================
+-- Script: Rename PK & FK Constraints to Match Renamed Tables
+-- Scenario: Tables renamed with '_obsolete' suffix
+-- Constraints still have old names → this renames them to match
+-- ============================================================
+
+SET NOCOUNT ON;
+
+DECLARE @SQL        NVARCHAR(MAX) = N'';
+DECLARE @OldName    NVARCHAR(256);
+DECLARE @NewName    NVARCHAR(256);
+DECLARE @TableName  NVARCHAR(256);
+DECLARE @SchemaName NVARCHAR(256);
+DECLARE @Type       NVARCHAR(10);
+
+-- ============================================================
+-- STEP 1: Rename PRIMARY KEY Constraints
+-- ============================================================
+DECLARE pk_cursor CURSOR FOR
+    SELECT 
+        s.name                          AS SchemaName,
+        t.name                          AS TableName,
+        kc.name                         AS OldConstraintName,
+        -- Replace old table base name in constraint with new table name
+        REPLACE(kc.name, 
+                REPLACE(t.name, '_obsolete', ''),  -- old table name part
+                t.name)                             -- new table name (with _obsolete)
+                                        AS NewConstraintName
+    FROM sys.key_constraints kc
+    JOIN sys.tables t  ON kc.parent_object_id = t.object_id
+    JOIN sys.schemas s ON t.schema_id = s.schema_id
+    WHERE kc.type = 'PK'
+      -- Only rename if constraint name does NOT already contain '_obsolete'
+      AND kc.name NOT LIKE '%_obsolete%'
+      -- Only target tables that were renamed (have _obsolete suffix)
+      AND t.name LIKE '%_obsolete';
+
+OPEN pk_cursor;
+FETCH NEXT FROM pk_cursor INTO @SchemaName, @TableName, @OldName, @NewName;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    PRINT 'Renaming PK: [' + @OldName + '] → [' + @NewName + '] on table [' + @SchemaName + '].[' + @TableName + ']';
+
+    SET @SQL = N'EXEC sp_rename 
+        @objname = N''' + @SchemaName + '.' + @OldName + ''', 
+        @newname = N''' + @NewName + ''', 
+        @objtype = N''OBJECT'';';
+
+    EXEC sp_executesql @SQL;
+
+    FETCH NEXT FROM pk_cursor INTO @SchemaName, @TableName, @OldName, @NewName;
+END
+
+CLOSE pk_cursor;
+DEALLOCATE pk_cursor;
+
+-- ============================================================
+-- STEP 2: Rename FOREIGN KEY Constraints
+-- ============================================================
+DECLARE fk_cursor CURSOR FOR
+    SELECT 
+        s.name                          AS SchemaName,
+        t.name                          AS TableName,
+        fk.name                         AS OldConstraintName,
+        REPLACE(fk.name, 
+                REPLACE(t.name, '_obsolete', ''),
+                t.name)                 AS NewConstraintName
+    FROM sys.foreign_keys fk
+    JOIN sys.tables t  ON fk.parent_object_id = t.object_id
+    JOIN sys.schemas s ON t.schema_id = s.schema_id
+    WHERE fk.name NOT LIKE '%_obsolete%'
+      AND t.name LIKE '%_obsolete';
+
+OPEN fk_cursor;
+FETCH NEXT FROM fk_cursor INTO @SchemaName, @TableName, @OldName, @NewName;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    PRINT 'Renaming FK: [' + @OldName + '] → [' + @NewName + '] on table [' + @SchemaName + '].[' + @TableName + ']';
+
+    SET @SQL = N'EXEC sp_rename 
+        @objname = N''' + @SchemaName + '.' + @OldName + ''', 
+        @newname = N''' + @NewName + ''', 
+        @objtype = N''OBJECT'';';
+
+    EXEC sp_executesql @SQL;
+
+    FETCH NEXT FROM fk_cursor INTO @SchemaName, @TableName, @OldName, @NewName;
+END
+
+CLOSE fk_cursor;
+DEALLOCATE fk_cursor;
+
+PRINT '✅ All PK and FK constraints renamed successfully.';
+
+
 [HttpPost("testlogin")]
 [AllowAnonymous]
 public async Task<IActionResult> TestLogin([FromBody] LoginRequest request)
