@@ -1,3 +1,14 @@
+Hi Team,
+
+Currently, QA deployment is on hold due to a mismatch between the latest changes in DEV DB and the deployment scripts. We identified that some recent updates in DEV (tables/procs) are causing the pipeline to fail during CD.
+
+We are coordinating with the DEV owner (Khaja) to align the changes and resolve the issue. Once this is fixed, we will proceed with the deployment.
+
+Will keep you posted on the progress.
+
+
+
+
 Hi Mirza,
 
 I have not requested the QA DB credentials earlier, and they were also not shared with me previously.
