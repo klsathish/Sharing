@@ -1,3 +1,17 @@
+Hi Mirza,
+
+I have not requested the QA DB credentials earlier, and they were also not shared with me previously.
+
+For the initial setup, I used Dev credentials to complete the QA CI/CD pipeline to avoid any delay.
+
+Now I need the QA DB credentials to proceed further.
+
+Thanks,
+Sathish
+
+
+
+
 /v:AIFinance_SQL_Master="SABIC_DT_Finance_Master"/p:BlockOnPossibleDataLoss=true/p:IgnoreColumnNullability=true 
 
 2026-04-07T16:55:10.9518732Z ##[section]Starting: Deploy using : dacpac
