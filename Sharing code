@@ -1,73 +1,15 @@
-2026-04-08T11:47:43.5587755Z ##[section]Starting: Deploy using : dacpac
-2026-04-08T11:47:43.6921973Z ==============================================================================
-2026-04-08T11:47:43.6922948Z Task         : SQL Server database deploy
-2026-04-08T11:47:43.6923547Z Description  : Deploy a SQL Server database using DACPAC or SQL scripts
-2026-04-08T11:47:43.6923934Z Version      : 0.198.0
-2026-04-08T11:47:43.6924393Z Author       : Microsoft Corporation
-2026-04-08T11:47:43.6924928Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/deploy/sql-dacpac-deployment-on-machine-group
-2026-04-08T11:47:43.6925452Z ==============================================================================
-2026-04-08T11:49:45.7092890Z *** Could not deploy package.
-2026-04-08T11:49:45.7096361Z Warning SQL72030: If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_InsertInventoryDetails_Forecast_FG_New_ActualsForTesting].
-2026-04-08T11:49:45.7097960Z Warning SQL72030: If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_InsertOpeningAndClosingInventoryDetails_ActualsForTesting].
-2026-04-08T11:49:45.7102146Z Warning SQL72030: If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_InsertInventoryDetails_Forecast_FG_New].
-2026-04-08T11:49:45.7103494Z Warning SQL72030: If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_InsertInventoryDetails_Forecast_RM_New_DEMO].
-2026-04-08T11:49:45.7104839Z Warning SQL72030: If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_InsertInventoryDetails_Forecast_FG_New_DEMO].
-2026-04-08T11:49:45.7106144Z Warning SQL72030: If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_GetFGClosingInventoryBalanceChartData_Old].
-2026-04-08T11:49:45.7107467Z Warning SQL72030: If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_InsertInventoryDetails_Forecast_RM_New].
-2026-04-08T11:49:45.7108799Z Warning SQL72030: If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_GetFGInterCompanyTransferAIFCChartDataForGIT].
-2026-04-08T11:49:45.7110144Z Warning SQL72030: If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_GetFinishedGoodsDemandChartAIEnhancedForecastData2].
-2026-04-08T11:49:45.7111529Z Warning SQL72030: If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_GetFGInterCompanyTransferAIFCChartDataForWIP].
-2026-04-08T11:49:45.7113055Z Warning SQL72030: If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_InsertInventoryDetails_Forecast_FG_Old].
-2026-04-08T11:49:45.7114436Z Warning SQL72030: If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData2].
-2026-04-08T11:49:45.7116170Z Error SQL72014: Framework Microsoft SqlClient Data Provider: Msg 208, Level 16, State 1, Procedure view_FG_Actual_CompanyWise, Line 25 Invalid object name 'SABIC_DT_Finance_Master/p:BlockOnPossibleDataLoss=true/p:IgnoreColumnNullability=true.master.MST_ProfitCenter'.
-2026-04-08T11:49:45.7117464Z Error SQL72045: Script execution error.  The executed script:
-2026-04-08T11:49:45.7118039Z ALTER VIEW view_FG_Actual_CompanyWise
-2026-04-08T11:49:45.7118447Z AS
-2026-04-08T11:49:45.7118832Z SELECT   CompanyCode AS CompanyCode,
-2026-04-08T11:49:45.7119333Z          min(AffiliateName) AS CompanyName,
-2026-04-08T11:49:45.7119777Z          calYear AS calYear,
-2026-04-08T11:49:45.7120193Z          calMonth AS calMonth,
-2026-04-08T11:49:45.7120592Z          min(a.SBU) AS SBU,
-2026-04-08T11:49:45.7125519Z          min(a.BU) AS BU,
-2026-04-08T11:49:45.7125951Z          min(b.SUB_BU) AS SUB_BU,
-2026-04-08T11:49:45.7126382Z          min(Plant) AS Plant,
-2026-04-08T11:49:45.7126845Z          min(ProfitCenter) AS ProfitCenter,
-2026-04-08T11:49:45.7127458Z          sum(Opening_Inventory_Volume_In_MT) AS Opening_Inventory_Volume_In_MT,
-2026-04-08T11:49:45.7128206Z          sum(Closing_Inventory_Volume_In_MT) AS Closing_Inventory_Volume_In_MT,
-2026-04-08T11:49:45.7128936Z          sum(Opening_Inventory_Value_In_SAR) AS Opening_Inventory_Value_In_SAR,
-2026-04-08T11:49:45.7129683Z          sum(Closing_Inventory_Value_In_SAR) AS Closing_Inventory_Value_In_SAR,
-2026-04-08T11:49:45.7130414Z          sum(Opening_Inventory_Value_In_USD) AS Opening_Inventory_Value_In_USD,
-2026-04-08T11:49:45.7131156Z          sum(Closing_Inventory_Value_In_USD) AS Closing_Inventory_Value_In_USD
-2026-04-08T11:49:45.7131819Z FROM     Aggregate_Actuals_OpeningClosingInventory_FG AS a
-2026-04-08T11:49:45.7132789Z          INNER JOIN
-2026-04-08T11:49:45.7133293Z          [$(AIFinance_SQL_Master)].[master].[MST_ProfitCenter] AS b
-2026-04-08T11:49:45.7135244Z          ON b.AffiliateCode = a.Co
-2026-04-08T11:49:45.7135460Z 
-2026-04-08T11:49:45.9513430Z ##[error]Publishing to database 'SABIC_DT_Finance_WCI_WebUI' on server 'dc2dpbicln004,1433'. 
-Initializing deployment (Start) 
-Initializing deployment (Complete) 
-Analyzing deployment plan (Start) 
-*** If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_InsertInventoryDetails_Forecast_FG_New_ActualsForTesting]. 
-*** If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_InsertOpeningAndClosingInventoryDetails_ActualsForTesting]. 
-*** If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_InsertInventoryDetails_Forecast_FG_New]. 
-*** If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_InsertInventoryDetails_Forecast_RM_New_DEMO]. 
-*** If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_InsertInventoryDetails_Forecast_FG_New_DEMO]. 
-*** If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_GetFGClosingInventoryBalanceChartData_Old]. 
-*** If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_InsertInventoryDetails_Forecast_RM_New]. 
-*** If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_GetFGInterCompanyTransferAIFCChartDataForGIT]. 
-*** If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_GetFinishedGoodsDemandChartAIEnhancedForecastData2]. 
-*** If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_GetFGInterCompanyTransferAIFCChartDataForWIP]. 
-*** If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_InsertInventoryDetails_Forecast_FG_Old]. 
-*** If this deployment is executed, changes to [dbo].[FN_ConvertCurrency] might introduce run-time errors in [dbo].[SP_GetRawMaterialsGoodsReceiptChartAIEnhancedForecastData2]. 
-Analyzing deployment plan (Complete) 
-Updating database (Start) 
-Altering View [dbo].[view_FG_Actual_CompanyWise]... 
-An error occurred while the batch was being executed. 
-Updating database (Failed) 
-Time elapsed 0:01:15.81 
+Dears,
 
-2026-04-08T11:49:46.1524037Z ##[section]Finishing: Deploy using : dacpac
+We have re-released WCI Master and WCI Web DS CD pipline because of DB credencials was not updfated previously. Please update
+AI Finance SQL Master CD : link
+AI Finance SQL DS-CD : link
 
 
-i am using aditional arguments (/v:AIFinance_SQL_Master="SABIC_DT_Finance_Master"/p:BlockOnPossibleDataLoss=true/p:IgnoreColumnNullability=true )
 
+And wil continue to check and approve WCI WEB SQL . Its recreared PR bz getting cD pipline error. Mean while taking from local db scema updations too.
+
+WCI WEB SQL PR:  link
+
+
+Regards,
+K.L.Sathish.
