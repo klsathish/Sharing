@@ -1,3 +1,24 @@
+Dear Team,
+
+We have re-released the WCI Master and WCI Web DS CD pipelines due to previously outdated database credentials. The credentials have now been updated successfully.
+
+Please find the updated pipeline links below:
+
+- AI Finance SQL Master CD: [link]
+- AI Finance SQL DS-CD: [link]
+
+Additionally, we are continuing to review and approve the WCI WEB SQL changes. The Pull Request has been recreated due to errors encountered in the CD pipeline.
+
+In parallel, we are also incorporating the latest schema updates from the local database to ensure consistency and avoid further deployment issues.
+
+- WCI WEB SQL PR: [link]
+
+We will keep monitoring the pipeline executions and provide further updates as needed.
+
+Regards,
+K.L. Sathish
+
+
 Dears,
 
 We have re-released WCI Master and WCI Web DS CD pipline because of DB credencials was not updfated previously. Please update
