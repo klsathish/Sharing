@@ -1,38 +1,43 @@
-Hi Team,
+--AI Finance SQL DS-CD pipeline
 
-Apologies for the inconvenience.
+2026-04-12T06:23:21.8731796Z ##[section]Starting: Deploy using : dacpac
+2026-04-12T06:23:22.0457666Z ==============================================================================
+2026-04-12T06:23:22.0459038Z Task         : SQL Server database deploy
+2026-04-12T06:23:22.0460033Z Description  : Deploy a SQL Server database using DACPAC or SQL scripts
+2026-04-12T06:23:22.0460506Z Version      : 0.198.0
+2026-04-12T06:23:22.0461031Z Author       : Microsoft Corporation
+2026-04-12T06:23:22.0461659Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/deploy/sql-dacpac-deployment-on-machine-group
+2026-04-12T06:23:22.0462231Z ==============================================================================
+2026-04-12T06:24:58.0231632Z *** An error occurred during deployment plan generation. Deployment cannot continue.
+2026-04-12T06:24:58.0235347Z Failed to import target model SABIC_DT_Finance_WCI. Detailed message Cannot open database "SABIC_DT_Finance_WCI" requested by the login. The login failed.
+2026-04-12T06:24:58.0236849Z Login failed for user 'SABIC_DT_Finance_WCI_User'.
+2026-04-12T06:24:58.0237565Z Cannot open database "SABIC_DT_Finance_WCI" requested by the login. The login failed.
+2026-04-12T06:24:58.0238283Z Login failed for user 'SABIC_DT_Finance_WCI_User'.
+2026-04-12T06:24:58.2735866Z ##[error]Publishing to database 'SABIC_DT_Finance_WCI' on server 'dc2qpbicln004,1433'. 
+Initializing deployment (Start) 
+Initializing deployment (Failed) 
+Time elapsed 0:00:44.58 
 
-I am currently looking into the CD pipeline failure and working on fixing it on priority.
-
-Regarding the WCI WEB SQL PR, I have addressed the available comments from my end. I couldn’t find any additional specific recommendations pending — could you please help point out the exact items that still need to be addressed?
-
-This will help me resolve everything quickly.
-
-Happy to connect over a call if needed.
-
-Regards,
-Sathish
+2026-04-12T06:24:58.4729834Z ##[section]Finishing: Deploy using : dacpac
 
 
+-----------------
+--AI Finance SQL Master CD Pipeline
 
+2026-04-12T06:22:55.4803533Z ##[section]Starting: Deploy using : dacpac
+2026-04-12T06:22:55.6619384Z ==============================================================================
+2026-04-12T06:22:55.6620407Z Task         : SQL Server database deploy
+2026-04-12T06:22:55.6620976Z Description  : Deploy a SQL Server database using DACPAC or SQL scripts
+2026-04-12T06:22:55.6621368Z Version      : 0.198.0
+2026-04-12T06:22:55.6621815Z Author       : Microsoft Corporation
+2026-04-12T06:22:55.6622372Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/deploy/sql-dacpac-deployment-on-machine-group
+2026-04-12T06:22:55.6622892Z ==============================================================================
+2026-04-12T06:24:15.0480076Z *** An error occurred during deployment plan generation. Deployment cannot continue.
+2026-04-12T06:24:15.0483173Z Failed to import target model SABIC_DT_Finance_Master. Detailed message The reverse engineering operation cannot continue because you do not have View Definition permission on the 'SABIC_DT_Finance_Master' database.
+2026-04-12T06:24:15.0485037Z The reverse engineering operation cannot continue because you do not have View Definition permission on the 'SABIC_DT_Finance_Master' database.
+2026-04-12T06:24:15.2502171Z ##[error]Publishing to database 'SABIC_DT_Finance_Master' on server 'dc2qpbicln004,1433'. 
+Initializing deployment (Start) 
+Initializing deployment (Failed) 
+Time elapsed 0:00:26.30 
 
-
-Hi Paul,
-
-Thank you for sharing the inputs.
-
-- The Volume section will not be included under the “All” toggle.
-- There is a count mismatch when selecting “All,” which appears to be related to a country mapping issue. @Moinuddin Khaja is currently looking into this, and I have already addressed the issue from my end.
-
-We will keep you posted on further updates.
-
-Regards,
-K.L. Sathish
-
-Hi Paul,
-
-Thanks for sharing inputs.
-
--	Volume section won’t come All toggle.
-
--	And count mismatching while selecting ALL its considering country mapping issue. @Moinuddin, Khaja is looking on it. I have addressed that issue already.
+2026-04-12T06:24:15.4260938Z ##[section]Finishing: Deploy using : dacpac
