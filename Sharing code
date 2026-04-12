@@ -1,3 +1,6 @@
+
+I would like to clarify that the CD pipeline failures for AI Finance SQL Master and WCI SQL DS are occurring for the first time today. This is not a recurring code issue — both failures are due to one-time environment permission gaps on the target SQL Server (dc2qpbicln004), which need to be fixed by the DBA team.
+
 Subject: RE: AI Finance SQL Master CD & WCI SQL DS Pipeline Failure – Root Cause & Action Required
 
 Dear Farhan / Rajat / Puneet,
