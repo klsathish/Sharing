@@ -1,3 +1,41 @@
+Subject: RE: AI Finance SQL Master CD & WCI SQL DS Pipeline Failure – Root Cause & Action Required
+
+Dear Farhan / Rajat / Puneet,
+
+Thank you for your patience. I have investigated the CD pipeline failures and would like to share the update below.
+
+This is not a code issue. Both failures are due to a one-time server-side permission setup that was missed during the initial configuration on the target SQL Server (dc2qpbicln004).
+
+Root Cause:
+
+1. WCI SQL DS Pipeline
+The login 'SABIC_DT_Finance_WCI_User' is created but not mapped to the SABIC_DT_Finance_WCI database. A one-time user mapping is required on the target server.
+
+2. AI Finance SQL Master Pipeline
+The pipeline login is missing VIEW DEFINITION permission on the SABIC_DT_Finance_Master database. A one-time permission grant is required on the target server.
+
+Action Required (DB Team):
+Request the DB team to apply the below fixes at the earliest:
+
+1. WCI SQL DS:
+USE SABIC_DT_Finance_WCI;
+CREATE USER [SABIC_DT_Finance_WCI_User] FOR LOGIN [SABIC_DT_Finance_WCI_User];
+ALTER ROLE db_owner ADD MEMBER [SABIC_DT_Finance_WCI_User];
+
+2. SQL Master:
+USE SABIC_DT_Finance_Master;
+GRANT VIEW DEFINITION TO [<pipeline-login-user>];
+
+Once the DB team confirms the fix, I will re-trigger both pipelines immediately.
+
+Regards,
+Sathish
+Lead Full Stack Developer – WCI & Smart Forecast
+
+
+
+
+
 --AI Finance SQL DS-CD pipeline
 
 2026-04-12T06:23:21.8731796Z ##[section]Starting: Deploy using : dacpac
