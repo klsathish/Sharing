@@ -1,3 +1,13 @@
+Hi Team,
+
+I will be taking leave today due to personal work, and tentatively tomorrow as well.
+
+Some of my tasks are still in progress as additional changes are pending. I will try to continue working and complete them during my leave wherever possible.
+
+Please feel free to reach out if anything urgent comes up.
+
+Thanks.
+
 
 I would like to clarify that the CD pipeline failures for AI Finance SQL Master and WCI SQL DS are occurring for the first time today. This is not a recurring code issue — both failures are due to one-time environment permission gaps on the target SQL Server (dc2qpbicln004), which need to be fixed by the DBA team.
 
