@@ -1,94 +1,529 @@
-Hi Team,
+4.16	Aggregate_Actuals_InventoryDetails_FG
+Stores finished goods actuals closing inventory actuals.
+Column 	 Description 	 Example
+RecID (PK) 	 Auto-increment primary key 	 1
+CalYear 	 Calendar year 	 2023
+CalMonth 	 Calendar month 	 JUN
+CompanyCode 	 Company code 	 1000
+ProfitCenter 	 Profit center code 	 PC100
+Material_Type 	 Material type 	 FG
+Closing_Inventory_Volume_In_MT 	 Closing inventory volume 	 25000
 
-I will be taking leave today due to personal work, and tentatively tomorrow as well.
+above details in word table need to formate below details
 
-Some of my tasks are still in progress as additional changes are pending. I will try to continue working and complete them during my leave wherever possible.
+CREATE TABLE [dbo].[Aggregate_Actuals_InventoryDetails_FG](
+	[InventoryDetailsID] [int] IDENTITY(1,1) NOT NULL,
+	[CalYearMonth] [int] NULL,
+	[CalYear] [int] NULL,
+	[CalMonth] [int] NULL,
+	[InventoryType] [varchar](100) NULL,
+	[CompanyCode] [varchar](100) NULL,
+	[CompanyName] [varchar](100) NULL,
+	[ProfitCenterID] [int] NULL,
+	[Profit_Center] [varchar](10) NULL,
+	[PlantID] [int] NULL,
+	[Plant] [varchar](10) NULL,
+	[OpeningInventory_Volume_In_MT] [float] NULL,
+	[ClosingInventory_Volume_In_MT] [float] NULL,
+	[OpeningInventory_Value_In_MillionSAR] [float] NULL,
+	[OpeningInventory_Value_In_MillionUSD] [float] NULL,
+	[ClosingInventory_Value_In_MillionSAR] [float] NULL,
+	[ClosingInventory_Value_In_MillionUSD] [float] NULL,
+	[volume_Consumed_in_production_In_MT] [float] NULL,
+	[volume_Demand_In_MT] [float] NULL,
+	[volume_Others_In_MT] [float] NULL,
+	[volume_Production_Output_In_MT] [float] NULL,
+	[volume_Purchase_In_MT] [float] NULL,
+	[volume_STO_IN_In_MT] [float] NULL,
+	[volume_STO_OUT_In_MT] [float] NULL,
+	[volume_Transfers_In_MT] [float] NULL,
+	[volume_Unallocated_In_MT] [float] NULL,
+	[value_Consumed_in_production_In_MillionSAR] [float] NULL,
+	[value_Consumed_in_production_In_MillionUSD] [float] NULL,
+	[value_Demand_In_MillionSAR] [float] NULL,
+	[value_Demand_In_MillionUSD] [float] NULL,
+	[value_Others_In_MillionSAR] [float] NULL,
+	[value_Others_In_MillionUSD] [float] NULL,
+	[value_Production_Output_In_MillionSAR] [float] NULL,
+	[value_Production_Output_In_MillionUSD] [float] NULL,
+	[value_Purchase_In_MillionSAR] [float] NULL,
+	[value_Purchase_In_MillionUSD] [float] NULL,
+	[value_STO_IN_In_MillionSAR] [float] NULL,
+	[value_STO_IN_In_MillionUSD] [float] NULL,
+	[value_STO_OUT_In_MillionSAR] [float] NULL,
+	[value_STO_OUT_In_MillionUSD] [float] NULL,
+	[value_Transfers_In_MillionSAR] [float] NULL,
+	[value_Transfers_In_MillionUSD] [float] NULL,
+	[value_Unallocated_In_MillionSAR] [float] NULL,
+	[value_Unallocated_In_MillionUSD] [float] NULL,
+	[CreatedDate] [datetime] NULL,
+	[SBU] [varchar](10) NULL,
+	[BU] [varchar](10) NULL,
+ CONSTRAINT [PK_Aggregate_Actuals_InventoryDetails_FG] PRIMARY KEY CLUSTERED 
+(
+	[InventoryDetailsID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 
-Please feel free to reach out if anything urgent comes up.
+CREATE TABLE [dbo].[Aggregate_Actuals_InventoryDetails_RM](
+	[InventoryDetailsID] [int] IDENTITY(1,1) NOT NULL,
+	[CalYearMonth] [int] NULL,
+	[CalYear] [int] NULL,
+	[CalMonth] [int] NULL,
+	[InventoryType] [varchar](100) NULL,
+	[CompanyCode] [varchar](100) NULL,
+	[CompanyName] [varchar](100) NULL,
+	[ProfitCenterID] [int] NULL,
+	[Profit_Center] [varchar](10) NULL,
+	[PlantID] [int] NULL,
+	[Plant] [varchar](10) NULL,
+	[OpeningInventory_Volume_In_MT] [float] NULL,
+	[ClosingInventory_Volume_In_MT] [float] NULL,
+	[OpeningInventory_Value_In_MillionSAR] [float] NULL,
+	[OpeningInventory_Value_In_MillionUSD] [float] NULL,
+	[ClosingInventory_Value_In_MillionSAR] [float] NULL,
+	[ClosingInventory_Value_In_MillionUSD] [float] NULL,
+	[volume_Consumed_in_production_In_MT] [float] NULL,
+	[volume_Demand_In_MT] [float] NULL,
+	[volume_Others_In_MT] [float] NULL,
+	[volume_Production_Output_In_MT] [float] NULL,
+	[volume_Purchase_In_MT] [float] NULL,
+	[volume_STO_IN_In_MT] [float] NULL,
+	[volume_STO_OUT_In_MT] [float] NULL,
+	[volume_Transfers_In_MT] [float] NULL,
+	[volume_Unallocated_In_MT] [float] NULL,
+	[value_Consumed_in_production_In_MillionSAR] [float] NULL,
+	[value_Consumed_in_production_In_MillionUSD] [float] NULL,
+	[value_Demand_In_MillionSAR] [float] NULL,
+	[value_Demand_In_MillionUSD] [float] NULL,
+	[value_Others_In_MillionSAR] [float] NULL,
+	[value_Others_In_MillionUSD] [float] NULL,
+	[value_Production_Output_In_MillionSAR] [float] NULL,
+	[value_Production_Output_In_MillionUSD] [float] NULL,
+	[value_Purchase_In_MillionSAR] [float] NULL,
+	[value_Purchase_In_MillionUSD] [float] NULL,
+	[value_STO_IN_In_MillionSAR] [float] NULL,
+	[value_STO_IN_In_MillionUSD] [float] NULL,
+	[value_STO_OUT_In_MillionSAR] [float] NULL,
+	[value_STO_OUT_In_MillionUSD] [float] NULL,
+	[value_Transfers_In_MillionSAR] [float] NULL,
+	[value_Transfers_In_MillionUSD] [float] NULL,
+	[value_Unallocated_In_MillionSAR] [float] NULL,
+	[value_Unallocated_In_MillionUSD] [float] NULL,
+	[CreatedDate] [datetime] NULL,
+	[SBU] [varchar](10) NULL,
+	[BU] [varchar](10) NULL,
+ CONSTRAINT [PK_Aggregate_Actuals_InventoryDetails_RM] PRIMARY KEY CLUSTERED 
+(
+	[InventoryDetailsID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 
-Thanks.
+CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovement_ConsumedInProduction](
+	[MaterialMovementDemandID] [int] IDENTITY(1,1) NOT NULL,
+	[CalYearMonth] [int] NULL,
+	[CalYear] [int] NULL,
+	[CalMonth] [int] NULL,
+	[SBU] [varchar](100) NULL,
+	[BU] [varchar](100) NULL,
+	[CompanyCode] [varchar](100) NULL,
+	[CompanyName] [varchar](100) NULL,
+	[Plant] [varchar](100) NULL,
+	[PlantName] [varchar](100) NULL,
+	[ProfitCenterID] [int] NULL,
+	[ProfitCenterName] [varchar](100) NULL,
+	[Volume_In_MT] [float] NULL,
+	[Value_In_SAR] [float] NULL,
+	[Value_In_USD] [float] NULL,
+	[Value_In_MillionSAR] [float] NULL,
+	[Value_In_MillionUSD] [float] NULL,
+	[CreatedDate] [datetime] NULL,
+	[InventoryType] [varchar](100) NULL,
+	[UnitOfMeasure] [varchar](50) NULL,
+ CONSTRAINT [PK__Aggregat__D832C48DCBD25A92] PRIMARY KEY CLUSTERED 
+(
+	[MaterialMovementDemandID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 
+CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovement_Demand](
+	[MaterialMovementDemandID] [int] IDENTITY(1,1) NOT NULL,
+	[CalYearMonth] [int] NULL,
+	[CalYear] [int] NULL,
+	[CalMonth] [int] NULL,
+	[SBU] [varchar](100) NULL,
+	[BU] [varchar](100) NULL,
+	[CompanyCode] [varchar](100) NULL,
+	[CompanyName] [varchar](100) NULL,
+	[Plant] [varchar](100) NULL,
+	[PlantName] [varchar](100) NULL,
+	[ProfitCenterID] [int] NULL,
+	[ProfitCenterName] [varchar](100) NULL,
+	[Volume_In_MT] [float] NULL,
+	[Value_In_SAR] [float] NULL,
+	[Value_In_USD] [float] NULL,
+	[Value_In_MillionSAR] [float] NULL,
+	[Value_In_MillionUSD] [float] NULL,
+	[CreatedDate] [datetime] NULL,
+	[InventoryType] [varchar](100) NULL,
+	[UnitOfMeasure] [varchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[MaterialMovementDemandID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 
-I would like to clarify that the CD pipeline failures for AI Finance SQL Master and WCI SQL DS are occurring for the first time today. This is not a recurring code issue — both failures are due to one-time environment permission gaps on the target SQL Server (dc2qpbicln004), which need to be fixed by the DBA team.
+CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovement_Others](
+	[MaterialMovementDemandID] [int] IDENTITY(1,1) NOT NULL,
+	[CalYearMonth] [int] NULL,
+	[CalYear] [int] NULL,
+	[CalMonth] [int] NULL,
+	[SBU] [varchar](100) NULL,
+	[BU] [varchar](100) NULL,
+	[CompanyCode] [varchar](100) NULL,
+	[CompanyName] [varchar](100) NULL,
+	[Plant] [varchar](100) NULL,
+	[PlantName] [varchar](100) NULL,
+	[ProfitCenterID] [int] NULL,
+	[ProfitCenterName] [varchar](100) NULL,
+	[Volume_In_MT] [float] NULL,
+	[Value_In_SAR] [float] NULL,
+	[Value_In_USD] [float] NULL,
+	[Value_In_MillionSAR] [float] NULL,
+	[Value_In_MillionUSD] [float] NULL,
+	[CreatedDate] [datetime] NULL,
+	[InventoryType] [varchar](100) NULL,
+	[UnitOfMeasure] [varchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[MaterialMovementDemandID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 
-Subject: RE: AI Finance SQL Master CD & WCI SQL DS Pipeline Failure – Root Cause & Action Required
+CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovement_ProductionOutput](
+	[MaterialMovementDemandID] [int] IDENTITY(1,1) NOT NULL,
+	[CalYearMonth] [int] NULL,
+	[CalYear] [int] NULL,
+	[CalMonth] [int] NULL,
+	[SBU] [varchar](100) NULL,
+	[BU] [varchar](100) NULL,
+	[CompanyCode] [varchar](100) NULL,
+	[CompanyName] [varchar](100) NULL,
+	[Plant] [varchar](100) NULL,
+	[PlantName] [varchar](100) NULL,
+	[ProfitCenterID] [int] NULL,
+	[ProfitCenterName] [varchar](100) NULL,
+	[Volume_In_MT] [float] NULL,
+	[Value_In_SAR] [float] NULL,
+	[Value_In_USD] [float] NULL,
+	[Value_In_MillionSAR] [float] NULL,
+	[Value_In_MillionUSD] [float] NULL,
+	[CreatedDate] [datetime] NULL,
+	[InventoryType] [varchar](100) NULL,
+	[UnitOfMeasure] [varchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[MaterialMovementDemandID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 
-Dear Farhan / Rajat / Puneet,
+CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovement_Purchases](
+	[MaterialMovementDemandID] [int] IDENTITY(1,1) NOT NULL,
+	[CalYearMonth] [int] NULL,
+	[CalYear] [int] NULL,
+	[CalMonth] [int] NULL,
+	[SBU] [varchar](100) NULL,
+	[BU] [varchar](100) NULL,
+	[CompanyCode] [varchar](100) NULL,
+	[CompanyName] [varchar](100) NULL,
+	[Plant] [varchar](100) NULL,
+	[PlantName] [varchar](100) NULL,
+	[ProfitCenterID] [int] NULL,
+	[ProfitCenterName] [varchar](100) NULL,
+	[Volume_In_MT] [float] NULL,
+	[Value_In_SAR] [float] NULL,
+	[Value_In_USD] [float] NULL,
+	[Value_In_MillionSAR] [float] NULL,
+	[Value_In_MillionUSD] [float] NULL,
+	[CreatedDate] [datetime] NULL,
+	[InventoryType] [varchar](100) NULL,
+	[UnitOfMeasure] [varchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[MaterialMovementDemandID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 
-Thank you for your patience. I have investigated the CD pipeline failures and would like to share the update below.
+CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovement_STOIn](
+	[MaterialMovementDemandID] [int] IDENTITY(1,1) NOT NULL,
+	[CalYearMonth] [int] NULL,
+	[CalYear] [int] NULL,
+	[CalMonth] [int] NULL,
+	[SBU] [varchar](100) NULL,
+	[BU] [varchar](100) NULL,
+	[CompanyCode] [varchar](100) NULL,
+	[CompanyName] [varchar](100) NULL,
+	[Plant] [varchar](100) NULL,
+	[PlantName] [varchar](100) NULL,
+	[ProfitCenterID] [int] NULL,
+	[ProfitCenterName] [varchar](100) NULL,
+	[Volume_In_MT] [float] NULL,
+	[Value_In_SAR] [float] NULL,
+	[Value_In_USD] [float] NULL,
+	[Value_In_MillionSAR] [float] NULL,
+	[Value_In_MillionUSD] [float] NULL,
+	[CreatedDate] [datetime] NULL,
+	[InventoryType] [varchar](100) NULL,
+	[UnitOfMeasure] [varchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[MaterialMovementDemandID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 
-This is not a code issue. Both failures are due to a one-time server-side permission setup that was missed during the initial configuration on the target SQL Server (dc2qpbicln004).
+CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovement_STOOut](
+	[MaterialMovementDemandID] [int] IDENTITY(1,1) NOT NULL,
+	[CalYearMonth] [int] NULL,
+	[CalYear] [int] NULL,
+	[CalMonth] [int] NULL,
+	[SBU] [varchar](100) NULL,
+	[BU] [varchar](100) NULL,
+	[CompanyCode] [varchar](100) NULL,
+	[CompanyName] [varchar](100) NULL,
+	[Plant] [varchar](100) NULL,
+	[PlantName] [varchar](100) NULL,
+	[ProfitCenterID] [int] NULL,
+	[ProfitCenterName] [varchar](100) NULL,
+	[Volume_In_MT] [float] NULL,
+	[Value_In_SAR] [float] NULL,
+	[Value_In_USD] [float] NULL,
+	[Value_In_MillionSAR] [float] NULL,
+	[Value_In_MillionUSD] [float] NULL,
+	[CreatedDate] [datetime] NULL,
+	[InventoryType] [varchar](100) NULL,
+	[UnitOfMeasure] [varchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[MaterialMovementDemandID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 
-Root Cause:
+CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovement_Transfers](
+	[MaterialMovementDemandID] [int] IDENTITY(1,1) NOT NULL,
+	[CalYearMonth] [int] NULL,
+	[CalYear] [int] NULL,
+	[CalMonth] [int] NULL,
+	[SBU] [varchar](100) NULL,
+	[BU] [varchar](100) NULL,
+	[CompanyCode] [varchar](100) NULL,
+	[CompanyName] [varchar](100) NULL,
+	[Plant] [varchar](100) NULL,
+	[PlantName] [varchar](100) NULL,
+	[ProfitCenterID] [int] NULL,
+	[ProfitCenterName] [varchar](100) NULL,
+	[Volume_In_MT] [float] NULL,
+	[Value_In_SAR] [float] NULL,
+	[Value_In_USD] [float] NULL,
+	[Value_In_MillionSAR] [float] NULL,
+	[Value_In_MillionUSD] [float] NULL,
+	[CreatedDate] [datetime] NULL,
+	[InventoryType] [varchar](100) NULL,
+	[UnitOfMeasure] [varchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[MaterialMovementDemandID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 
-1. WCI SQL DS Pipeline
-The login 'SABIC_DT_Finance_WCI_User' is created but not mapped to the SABIC_DT_Finance_WCI database. A one-time user mapping is required on the target server.
+CREATE TABLE [dbo].[Aggregate_Actuals_MaterialMovement_Unallocated](
+	[MaterialMovementDemandID] [int] IDENTITY(1,1) NOT NULL,
+	[CalYearMonth] [int] NULL,
+	[CalYear] [int] NULL,
+	[CalMonth] [int] NULL,
+	[SBU] [varchar](100) NULL,
+	[BU] [varchar](100) NULL,
+	[CompanyCode] [varchar](100) NULL,
+	[CompanyName] [varchar](100) NULL,
+	[Plant] [varchar](100) NULL,
+	[PlantName] [varchar](100) NULL,
+	[ProfitCenterID] [int] NULL,
+	[ProfitCenterName] [varchar](100) NULL,
+	[Volume_In_MT] [float] NULL,
+	[Value_In_SAR] [float] NULL,
+	[Value_In_USD] [float] NULL,
+	[Value_In_MillionSAR] [float] NULL,
+	[Value_In_MillionUSD] [float] NULL,
+	[CreatedDate] [datetime] NULL,
+	[InventoryType] [varchar](100) NULL,
+	[UnitOfMeasure] [varchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[MaterialMovementDemandID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 
-2. AI Finance SQL Master Pipeline
-The pipeline login is missing VIEW DEFINITION permission on the SABIC_DT_Finance_Master database. A one-time permission grant is required on the target server.
+CREATE TABLE [dbo].[Aggregate_Actuals_OpeningClosingInventory_FG](
+	[RecID] [int] IDENTITY(1,1) NOT NULL,
+	[calYearMonth] [int] NULL,
+	[calYear] [int] NOT NULL,
+	[calMonth] [int] NOT NULL,
+	[SBU] [varchar](50) NULL,
+	[BU] [varchar](50) NULL,
+	[CompanyCode] [varchar](50) NULL,
+	[Plant] [varchar](50) NULL,
+	[ProfitCenter] [varchar](50) NULL,
+	[InventoryType] [varchar](50) NOT NULL,
+	[Opening_Inventory_Volume_In_MT] [float] NULL,
+	[Closing_Inventory_Volume_In_MT] [float] NULL,
+	[Opening_Inventory_Value_In_SAR] [float] NULL,
+	[Closing_Inventory_Value_In_SAR] [float] NULL,
+	[Opening_Inventory_Value_In_USD] [float] NULL,
+	[Closing_Inventory_Value_In_USD] [float] NULL,
+	[CreatedBy] [nvarchar](50) NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_Aggregate_Actuals_ClosingInventory_fg] PRIMARY KEY CLUSTERED 
+(
+	[RecID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 
-Action Required (DB Team):
-Request the DB team to apply the below fixes at the earliest:
+CREATE TABLE [dbo].[Aggregate_Actuals_OpeningClosingInventory_RM](
+	[RecID] [int] IDENTITY(1,1) NOT NULL,
+	[calYearMonth] [int] NULL,
+	[calYear] [int] NOT NULL,
+	[calMonth] [int] NOT NULL,
+	[SBU] [varchar](50) NULL,
+	[BU] [varchar](50) NULL,
+	[CompanyCode] [varchar](50) NULL,
+	[Plant] [varchar](50) NULL,
+	[ProfitCenter] [varchar](50) NULL,
+	[InventoryType] [varchar](50) NOT NULL,
+	[Opening_Inventory_Volume_In_MT] [float] NULL,
+	[Closing_Inventory_Volume_In_MT] [float] NULL,
+	[Opening_Inventory_Value_In_SAR] [float] NULL,
+	[Closing_Inventory_Value_In_SAR] [float] NULL,
+	[Opening_Inventory_Value_In_USD] [float] NULL,
+	[Closing_Inventory_Value_In_USD] [float] NULL,
+	[CreatedBy] [nvarchar](50) NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UnitOfMeasure] [varchar](50) NULL,
+ CONSTRAINT [PK_Aggregate_Actuals_OpeningClosingInventory_RM] PRIMARY KEY CLUSTERED 
+(
+	[RecID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 
-1. WCI SQL DS:
-USE SABIC_DT_Finance_WCI;
-CREATE USER [SABIC_DT_Finance_WCI_User] FOR LOGIN [SABIC_DT_Finance_WCI_User];
-ALTER ROLE db_owner ADD MEMBER [SABIC_DT_Finance_WCI_User];
+CREATE TABLE [dbo].[Aggregate_Forecast_InventoryDetails_FG](
+	[ForecastInventoryDetailsID] [int] IDENTITY(1,1) NOT NULL,
+	[CalYearMonth] [int] NULL,
+	[CalYear] [int] NULL,
+	[CalMonth] [int] NULL,
+	[InventoryType] [varchar](100) NULL,
+	[SBU] [varchar](50) NULL,
+	[BU] [varchar](50) NULL,
+	[CompanyCode] [varchar](100) NULL,
+	[CompanyName] [varchar](100) NULL,
+	[Plant] [varchar](50) NULL,
+	[PlantName] [varchar](100) NULL,
+	[ProfitCenterID] [int] NULL,
+	[ProfitCenterName] [varchar](50) NULL,
+	[OpeningInventory_Volume_In_MT] [float] NULL,
+	[ClosingInventory_Volume_In_MT] [float] NULL,
+	[OpeningInventory_Value_In_MillionSAR] [float] NULL,
+	[OpeningInventory_Value_In_MillionUSD] [float] NULL,
+	[ClosingInventory_Value_In_MillionSAR] [float] NULL,
+	[ClosingInventory_Value_In_MillionUSD] [float] NULL,
+	[ForecastedInventoryMovement_Volume_In_MT] [float] NULL,
+	[ForecastedInventoryMovement_Value_In_MillionSAR] [float] NULL,
+	[ForecastedInventoryMovement_Value_In_MillionUSD] [float] NULL,
+	[forecast_volume_Consumed_in_production_In_MT] [float] NULL,
+	[forecast_volume_Demand_In_MT] [float] NULL,
+	[forecast_volume_Others_In_MT] [float] NULL,
+	[forecast_volume_Production_Output_In_MT] [float] NULL,
+	[forecast_volume_Purchase_In_MT] [float] NULL,
+	[forecast_volume_STO_IN_In_MT] [float] NULL,
+	[forecast_volume_STO_OUT_In_MT] [float] NULL,
+	[forecast_volume_Transfers_In_MT] [float] NULL,
+	[forecast_volume_Unallocated_In_MT] [float] NULL,
+	[forecast_value_Consumed_in_production_In_MillionSAR] [float] NULL,
+	[forecast_value_Consumed_in_production_In_MillionUSD] [float] NULL,
+	[forecast_value_Demand_In_MillionSAR] [float] NULL,
+	[forecast_value_Demand_In_MillionUSD] [float] NULL,
+	[forecast_value_Others_In_MillionSAR] [float] NULL,
+	[forecast_value_Others_In_MillionUSD] [float] NULL,
+	[forecast_value_Production_Output_In_MillionSAR] [float] NULL,
+	[forecast_value_Production_Output_In_MillionUSD] [float] NULL,
+	[forecast_value_Purchase_In_MillionSAR] [float] NULL,
+	[forecast_value_Purchase_In_MillionUSD] [float] NULL,
+	[forecast_value_STO_IN_In_MillionSAR] [float] NULL,
+	[forecast_value_STO_IN_In_MillionUSD] [float] NULL,
+	[forecast_value_STO_OUT_In_MillionSAR] [float] NULL,
+	[forecast_value_STO_OUT_In_MillionUSD] [float] NULL,
+	[forecast_value_Transfers_In_MillionSAR] [float] NULL,
+	[forecast_value_Transfers_In_MillionUSD] [float] NULL,
+	[forecast_value_Unallocated_In_MillionSAR] [float] NULL,
+	[forecast_value_Unallocated_In_MillionUSD] [float] NULL,
+	[CreatedDate] [datetime] NULL,
+ CONSTRAINT [PK_Aggregate_Forecast_InventoryDetails_FG] PRIMARY KEY CLUSTERED 
+(
+	[ForecastInventoryDetailsID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 
-2. SQL Master:
-USE SABIC_DT_Finance_Master;
-GRANT VIEW DEFINITION TO [<pipeline-login-user>];
-
-Once the DB team confirms the fix, I will re-trigger both pipelines immediately.
-
-Regards,
-Sathish
-Lead Full Stack Developer – WCI & Smart Forecast
-
-
-
-
-
---AI Finance SQL DS-CD pipeline
-
-2026-04-12T06:23:21.8731796Z ##[section]Starting: Deploy using : dacpac
-2026-04-12T06:23:22.0457666Z ==============================================================================
-2026-04-12T06:23:22.0459038Z Task         : SQL Server database deploy
-2026-04-12T06:23:22.0460033Z Description  : Deploy a SQL Server database using DACPAC or SQL scripts
-2026-04-12T06:23:22.0460506Z Version      : 0.198.0
-2026-04-12T06:23:22.0461031Z Author       : Microsoft Corporation
-2026-04-12T06:23:22.0461659Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/deploy/sql-dacpac-deployment-on-machine-group
-2026-04-12T06:23:22.0462231Z ==============================================================================
-2026-04-12T06:24:58.0231632Z *** An error occurred during deployment plan generation. Deployment cannot continue.
-2026-04-12T06:24:58.0235347Z Failed to import target model SABIC_DT_Finance_WCI. Detailed message Cannot open database "SABIC_DT_Finance_WCI" requested by the login. The login failed.
-2026-04-12T06:24:58.0236849Z Login failed for user 'SABIC_DT_Finance_WCI_User'.
-2026-04-12T06:24:58.0237565Z Cannot open database "SABIC_DT_Finance_WCI" requested by the login. The login failed.
-2026-04-12T06:24:58.0238283Z Login failed for user 'SABIC_DT_Finance_WCI_User'.
-2026-04-12T06:24:58.2735866Z ##[error]Publishing to database 'SABIC_DT_Finance_WCI' on server 'dc2qpbicln004,1433'. 
-Initializing deployment (Start) 
-Initializing deployment (Failed) 
-Time elapsed 0:00:44.58 
-
-2026-04-12T06:24:58.4729834Z ##[section]Finishing: Deploy using : dacpac
-
-
------------------
---AI Finance SQL Master CD Pipeline
-
-2026-04-12T06:22:55.4803533Z ##[section]Starting: Deploy using : dacpac
-2026-04-12T06:22:55.6619384Z ==============================================================================
-2026-04-12T06:22:55.6620407Z Task         : SQL Server database deploy
-2026-04-12T06:22:55.6620976Z Description  : Deploy a SQL Server database using DACPAC or SQL scripts
-2026-04-12T06:22:55.6621368Z Version      : 0.198.0
-2026-04-12T06:22:55.6621815Z Author       : Microsoft Corporation
-2026-04-12T06:22:55.6622372Z Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/deploy/sql-dacpac-deployment-on-machine-group
-2026-04-12T06:22:55.6622892Z ==============================================================================
-2026-04-12T06:24:15.0480076Z *** An error occurred during deployment plan generation. Deployment cannot continue.
-2026-04-12T06:24:15.0483173Z Failed to import target model SABIC_DT_Finance_Master. Detailed message The reverse engineering operation cannot continue because you do not have View Definition permission on the 'SABIC_DT_Finance_Master' database.
-2026-04-12T06:24:15.0485037Z The reverse engineering operation cannot continue because you do not have View Definition permission on the 'SABIC_DT_Finance_Master' database.
-2026-04-12T06:24:15.2502171Z ##[error]Publishing to database 'SABIC_DT_Finance_Master' on server 'dc2qpbicln004,1433'. 
-Initializing deployment (Start) 
-Initializing deployment (Failed) 
-Time elapsed 0:00:26.30 
-
-2026-04-12T06:24:15.4260938Z ##[section]Finishing: Deploy using : dacpac
+CREATE TABLE [dbo].[Aggregate_Forecast_InventoryDetails_RM](
+	[ForecastInventoryDetailsID] [int] IDENTITY(1,1) NOT NULL,
+	[CalYearMonth] [int] NULL,
+	[CalYear] [int] NULL,
+	[CalMonth] [int] NULL,
+	[InventoryType] [varchar](100) NULL,
+	[SBU] [varchar](50) NULL,
+	[BU] [varchar](50) NULL,
+	[CompanyCode] [varchar](100) NULL,
+	[CompanyName] [varchar](100) NULL,
+	[Plant] [varchar](50) NULL,
+	[PlantName] [varchar](100) NULL,
+	[ProfitCenterID] [int] NULL,
+	[ProfitCenterName] [varchar](50) NULL,
+	[OpeningInventory_Volume_In_MT] [float] NULL,
+	[ClosingInventory_Volume_In_MT] [float] NULL,
+	[OpeningInventory_Value_In_MillionSAR] [float] NULL,
+	[OpeningInventory_Value_In_MillionUSD] [float] NULL,
+	[ClosingInventory_Value_In_MillionSAR] [float] NULL,
+	[ClosingInventory_Value_In_MillionUSD] [float] NULL,
+	[ForecastedInventoryMovement_Volume_In_MT] [float] NULL,
+	[ForecastedInventoryMovement_Value_In_MillionSAR] [float] NULL,
+	[ForecastedInventoryMovement_Value_In_MillionUSD] [float] NULL,
+	[forecast_volume_Consumed_in_production_In_MT] [float] NULL,
+	[forecast_volume_Demand_In_MT] [float] NULL,
+	[forecast_volume_Others_In_MT] [float] NULL,
+	[forecast_volume_Production_Output_In_MT] [float] NULL,
+	[forecast_volume_Purchase_In_MT] [float] NULL,
+	[forecast_volume_STO_IN_In_MT] [float] NULL,
+	[forecast_volume_STO_OUT_In_MT] [float] NULL,
+	[forecast_volume_Transfers_In_MT] [float] NULL,
+	[forecast_volume_Unallocated_In_MT] [float] NULL,
+	[forecast_value_Consumed_in_production_In_MillionSAR] [float] NULL,
+	[forecast_value_Consumed_in_production_In_MillionUSD] [float] NULL,
+	[forecast_value_Demand_In_MillionSAR] [float] NULL,
+	[forecast_value_Demand_In_MillionUSD] [float] NULL,
+	[forecast_value_Others_In_MillionSAR] [float] NULL,
+	[forecast_value_Others_In_MillionUSD] [float] NULL,
+	[forecast_value_Production_Output_In_MillionSAR] [float] NULL,
+	[forecast_value_Production_Output_In_MillionUSD] [float] NULL,
+	[forecast_value_Purchase_In_MillionSAR] [float] NULL,
+	[forecast_value_Purchase_In_MillionUSD] [float] NULL,
+	[forecast_value_STO_IN_In_MillionSAR] [float] NULL,
+	[forecast_value_STO_IN_In_MillionUSD] [float] NULL,
+	[forecast_value_STO_OUT_In_MillionSAR] [float] NULL,
+	[forecast_value_STO_OUT_In_MillionUSD] [float] NULL,
+	[forecast_value_Transfers_In_MillionSAR] [float] NULL,
+	[forecast_value_Transfers_In_MillionUSD] [float] NULL,
+	[forecast_value_Unallocated_In_MillionSAR] [float] NULL,
+	[forecast_value_Unallocated_In_MillionUSD] [float] NULL,
+	[CreatedDate] [datetime] NULL,
+	[UnitOfMeasure] [varchar](50) NULL,
+ CONSTRAINT [PK_Aggregate_Forecast_InventoryDetails_RM] PRIMARY KEY CLUSTERED 
+(
+	[ForecastInventoryDetailsID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
