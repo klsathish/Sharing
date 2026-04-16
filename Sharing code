@@ -1,4 +1,184 @@
 4.16	Aggregate_Actuals_InventoryDetails_FG
+Stores finished goods actuals closing inventory details.
+
+Column	Description	Example
+InventoryDetailsID (PK)	Auto-increment primary key	1
+CalYearMonth	Calendar year and month (YYYYMM)	202306
+CalYear	Calendar year	2023
+CalMonth	Calendar month	6
+InventoryType	Type of inventory (FG)	FG
+CompanyCode	Company code	1000
+CompanyName	Company name	ABC Ltd
+ProfitCenterID	Profit center ID	101
+Profit_Center	Profit center code	PC100
+PlantID	Plant ID	10
+Plant	Plant code	PL01
+OpeningInventory_Volume_In_MT	Opening inventory volume in MT	20000
+ClosingInventory_Volume_In_MT	Closing inventory volume in MT	25000
+CreatedDate	Record creation date	2023-06-30
+SBU	Strategic Business Unit	SBU1
+BU	Business Unit	BU1
+
+
+4.17	Aggregate_Actuals_InventoryDetails_RM
+Stores raw material actuals closing inventory details.
+
+Column	Description	Example
+InventoryDetailsID (PK)	Auto-increment primary key	1
+CalYearMonth	Calendar year and month (YYYYMM)	202306
+CalYear	Calendar year	2023
+CalMonth	Calendar month	6
+InventoryType	Type of inventory (RM)	RM
+CompanyCode	Company code	1000
+CompanyName	Company name	ABC Ltd
+Profit_Center	Profit center code	PC100
+Plant	Plant code	PL01
+OpeningInventory_Volume_In_MT	Opening inventory volume	15000
+ClosingInventory_Volume_In_MT	Closing inventory volume	18000
+CreatedDate	Record creation date	2023-06-30
+SBU	Strategic Business Unit	SBU1
+BU	Business Unit	BU1
+
+
+4.18	Aggregate_Actuals_MaterialMovement_ConsumedInProduction
+Stores material consumed in production.
+
+Column	Description	Example
+MaterialMovementDemandID (PK)	Auto-increment primary key	1
+CalYearMonth	Calendar year and month	202306
+CalYear	Calendar year	2023
+CalMonth	Calendar month	6
+CompanyCode	Company code	1000
+Plant	Plant code	PL01
+ProfitCenterName	Profit center	PC100
+Volume_In_MT	Consumed volume	5000
+Value_In_MillionSAR	Consumed value (SAR)	3.5
+Value_In_MillionUSD	Consumed value (USD)	0.9
+CreatedDate	Record creation date	2023-06-30
+
+
+4.19	Aggregate_Actuals_MaterialMovement_Demand
+Stores demand material movement.
+
+Column	Description	Example
+MaterialMovementDemandID (PK)	Auto-increment primary key	1
+CalYearMonth	Calendar year and month	202306
+Volume_In_MT	Demand volume	3000
+Value_In_MillionSAR	Demand value (SAR)	2.1
+Value_In_MillionUSD	Demand value (USD)	0.55
+
+
+4.20	Aggregate_Actuals_MaterialMovement_Others
+Stores other material movements.
+
+Column	Description	Example
+MaterialMovementDemandID (PK)	Auto-increment primary key	1
+Volume_In_MT	Other volume	1000
+Value_In_MillionSAR	Other value (SAR)	0.8
+
+
+4.21	Aggregate_Actuals_MaterialMovement_ProductionOutput
+Stores production output material movement.
+
+Column	Description	Example
+MaterialMovementDemandID (PK)	Auto-increment primary key	1
+Volume_In_MT	Production output volume	7000
+Value_In_MillionSAR	Production value (SAR)	5.0
+
+
+4.22	Aggregate_Actuals_MaterialMovement_Purchases
+Stores purchase material movement.
+
+Column	Description	Example
+MaterialMovementDemandID (PK)	Auto-increment primary key	1
+Volume_In_MT	Purchase volume	4000
+Value_In_MillionSAR	Purchase value (SAR)	2.8
+
+
+4.23	Aggregate_Actuals_MaterialMovement_STOIn
+Stores stock transfer in (STO In).
+
+Column	Description	Example
+MaterialMovementDemandID (PK)	Auto-increment primary key	1
+Volume_In_MT	STO In volume	1500
+Value_In_MillionSAR	STO In value (SAR)	1.1
+
+
+4.24	Aggregate_Actuals_MaterialMovement_STOOut
+Stores stock transfer out (STO Out).
+
+Column	Description	Example
+MaterialMovementDemandID (PK)	Auto-increment primary key	1
+Volume_In_MT	STO Out volume	1200
+Value_In_MillionSAR	STO Out value (SAR)	0.9
+
+
+4.25	Aggregate_Actuals_MaterialMovement_Transfers
+Stores internal transfer movements.
+
+Column	Description	Example
+MaterialMovementDemandID (PK)	Auto-increment primary key	1
+Volume_In_MT	Transfer volume	800
+Value_In_MillionSAR	Transfer value (SAR)	0.6
+
+
+4.26	Aggregate_Actuals_MaterialMovement_Unallocated
+Stores unallocated material movements.
+
+Column	Description	Example
+MaterialMovementDemandID (PK)	Auto-increment primary key	1
+Volume_In_MT	Unallocated volume	500
+Value_In_MillionSAR	Unallocated value (SAR)	0.4
+
+
+4.27	Aggregate_Actuals_OpeningClosingInventory_FG
+Stores FG opening and closing inventory.
+
+Column	Description	Example
+RecID (PK)	Auto-increment primary key	1
+calYear	Calendar year	2023
+calMonth	Calendar month	6
+Opening_Inventory_Volume_In_MT	Opening volume	20000
+Closing_Inventory_Volume_In_MT	Closing volume	25000
+Opening_Inventory_Value_In_SAR	Opening value	15000000
+Closing_Inventory_Value_In_SAR	Closing value	18000000
+CreatedDate	Record creation date	2023-06-30
+
+
+4.28	Aggregate_Actuals_OpeningClosingInventory_RM
+Stores RM opening and closing inventory.
+
+Column	Description	Example
+RecID (PK)	Auto-increment primary key	1
+calYear	Calendar year	2023
+calMonth	Calendar month	6
+Opening_Inventory_Volume_In_MT	Opening volume	15000
+Closing_Inventory_Volume_In_MT	Closing volume	18000
+CreatedDate	Record creation date	2023-06-30
+
+
+4.29	Aggregate_Forecast_InventoryDetails_FG
+Stores forecast inventory details for FG.
+
+Column	Description	Example
+ForecastInventoryDetailsID (PK)	Auto-increment primary key	1
+CalYearMonth	Calendar year and month	202306
+OpeningInventory_Volume_In_MT	Opening forecast volume	21000
+ClosingInventory_Volume_In_MT	Closing forecast volume	26000
+CreatedDate	Record creation date	2023-06-30
+
+
+4.30	Aggregate_Forecast_InventoryDetails_RM
+Stores forecast inventory details for RM.
+
+Column	Description	Example
+ForecastInventoryDetailsID (PK)	Auto-increment primary key	1
+CalYearMonth	Calendar year and month	202306
+OpeningInventory_Volume_In_MT	Opening forecast volume	16000
+ClosingInventory_Volume_In_MT	Closing forecast volume	19000
+CreatedDate	Record creation date	2023-06-30
+
+4.16	Aggregate_Actuals_InventoryDetails_FG
 Stores finished goods actuals closing inventory actuals.
 Column 	 Description 	 Example
 RecID (PK) 	 Auto-increment primary key 	 1
