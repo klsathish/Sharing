@@ -1,3 +1,30 @@
+Subject: [WCI – SABIC] PR Approved | Release Notes – React UI & Middleware | QA Sign-off Done
+Hi Khaja / Harish,
+Hope you are doing well.
+Please find the attached release notes for the latest WCI – SABIC code changes. The PR has been reviewed and approved by the QA team and is ready for deployment.
+Kindly review and let me know if any further action is required from my end.
+Thanks & Regards,
+KL Sathish
+Lead Full Stack Developer – AI Finance (WCI / Smart Forecast)
+Wipro Limited
+
+
+RELEASE NOTES
+Working Capital Insights (WCI) – SABIC
+React UI | Middleware (.NET Core)
+FieldDetailsProjectWCI – SABICRelease Date19 April 2025Versionv1.1EnvironmentQAPrepared ByKL SathishTeamWipro – AI FinancePR StatusApproved ✓Approved ByQA Team
+
+Code Changes Summary
+#CategoryComponentDescriptionImpactStatus1EnhancementAuthentication APIAdded automation-related login API to support pipeline agent authentication (Basic Auth) for CI/CD DevOps pipeline agentsLowCompleted2Code QualityGeneralAddressed and resolved compiler/build warnings across the solution to improve code health and reduce technical debtNoneCompleted3Code CleanupGeneralRemoved unnecessary code blocks and commented-out code to improve readability and maintainabilityNoneCompleted4MergeAll ModulesMerged local updated changes into the main branch; conflicts resolved and PR raised for QA review and approvalLowCompleted5RepositoryProject ConfigRemoved bin/ and obj/ build output folders from source control and added a project-specific .gitignore to prevent future trackingNoneCompleted
+
+Notes
+
+PR has been reviewed and approved by the QA team.
+Both React UI and Middleware (.NET Core) components have been updated in this release.
+The .gitignore update ensures bin/ and obj/ folders will not be tracked in future commits.
+No database schema changes are included in this release
+
+
 4.16	Aggregate_Actuals_InventoryDetails_FG
 Stores finished goods actuals inventory details.
 
