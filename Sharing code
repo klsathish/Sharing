@@ -1,15 +1,148 @@
-Dear [Name],
+SELECT 
 
-Thank you for the update.
+		tblresult.calmonth
 
-We are currently working on incorporating the required changes to all SF PRs in line with Sabic standards and the discussions held with Harish and Atif during WCI. The updates are in progress and will be addressed accordingly.
+		,tblresult.material_number
 
-Please let us know if there are any additional inputs.
+		,tblresult.plant AS plant
 
-Regards,
-Sathish
+		,tblresult.plant_type
+ 
+		,SUM(tblresult.OPN_VOL) AS OpeningInventory_Volume
 
+		,SUM(tblresult.OPN_BAL) AS OpeningInventory_Value_In_LC
 
-@ Dear Khaja/ Sathish, 
+		,SUM(tblresult.OPN_VOL_CONVERTED) AS OpeningInventory_Volume_In_MT
 
-I appreciate to do the required changes to all SF - PRs that accommodate Sabic standard and the changes already discussed with Harish/Atif during WCI that should reflect on SF PRs.  
+		,SUM(tblresult.OPN_BAL_CONVERTED) AS OpeningInventory_Value_In_SAR
+
+		,SUM(tblresult.CLS_VOL) AS ClosingInventory_Volume
+
+		,SUM(tblresult.CLS_BAL) AS ClosingInventory_Value_In_LC
+
+		,SUM(tblresult.CLS_VOL_CONVERTED) AS ClosingInventory_Volume_In_MT
+
+		,SUM(tblresult.CLS_BAL_CONVERTED) AS ClosingInventory_Value_In_SAR
+
+	FROM
+
+	(
+
+		SELECT
+
+			INV.calmonth AS CALMONTH,
+
+			INV.material_number AS MATERIAL_NUMBER,
+
+			INV.plant AS plant,
+
+			inv.plant_type AS plant_type,
+
+			/* Opening = previous month closing */
+
+			LAG(SUM(INV.closing_inventory_volume), 1, 0)
+
+				OVER (
+
+					PARTITION BY INV.material_number, INV.plant
+
+					ORDER BY INV.calmonth
+
+				) AS OPN_VOL,
+
+			LAG(SUM(INV.inventory_value_lc), 1, 0)
+
+				OVER (
+
+					PARTITION BY INV.material_number, INV.plant
+
+					ORDER BY INV.calmonth
+
+				) AS OPN_BAL,
+
+			LAG(SUM(INV.closing_inventory_volume_mt), 1, 0)
+
+				OVER (
+
+					PARTITION BY INV.material_number, INV.plant
+
+					ORDER BY INV.calmonth
+
+				) AS OPN_VOL_CONVERTED,
+
+			LAG(SUM(INV.inventory_value_sar), 1, 0)
+
+				OVER (
+
+					PARTITION BY INV.material_number, INV.plant
+
+					ORDER BY INV.calmonth
+
+				) AS OPN_BAL_CONVERTED,
+ 
+			/* Closing */
+
+			SUM(INV.closing_inventory_volume) AS CLS_VOL,
+
+			SUM(INV.inventory_value_lc) AS CLS_BAL,
+
+			SUM(INV.closing_inventory_volume_mt) AS CLS_VOL_CONVERTED,
+
+			SUM(INV.inventory_value_sar) AS CLS_BAL_CONVERTED,
+
+			/* Used only to hide first month */
+
+			ROW_NUMBER()
+
+				OVER (
+
+					PARTITION BY INV.material_number, INV.plant, INV.plant_type
+
+					ORDER BY INV.calmonth
+
+				) AS RNK
+
+		FROM
+
+			[SABIC_DT_Finance_Master].[staging].[inventory_detail] AS INV
+
+		WHERE
+
+			INV.material_type IN ('HALB','KMAT', 'ROH')
+
+			AND INV.calmonth BETWEEN '202205' AND '202306'
+
+		GROUP BY
+
+			INV.calmonth,
+
+			INV.material_number,
+
+			INV.plant,
+
+			INV.plant_type
+
+	) tblresult
+
+	WHERE
+
+		RNK > 1
+
+	GROUP BY
+
+		tblresult.calmonth
+
+		,tblresult.plant
+
+		,tblresult.material_number
+
+		,tblresult.plant_type
+
+	ORDER BY
+
+		tblresult.calmonth
+
+		,tblresult.plant
+
+		,tblresult.material_number
+ 
