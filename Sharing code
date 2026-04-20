@@ -1,3 +1,82 @@
+WITH MonthlyAgg AS (
+    -- Step 1: Aggregate once, cleanly
+    SELECT
+        INV.calmonth,
+        INV.material_number,
+        INV.plant,
+        INV.plant_type,
+        SUM(INV.closing_inventory_volume)    AS cls_vol,
+        SUM(INV.inventory_value_lc)          AS cls_bal,
+        SUM(INV.closing_inventory_volume_mt) AS cls_vol_mt,
+        SUM(INV.inventory_value_sar)         AS cls_bal_sar
+    FROM [SABIC_DT_Finance_Master].[staging].[inventory_detail] AS INV
+    WHERE
+        INV.material_type IN ('HALB', 'KMAT', 'ROH')
+        AND INV.calmonth BETWEEN '202205' AND '202306'
+    GROUP BY
+        INV.calmonth,
+        INV.material_number,
+        INV.plant,
+        INV.plant_type
+),
+WithLagAndRank AS (
+    -- Step 2: Apply LAG on pre-aggregated values (no double aggregation)
+    SELECT
+        calmonth,
+        material_number,
+        plant,
+        plant_type,
+
+        LAG(cls_vol,    1, 0) OVER (PARTITION BY material_number, plant ORDER BY calmonth) AS opn_vol,
+        LAG(cls_bal,    1, 0) OVER (PARTITION BY material_number, plant ORDER BY calmonth) AS opn_bal,
+        LAG(cls_vol_mt, 1, 0) OVER (PARTITION BY material_number, plant ORDER BY calmonth) AS opn_vol_mt,
+        LAG(cls_bal_sar,1, 0) OVER (PARTITION BY material_number, plant ORDER BY calmonth) AS opn_bal_sar,
+
+        cls_vol,
+        cls_bal,
+        cls_vol_mt,
+        cls_bal_sar,
+
+        ROW_NUMBER() OVER (PARTITION BY material_number, plant ORDER BY calmonth) AS rnk
+        -- NOTE: plant_type removed from RNK partition to match LAG partition (same sort, no extra spool)
+    FROM MonthlyAgg
+)
+SELECT
+    calmonth,
+    material_number,
+    plant,
+    plant_type,
+
+    opn_vol     AS OpeningInventory_Volume,
+    opn_bal     AS OpeningInventory_Value_In_LC,
+    opn_vol_mt  AS OpeningInventory_Volume_In_MT,
+    opn_bal_sar AS OpeningInventory_Value_In_SAR,
+
+    cls_vol     AS ClosingInventory_Volume,
+    cls_bal     AS ClosingInventory_Value_In_LC,
+    cls_vol_mt  AS ClosingInventory_Volume_In_MT,
+    cls_bal_sar AS ClosingInventory_Value_In_SAR
+
+FROM WithLagAndRank
+WHERE rnk > 1
+ORDER BY calmonth, plant, material_number;
+
+
+------
+Recommended index — this is the biggest single win. Add this on the source table if not already present:
+sqlCREATE NONCLUSTERED INDEX IX_inventory_detail_perf
+ON [SABIC_DT_Finance_Master].[staging].[inventory_detail]
+    (material_type, calmonth, material_number, plant)
+INCLUDE
+    (plant_type, closing_inventory_volume, inventory_value_lc,
+     closing_inventory_volume_mt, inventory_value_sar);
+This makes the WHERE + GROUP BY a single index seek with no key lookup.
+
+Summary of what changed:
+IssueBeforeAfterLAG(SUM(...)) patternAggregate inside window functionCTE pre-aggregates first, LAG operates on scalarsDouble aggregationInner GROUP BY + outer SUMSingle GROUP BY in CTE, outer is direct selectMismatched partitionsRNK had plant_type, LAG didn'tRNK partition matches LAG — single shared sortReadabilityOne deep subqueryTwo named CTEs — easier to debug in SSMS
+
+
+
 SELECT 
 
 		tblresult.calmonth
