@@ -1,8 +1,23 @@
-curl -X 'POST' \
-  'https://dsappsdev.sabic.com/WCI_api/api/automationauth/automationlogin' \
-  -H 'accept: */*' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "username": "sabiccorp\\30793361",
-  "password": "Test@123"
-}'
+[HttpPost("automationlogin")]
+public async Task<IActionResult> AutomationCheckLogin([FromBody] LoginRequest request)
+{
+    string username = string.Empty;
+
+    var hasCredentials = !string.IsNullOrEmpty(request.Username)
+                      && !string.IsNullOrEmpty(request.Password);
+
+    if (hasCredentials)
+    {
+        if (string.Equals(_configuration["Automation:TestingUsername"], request.Username, StringComparison.OrdinalIgnoreCase) && _configuration["Automation:TestingPassword"] == request.Password)
+        {
+            username = request.Username!;
+        }
+
+        if (string.IsNullOrEmpty(username))
+            return Unauthorized(new
+            {
+                UserName = request.Username,
+                StatusMessage = SabicConstants.UnAuthorized,
+                StatusCode = SabicConstants.UnAuthorizedStatusCode
+            });
+    }
