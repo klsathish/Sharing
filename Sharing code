@@ -1,227 +1,282 @@
-WITH MonthlyAgg AS (
-    -- Step 1: Aggregate once, cleanly
-    SELECT
-        INV.calmonth,
-        INV.material_number,
-        INV.plant,
-        INV.plant_type,
-        SUM(INV.closing_inventory_volume)    AS cls_vol,
-        SUM(INV.inventory_value_lc)          AS cls_bal,
-        SUM(INV.closing_inventory_volume_mt) AS cls_vol_mt,
-        SUM(INV.inventory_value_sar)         AS cls_bal_sar
-    FROM [SABIC_DT_Finance_Master].[staging].[inventory_detail] AS INV
-    WHERE
-        INV.material_type IN ('HALB', 'KMAT', 'ROH')
-        AND INV.calmonth BETWEEN '202205' AND '202306'
-    GROUP BY
-        INV.calmonth,
-        INV.material_number,
-        INV.plant,
-        INV.plant_type
-),
-WithLagAndRank AS (
-    -- Step 2: Apply LAG on pre-aggregated values (no double aggregation)
-    SELECT
-        calmonth,
-        material_number,
-        plant,
-        plant_type,
-
-        LAG(cls_vol,    1, 0) OVER (PARTITION BY material_number, plant ORDER BY calmonth) AS opn_vol,
-        LAG(cls_bal,    1, 0) OVER (PARTITION BY material_number, plant ORDER BY calmonth) AS opn_bal,
-        LAG(cls_vol_mt, 1, 0) OVER (PARTITION BY material_number, plant ORDER BY calmonth) AS opn_vol_mt,
-        LAG(cls_bal_sar,1, 0) OVER (PARTITION BY material_number, plant ORDER BY calmonth) AS opn_bal_sar,
-
-        cls_vol,
-        cls_bal,
-        cls_vol_mt,
-        cls_bal_sar,
-
-        ROW_NUMBER() OVER (PARTITION BY material_number, plant ORDER BY calmonth) AS rnk
-        -- NOTE: plant_type removed from RNK partition to match LAG partition (same sort, no extra spool)
-    FROM MonthlyAgg
+USE [SABIC_DT_Finance_WCI_WebUI]
+GO
+/****** Object:  Table [dbo].[Aggregate_Actuals_InventoryDetails_FG]    Script Date: 4/21/2026 3:32:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Aggregate_Actuals_InventoryDetails_FG](
+	[InventoryDetailsID] [int] IDENTITY(1,1) NOT NULL,
+	[CalYearMonth] [int] NULL,
+	[CalYear] [int] NULL,
+	[CalMonth] [int] NULL,
+	[InventoryType] [varchar](100) NULL,
+	[CompanyCode] [varchar](100) NULL,
+	[CompanyName] [varchar](100) NULL,
+	[ProfitCenterID] [int] NULL,
+	[Profit_Center] [varchar](10) NULL,
+	[PlantID] [int] NULL,
+	[Plant] [varchar](10) NULL,
+	[OpeningInventory_Volume_In_MT] [float] NULL,
+	[ClosingInventory_Volume_In_MT] [float] NULL,
+	[OpeningInventory_Value_In_MillionSAR] [float] NULL,
+	[OpeningInventory_Value_In_MillionUSD] [float] NULL,
+	[ClosingInventory_Value_In_MillionSAR] [float] NULL,
+	[ClosingInventory_Value_In_MillionUSD] [float] NULL,
+	[volume_Consumed_in_production_In_MT] [float] NULL,
+	[volume_Demand_In_MT] [float] NULL,
+	[volume_Others_In_MT] [float] NULL,
+	[volume_Production_Output_In_MT] [float] NULL,
+	[volume_Purchase_In_MT] [float] NULL,
+	[volume_STO_IN_In_MT] [float] NULL,
+	[volume_STO_OUT_In_MT] [float] NULL,
+	[volume_Transfers_In_MT] [float] NULL,
+	[volume_Unallocated_In_MT] [float] NULL,
+	[value_Consumed_in_production_In_MillionSAR] [float] NULL,
+	[value_Consumed_in_production_In_MillionUSD] [float] NULL,
+	[value_Demand_In_MillionSAR] [float] NULL,
+	[value_Demand_In_MillionUSD] [float] NULL,
+	[value_Others_In_MillionSAR] [float] NULL,
+	[value_Others_In_MillionUSD] [float] NULL,
+	[value_Production_Output_In_MillionSAR] [float] NULL,
+	[value_Production_Output_In_MillionUSD] [float] NULL,
+	[value_Purchase_In_MillionSAR] [float] NULL,
+	[value_Purchase_In_MillionUSD] [float] NULL,
+	[value_STO_IN_In_MillionSAR] [float] NULL,
+	[value_STO_IN_In_MillionUSD] [float] NULL,
+	[value_STO_OUT_In_MillionSAR] [float] NULL,
+	[value_STO_OUT_In_MillionUSD] [float] NULL,
+	[value_Transfers_In_MillionSAR] [float] NULL,
+	[value_Transfers_In_MillionUSD] [float] NULL,
+	[value_Unallocated_In_MillionSAR] [float] NULL,
+	[value_Unallocated_In_MillionUSD] [float] NULL,
+	[CreatedDate] [datetime] NULL,
+	[SBU] [varchar](10) NULL,
+	[BU] [varchar](10) NULL,
+ CONSTRAINT [PK_Aggregate_Actuals_InventoryDetails_FG] PRIMARY KEY CLUSTERED 
+(
+	[InventoryDetailsID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Aggregate_Actuals_InventoryDetails_RM]    Script Date: 4/21/2026 3:32:59 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Aggregate_Actuals_InventoryDetails_RM](
+	[InventoryDetailsID] [int] IDENTITY(1,1) NOT NULL,
+	[CalYearMonth] [int] NULL,
+	[CalYear] [int] NULL,
+	[CalMonth] [int] NULL,
+	[InventoryType] [varchar](100) NULL,
+	[CompanyCode] [varchar](100) NULL,
+	[CompanyName] [varchar](100) NULL,
+	[ProfitCenterID] [int] NULL,
+	[Profit_Center] [varchar](10) NULL,
+	[PlantID] [int] NULL,
+	[Plant] [varchar](10) NULL,
+	[OpeningInventory_Volume_In_MT] [float] NULL,
+	[ClosingInventory_Volume_In_MT] [float] NULL,
+	[OpeningInventory_Value_In_MillionSAR] [float] NULL,
+	[OpeningInventory_Value_In_MillionUSD] [float] NULL,
+	[ClosingInventory_Value_In_MillionSAR] [float] NULL,
+	[ClosingInventory_Value_In_MillionUSD] [float] NULL,
+	[volume_Consumed_in_production_In_MT] [float] NULL,
+	[volume_Demand_In_MT] [float] NULL,
+	[volume_Others_In_MT] [float] NULL,
+	[volume_Production_Output_In_MT] [float] NULL,
+	[volume_Purchase_In_MT] [float] NULL,
+	[volume_STO_IN_In_MT] [float] NULL,
+	[volume_STO_OUT_In_MT] [float] NULL,
+	[volume_Transfers_In_MT] [float] NULL,
+	[volume_Unallocated_In_MT] [float] NULL,
+	[value_Consumed_in_production_In_MillionSAR] [float] NULL,
+	[value_Consumed_in_production_In_MillionUSD] [float] NULL,
+	[value_Demand_In_MillionSAR] [float] NULL,
+	[value_Demand_In_MillionUSD] [float] NULL,
+	[value_Others_In_MillionSAR] [float] NULL,
+	[value_Others_In_MillionUSD] [float] NULL,
+	[value_Production_Output_In_MillionSAR] [float] NULL,
+	[value_Production_Output_In_MillionUSD] [float] NULL,
+	[value_Purchase_In_MillionSAR] [float] NULL,
+	[value_Purchase_In_MillionUSD] [float] NULL,
+	[value_STO_IN_In_MillionSAR] [float] NULL,
+	[value_STO_IN_In_MillionUSD] [float] NULL,
+	[value_STO_OUT_In_MillionSAR] [float] NULL,
+	[value_STO_OUT_In_MillionUSD] [float] NULL,
+	[value_Transfers_In_MillionSAR] [float] NULL,
+	[value_Transfers_In_MillionUSD] [float] NULL,
+	[value_Unallocated_In_MillionSAR] [float] NULL,
+	[value_Unallocated_In_MillionUSD] [float] NULL,
+	[CreatedDate] [datetime] NULL,
+	[SBU] [varchar](10) NULL,
+	[BU] [varchar](10) NULL,
+ CONSTRAINT [PK_Aggregate_Actuals_InventoryDetails_RM] PRIMARY KEY CLUSTERED 
+(
+	[InventoryDetailsID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Aggregate_Actuals_OpeningClosingInventory_FG]    Script Date: 4/21/2026 3:32:59 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Aggregate_Actuals_OpeningClosingInventory_FG](
+	[RecID] [int] IDENTITY(1,1) NOT NULL,
+	[calYearMonth] [int] NULL,
+	[calYear] [int] NOT NULL,
+	[calMonth] [int] NOT NULL,
+	[SBU] [varchar](50) NULL,
+	[BU] [varchar](50) NULL,
+	[CompanyCode] [varchar](50) NULL,
+	[Plant] [varchar](50) NULL,
+	[ProfitCenter] [varchar](50) NULL,
+	[InventoryType] [varchar](50) NOT NULL,
+	[Opening_Inventory_Volume_In_MT] [float] NULL,
+	[Closing_Inventory_Volume_In_MT] [float] NULL,
+	[Opening_Inventory_Value_In_SAR] [float] NULL,
+	[Closing_Inventory_Value_In_SAR] [float] NULL,
+	[Opening_Inventory_Value_In_USD] [float] NULL,
+	[Closing_Inventory_Value_In_USD] [float] NULL,
+	[CreatedBy] [nvarchar](50) NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
 )
-SELECT
-    calmonth,
-    material_number,
-    plant,
-    plant_type,
-
-    opn_vol     AS OpeningInventory_Volume,
-    opn_bal     AS OpeningInventory_Value_In_LC,
-    opn_vol_mt  AS OpeningInventory_Volume_In_MT,
-    opn_bal_sar AS OpeningInventory_Value_In_SAR,
-
-    cls_vol     AS ClosingInventory_Volume,
-    cls_bal     AS ClosingInventory_Value_In_LC,
-    cls_vol_mt  AS ClosingInventory_Volume_In_MT,
-    cls_bal_sar AS ClosingInventory_Value_In_SAR
-
-FROM WithLagAndRank
-WHERE rnk > 1
-ORDER BY calmonth, plant, material_number;
-
-
-------
-Recommended index — this is the biggest single win. Add this on the source table if not already present:
-sqlCREATE NONCLUSTERED INDEX IX_inventory_detail_perf
-ON [SABIC_DT_Finance_Master].[staging].[inventory_detail]
-    (material_type, calmonth, material_number, plant)
-INCLUDE
-    (plant_type, closing_inventory_volume, inventory_value_lc,
-     closing_inventory_volume_mt, inventory_value_sar);
-This makes the WHERE + GROUP BY a single index seek with no key lookup.
-
-Summary of what changed:
-IssueBeforeAfterLAG(SUM(...)) patternAggregate inside window functionCTE pre-aggregates first, LAG operates on scalarsDouble aggregationInner GROUP BY + outer SUMSingle GROUP BY in CTE, outer is direct selectMismatched partitionsRNK had plant_type, LAG didn'tRNK partition matches LAG — single shared sortReadabilityOne deep subqueryTwo named CTEs — easier to debug in SSMS
-
-
-
-SELECT 
-
-		tblresult.calmonth
-
-		,tblresult.material_number
-
-		,tblresult.plant AS plant
-
-		,tblresult.plant_type
- 
-		,SUM(tblresult.OPN_VOL) AS OpeningInventory_Volume
-
-		,SUM(tblresult.OPN_BAL) AS OpeningInventory_Value_In_LC
-
-		,SUM(tblresult.OPN_VOL_CONVERTED) AS OpeningInventory_Volume_In_MT
-
-		,SUM(tblresult.OPN_BAL_CONVERTED) AS OpeningInventory_Value_In_SAR
-
-		,SUM(tblresult.CLS_VOL) AS ClosingInventory_Volume
-
-		,SUM(tblresult.CLS_BAL) AS ClosingInventory_Value_In_LC
-
-		,SUM(tblresult.CLS_VOL_CONVERTED) AS ClosingInventory_Volume_In_MT
-
-		,SUM(tblresult.CLS_BAL_CONVERTED) AS ClosingInventory_Value_In_SAR
-
-	FROM
-
-	(
-
-		SELECT
-
-			INV.calmonth AS CALMONTH,
-
-			INV.material_number AS MATERIAL_NUMBER,
-
-			INV.plant AS plant,
-
-			inv.plant_type AS plant_type,
-
-			/* Opening = previous month closing */
-
-			LAG(SUM(INV.closing_inventory_volume), 1, 0)
-
-				OVER (
-
-					PARTITION BY INV.material_number, INV.plant
-
-					ORDER BY INV.calmonth
-
-				) AS OPN_VOL,
-
-			LAG(SUM(INV.inventory_value_lc), 1, 0)
-
-				OVER (
-
-					PARTITION BY INV.material_number, INV.plant
-
-					ORDER BY INV.calmonth
-
-				) AS OPN_BAL,
-
-			LAG(SUM(INV.closing_inventory_volume_mt), 1, 0)
-
-				OVER (
-
-					PARTITION BY INV.material_number, INV.plant
-
-					ORDER BY INV.calmonth
-
-				) AS OPN_VOL_CONVERTED,
-
-			LAG(SUM(INV.inventory_value_sar), 1, 0)
-
-				OVER (
-
-					PARTITION BY INV.material_number, INV.plant
-
-					ORDER BY INV.calmonth
-
-				) AS OPN_BAL_CONVERTED,
- 
-			/* Closing */
-
-			SUM(INV.closing_inventory_volume) AS CLS_VOL,
-
-			SUM(INV.inventory_value_lc) AS CLS_BAL,
-
-			SUM(INV.closing_inventory_volume_mt) AS CLS_VOL_CONVERTED,
-
-			SUM(INV.inventory_value_sar) AS CLS_BAL_CONVERTED,
-
-			/* Used only to hide first month */
-
-			ROW_NUMBER()
-
-				OVER (
-
-					PARTITION BY INV.material_number, INV.plant, INV.plant_type
-
-					ORDER BY INV.calmonth
-
-				) AS RNK
-
-		FROM
-
-			[SABIC_DT_Finance_Master].[staging].[inventory_detail] AS INV
-
-		WHERE
-
-			INV.material_type IN ('HALB','KMAT', 'ROH')
-
-			AND INV.calmonth BETWEEN '202205' AND '202306'
-
-		GROUP BY
-
-			INV.calmonth,
-
-			INV.material_number,
-
-			INV.plant,
-
-			INV.plant_type
-
-	) tblresult
-
-	WHERE
-
-		RNK > 1
-
-	GROUP BY
-
-		tblresult.calmonth
-
-		,tblresult.plant
-
-		,tblresult.material_number
-
-		,tblresult.plant_type
-
-	ORDER BY
-
-		tblresult.calmonth
-
-		,tblresult.plant
-
-		,tblresult.material_number
- 
+CREATE TABLE [dbo].[Aggregate_Actuals_OpeningClosingInventory_RM](
+	[RecID] [int] IDENTITY(1,1) NOT NULL,
+	[calYearMonth] [int] NULL,
+	[calYear] [int] NOT NULL,
+	[calMonth] [int] NOT NULL,
+	[SBU] [varchar](50) NULL,
+	[BU] [varchar](50) NULL,
+	[CompanyCode] [varchar](50) NULL,
+	[Plant] [varchar](50) NULL,
+	[ProfitCenter] [varchar](50) NULL,
+	[InventoryType] [varchar](50) NOT NULL,
+	[Opening_Inventory_Volume_In_MT] [float] NULL,
+	[Closing_Inventory_Volume_In_MT] [float] NULL,
+	[Opening_Inventory_Value_In_SAR] [float] NULL,
+	[Closing_Inventory_Value_In_SAR] [float] NULL,
+	[Opening_Inventory_Value_In_USD] [float] NULL,
+	[Closing_Inventory_Value_In_USD] [float] NULL,
+	[CreatedBy] [nvarchar](50) NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[UnitOfMeasure] [varchar](50) NULL,
+)
+CREATE TABLE [dbo].[Aggregate_Forecast_InventoryDetails_FG](
+	[ForecastInventoryDetailsID] [int] IDENTITY(1,1) NOT NULL,
+	[CalYearMonth] [int] NULL,
+	[CalYear] [int] NULL,
+	[CalMonth] [int] NULL,
+	[InventoryType] [varchar](100) NULL,
+	[SBU] [varchar](50) NULL,
+	[BU] [varchar](50) NULL,
+	[CompanyCode] [varchar](100) NULL,
+	[CompanyName] [varchar](100) NULL,
+	[Plant] [varchar](50) NULL,
+	[PlantName] [varchar](100) NULL,
+	[ProfitCenterID] [int] NULL,
+	[ProfitCenterName] [varchar](50) NULL,
+	[OpeningInventory_Volume_In_MT] [float] NULL,
+	[ClosingInventory_Volume_In_MT] [float] NULL,
+	[OpeningInventory_Value_In_MillionSAR] [float] NULL,
+	[OpeningInventory_Value_In_MillionUSD] [float] NULL,
+	[ClosingInventory_Value_In_MillionSAR] [float] NULL,
+	[ClosingInventory_Value_In_MillionUSD] [float] NULL,
+	[ForecastedInventoryMovement_Volume_In_MT] [float] NULL,
+	[ForecastedInventoryMovement_Value_In_MillionSAR] [float] NULL,
+	[ForecastedInventoryMovement_Value_In_MillionUSD] [float] NULL,
+	[forecast_volume_Consumed_in_production_In_MT] [float] NULL,
+	[forecast_volume_Demand_In_MT] [float] NULL,
+	[forecast_volume_Others_In_MT] [float] NULL,
+	[forecast_volume_Production_Output_In_MT] [float] NULL,
+	[forecast_volume_Purchase_In_MT] [float] NULL,
+	[forecast_volume_STO_IN_In_MT] [float] NULL,
+	[forecast_volume_STO_OUT_In_MT] [float] NULL,
+	[forecast_volume_Transfers_In_MT] [float] NULL,
+	[forecast_volume_Unallocated_In_MT] [float] NULL,
+	[forecast_value_Consumed_in_production_In_MillionSAR] [float] NULL,
+	[forecast_value_Consumed_in_production_In_MillionUSD] [float] NULL,
+	[forecast_value_Demand_In_MillionSAR] [float] NULL,
+	[forecast_value_Demand_In_MillionUSD] [float] NULL,
+	[forecast_value_Others_In_MillionSAR] [float] NULL,
+	[forecast_value_Others_In_MillionUSD] [float] NULL,
+	[forecast_value_Production_Output_In_MillionSAR] [float] NULL,
+	[forecast_value_Production_Output_In_MillionUSD] [float] NULL,
+	[forecast_value_Purchase_In_MillionSAR] [float] NULL,
+	[forecast_value_Purchase_In_MillionUSD] [float] NULL,
+	[forecast_value_STO_IN_In_MillionSAR] [float] NULL,
+	[forecast_value_STO_IN_In_MillionUSD] [float] NULL,
+	[forecast_value_STO_OUT_In_MillionSAR] [float] NULL,
+	[forecast_value_STO_OUT_In_MillionUSD] [float] NULL,
+	[forecast_value_Transfers_In_MillionSAR] [float] NULL,
+	[forecast_value_Transfers_In_MillionUSD] [float] NULL,
+	[forecast_value_Unallocated_In_MillionSAR] [float] NULL,
+	[forecast_value_Unallocated_In_MillionUSD] [float] NULL,
+	[CreatedDate] [datetime] NULL,
+}
+CREATE TABLE [dbo].[Aggregate_Forecast_InventoryDetails_RM](
+	[ForecastInventoryDetailsID] [int] IDENTITY(1,1) NOT NULL,
+	[CalYearMonth] [int] NULL,
+	[CalYear] [int] NULL,
+	[CalMonth] [int] NULL,
+	[InventoryType] [varchar](100) NULL,
+	[SBU] [varchar](50) NULL,
+	[BU] [varchar](50) NULL,
+	[CompanyCode] [varchar](100) NULL,
+	[CompanyName] [varchar](100) NULL,
+	[Plant] [varchar](50) NULL,
+	[PlantName] [varchar](100) NULL,
+	[ProfitCenterID] [int] NULL,
+	[ProfitCenterName] [varchar](50) NULL,
+	[OpeningInventory_Volume_In_MT] [float] NULL,
+	[ClosingInventory_Volume_In_MT] [float] NULL,
+	[OpeningInventory_Value_In_MillionSAR] [float] NULL,
+	[OpeningInventory_Value_In_MillionUSD] [float] NULL,
+	[ClosingInventory_Value_In_MillionSAR] [float] NULL,
+	[ClosingInventory_Value_In_MillionUSD] [float] NULL,
+	[ForecastedInventoryMovement_Volume_In_MT] [float] NULL,
+	[ForecastedInventoryMovement_Value_In_MillionSAR] [float] NULL,
+	[ForecastedInventoryMovement_Value_In_MillionUSD] [float] NULL,
+	[forecast_volume_Consumed_in_production_In_MT] [float] NULL,
+	[forecast_volume_Demand_In_MT] [float] NULL,
+	[forecast_volume_Others_In_MT] [float] NULL,
+	[forecast_volume_Production_Output_In_MT] [float] NULL,
+	[forecast_volume_Purchase_In_MT] [float] NULL,
+	[forecast_volume_STO_IN_In_MT] [float] NULL,
+	[forecast_volume_STO_OUT_In_MT] [float] NULL,
+	[forecast_volume_Transfers_In_MT] [float] NULL,
+	[forecast_volume_Unallocated_In_MT] [float] NULL,
+	[forecast_value_Consumed_in_production_In_MillionSAR] [float] NULL,
+	[forecast_value_Consumed_in_production_In_MillionUSD] [float] NULL,
+	[forecast_value_Demand_In_MillionSAR] [float] NULL,
+	[forecast_value_Demand_In_MillionUSD] [float] NULL,
+	[forecast_value_Others_In_MillionSAR] [float] NULL,
+	[forecast_value_Others_In_MillionUSD] [float] NULL,
+	[forecast_value_Production_Output_In_MillionSAR] [float] NULL,
+	[forecast_value_Production_Output_In_MillionUSD] [float] NULL,
+	[forecast_value_Purchase_In_MillionSAR] [float] NULL,
+	[forecast_value_Purchase_In_MillionUSD] [float] NULL,
+	[forecast_value_STO_IN_In_MillionSAR] [float] NULL,
+	[forecast_value_STO_IN_In_MillionUSD] [float] NULL,
+	[forecast_value_STO_OUT_In_MillionSAR] [float] NULL,
+	[forecast_value_STO_OUT_In_MillionUSD] [float] NULL,
+	[forecast_value_Transfers_In_MillionSAR] [float] NULL,
+	[forecast_value_Transfers_In_MillionUSD] [float] NULL,
+	[forecast_value_Unallocated_In_MillionSAR] [float] NULL,
+	[forecast_value_Unallocated_In_MillionUSD] [float] NULL,
+	[CreatedDate] [datetime] NULL,
+	[UnitOfMeasure] [varchar](50) NULL,
+}
+
+abouve table column details  need to create document like 
+
+Column	Description	Example
+ApplicationID (PK)	Auto-increment primary key	1
+ApplicationName	Name of the application	Finance WCI
+IsActive	Application active status	1
+CreatedBy	Record created by	Admin
+CreatedDate	Record created date	2023-08-20
+UpdatedBy	Record updated by	Admin
+UpdatedDate	Record updated date	2023-08-21
