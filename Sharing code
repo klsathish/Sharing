@@ -1,3 +1,12 @@
--	Automation Test endpoint has been created new controller and has tested both windows and basic authendication in dev envioronments
--	Created DEvops Release pipeline variable and utilized from app settings for automation testing credentials
--	PR has been updated.
+Hi Team,
+
+Please find the updates below:
+
+- A new controller has been created for the automation test endpoint. Both Windows Authentication and Basic Authentication have been successfully tested in the DEV environment.
+- DevOps release pipeline variables have been configured and are now being used to retrieve automation testing credentials via application settings.
+- The PR has been updated with the latest changes.
+
+Please let me know if any further validation is required.
+
+Thanks,
+Sathish
