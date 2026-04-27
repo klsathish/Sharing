@@ -1,14 +1,23 @@
+Dear Sathish,
 
-D:\devops-agents\agent-b\_work\68\s\dbo\Stored Procedures\sp_inserttostaging_materialmovementpricedifference.sql(36,4,36,4): Build warning SQL71502: Procedure: [dbo].[sp_inserttostaging_materialmovementpricedifference] has an unresolved reference to object [raw].[v_material_movement_price_difference].[total_price_diff_in_sar]. [D:\devops-agents\agent-b\_work\68\s\AIFinance_SQL_Master.sqlproj]
-##[warning]dbo\Stored Procedures\sp_inserttostaging_mr11.sql(33,3): Warning SQL71502: Procedure: [dbo].[sp_inserttostaging_mr11] has an unresolved reference to object [raw].[v_mr11].
-D:\devops-agents\agent-b\_work\68\s\dbo\Stored Procedures\sp_inserttostaging_mr11.sql(33,3,33,3): Build warning SQL71502: Procedure: [dbo].[sp_inserttostaging_mr11] has an unresolved reference to object [raw].[v_mr11]. [D:\devops-agents\agent-b\_work\68\s\AIFinance_SQL_Master.sqlproj]
-##[warning]dbo\Stored Procedures\sp_inserttostaging_mr11.sql(23,4): Warning SQL71502: Procedure: [dbo].[sp_inserttostaging_mr11] has an unresolved reference to object [raw].[v_mr11].[calmonth].
-D:\devops-agents\agent-b\_work\68\s\dbo\Stored Procedures\sp_inserttostaging_mr11.sql(23,4,23,4): Build warning SQL71502: Procedure: [dbo].[sp_inserttostaging_mr11] has an unresolved reference to object [raw].[v_mr11].[calmonth]. [D:\devops-agents\agent-b\_work\68\s\AIFinance_SQL_Master.sqlproj]
-##[warning]dbo\Stored Procedures\sp_inserttostaging_mr11.sql(24,4): Warning SQL71502: Procedure: [dbo].[sp_inserttostaging_mr11] has an unresolved reference to object [raw].[v_mr11].[plant].
-D:\devops-agents\agent-b\_work\68\s\dbo\Stored Procedures\sp_inserttostaging_mr11.sql(24,4,24,4): Build warning SQL71502: Procedure: [dbo].[sp_inserttostaging_mr11] has an unresolved reference to object [raw].[v_mr11].[plant]. [D:\devops-agents\agent-b\_work\68\s\AIFinance_SQL_Master.sqlproj]
-##[warning]dbo\Stored Procedures\sp_inserttostaging_mr11.sql(25,10): Warning SQL71502: Procedure: [dbo].[sp_inserttostaging_mr11] has an unresolved reference to object [raw].[v_mr11].[material_number].
-D:\devops-agents\agent-b\_work\68\s\dbo\Stored Procedures\sp_inserttostaging_mr11.sql(25,10,25,10): Build warning SQL71502: Procedure: [dbo].[sp_inserttostaging_mr11] has an unresolved reference to object [raw].[v_mr11].[material_number]. [D:\devops-agents\agent-b\_work\68\s\AIFinance_SQL_Master.sqlproj]
-##[warning]dbo\Stored Procedures\sp_inserttostaging_mr11.sql(26,4): Warning SQL71502: Procedure: [dbo].[sp_inserttostaging_mr11] has an unresolved reference to object [raw].[v_mr11].[valuation_type].
-D:\devops-agents\agent-b\_work\68\s\dbo\Stored Procedures\sp_inserttostaging_mr11.sql(26,4,26,4): Build warning SQL71502: Procedure: [dbo].[sp_inserttostaging_mr11] has an unresolved reference to object [raw].[v_mr11].[valuation_type]. [D:\devops-agents\agent-b\_work\68\s\AIFinance_SQL_Master.sqlproj]
-##[warning]dbo\Stored Procedures\sp_inserttostaging_mr11.sql(27,4): Warning SQL71502: Procedure: [dbo].[sp_inserttostaging_mr11] has an unresolved reference to object [raw].[v_mr11].[currency].
-D:\devops-agents\agent-b\_work\68\s\dbo\Stored Procedures\sp_inserttostaging_mr11.sql(27,4,27,4): Build warning SQL71502: Procedure: [dbo].[sp_inserttostaging_mr11] has an unresolved reference to object [raw].[v_mr11].[currency]. [D:\devops-agents\agent-b\_work\68\s\AIFinance_SQL_Master.sqlproj]
+Any progress here ? I see this take longtime to sort out the changes and return to us , please ensure to keep SF activities on track to avoid further delay .
+
+@ Puneet , I appreciate your prompt attention. 
+
+
+Dear Khalid,
+
+Thank you for the update.
+
+We are currently working on incorporating the required changes to all SF PRs in line with Sabic standards and the discussions held with Harish and inputs from Atif are being received as comments during WCI. The updates are in progress and will be addressed accordingly.
+
+Please let us know if there are any additional inputs.
+
+
+Removed non Sabic email.
+
+@ Dear Khaja/ Sathish, 
+
+I appreciate to do the required changes to all SF - PRs that accommodate Sabic standard and the changes already discussed with Harish/Atif during WCI that should reflect on SF PRs.  
+
+
