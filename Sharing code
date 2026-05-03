@@ -1,3 +1,108 @@
+PRINT 'Starting Post Deployment Data Seeding...';
+
+--------------------------------------------------
+-- MST_Configurations_SF
+--------------------------------------------------
+IF NOT EXISTS (
+    SELECT 1 FROM dbo.MST_Configurations_SF WHERE ConfigurationName = 'Dashboard_URL'
+)
+BEGIN
+    INSERT INTO dbo.MST_Configurations_SF
+    (ConfigurationName, ConfigurationValue, IsActive, CreatedBy, CreatedDateTime, Workflow)
+    VALUES
+    (
+        'Dashboard_URL',
+        'https://$(HostName)/SF/',   -- ✅ ENV based
+        1,
+        SUSER_SNAME(),
+        GETDATE(),
+        'SF'
+    );
+END
+
+--------------------------------------------------
+-- MST_EmailTemplate
+--------------------------------------------------
+IF NOT EXISTS (
+    SELECT 1 FROM dbo.MST_EmailTemplate WHERE EmailTemplateName = 'Recommendation Review'
+)
+BEGIN
+    INSERT INTO dbo.MST_EmailTemplate
+    (EmailTemplateName, EmailSubject, EmailContent, IsActive, CreatedBy, CreatedOn)
+    VALUES
+    (
+        'Recommendation Review',
+        'AI Finance - Smart Forecast recommendation has been assigned for your review and approval',
+        '<html>...YOUR HTML...</html>',
+        1,
+        SUSER_SNAME(),
+        GETDATE()
+    );
+END
+
+--------------------------------------------------
+-- MST_Tasks
+--------------------------------------------------
+SET IDENTITY_INSERT dbo.MST_Tasks ON;
+
+IF NOT EXISTS (SELECT 1 FROM dbo.MST_Tasks WHERE TaskID = 1)
+BEGIN
+    INSERT INTO dbo.MST_Tasks (TaskID, TaskName, IsActive, CreatedBy, CreatedDate)
+    VALUES
+    (1,'EPM Planner Review',1,SUSER_SNAME(),GETDATE()),
+    (2,'EPM Manager Review',1,SUSER_SNAME(),GETDATE()),
+    (3,'BU Manager Review',1,SUSER_SNAME(),GETDATE()),
+    (4,'SNOP Manager Review',1,SUSER_SNAME(),GETDATE()),
+    (5,'SNOP Planner Review',1,SUSER_SNAME(),GETDATE()),
+    (6,'EPM Manager Action',1,SUSER_SNAME(),GETDATE()),
+    (7,'FBP Analyst Review',1,SUSER_SNAME(),GETDATE()),
+    (8,'FBP Manager Review',1,SUSER_SNAME(),GETDATE());
+END
+
+SET IDENTITY_INSERT dbo.MST_Tasks OFF;
+
+--------------------------------------------------
+-- MST_TaskAction
+--------------------------------------------------
+SET IDENTITY_INSERT dbo.MST_TaskAction ON;
+
+IF NOT EXISTS (SELECT 1 FROM dbo.MST_TaskAction WHERE TaskActionID = 1)
+BEGIN
+    INSERT INTO dbo.MST_TaskAction
+    (TaskActionID, TaskID, TaskActionName, TaskActionNameDisplay, IsActive, CreatedBy, CreatedDate)
+    VALUES
+    (1,1,'Approve','Approve',1,SUSER_SNAME(),GETDATE()),
+    (2,1,'Reject','Reject',1,SUSER_SNAME(),GETDATE()),
+    (3,2,'Approve','Approve',1,SUSER_SNAME(),GETDATE()),
+    (4,2,'Reject','Reject',1,SUSER_SNAME(),GETDATE()),
+    (5,2,'SendBack','Send Back',1,SUSER_SNAME(),GETDATE()),
+    (6,3,'Approve','Approve',1,SUSER_SNAME(),GETDATE()),
+    (7,3,'Reject','Reject',1,SUSER_SNAME(),GETDATE()),
+    (8,3,'SendBack','Send Back',1,SUSER_SNAME(),GETDATE()),
+    (9,4,'Approve','Approve',1,SUSER_SNAME(),GETDATE()),
+    (10,4,'Reject','Reject',1,SUSER_SNAME(),GETDATE()),
+    (11,4,'SendBack','Send Back',1,SUSER_SNAME(),GETDATE()),
+    (12,5,'Approve','Approve',1,SUSER_SNAME(),GETDATE()),
+    (13,5,'Reject','Reject',1,SUSER_SNAME(),GETDATE()),
+    (14,5,'SendBack','Send Back',1,SUSER_SNAME(),GETDATE()),
+    (15,6,'Approve','Approve',0,SUSER_SNAME(),GETDATE()),
+    (16,6,'Reject','Reject',0,SUSER_SNAME(),GETDATE()),
+    (17,6,'SendBack','SendBack',0,SUSER_SNAME(),GETDATE()),
+    (18,7,'Approve','Approve',1,SUSER_SNAME(),GETDATE()),
+    (19,7,'Reject','Reject',1,SUSER_SNAME(),GETDATE()),
+    (20,8,'Approve','Approve',1,SUSER_SNAME(),GETDATE()),
+    (21,8,'Reject','Reject',1,SUSER_SNAME(),GETDATE()),
+    (22,8,'SendBack','SendBack',1,SUSER_SNAME(),GETDATE());
+END
+
+SET IDENTITY_INSERT dbo.MST_TaskAction OFF;
+
+PRINT 'Post Deployment Data Seeding Completed';
+
+
+
+
+
 
 select * from [dbo].[MST_Configurations_SF]
 
