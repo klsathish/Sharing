@@ -1,3 +1,33 @@
+public async Task<string> ReadResponseBodyAsync(HttpResponse response)
+{
+    try
+    {
+        // Check if stream is readable & seekable
+        if (response?.Body == null || !response.Body.CanRead)
+            return "Response body not readable";
+
+        if (!response.Body.CanSeek)
+            return "Response stream is not seekable";
+
+        response.Body.Seek(0, SeekOrigin.Begin);
+
+        using var reader = new StreamReader(response.Body, leaveOpen: true);
+        var body = await reader.ReadToEndAsync();
+
+        response.Body.Seek(0, SeekOrigin.Begin);
+
+        return string.IsNullOrEmpty(body) ? "Empty Response Body" : body;
+    }
+    catch (ObjectDisposedException)
+    {
+        return "Response stream already closed";
+    }
+    catch (Exception ex)
+    {
+        return $"Error reading response: {ex.Message}";
+    }
+}
+
 
 Category: Microsoft.EntityFrameworkCore.Database.Connection
 EventId: 20004
